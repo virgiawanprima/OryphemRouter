@@ -5,6 +5,11 @@ on:
     branches:
       - master
 
+# Required for pushing to GHCR (github-actions bot needs packages: write)
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY_IMAGE: ghcr.io/virgiawanprima/oryphemrouter
 
