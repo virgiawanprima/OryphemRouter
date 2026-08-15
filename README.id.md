@@ -331,7 +331,7 @@ Model: cc/claude-opus-4-7
 | Variable | Default | Deskripsi |
 |----------|---------|-----------|
 | `JWT_SECRET` | Auto-generated | Secret signing JWT untuk auth cookie |
-| `INITIAL_PASSWORD` | `123456` | Password login pertama |
+| `INITIAL_PASSWORD` | `123` | Password login pertama |
 | `DATA_DIR` | `~/.oryphemrouter` | Lokasi data utama (SQLite) |
 | `PORT` | `20129` | Port service |
 | `HOSTNAME` | framework default | Bind host (Docker: `0.0.0.0`) |
@@ -469,7 +469,7 @@ GET http://localhost:20129/api/dashboard/realtime
 
 **Login pertama tidak berfungsi**
 - Cek `INITIAL_PASSWORD` di `.env`
-- Password fallback adalah `123456`
+- Password fallback adalah `123`
 
 **Tidak ada request logs di `logs/`**
 - Set `ENABLE_REQUEST_LOGS=true`

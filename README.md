@@ -331,7 +331,7 @@ Model: cc/claude-opus-4-7
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `JWT_SECRET` | Auto-generated | JWT signing secret for auth cookie |
-| `INITIAL_PASSWORD` | `123456` | First login password |
+| `INITIAL_PASSWORD` | `123` | First login password |
 | `DATA_DIR` | `~/.oryphemrouter` | Main app data location (SQLite) |
 | `PORT` | `20129` | Service port |
 | `HOSTNAME` | framework default | Bind host (Docker: `0.0.0.0`) |
@@ -469,7 +469,7 @@ GET http://localhost:20129/api/dashboard/realtime
 
 **First login not working**
 - Check `INITIAL_PASSWORD` in `.env`
-- Fallback password is `123456`
+- Fallback password is `123`
 
 **No request logs under `logs/`**
 - Set `ENABLE_REQUEST_LOGS=true`
