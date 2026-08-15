@@ -6,8 +6,7 @@ on:
       - master
 
 env:
-  REGISTRY_IMAGE: virgiawanprima/oryphemrouter
-  DOCKERHUB_IMAGE: virgiawanprima/oryphemrouter
+  REGISTRY_IMAGE: ghcr.io/virgiawanprima/oryphemrouter
 
 jobs:
   build:
@@ -24,11 +23,6 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -69,11 +63,6 @@ jobs:
           path: /tmp/digests
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
