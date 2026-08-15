@@ -1,0 +1,30 @@
+services:
+  oryphremrouter:
+    image: virgiawanprima/oryphemrouter:latest
+    container_name: oryphremrouter
+    restart: always
+    ports:
+      - "20129:20129"
+    volumes:
+      - oryphremrouter-data:/app/data
+    env_file:
+      - .env
+    environment:
+      DATA_DIR: /app/data
+      PORT: "20129"
+      HOSTNAME: "0.0.0.0"
+      NODE_ENV: production
+      HEADROOM_URL: http://headroom:8787
+    depends_on:
+      - headroom
+
+  headroom:
+    image: ghcr.io/chopratejas/headroom:latest
+    container_name: headroom
+    restart: always
+    ports:
+      - "8787:8787"
+
+volumes:
+  oryphremrouter-data:
+    name: oryphremrouter-data
