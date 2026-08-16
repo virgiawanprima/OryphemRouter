@@ -358,7 +358,7 @@ Model: cc/claude-opus-4-7
 | `ENABLE_REQUEST_LOGS` | `false` | Aktifkan request logs |
 | `REQUIRE_API_KEY` | `false` | Enforce Bearer API key pada `/v1/*` |
 
-> 📄 Lihat [` .env.example`](./.env.example) untuk referensi lengkap dengan variabel OAuth client.
+> 📄 Lihat [`.env.example`](./.env.example) untuk referensi lengkap dengan variabel OAuth client.
 
 ---
 
