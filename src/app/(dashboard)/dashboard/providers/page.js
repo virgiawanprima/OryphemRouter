@@ -343,6 +343,8 @@ export default function ProvidersPage() {
       ? apikeyEntries
       : apikeyEntries.slice(0, APIKEY_INITIAL_VISIBLE);
   const hiddenApikeyCount = apikeyEntries.length - APIKEY_INITIAL_VISIBLE;
+  const webCookieEntries = Object.entries(WEB_COOKIE_PROVIDERS)
+    .filter(([, info]) => !info.hidden && matchSearch(info.name));
 
   if (loading) {
     return (
@@ -358,6 +360,7 @@ export default function ProvidersPage() {
     freeEntries.length > 0 ||
     freeTierEntries.length > 0 ||
     apikeyEntries.length > 0 ||
+    webCookieEntries.length > 0 ||
     compatibleProviders.length > 0 ||
     anthropicCompatibleProviders.length > 0;
 
@@ -583,25 +586,45 @@ export default function ProvidersPage() {
       )}
 
       {/* Web Cookie Providers — use browser subscription cookie instead of API key */}
-      {/* <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
+      {webCookieEntries.length > 0 && (
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
             Web Cookie Providers{" "}
           </h2>
+          <button
+            onClick={() => handleBatchTest("apikey")}
+            disabled={!!testingMode}
+            className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition-colors sm:w-auto sm:py-1.5 ${
+              testingMode === "apikey"
+                ? "bg-primary/20 border-primary/40 text-primary animate-pulse"
+                : "bg-bg border-border text-text-muted hover:text-text-main hover:border-primary/40"
+            }`}
+            title="Test all web cookie connections"
+            aria-label="Test all web cookie provider connections"
+          >
+            <span
+              className={`material-symbols-outlined text-[14px]${testingMode === "apikey" ? " animate-spin" : ""}`}
+            >
+              play_arrow
+            </span>
+            {testingMode === "apikey" ? "Testing..." : "Test All"}
+          </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Object.entries(WEB_COOKIE_PROVIDERS).map(([key, info]) => (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          {webCookieEntries.map(([key, info]) => (
             <ApiKeyProviderCard
               key={key}
               providerId={key}
               provider={info}
-              stats={getProviderStats(key, "apikey")}
+              stats={getProviderStats(key, "cookie")}
               authType="apikey"
-              onToggle={(active) => handleToggleProvider(key, "apikey", active)}
+              onToggle={(active) => handleToggleProvider(key, "cookie", active)}
             />
           ))}
         </div>
-      </div> */}
+      </div>
+      )}
 
       <AddCompatibleModal
         variant="openai"

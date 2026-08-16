@@ -25,6 +25,7 @@ import {
   getPaginationPageValue,
   getProviderOptions,
   reconcileConnectionsPage,
+  groupConnectionsByProvider,
   getQuotaCache,
   setQuotaCache,
   QUOTA_CACHE_KEY,
@@ -698,6 +699,19 @@ export default function ProviderLimits() {
     [connections, quotaData, expiringFirst, providerFilter, quotaSortMode],
   );
 
+  // One card per provider: group connections (and empty free/no-auth providers)
+  // by provider so the tracker shows a single card with an "N API keys" badge.
+  const providerGroups = useMemo(
+    () =>
+      groupConnectionsByProvider(
+        sortedConnections,
+        freeProviderIds.filter(
+          (id) => providerFilter === "all" || providerFilter === id,
+        ),
+      ),
+    [sortedConnections, freeProviderIds, providerFilter],
+  );
+
   // Connection is depleted when any quota entry hit the threshold
   const isConnectionDepleted = (conn) => {
     const quotas = quotaData[conn.id]?.quotas;
@@ -748,8 +762,9 @@ export default function ProviderLimits() {
 
   const selectedProviderLabel =
     providerFilter === "all" ? "All providers" : providerFilter;
-  const hasEligibleConnections = totals.eligibleConnections > 0;
-  const hasVisibleConnections = sortedConnections.length > 0;
+  const hasEligibleConnections =
+    (totals.eligibleConnections ?? 0) > 0 || freeProviderIds.length > 0;
+  const hasVisibleConnections = providerGroups.length > 0;
   const emptyState = getConnectionsEmptyMessage(
     totals,
     providerFilter,

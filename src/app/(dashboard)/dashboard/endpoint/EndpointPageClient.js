@@ -1133,7 +1133,7 @@ export default function APIPageClient({ machineId }) {
       <Modal
         isOpen={showAddModal}
         title="Create API Key"
-        onClose={() = aria-label="Create API Key"> {
+        onClose={() => {
           setShowAddModal(false);
           setNewKeyName("");
         }}

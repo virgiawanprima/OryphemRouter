@@ -120,9 +120,9 @@ export default function FreeTiersPage() {
       {/* Provider Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {freeTiers.map((tier, idx) => (
-          <Card key={idx} className={`border-2 ${TIER_BORDERS[tier.icon] || "border-border-500"}`}>
+          <Card key={idx} className={`border ${TIER_BORDERS[tier.icon] || "border-border-500"}`}>
             <div className="flex items-start gap-3">
-              <div className={`p-2 ${TIER_BG_COLORS[tier.icon] || "text-text-muted"} bg-surface-2 border-2 border-border-500`}>
+              <div className={`p-2 ${TIER_BG_COLORS[tier.icon] || "text-text-muted"} bg-surface-2 rounded-[var(--radius-brand)] border border-border-500`}>
                 <span className="material-symbols-outlined text-[24px]">
                   {TIER_ICONS[tier.icon] || "smart_toy"}
                 </span>
@@ -157,9 +157,9 @@ export default function FreeTiersPage() {
       </div>
 
       {/* Info Card */}
-      <Card className="border-2 border-blue-500/30">
+      <Card className="border border-blue-500/30">
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 border-2 border-blue-500/30">
+          <div className="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-[var(--radius-brand)] border border-blue-500/30">
             <span className="material-symbols-outlined text-[20px]">info</span>
           </div>
           <div>

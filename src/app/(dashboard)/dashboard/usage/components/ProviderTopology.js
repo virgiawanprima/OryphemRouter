@@ -36,7 +36,7 @@ function ProviderNode({ data }) {
   const [imgError, setImgError] = useState(false);
   return (
     <div
-      className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg border-2 transition-all duration-300 bg-bg"
+      className="flex items-center gap-2.5 px-4 py-2.5 rounded-[var(--radius-brand)] border transition-all duration-300 bg-bg"
       style={{
         borderColor: active ? color : "var(--color-border)",
         boxShadow: active ? `0 0 16px ${color}40` : "none",
@@ -99,7 +99,7 @@ function RouterNode({ data }) {
   const powering = (data.activeCount || 0) > 0;
   return (
     <div
-      className={`relative z-[1] flex items-center justify-center px-5 py-3 rounded-xl border-2 min-w-[130px] ${
+      className={`relative z-[1] flex items-center justify-center px-5 py-3 rounded-[var(--radius-brand)] border min-w-[130px] ${
         powering
           ? "topology-router-core border-yellow-300 bg-gradient-to-br from-primary/30 via-yellow-400/20 to-cyan-400/25"
           : "border-primary bg-primary/5 shadow-md"
