@@ -10,7 +10,7 @@ Local/remote AI gateway exposing OpenAI-compatible REST. One key, many providers
 ## Setup
 
 ```bash
-export NINE_ROUTER_URL="http://localhost:20128"      # or VPS / tunnel URL
+export NINE_ROUTER_URL="http://localhost:20129"      # or VPS / tunnel URL
 export NINE_ROUTER_KEY="sk-..."                      # from Dashboard → Keys (only if requireApiKey=true)
 ```
 
