@@ -1,9 +1,8 @@
 name: Docker
 
 on:
-  push:
-    branches:
-      - master
+  # Disabled automatic runs — build manually from the Actions tab when needed.
+  workflow_dispatch:
 
 # Required for pushing to GHCR (github-actions bot needs packages: write)
 permissions:
