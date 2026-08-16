@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 OryphemRouter
+# OryphemRouter
 
 **AI Router & Token Saver — Never stop coding. Save tokens, money and rate limits.**
 
@@ -11,49 +11,49 @@
 
 **Connect All AI Code Tools** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **to 40+ AI Providers & 100+ Models.**
 
-**🌐 Language:** [🇬🇧 English](README.md) (default) · [🇮🇩 Indonesia](README.id.md)
+** Language:** [ English](README.md) (default) · [ Indonesia](README.id.md)
 
 </div>
 
 ---
 
-## 📖 About
+## About
 
 **OryphemRouter** is a local **AI routing gateway** that consolidates all your AI coding needs into **one endpoint**. Built by the **oryphem team** as an enhancement over 9Router, this project brings:
 
-- 🎯 **Auto-fallback** across providers (Subscription → Cheap → Free) so you **never stop coding**
-- 💸 **Save 20-40% tokens** with integrated RTK Token Saver
-- 🆓 **Free forever** with Kiro, OpenCode Free, and Vertex AI free tiers
-- 🔒 **100% local-first** — your data & API keys never leave your machine
-- 🌍 **Dual language** — English & Indonesian
+-  **Auto-fallback** across providers (Subscription → Cheap → Free) so you **never stop coding**
+-  **Save 20-40% tokens** with integrated RTK Token Saver
+-  **Free forever** with Kiro, OpenCode Free, and Vertex AI free tiers
+-  **100% local-first** — your data & API keys never leave your machine
+-  **Dual language** — English & Indonesian
 
 ---
 
-## 🤔 Why OryphemRouter?
+## Why OryphemRouter?
 
 **Stop wasting money, tokens and hitting limits:**
 
-- ❌ Subscription quota expires unused every month
-- ❌ Rate limits stop you mid-coding
-- ❌ Tool outputs (git diff, grep, ls...) burn tokens fast
-- ❌ Expensive APIs ($20-50/month per provider)
-- ❌ Manual switching between providers
+-  Subscription quota expires unused every month
+-  Rate limits stop you mid-coding
+-  Tool outputs (git diff, grep, ls...) burn tokens fast
+-  Expensive APIs ($20-50/month per provider)
+-  Manual switching between providers
 
 **OryphemRouter solves this:**
 
-- ✅ **RTK Token Saver** — Auto-compress tool_result, save **20-40% tokens**
-- ✅ **Maximize subscriptions** — Track quota, use every bit before reset
-- ✅ **Auto fallback** — Subscription → Cheap → Free, zero downtime
-- ✅ **Multi-account** — Round-robin between accounts per provider
-- ✅ **Universal** — Works with Claude Code, Codex, Cursor, Cline, any CLI tool
-- ✅ **Cost-Optimized Routing** — Automatically pick the cheapest working provider
-- ✅ **Circuit Breaker** — Providers erroring automatically get a 5-min cooldown
-- ✅ **Spending Limits** — Limit monthly/daily costs to prevent surprise bills
-- ✅ **Free-Tier Tracker** — Monitor remaining free quota per provider
+-  **RTK Token Saver** — Auto-compress tool_result, save **20-40% tokens**
+-  **Maximize subscriptions** — Track quota, use every bit before reset
+-  **Auto fallback** — Subscription → Cheap → Free, zero downtime
+-  **Multi-account** — Round-robin between accounts per provider
+-  **Universal** — Works with Claude Code, Codex, Cursor, Cline, any CLI tool
+-  **Cost-Optimized Routing** — Automatically pick the cheapest working provider
+-  **Circuit Breaker** — Providers erroring automatically get a 5-min cooldown
+-  **Spending Limits** — Limit monthly/daily costs to prevent surprise bills
+-  **Free-Tier Tracker** — Monitor remaining free quota per provider
 
 ---
 
-## 🔄 How It Works
+## How It Works
 
 ```
 ┌─────────────┐
@@ -61,7 +61,7 @@
 │   Tool      │
 └──────┬──────┘
        │ http://localhost:20129/v1
-       ↓
+       
 ┌─────────────────────────────────────────────┐
 │        OryphemRouter (Smart Router)         │
 │  • RTK Token Saver (cut tool_result tokens) │
@@ -72,20 +72,20 @@
 │  • Circuit breaker + spending limits        │
 └──────┬──────────────────────────────────────┘
        │
-       ├─→ [Tier 1: SUBSCRIPTION] Claude Code, Codex, GitHub Copilot
-       │   ↓ quota exhausted
-       ├─→ [Tier 2: CHEAP] GLM ($0.6/1M), MiniMax ($0.2/1M)
-       │   ↓ budget limit
-       └─→ [Tier 3: FREE] Kiro, OpenCode Free, Vertex ($300 credits)
+       ├─ [Tier 1: SUBSCRIPTION] Claude Code, Codex, GitHub Copilot
+       │    quota exhausted
+       ├─ [Tier 2: CHEAP] GLM ($0.6/1M), MiniMax ($0.2/1M)
+       │    budget limit
+       └─ [Tier 3: FREE] Kiro, OpenCode Free, Vertex ($300 credits)
 
 Result: Never stop coding, minimal cost + 20-40% token savings via RTK
 ```
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
-### 📋 Requirements
+### Requirements
 
 | OS | Requirement |
 |----|-------------|
@@ -98,7 +98,7 @@ Result: Never stop coding, minimal cost + 20-40% token savings via RTK
 
 ### Installation
 
-#### 🪟 Windows
+#### Windows
 
 **Option A — npm (recommended):**
 
@@ -127,9 +127,9 @@ docker run -d --name oryphremrouter `
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-> 💡 Data is stored at `%APPDATA%\oryphemrouter\` on Windows.
+>  Data is stored at `%APPDATA%\oryphemrouter\` on Windows.
 
-#### 🍎 macOS
+#### macOS
 
 **Option A — npm (recommended):**
 
@@ -151,9 +151,9 @@ docker run -d --name oryphremrouter \
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-> 💡 Data is stored at `~/.oryphemrouter/` on macOS. Apple Silicon (ARM) supported.
+>  Data is stored at `~/.oryphemrouter/` on macOS. Apple Silicon (ARM) supported.
 
-#### 🐧 Linux
+#### Linux
 
 **Option A — npm (recommended for Ubuntu/Debian):**
 
@@ -184,9 +184,9 @@ sudo npm install -g oryphremrouter
 oryphremrouter
 ```
 
-> 💡 Data is stored at `~/.oryphemrouter/` on Linux.
+>  Data is stored at `~/.oryphemrouter/` on Linux.
 
-#### 🐳 Docker (any OS, server/VPS)
+#### Docker (any OS, server/VPS)
 
 The pre-built image is published on GHCR — no need to build from source:
 
@@ -198,7 +198,7 @@ docker run -d --name oryphremrouter \
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-#### 🛠️ From source (development)
+#### From source (development)
 
 ```bash
 git clone https://github.com/virgiawanprima/OryphemRouter.git
@@ -215,14 +215,14 @@ After running `oryphremrouter`, check the dashboard:
 
 ```bash
 curl http://localhost:20129/api/health
-# → {"ok":true} or similar healthy response
+# {"ok":true} or similar healthy response
 ```
 
-🎉 Dashboard opens at `http://localhost:20129`
+ Dashboard opens at `http://localhost:20129`
 
 ### Step 1: Connect a free provider
 
-Dashboard → Providers → Connect **Kiro AI** (Claude 4.5 + GLM-5 + MiniMax free) or **OpenCode Free** (no auth) → Done!
+Dashboard → Providers → Connect **Kiro AI** (Claude 4.5 + GLM-5 + MiniMax free) or **OpenCode Free** (no auth)  Done!
 
 ### Step 2: Use in your CLI tool
 
@@ -237,31 +237,31 @@ Claude Code / Codex / OpenClaw / Cursor / Cline Settings:
 
 ---
 
-## 💡 Key Features
+## Key Features
 
 | Feature | What It Does | Why It Matters |
 |---------|--------------|----------------|
-| 🚀 **RTK Token Saver** | Compress tool outputs before sending to LLM | Save **20-40% input tokens** per request |
-| 🧠 **Headroom Token Saver** | External `/v1/compress` proxy | Save more context tokens |
-| 🪨 **Caveman Mode** | Inject caveman-speak prompt | Save **up to 65% output tokens** |
-| 🐴 **Ponytail** | "Lazy senior dev" system prompt | Fewer tokens, less code |
-| 🎯 **Smart 3-Tier Fallback** | Auto-route: Subscription → Cheap → Free | Never stop coding |
-| 📊 **Real-Time Quota Tracking** | Live token count + reset countdown | Maximize subscription value |
-| 🔄 **Format Translation** | OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex | Works with any CLI tool |
-| 👥 **Multi-Account Support** | Multiple accounts per provider | Load balancing + redundancy |
-| 🔄 **Auto Token Refresh** | OAuth tokens refresh automatically | No manual re-login needed |
-| 🎨 **Custom Combos** | Group models, pick strategy per combo | Tailor fallback to your needs |
-| 💰 **Spending Limits** | Max cost per day/month + auto-pause | Prevent surprise bills |
-| ⚡ **Cost-Optimized Routing** | Auto-pick cheapest working provider | Minimize cost automatically |
-| 🛡️ **Circuit Breaker** | 5 errors → 5-min cooldown, auto-recover | Resilience against dead providers |
-| 🆓 **Free-Tier Tracker** | Live free quota usage per provider | Maximize free usage |
-| 📝 **Request Logging** | Debug mode with full logs | Troubleshoot easily |
-| 💾 **Cloud Sync** | Sync config across devices | Same setup everywhere |
-| 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Flexible deployment |
+|  **RTK Token Saver** | Compress tool outputs before sending to LLM | Save **20-40% input tokens** per request |
+|  **Headroom Token Saver** | External `/v1/compress` proxy | Save more context tokens |
+|  **Caveman Mode** | Inject caveman-speak prompt | Save **up to 65% output tokens** |
+|  **Ponytail** | "Lazy senior dev" system prompt | Fewer tokens, less code |
+|  **Smart 3-Tier Fallback** | Auto-route: Subscription → Cheap → Free | Never stop coding |
+|  **Real-Time Quota Tracking** | Live token count + reset countdown | Maximize subscription value |
+|  **Format Translation** | OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex | Works with any CLI tool |
+|  **Multi-Account Support** | Multiple accounts per provider | Load balancing + redundancy |
+|  **Auto Token Refresh** | OAuth tokens refresh automatically | No manual re-login needed |
+|  **Custom Combos** | Group models, pick strategy per combo | Tailor fallback to your needs |
+|  **Spending Limits** | Max cost per day/month + auto-pause | Prevent surprise bills |
+|  **Cost-Optimized Routing** | Auto-pick cheapest working provider | Minimize cost automatically |
+|  **Circuit Breaker** | 5 errors  5-min cooldown, auto-recover | Resilience against dead providers |
+|  **Free-Tier Tracker** | Live free quota usage per provider | Maximize free usage |
+|  **Request Logging** | Debug mode with full logs | Troubleshoot easily |
+|  **Cloud Sync** | Sync config across devices | Same setup everywhere |
+|  **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Flexible deployment |
 
 ---
 
-## 🎯 Routing Strategies
+## Routing Strategies
 
 OryphemRouter supports **4 routing strategies** per combo:
 
@@ -279,27 +279,27 @@ Combo: "my-coding-stack"
 Rotate models across requests to spread load.
 
 ```
-Request 1 → cc/claude-opus-4-7
-Request 2 → glm/glm-5.1
-Request 3 → kr/claude-sonnet-4.5
-Request 4 → cc/claude-opus-4-7  (repeat)
+Request 1  cc/claude-opus-4-7
+Request 2  glm/glm-5.1
+Request 3  kr/claude-sonnet-4.5
+Request 4  cc/claude-opus-4-7  (repeat)
 ```
 
 ### 3. Fusion
 Query all models in parallel, then a judge synthesizes one answer. **Best quality, highest cost** (N+1 calls).
 
-### 4. Cost-Optimized (new! ⭐)
+### 4. Cost-Optimized (new! )
 Automatically order models from **cheapest** to **most expensive**, then fallback to the next on failure.
 
 ```
-Cost order: oc (free) → kr (free) → vertex (free) → minimax ($0.2/1M) → glm ($0.6/1M) → cc (subscription)
+Cost order: oc (free)  kr (free)  vertex (free)  minimax ($0.2/1M)  glm ($0.6/1M)  cc (subscription)
 ```
 
 **How to use:** Dashboard → Combos → create a combo → pick strategy in Profile Settings.
 
 ---
 
-## 🆓 Free-Tier Budget Tracker
+## Free-Tier Budget Tracker
 
 The new `/dashboard/free-tiers` page displays **free quota usage** in real-time:
 
@@ -310,13 +310,13 @@ The new `/dashboard/free-tiers` page displays **free quota usage** in real-time:
 | **Vertex AI** | Credits | $300 | One-time (90 days) |
 | **Felo** | Unlimited | ∞ | None |
 
-- 🟢 *Used / remaining* progress bar per provider
-- 🔄 Auto-refresh every 60 seconds
-- 📊 Cumulative free budget total
+-  *Used / remaining* progress bar per provider
+-  Auto-refresh every 60 seconds
+-  Cumulative free budget total
 
 ---
 
-## 💰 Spending Limits
+## Spending Limits
 
 Prevent surprise bills with **spending limits**:
 
@@ -330,20 +330,20 @@ spendingLimits: {
 }
 ```
 
-- 🔒 **autoPause: true** → requests blocked when limit reached
-- 🔄 **fallbackToFree: true** → keep working with free providers
-- 🚫 **fallbackToFree: false** → block request with 403
+-  **autoPause: true**  requests blocked when limit reached
+-  **fallbackToFree: true**  keep working with free providers
+-  **fallbackToFree: false**  block request with 403
 
 ---
 
-## 🛡️ Circuit Breaker
+## Circuit Breaker
 
 Automatic resilience against problematic providers:
 
 ```
-Error 1..4   → normal cooldown (exponential backoff)
-Error 5      → 🔴 CIRCUIT OPEN (5-min cooldown)
-Success      → 🟢 circuit reset (error count = 0)
+Error 1..4    normal cooldown (exponential backoff)
+Error 5        CIRCUIT OPEN (5-min cooldown)
+Success        circuit reset (error count = 0)
 ```
 
 - **Threshold:** 5 consecutive errors
@@ -352,7 +352,7 @@ Success      → 🟢 circuit reset (error count = 0)
 
 ---
 
-## 🔧 CLI Integration
+## CLI Integration
 
 ### Cursor IDE
 
@@ -397,7 +397,7 @@ Model: cc/claude-opus-4-7
 
 ---
 
-## 📊 Available Models
+## Available Models
 
 ### Free
 
@@ -426,7 +426,7 @@ Model: cc/claude-opus-4-7
 
 ---
 
-## 🌐 Environment Variables
+## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -446,7 +446,7 @@ Model: cc/claude-opus-4-7
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker
 
@@ -463,7 +463,7 @@ docker run -d \
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-→ Open http://localhost:20129
+ Open http://localhost:20129
 
 ### Build from source (optional)
 
@@ -521,7 +521,7 @@ volumes:
 
 ---
 
-## 📝 API Reference
+## API Reference
 
 ### Chat Completions
 
@@ -555,14 +555,14 @@ GET http://localhost:20129/api/dashboard/realtime
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **"Language model did not provide messages"**
 - Provider quota exhausted → Use combo fallback or switch to cheaper tier
 
 **Rate limiting**
 - Subscription quota out → Fallback to GLM/MiniMax
-- Add combo: `cc/claude-opus-4-7 → glm/glm-5.1 → kr/claude-sonnet-4.5`
+- Add combo: `cc/claude-opus-4-7  glm/glm-5.1  kr/claude-sonnet-4.5`
 
 **OAuth token expired**
 - Auto-refreshed by OryphemRouter
@@ -585,7 +585,7 @@ GET http://localhost:20129/api/dashboard/realtime
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -599,21 +599,21 @@ GET http://localhost:20129/api/dashboard/realtime
 
 ---
 
-## 🎁 Support
+## Support
 
-This project is developed with ❤️ by the oryphem team. If you find it helpful, consider supporting us:
+This project is developed with love by the oryphem team. If you find it helpful, consider supporting us:
 
-### 🏦 Bank Transfer
+### Bank Transfer
 
 | Bank | Account Name | Account Number |
 |------|--------------|----------------|
 | **Bank Mandiri** | **VIRGIAWAN PRIMA RIZK** | **1480022960655** |
 
-Every donation helps us keep developing new features and maintaining servers. Thank you! 🙏
+Every donation helps us keep developing new features and maintaining servers. Thank you! 
 
 ---
 
-## 📧 Contact
+## Contact
 
 - **Website**: https://oryphem.com
 - **GitHub**: https://github.com/virgiawanprima/OryphemRouter
@@ -621,39 +621,25 @@ Every donation helps us keep developing new features and maintaining servers. Th
 
 ---
 
-## 👥 Contributors
-
-Thanks to all contributors who helped make OryphemRouter better!
-
-[![Contributors](https://contrib.rocks/image?repo=virgiawanprima/OryphemRouter&max=150&columns=15&anon=1&v=20260309)](https://github.com/virgiawanprima/OryphemRouter/graphs/contributors)
-
----
-
-## 📊 Star Chart
-
-[![Star Chart](https://starchart.cc/virgiawanprima/OryphemRouter.svg?variant=adaptive)](https://starchart.cc/virgiawanprima/OryphemRouter)
-
----
-
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built on the shoulders of giants:
 
 - **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** — original Go implementation that inspired this JavaScript port.
-- **[RTK](https://github.com/rtk-ai/rtk)** ⭐ — Rust token-saver. OryphemRouter ports its compression pipeline to JS → **−20-40% input tokens** on every request.
-- **[Caveman](https://github.com/JuliusBrussee/caveman)** ⭐ by **[@JuliusBrussee](https://github.com/JuliusBrussee)** — viral _"why use many token when few token do trick"_. → **−65% output tokens**.
-- **[Ponytail](https://github.com/DietrichGebert/ponytail)** ⭐ by **[@DietrichGebert](https://github.com/DietrichGebert)** — _"lazy senior dev"_ skill → **fewer tokens, less code**.
+- **[RTK](https://github.com/rtk-ai/rtk)**  — Rust token-saver. OryphemRouter ports its compression pipeline to JS  **−20-40% input tokens** on every request.
+- **[Caveman](https://github.com/JuliusBrussee/caveman)**  by **[@JuliusBrussee](https://github.com/JuliusBrussee)** — viral _"why use many token when few token do trick"_.  **−65% output tokens**.
+- **[Ponytail](https://github.com/DietrichGebert/ponytail)**  by **[@DietrichGebert](https://github.com/DietrichGebert)** — _"lazy senior dev"_ skill  **fewer tokens, less code**.
 
-Huge thanks to these authors — without their work, OryphemRouter's token-saving features wouldn't exist. ⭐ them on GitHub!
+Huge thanks to these authors — without their work, OryphemRouter's token-saving features wouldn't exist.  them on GitHub!
 
 ---
 
-## 📄 License
+## License
 
 MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ for developers who code 24/7 · 🇬🇧 English · 🇮🇩 Indonesia</sub>
+  <sub>Built with love for developers who code 24/7 · English · Indonesia</sub>
 </div>
