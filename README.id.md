@@ -9,9 +9,9 @@
 [![Last Commit](https://img.shields.io/github/last-commit/virgiawanprima/OryphemRouter?style=flat&label=Last%20Commit)](https://github.com/virgiawanprima/OryphemRouter)
 [![License](https://img.shields.io/github/license/virgiawanprima/OryphemRouter?style=flat)](https://github.com/virgiawanprima/OryphemRouter/blob/main/LICENSE)
 
-**Hubungkan Semua Tools AI Coding** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **ke 40+ Provider AI & 100+ Model.**
+**Hubungkan Semua Tools AI Coding**(Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...)**ke 40+ Provider AI & 100+ Model.**
 
-** Bahasa:** [ English](README.md) (default) · [ Indonesia](README.id.md)
+**Bahasa:** [English](README.md) (default) · [Indonesia](README.id.md)
 
 </div>
 
@@ -19,13 +19,13 @@
 
 ## Tentang
 
-**OryphemRouter** adalah **gerbang routing AI** lokal yang menggabungkan seluruh kebutuhan AI coding Anda ke dalam **satu endpoint**. Dibangun oleh **tim oryphem** sebagai peningkatan dari 9Router, proyek ini menghadirkan:
+**OryphemRouter**adalah**gerbang routing AI**lokal yang menggabungkan seluruh kebutuhan AI coding Anda ke dalam**satu endpoint**. Dibangun oleh **tim oryphem** sebagai peningkatan dari 9Router, proyek ini menghadirkan:
 
--  **Auto-fallback** antar provider (Subscription → Cheap → Free) sehingga Anda **tidak pernah berhenti coding**
--  **Hemat 20-40% token** dengan RTK Token Saver terintegrasi
--  **Gratis selamanya** dengan free tier Kiro, OpenCode Free, dan Vertex AI
--  **100% local-first** — data & API key Anda tidak pernah keluar dari mesin Anda
--  **Dua bahasa** — Indonesia & Inggris
+- **Auto-fallback**antar provider (Subscription → Cheap → Free) sehingga Anda**tidak pernah berhenti coding**
+- **Hemat 20-40% token** dengan RTK Token Saver terintegrasi
+- **Gratis selamanya** dengan free tier Kiro, OpenCode Free, dan Vertex AI
+- **100% local-first** — data & API key Anda tidak pernah keluar dari mesin Anda
+- **Dua bahasa** — Indonesia & Inggris
 
 ---
 
@@ -33,23 +33,23 @@
 
 **Berhenti buang uang, token, dan berhenti kena limit:**
 
--  Kuota subscription habis tidak terpakai setiap bulan
--  Rate limit menghentikan coding Anda di tengah jalan
--  Output tools (git diff, grep, ls...) membakar token dengan cepat
--  API mahal ($20-50/bulan per provider)
--  Ganti-ganti provider secara manual
+- Kuota subscription habis tidak terpakai setiap bulan
+- Rate limit menghentikan coding Anda di tengah jalan
+- Output tools (git diff, grep, ls...) membakar token dengan cepat
+- API mahal ($20-50/bulan per provider)
+- Ganti-ganti provider secara manual
 
 **OryphemRouter menyelesaikannya:**
 
--  **RTK Token Saver** — Kompres tool_result otomatis, hemat **20-40% token**
--  **Maksimalkan subscription** — Lacak kuota, gunakan setiap bit sebelum reset
--  **Auto fallback** — Subscription → Cheap → Free, tanpa downtime
--  **Multi-account** — Round-robin antar akun per provider
--  **Universal** — Bekerja dengan Claude Code, Codex, Cursor, Cline, tool CLI apa pun
--  **Cost-Optimized Routing** — Otomatis pilih provider termurah yang bekerja
--  **Circuit Breaker** — Provider bermasalah otomatis di-cooldown 5 menit
--  **Spending Limits** — Batasi biaya bulanan/harian untuk cegah tagihan tak terduga
--  **Free-Tier Tracker** — Pantau sisa kuota gratis per provider
+- **RTK Token Saver**— Kompres tool_result otomatis, hemat**20-40% token**
+- **Maksimalkan subscription** — Lacak kuota, gunakan setiap bit sebelum reset
+- **Auto fallback** — Subscription → Cheap → Free, tanpa downtime
+- **Multi-account** — Round-robin antar akun per provider
+- **Universal** — Bekerja dengan Claude Code, Codex, Cursor, Cline, tool CLI apa pun
+- **Cost-Optimized Routing** — Otomatis pilih provider termurah yang bekerja
+- **Circuit Breaker** — Provider bermasalah otomatis di-cooldown 5 menit
+- **Spending Limits** — Batasi biaya bulanan/harian untuk cegah tagihan tak terduga
+- **Free-Tier Tracker** — Pantau sisa kuota gratis per provider
 
 ---
 
@@ -61,7 +61,7 @@
 │   Anda      │
 └──────┬──────┘
        │ http://localhost:20129/v1
-       
+
 ┌─────────────────────────────────────────────┐
 │        OryphemRouter (Smart Router)         │
 │  • RTK Token Saver (potong tool_result)     │
@@ -103,7 +103,9 @@ Hasil: Tidak pernah berhenti coding, biaya minimal + hemat 20-40% token via RTK
 **Opsi A — npm (recommended):**
 
 ```powershell
+
 # Install Node.js 20+ dari https://nodejs.org (versi LTS)
+
 npm install -g oryphremrouter
 oryphremrouter
 ```
@@ -119,7 +121,9 @@ oryphremrouter
 **Opsi C — Docker Desktop:**
 
 ```powershell
+
 # Install Docker Desktop dari https://www.docker.com/products/docker-desktop/
+
 docker run -d --name oryphremrouter `
   -p 20129:20129 `
   -v "$env:USERPROFILE\.oryphemrouter:/app/data" `
@@ -127,14 +131,16 @@ docker run -d --name oryphremrouter `
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
->  Data disimpan di `%APPDATA%\oryphemrouter\` di Windows.
+> Data disimpan di `%APPDATA%\oryphemrouter\` di Windows.
 
 #### macOS
 
 **Opsi A — npm (recommended):**
 
 ```bash
+
 # Install Node.js 20+ via Homebrew
+
 brew install node@22
 npm install -g oryphremrouter
 oryphremrouter
@@ -151,14 +157,16 @@ docker run -d --name oryphremrouter \
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
->  Data disimpan di `~/.oryphemrouter/` di macOS. Apple Silicon (ARM) didukung.
+> Data disimpan di `~/.oryphemrouter/` di macOS. Apple Silicon (ARM) didukung.
 
 #### Linux
 
 **Opsi A — npm (recommended untuk Ubuntu/Debian):**
 
 ```bash
+
 # Install Node.js 20+ (via NodeSource)
+
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
@@ -184,7 +192,7 @@ sudo npm install -g oryphremrouter
 oryphremrouter
 ```
 
->  Data disimpan di `~/.oryphemrouter/` di Linux.
+> Data disimpan di `~/.oryphemrouter/` di Linux.
 
 #### Docker (semua OS, server/VPS)
 
@@ -215,14 +223,16 @@ Setelah menjalankan `oryphremrouter`, cek dashboard:
 
 ```bash
 curl http://localhost:20129/api/health
+
 # {"ok":true} atau respons sehat serupa
+
 ```
 
  Dashboard terbuka di `http://localhost:20129`
 
 ### Langkah 1: Hubungkan provider gratis
 
-Dashboard → Providers → Connect **Kiro AI** (Claude 4.5 + GLM-5 + MiniMax gratis) atau **OpenCode Free** (tanpa auth)  Selesai!
+Dashboard → Providers → Connect **Kiro AI**(Claude 4.5 + GLM-5 + MiniMax gratis) atau**OpenCode Free** (tanpa auth)  Selesai!
 
 ### Langkah 2: Gunakan di tool CLI Anda
 
@@ -241,9 +251,9 @@ Claude Code / Codex / OpenClaw / Cursor / Cline Settings:
 
 | Fitur | Apa yang Dilakukan | Kenapa Penting |
 |-------|-------------------|----------------|
-|  **RTK Token Saver** | Kompres output tools sebelum dikirim ke LLM | Hemat **20-40% token input** per request |
+|  **RTK Token Saver**| Kompres output tools sebelum dikirim ke LLM | Hemat**20-40% token input** per request |
 |  **Headroom Token Saver** | Proxy eksternal `/v1/compress` | Hemat lebih banyak context token |
-|  **Caveman Mode** | Suntik prompt gaya caveman | Hemat **hingga 65% token output** |
+|  **Caveman Mode**| Suntik prompt gaya caveman | Hemat**hingga 65% token output** |
 |  **Ponytail** | Prompt "senior dev malas" | Lebih sedikit token, lebih sedikit kode |
 |  **Smart 3-Tier Fallback** | Auto-route: Subscription → Cheap → Free | Tidak pernah berhenti coding |
 |  **Real-Time Quota Tracking** | Jumlah token live + hitung mundur reset | Maksimalkan nilai subscription |
@@ -266,6 +276,7 @@ Claude Code / Codex / OpenClaw / Cursor / Cline Settings:
 OryphemRouter mendukung **4 strategi routing** per combo:
 
 ### 1. Fallback (default)
+
 Coba model berurutan, pindah ke model berikutnya jika gagal.
 
 ```
@@ -276,6 +287,7 @@ Combo: "my-coding-stack"
 ```
 
 ### 2. Round Robin
+
 Putar model antar request untuk menyebarkan beban.
 
 ```
@@ -286,10 +298,12 @@ Request 4  cc/claude-opus-4-7  (ulang)
 ```
 
 ### 3. Fusion
+
 Query semua model paralel, lalu judge menyintesis satu jawaban. **Kualitas terbaik, biaya tertinggi** (N+1 calls).
 
 ### 4. Cost-Optimized (baru! )
-Otomatis urutkan model dari **termurah** ke **termahal**, lalu fallback ke model berikutnya jika gagal.
+
+Otomatis urutkan model dari **termurah**ke**termahal**, lalu fallback ke model berikutnya jika gagal.
 
 ```
 Urutan biaya: oc (gratis)  kr (gratis)  vertex (gratis)  minimax ($0.2/1M)  glm ($0.6/1M)  cc (subscription)
@@ -310,9 +324,9 @@ Halaman `/dashboard/free-tiers` menampilkan **penggunaan kuota gratis** secara r
 | **Vertex AI** | Credits | $300 | Sekali (90 hari) |
 | **Felo** | Unlimited | ∞ | Tidak ada |
 
--  Progress bar *used / remaining* per provider
--  Auto-refresh setiap 60 detik
--  Total free budget kumulatif
+- Progress bar *used / remaining* per provider
+- Auto-refresh setiap 60 detik
+- Total free budget kumulatif
 
 ---
 
@@ -330,9 +344,9 @@ spendingLimits: {
 }
 ```
 
--  **autoPause: true**  request dibatasi saat limit tercapai
--  **fallbackToFree: true**  tetap jalan dengan provider gratis
--  **fallbackToFree: false**  blokir request dengan 403
+- **autoPause: true**  request dibatasi saat limit tercapai
+- **fallbackToFree: true**  tetap jalan dengan provider gratis
+- **fallbackToFree: false**  blokir request dengan 403
 
 ---
 
@@ -493,6 +507,7 @@ export NODE_ENV="production"
 npm run start
 
 # PM2
+
 npm install -g pm2
 pm2 start npm --name oryphremrouter -- start
 pm2 save
@@ -550,7 +565,9 @@ Authorization: Bearer your-api-key
 
 ```bash
 GET http://localhost:20129/api/dashboard/realtime
+
 # Server-Sent Events: active requests, tunnel status, tailscale status
+
 ```
 
 ---
@@ -607,9 +624,9 @@ Proyek ini dikembangkan dengan love oleh tim oryphem. Jika Anda merasa terbantu,
 
 | Bank | Atas Nama | Nomor Rekening |
 |------|-----------|----------------|
-| **Bank Mandiri** | **VIRGIAWAN PRIMA RIZK** | **1480022960655** |
+| **Bank Mandiri**|**VIRGIAWAN PRIMA RIZK**|**1480022960655** |
 
-Setiap dukungan membantu kami terus mengembangkan fitur baru dan pemeliharaan server. Terima kasih! 
+Setiap dukungan membantu kami terus mengembangkan fitur baru dan pemeliharaan server. Terima kasih!
 
 ---
 
@@ -626,9 +643,9 @@ Setiap dukungan membantu kami terus mengembangkan fitur baru dan pemeliharaan se
 Dibangun di atas karya para raksasa:
 
 - **[CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)** — implementasi Go asli yang menginspirasi port JavaScript ini.
-- **[RTK](https://github.com/rtk-ai/rtk)**  — token-saver Rust. OryphemRouter memporting pipeline kompresinya ke JS  **−20-40% token input** di setiap request.
-- **[Caveman](https://github.com/JuliusBrussee/caveman)**  oleh **[@JuliusBrussee](https://github.com/JuliusBrussee)** — viral _"why use many token when few token do trick"_.  **−65% token output**.
-- **[Ponytail](https://github.com/DietrichGebert/ponytail)**  oleh **[@DietrichGebert](https://github.com/DietrichGebert)** — skill _"lazy senior dev"_  **lebih sedikit token, lebih sedikit kode**.
+- **[RTK](https://github.com/rtk-ai/rtk)**— token-saver Rust. OryphemRouter memporting pipeline kompresinya ke JS**−20-40% token input** di setiap request.
+- **[Caveman](https://github.com/JuliusBrussee/caveman)**oleh**[@JuliusBrussee](https://github.com/JuliusBrussee)**— viral *"why use many token when few token do trick"*_.**−65% token output**.
+- **[Ponytail](https://github.com/DietrichGebert/ponytail)**oleh**[@DietrichGebert](https://github.com/DietrichGebert)**— skill *"lazy senior dev"*_**lebih sedikit token, lebih sedikit kode**.
 
 Terima kasih besar untuk para penulis ini — tanpa karya mereka, fitur hemat token OryphemRouter tidak akan ada.  mereka di GitHub!
 
@@ -643,3 +660,4 @@ Lisensi MIT — lihat [LICENSE](LICENSE) untuk detail.
 <div align="center">
   <sub>Dibuat dengan love untuk developer yang coding 24/7 · English · Indonesia</sub>
 </div>
+

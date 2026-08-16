@@ -1,0 +1,18 @@
+{
+  "default": true,
+  "MD013": false,
+  "MD024": false,
+  "MD026": false,
+  "MD033": false,
+  "MD034": false,
+  "MD036": false,
+  "MD040": false,
+  "MD041": false,
+  "MD047": false,
+  "MD049": { "style": "asterisk" },
+  "MD050": { "style": "asterisk" },
+  "MD060": false,
+  "MD061": false,
+  "MD062": false,
+  "MD030": { "ul_single": 1, "ol_single": 1, "ul_multi": 3, "ol_multi": 2 }
+}
