@@ -63,9 +63,9 @@ describe("SAML 2.0 Auth Engine Utilities", () => {
         samlIssuer: "urn:oryphemrouter:sp",
         samlCert: "MIIC123456789012345678901234567890123456789012345678901234567890",
       };
-      const xml = generateSamlMetadata("https://localhost:20127", settings);
+      const xml = generateSamlMetadata("https://localhost:20129", settings);
       expect(xml).toContain('entityID="urn:oryphemrouter:sp"');
-      expect(xml).toContain('Location="https://localhost:20127/api/auth/saml/acs"');
+      expect(xml).toContain('Location="https://localhost:20129/api/auth/saml/acs"');
       expect(xml).toContain('WantAssertionsSigned="true"');
     });
   });
