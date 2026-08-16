@@ -5,7 +5,7 @@ description: Generate vector embeddings via oryphremrouter /v1/embeddings using 
 
 # oryphremrouter — Embeddings
 
-Requires `NINE_ROUTER_URL` (and `NINE_ROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter/SKILL.md for setup.
+Requires `NINE_ROUTER_URL` (and `NINE_ROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter/SKILL.md for setup.
 
 ## Discover
 

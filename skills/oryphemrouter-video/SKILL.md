@@ -5,7 +5,7 @@ description: Generate videos via oryphremrouter /v1/videos/generations using xAI
 
 # oryphremrouter — Video Generation (xAI Grok Imagine)
 
-Requires `NINE_ROUTER_URL` (and `NINE_ROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter/SKILL.md for setup.
+Requires `NINE_ROUTER_URL` (and `NINE_ROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter/SKILL.md for setup.
 
 Requires a connected **xAI account** in the oryphremrouter dashboard — either **Grok Build OAuth** (SuperGrok / X Premium+ subscription sign-in) or a direct **xAI API key** from console.x.ai. The two are separate auth types with separate billing; the dashboard shows which one each connection uses.
 

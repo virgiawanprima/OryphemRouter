@@ -46,13 +46,13 @@ When the user needs a specific capability, fetch that skill's `SKILL.md` from it
 
 | Capability | Raw URL |
 |---|---|
-| Chat / code-gen | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-chat/SKILL.md |
-| Image generation | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-image/SKILL.md |
-| Text-to-speech | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-tts/SKILL.md |
-| Speech-to-text | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-stt/SKILL.md |
-| Embeddings | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-embeddings/SKILL.md |
-| Web search | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-web-search/SKILL.md |
-| Web fetch (URL → markdown) | https://raw.githubusercontent.com/decolua/oryphemrouter/refs/heads/master/skills/oryphemrouter-web-fetch/SKILL.md |
+| Chat / code-gen | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-chat/SKILL.md |
+| Image generation | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-image/SKILL.md |
+| Text-to-speech | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-tts/SKILL.md |
+| Speech-to-text | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-stt/SKILL.md |
+| Embeddings | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-embeddings/SKILL.md |
+| Web search | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-web-search/SKILL.md |
+| Web fetch (URL → markdown) | https://raw.githubusercontent.com/virgiawanprima/OryphemRouter/refs/heads/master/skills/oryphemrouter-web-fetch/SKILL.md |
 
 ## Errors
 
