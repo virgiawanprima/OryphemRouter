@@ -85,33 +85,120 @@ Result: Never stop coding, minimal cost + 20-40% token savings via RTK
 
 ## ⚡ Quick Start
 
+### 📋 Requirements
+
+| OS | Requirement |
+|----|-------------|
+| **Windows** | Windows 10/11, Node.js 20+ |
+| **macOS** | macOS 12+, Node.js 20+ |
+| **Linux** | Ubuntu/Debian/Fedora/Arch, Node.js 20+ |
+| **Docker** | Docker 20.10+ (all platforms) |
+
+> **Node.js 20+** is required. Get it from [nodejs.org](https://nodejs.org) or use your OS package manager.
+
 ### Installation
 
-**Option 1 — npm (recommended for desktop):**
+#### 🪟 Windows
 
-```bash
+**Option A — npm (recommended):**
+
+```powershell
+# Install Node.js 20+ from https://nodejs.org (LTS version)
 npm install -g oryphremrouter
 oryphremrouter
 ```
 
-🎉 Dashboard opens at `http://localhost:20129`
+**Option B — Using winget (Windows Package Manager):**
 
-**Option 2 — Docker (server/VPS):**
+```powershell
+winget install OpenJS.NodeJS.LTS
+npm install -g oryphremrouter
+oryphremrouter
+```
 
-> ⚠️ Pre-built Docker image not yet published. Build from source:
+**Option C — Docker Desktop:**
+
+```powershell
+# Install Docker Desktop from https://www.docker.com/products/docker-desktop/
+docker run -d --name oryphremrouter `
+  -p 20129:20129 `
+  -v "$env:USERPROFILE\.oryphemrouter:/app/data" `
+  -e DATA_DIR=/app/data `
+  ghcr.io/virgiawanprima/oryphemrouter:latest
+```
+
+> 💡 Data is stored at `%APPDATA%\oryphemrouter\` on Windows.
+
+#### 🍎 macOS
+
+**Option A — npm (recommended):**
 
 ```bash
-git clone https://github.com/virgiawanprima/OryphemRouter.git
-cd OryphemRouter
-docker build -t oryphremrouter .
+# Install Node.js 20+ via Homebrew
+brew install node@22
+npm install -g oryphremrouter
+oryphremrouter
+```
+
+**Option B — Homebrew + Docker:**
+
+```bash
+brew install --cask docker
 docker run -d --name oryphremrouter \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
-  oryphremrouter
+  ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-**Option 3 — From source (development):**
+> 💡 Data is stored at `~/.oryphemrouter/` on macOS. Apple Silicon (ARM) supported.
+
+#### 🐧 Linux
+
+**Option A — npm (recommended for Ubuntu/Debian):**
+
+```bash
+# Install Node.js 20+ (via NodeSource)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+npm install -g oryphremrouter
+oryphremrouter
+```
+
+**Option B — Docker:**
+
+```bash
+docker run -d --name oryphremrouter \
+  -p 20129:20129 \
+  -v "$HOME/.oryphemrouter:/app/data" \
+  -e DATA_DIR=/app/data \
+  ghcr.io/virgiawanprima/oryphemrouter:latest
+```
+
+**Option C — Fedora/RHEL:**
+
+```bash
+sudo dnf install nodejs
+sudo npm install -g oryphremrouter
+oryphremrouter
+```
+
+> 💡 Data is stored at `~/.oryphemrouter/` on Linux.
+
+#### 🐳 Docker (any OS, server/VPS)
+
+The pre-built image is published on GHCR — no need to build from source:
+
+```bash
+docker run -d --name oryphremrouter \
+  -p 20129:20129 \
+  -v "$HOME/.oryphemrouter:/app/data" \
+  -e DATA_DIR=/app/data \
+  ghcr.io/virgiawanprima/oryphemrouter:latest
+```
+
+#### 🛠️ From source (development)
 
 ```bash
 git clone https://github.com/virgiawanprima/OryphemRouter.git
@@ -119,6 +206,19 @@ cd OryphemRouter
 npm install
 PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
 ```
+
+---
+
+### Verify installation
+
+After running `oryphremrouter`, check the dashboard:
+
+```bash
+curl http://localhost:20129/api/health
+# → {"ok":true} or similar healthy response
+```
+
+🎉 Dashboard opens at `http://localhost:20129`
 
 ### Step 1: Connect a free provider
 
@@ -350,21 +450,30 @@ Model: cc/claude-opus-4-7
 
 ### Docker
 
-> ⚠️ Pre-built Docker image not yet published. Build from source:
+The image is published on **GHCR** — multi-platform (`linux/amd64` + `linux/arm64`):
 
 ```bash
-git clone https://github.com/virgiawanprima/OryphemRouter.git
-cd OryphemRouter
-docker build -t oryphremrouter .
+docker pull ghcr.io/virgiawanprima/oryphemrouter:latest
+
 docker run -d \
   --name oryphremrouter \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
-  oryphremrouter
+  ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
 → Open http://localhost:20129
+
+### Build from source (optional)
+
+To build the image yourself:
+
+```bash
+git clone https://github.com/virgiawanprima/OryphemRouter.git
+cd OryphemRouter
+docker build -t oryphremrouter .
+```
 
 ### VPS
 

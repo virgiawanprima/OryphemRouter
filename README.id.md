@@ -85,33 +85,120 @@ Hasil: Tidak pernah berhenti coding, biaya minimal + hemat 20-40% token via RTK
 
 ## ⚡ Quick Start
 
+### 📋 Persyaratan (Requirements)
+
+| OS | Persyaratan |
+|----|-------------|
+| **Windows** | Windows 10/11, Node.js 20+ |
+| **macOS** | macOS 12+, Node.js 20+ |
+| **Linux** | Ubuntu/Debian/Fedora/Arch, Node.js 20+ |
+| **Docker** | Docker 20.10+ (semua OS) |
+
+> **Node.js 20+** diperlukan. Unduh dari [nodejs.org](https://nodejs.org) atau pakai package manager OS Anda.
+
 ### Instalasi
 
-**Opsi 1 — npm (recommended untuk desktop):**
+#### 🪟 Windows
 
-```bash
+**Opsi A — npm (recommended):**
+
+```powershell
+# Install Node.js 20+ dari https://nodejs.org (versi LTS)
 npm install -g oryphremrouter
 oryphremrouter
 ```
 
-🎉 Dashboard terbuka di `http://localhost:20129`
+**Opsi B — winget (Windows Package Manager):**
 
-**Opsi 2 — Docker (server/VPS):**
+```powershell
+winget install OpenJS.NodeJS.LTS
+npm install -g oryphremrouter
+oryphremrouter
+```
 
-> ⚠️ Image Docker siap-pakai belum dipublikasikan. Build dari source:
+**Opsi C — Docker Desktop:**
+
+```powershell
+# Install Docker Desktop dari https://www.docker.com/products/docker-desktop/
+docker run -d --name oryphremrouter `
+  -p 20129:20129 `
+  -v "$env:USERPROFILE\.oryphemrouter:/app/data" `
+  -e DATA_DIR=/app/data `
+  ghcr.io/virgiawanprima/oryphemrouter:latest
+```
+
+> 💡 Data disimpan di `%APPDATA%\oryphemrouter\` di Windows.
+
+#### 🍎 macOS
+
+**Opsi A — npm (recommended):**
 
 ```bash
-git clone https://github.com/virgiawanprima/OryphemRouter.git
-cd OryphemRouter
-docker build -t oryphremrouter .
+# Install Node.js 20+ via Homebrew
+brew install node@22
+npm install -g oryphremrouter
+oryphremrouter
+```
+
+**Opsi B — Homebrew + Docker:**
+
+```bash
+brew install --cask docker
 docker run -d --name oryphremrouter \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
-  oryphremrouter
+  ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-**Opsi 3 — Dari source (development):**
+> 💡 Data disimpan di `~/.oryphemrouter/` di macOS. Apple Silicon (ARM) didukung.
+
+#### 🐧 Linux
+
+**Opsi A — npm (recommended untuk Ubuntu/Debian):**
+
+```bash
+# Install Node.js 20+ (via NodeSource)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+npm install -g oryphremrouter
+oryphremrouter
+```
+
+**Opsi B — Docker:**
+
+```bash
+docker run -d --name oryphremrouter \
+  -p 20129:20129 \
+  -v "$HOME/.oryphemrouter:/app/data" \
+  -e DATA_DIR=/app/data \
+  ghcr.io/virgiawanprima/oryphemrouter:latest
+```
+
+**Opsi C — Fedora/RHEL:**
+
+```bash
+sudo dnf install nodejs
+sudo npm install -g oryphremrouter
+oryphremrouter
+```
+
+> 💡 Data disimpan di `~/.oryphemrouter/` di Linux.
+
+#### 🐳 Docker (semua OS, server/VPS)
+
+Image siap-pakai sudah dipublikasikan di **GHCR** — tidak perlu build dari source:
+
+```bash
+docker run -d --name oryphremrouter \
+  -p 20129:20129 \
+  -v "$HOME/.oryphemrouter:/app/data" \
+  -e DATA_DIR=/app/data \
+  ghcr.io/virgiawanprima/oryphemrouter:latest
+```
+
+#### 🛠️ Dari source (development)
 
 ```bash
 git clone https://github.com/virgiawanprima/OryphemRouter.git
@@ -119,6 +206,19 @@ cd OryphemRouter
 npm install
 PORT=20129 NEXT_PUBLIC_BASE_URL=http://localhost:20129 npm run dev
 ```
+
+---
+
+### Verifikasi instalasi
+
+Setelah menjalankan `oryphremrouter`, cek dashboard:
+
+```bash
+curl http://localhost:20129/api/health
+# → {"ok":true} atau respons sehat serupa
+```
+
+🎉 Dashboard terbuka di `http://localhost:20129`
 
 ### Langkah 1: Hubungkan provider gratis
 
@@ -350,21 +450,30 @@ Model: cc/claude-opus-4-7
 
 ### Docker
 
-> ⚠️ Image Docker siap-pakai belum dipublikasikan. Build dari source:
+Image sudah dipublikasikan di **GHCR** — multi-platform (`linux/amd64` + `linux/arm64`):
 
 ```bash
-git clone https://github.com/virgiawanprima/OryphemRouter.git
-cd OryphemRouter
-docker build -t oryphremrouter .
+docker pull ghcr.io/virgiawanprima/oryphemrouter:latest
+
 docker run -d \
   --name oryphremrouter \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
-  oryphremrouter
+  ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
 → Buka http://localhost:20129
+
+### Build dari source (opsional)
+
+Untuk build image sendiri:
+
+```bash
+git clone https://github.com/virgiawanprima/OryphemRouter.git
+cd OryphemRouter
+docker build -t oryphremrouter .
+```
 
 ### VPS
 

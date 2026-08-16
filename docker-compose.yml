@@ -1,6 +1,6 @@
 services:
   oryphremrouter:
-    image: virgiawanprima/oryphemrouter:latest
+    image: ghcr.io/virgiawanprima/oryphemrouter:latest
     container_name: oryphremrouter
     restart: always
     ports:

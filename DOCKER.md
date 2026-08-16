@@ -1,4 +1,4 @@
-Run OryphemRouter in a container. Published image: [`virgiawanprima/oryphemrouter`](https://hub.docker.com/r/virgiawanprima/oryphemrouter) — multi-platform `linux/amd64` + `linux/arm64`.
+Run OryphemRouter in a container. Published image: [`ghcr.io/virgiawanprima/oryphemrouter`](https://github.com/virgiawanprima/OryphemRouter/pkgs/container/oryphemrouter) — multi-platform `linux/amd64` + `linux/arm64`.
 
 ## Quick start
 
@@ -8,7 +8,7 @@ docker run -d \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
-  virgiawanprima/oryphemrouter:latest
+  ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
 → Open http://localhost:20129

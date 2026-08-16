@@ -6,7 +6,6 @@
 
 [![npm](https://img.shields.io/npm/v/oryphemrouter.svg)](https://www.npmjs.com/package/oryphemrouter)
 [![Downloads](https://img.shields.io/npm/dm/oryphemrouter.svg)](https://www.npmjs.com/package/oryphemrouter)
-[![Docker Pulls](https://img.shields.io/docker/pulls/virgiawanprima/OryphemRouter.svg?logo=docker&label=Docker%20pulls)](https://hub.docker.com/r/virgiawanprima/OryphemRouter)
 [![GHCR](https://img.shields.io/badge/GHCR-virgiawanprima%2Foryphemrouter-blue?logo=github)](https://github.com/virgiawanprima/OryphemRouter/pkgs/container/oryphemrouter)
 [![License](https://img.shields.io/npm/l/oryphemrouter.svg)](https://github.com/virgiawanprima/OryphemRouter/blob/main/LICENSE)
 
@@ -52,10 +51,10 @@ npx oryphremrouter
 ```bash
 docker run -d --name oryphremrouter -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" -e DATA_DIR=/app/data \
-  virgiawanprima/OryphemRouter:latest
+  ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
 
-Published images: [Docker Hub](https://hub.docker.com/r/virgiawanprima/OryphemRouter) • [GHCR](https://github.com/virgiawanprima/OryphemRouter/pkgs/container/oryphemrouter) (multi-platform amd64/arm64).
+Published image: [GHCR](https://github.com/virgiawanprima/OryphemRouter/pkgs/container/oryphemrouter) (multi-platform amd64/arm64) (multi-platform amd64/arm64).
 
 🎉 Dashboard opens at `http://localhost:20129`
 
