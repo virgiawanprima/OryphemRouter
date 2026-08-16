@@ -211,9 +211,9 @@ export default function CombosPage() {
             Group models under one name, then pick a strategy per combo:
           </p>
           <ul className="text-sm text-text-muted mt-2 flex flex-col gap-1">
-            <li><span className="font-medium text-text-main">Fallback</span> — tries models in order (next on failure)</li>
-            <li><span className="font-medium text-text-main">Round Robin</span> — rotates models across requests to spread load</li>
-            <li><span className="font-medium text-text-main">Fusion</span> — queries all models in parallel, then a judge synthesizes one answer. Best quality, but costs the most: every request bills all panel models + the judge (N+1 calls)</li>
+            <li><span className="font-medium text-text-main">Fallback</span>: tries models in order (next on failure)</li>
+            <li><span className="font-medium text-text-main">Round Robin</span>: rotates models across requests to spread load</li>
+            <li><span className="font-medium text-text-main">Fusion</span>: queries all models in parallel, then a judge synthesizes one answer. Best quality, but costs the most: every request bills all panel models + the judge (N+1 calls)</li>
           </ul>
         </div>
         <Button icon="add" onClick={() => setShowCreateModal(true)} className="w-full sm:w-auto whitespace-nowrap">
@@ -298,9 +298,9 @@ export default function CombosPage() {
 }
 
 const STRATEGY_OPTIONS = [
-  { value: "fallback", label: "Fallback — try in order" },
-  { value: "round-robin", label: "Round Robin — rotate" },
-  { value: "fusion", label: "Fusion — panel + judge" },
+  { value: "fallback", label: "Fallback: try in order" },
+  { value: "round-robin", label: "Round Robin: rotate" },
+  { value: "fusion", label: "Fusion: panel + judge" },
 ];
 
 function ComboCard({ combo, getCaps, activeProviders = [], copied, onCopy, onEdit, onDelete, strategy = {}, onSetStrategy }) {
@@ -343,7 +343,7 @@ function ComboCard({ combo, getCaps, activeProviders = [], copied, onCopy, onEdi
                   title="Pick the model that fuses panel answers"
                 >
                   <span className="material-symbols-outlined text-[13px]">gavel</span>
-                  <span className="truncate">{judge || `Auto — ${combo.models[0] || "first model"}`}</span>
+                  <span className="truncate">{judge || `Auto: ${combo.models[0] || "first model"}`}</span>
                 </button>
                 {judge && (
                   <button
@@ -428,8 +428,8 @@ function CapacityAdapterSection({ capacityAdapter, onChange, activeProviders, ge
             Your model can&apos;t read image/audio? Auto-switches to a model in the pool below.
           </p>
           <ul className="mt-1.5 text-[11px] text-text-muted flex flex-col gap-0.5">
-            <li><span className="font-medium text-text-main">Vision</span> — images (png, jpg, webp, …)</li>
-            <li><span className="font-medium text-text-main">Audio</span> — audio input</li>
+            <li><span className="font-medium text-text-main">Vision</span>: images (png, jpg, webp, …)</li>
+            <li><span className="font-medium text-text-main">Audio</span>: audio input</li>
           </ul>
         </div>
       </div>
@@ -489,7 +489,7 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps }) 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <code className="font-mono text-sm font-medium">{cap.label}</code>
-              <span className="text-[10px] text-text-muted">— {cap.desc}</span>
+              <span className="text-[10px] text-text-muted">: {cap.desc}</span>
             </div>
             <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1">
               {models.length === 0 ? (

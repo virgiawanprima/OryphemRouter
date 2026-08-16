@@ -137,7 +137,7 @@ const getPageInfo = (pathname) => {
   if (pathname.includes("/skills"))
     return {
       title: "Agent Skills",
-      description: "Copy a link and paste to your AI to use oryphremrouter — no install needed",
+      description: "Copy a link and paste to your AI to use oryphremrouter, no install needed",
       icon: "extension",
       breadcrumbs: [],
     };

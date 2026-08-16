@@ -821,7 +821,7 @@ export default function ProxyPoolsPage() {
             </p>
             <ul className="text-xs text-text-muted list-disc pl-4 space-y-0.5">
               <li>Your IP is replaced by Vercel&apos;s dynamic edge IPs (hundreds of IPs across 20+ global regions)</li>
-              <li>Vercel serves millions of apps — providers can&apos;t block Vercel IPs without affecting legitimate traffic</li>
+              <li>Vercel serves millions of apps: providers can&apos;t block Vercel IPs without affecting legitimate traffic</li>
               <li>Free tier: 100GB bandwidth/month, 500K edge invocations</li>
               <li>Deploy multiple relays on different accounts for more IP diversity</li>
             </ul>

@@ -98,7 +98,7 @@ export default function NoAuthProxyCard({ providerId }) {
           { value: NONE_PROXY_POOL_VALUE, label: "None (direct)" },
           ...proxyPools.map((pool) => ({ value: pool.id, label: pool.name })),
         ]}
-        hint={isRotation ? "Pool selector is ignored when rotation is active — all active pools are used." : undefined}
+        hint={isRotation ? "Pool selector is ignored when rotation is active: all active pools are used." : undefined}
       />
 
       <div className="flex flex-col gap-2 mt-4">

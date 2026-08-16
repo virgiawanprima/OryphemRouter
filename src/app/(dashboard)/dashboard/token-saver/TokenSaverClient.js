@@ -895,7 +895,7 @@ export default function TokenSaverClient() {
       >
         <div className="flex flex-col gap-4">
           <p className="text-sm text-text-muted">
-            Compress prompts using multimodal encoding. Runs in-process — no
+            Compress prompts using multimodal encoding. Runs in-process: no
             extra server or environment variables required.
           </p>
           <div className="flex items-center justify-between text-sm">

@@ -258,7 +258,7 @@ export default function MitmServerCard({ apiKeys, cloudEnabled, onStatusChange }
           {serverIsWindows && !isAdmin && (
             <div className="flex items-center gap-2 px-2 py-1.5 rounded text-xs bg-red-500/10 text-red-600 border border-red-500/20">
               <span className="material-symbols-outlined text-[14px]">shield_lock</span>
-              <span>Administrator required — restart oryphremrouter as Administrator to use MITM</span>
+              <span>Administrator required: restart oryphremrouter as Administrator to use MITM</span>
             </div>
           )}
         </div>
