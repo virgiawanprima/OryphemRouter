@@ -3,18 +3,23 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  primary: "border-2 border-brand-600 text-brand-600 hover:bg-brand-500 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
-  secondary: "border-2 border-border-500 text-text-main hover:bg-surface-2 hover:border-brand-600 disabled:bg-surface-3 disabled:text-text-muted",
-  outline: "border-2 border-border-500 text-text-main hover:bg-surface-2 hover:border-brand-600 disabled:bg-surface-3 disabled:text-text-muted",
-  ghost: "text-text-main hover:bg-surface-2 hover:border-brand-600 disabled:bg-surface-3 disabled:text-text-muted",
-  danger: "border-2 border-red-600 text-red-600 hover:bg-red-500 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
-  success: "border-2 border-green-600 text-green-600 hover:bg-green-500 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
+  primary:
+    "btn-gradient disabled:bg-surface-3 disabled:text-text-muted disabled:shadow-none",
+  secondary:
+    "border border-border-500 text-text-main bg-surface hover:border-brand-600 hover:bg-brand-50 dark:hover:bg-brand-500/10 disabled:bg-surface-3 disabled:text-text-muted",
+  outline:
+    "border border-brand-500 text-brand-700 dark:text-brand-400 bg-transparent hover:bg-brand-50 dark:hover:bg-brand-500/10 hover:border-brand-700 disabled:bg-surface-3 disabled:text-text-muted",
+  ghost: "text-text-main hover:bg-surface-2 hover:text-brand-700 disabled:bg-surface-3 disabled:text-text-muted",
+  danger:
+    "border border-red-500 text-red-600 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
+  success:
+    "border border-green-600 text-green-700 bg-green-50 dark:bg-green-500/10 hover:bg-green-500 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
 };
 
 const sizes = {
-  sm: "h-7 px-3 text-xs border-2 border-border-500",
-  md: "h-9 px-4 text-sm border-2 border-border-500",
-  lg: "h-11 px-6 text-sm border-2 border-border-500",
+  sm: "h-7 px-3 text-xs rounded-[var(--radius-brand)]",
+  md: "h-9 px-4 text-sm rounded-[var(--radius-brand)]",
+  lg: "h-11 px-6 text-sm rounded-[var(--radius-brand-lg)]",
 };
 
 export default function Button({

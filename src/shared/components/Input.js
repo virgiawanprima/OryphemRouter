@@ -38,7 +38,7 @@ export default function Input({
           onChange={onChange}
           disabled={disabled}
           className={cn(
-            "w-full py-2.5 px-3 text-sm text-text-main border-2 border-border-500 bg-surface-2 placeholder-text-muted/70 focus:outline-none focus:ring-2 focus:ring-brand-600/40 focus:border-brand-600/40 transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed",
+            "w-full py-2.5 px-3 text-sm text-text-main border border-border-500 bg-surface rounded-[var(--radius-brand)] placeholder-text-muted/70 focus:outline-none focus:ring-2 focus:ring-brand-600/40 focus:border-brand-600/40 transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed",
             // iOS zoom fix
             "text-[16px] sm:text-sm",
             icon && "pl-10",

@@ -3,18 +3,18 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  default: "border-2 border-border-500 text-text-main",
-  primary: "border-2 border-brand-600 text-brand-600 dark:text-brand-300",
-  success: "border-2 border-green-600 text-green-600 dark:text-green-400",
-  warning: "border-2 border-yellow-600 text-yellow-600 dark:text-yellow-400",
-  error: "border-2 border-red-600 text-red-600 dark:text-red-400",
-  info: "border-2 border-blue-600 text-blue-600 dark:text-blue-400",
+  default: "border border-border-500 text-text-muted bg-surface-2/50",
+  primary: "border border-brand-500/40 text-brand-700 dark:text-brand-300 bg-brand-500/10",
+  success: "border border-green-500/40 text-green-700 dark:text-green-400 bg-green-500/10",
+  warning: "border border-yellow-500/40 text-yellow-700 dark:text-yellow-400 bg-yellow-500/10",
+  error: "border border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
+  info: "border border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10",
 };
 
 const sizes = {
-  sm: "px-2 py-0.5 text-[10px] border-2 border-border-500",
-  md: "px-2.5 py-1 text-xs border-2 border-border-500",
-  lg: "px-3 py-1.5 text-sm border-2 border-border-500",
+  sm: "px-2 py-0.5 text-[10px]",
+  md: "px-2.5 py-1 text-xs",
+  lg: "px-3 py-1.5 text-sm",
 };
 
 export default function Badge({
@@ -37,13 +37,13 @@ export default function Badge({
       {dot && (
         <span
           className={cn(
-            "size-1.5 rounded-[0px] border-2 border-border-500",
-            variant === "success" && "text-green-600",
-            variant === "warning" && "text-yellow-600",
-            variant === "error" && "text-red-600",
-            variant === "info" && "text-blue-600",
-            variant === "primary" && "text-brand-600",
-            variant === "default" && "text-text-main"
+            "size-1.5 rounded-full",
+            variant === "success" && "bg-green-500",
+            variant === "warning" && "bg-yellow-500",
+            variant === "error" && "bg-red-500",
+            variant === "info" && "bg-blue-500",
+            variant === "primary" && "bg-brand-500",
+            variant === "default" && "bg-text-muted"
           )}
         />
       )}

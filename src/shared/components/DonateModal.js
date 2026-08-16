@@ -32,7 +32,7 @@ export default function DonateModal({ isOpen, onClose }) {
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
       <div
         ref={modalRef}
-        className="relative w-full bg-surface border-2 border-border-500 shadow-[0_8px_24px_rgba(0,0,0,0.3)] max-w-md flex flex-col"
+        className="relative w-full bg-surface border border-border-500 rounded-[var(--radius-brand-lg)] shadow-[var(--shadow-lg)] max-w-md flex flex-col"
       >
         <div className="flex items-center justify-between p-3 border-b border-border-500">
           <h2 className="text-lg font-semibold text-text-main flex items-center gap-2">
@@ -53,7 +53,7 @@ export default function DonateModal({ isOpen, onClose }) {
             {t("donate.message") || "Terima kasih telah menggunakan OryphemRouter. Dukungan Anda membantu kami terus mengembangkan proyek ini!"}
           </p>
 
-          <div className="flex flex-col items-center p-5 border-2 border-border-500 bg-surface-2">
+          <div className="flex flex-col items-center p-5 border border-border-500 bg-surface-2 rounded-[var(--radius-brand)]">
             <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-pink-500/20 text-pink-500">
               <span className="material-symbols-outlined text-[26px]">account_balance</span>
             </div>
@@ -63,7 +63,7 @@ export default function DonateModal({ isOpen, onClose }) {
               <code className="text-lg font-mono font-bold text-text-main">{bankInfo.number}</code>
               <button
                 onClick={copyNumber}
-                className="p-1.5 border-2 border-border-500 hover:border-pink-500 text-text-muted hover:text-pink-500 transition-colors"
+                className="p-1.5 border border-border-500 rounded-[var(--radius-brand)] hover:border-pink-500 text-text-muted hover:text-pink-500 transition-colors"
                 title={t("donate.copy") || "Salin"}
               >
                 <span className="material-symbols-outlined text-[16px]">
