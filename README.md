@@ -34,6 +34,7 @@
 - [🔄 How It Works](#-how-it-works)
 - [⚡ Quick Start](#-quick-start)
 - [💡 Key Features](#-key-features)
+- [🧭 Dashboard Modules](#-dashboard-modules)
 - [🎯 Routing Strategies](#-routing-strategies)
 - [🆓 Free-Tier Budget Tracker](#-free-tier-budget-tracker)
 - [💰 Spending Limits](#-spending-limits)
@@ -196,6 +197,88 @@ curl http://localhost:20129/api/health
 | 🎨 **Custom Combos** | Group models, pick strategy per combo | Tailor fallback to your needs |
 | 💾 **Cloud Sync** | Sync config across devices | Same setup everywhere |
 | 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Flexible deployment |
+
+---
+
+
+## 🧭 Dashboard Modules
+
+The OryphemRouter dashboard is organized into focused modules. Here is what each one does.
+
+### 📡 Providers
+
+Manage all AI provider connections from one place.
+
+- **Connect providers**: Claude Code, Codex, GitHub Copilot, Cursor, Kiro, OpenCode Free, Vertex, GLM, MiniMax, Kimi, and 40+ more.
+- **OAuth login**: One-click OAuth for subscription providers (Claude Code, Codex, GitHub, Cursor, Kiro).
+- **API keys**: Add, edit, pause, or delete API keys per provider. Supports **bulk add** with auto-naming:
+  ```
+  name1|sk-key1
+  name2|sk-key2
+  sk-key-only-auto-named
+  ```
+- **Multi-account**: Add several accounts per provider. OryphemRouter round-robins between them and falls back to the next account on failure.
+- **Test connection**: Validate an API key before saving with the built-in connection tester.
+- **Provider-specific data**: Set base URLs, regions, or deployments for Azure, Cloudflare AI, Ollama-local, and compatible endpoints.
+
+### 🔌 Endpoint
+
+The gateway's front door: one OpenAI-compatible URL for all your tools.
+
+- **Local endpoint**: `http://localhost:20129/v1` (your CLI tools point here).
+- **API keys**: Create and manage keys used to authenticate requests to `/v1/*`.
+- **Require API key toggle**: Enforce `Bearer` authentication on every request.
+- **Cloudflare Tunnel**: Expose your local gateway to the internet in one click (no port forwarding).
+- **Tailscale Funnel**: Alternative remote access through your Tailscale network.
+- **Realtime status**: The dashboard streams tunnel/Tailscale health live via SSE, no refresh needed.
+
+### 🎨 Combos
+
+Group models under one name and pick a routing strategy.
+
+- **Create a combo**: name it, add models in priority order (drag to reorder).
+- **Templates**: one-click **Free Combo** (free models first) or **Premium Combo** presets.
+- **Per-combo strategy**: Fallback, Round Robin, Fusion, or Cost-Optimized (see Routing Strategies).
+- **Capacity adapter**: automatic fallback pools for vision/audio when the target model lacks a capability.
+- **Use it anywhere**: reference the combo name as the `model` in any CLI tool.
+
+### 📊 Usage & Analytics
+
+Track every request that flows through the gateway.
+
+- **Request log**: recent requests with provider, model, tokens, cost, and status.
+- **Charts**: token usage and cost over time (today, 24h, 7d, 30d).
+- **Per-provider breakdown**: which provider/model consumed what.
+- **Request details**: drill into a single request to inspect headers, payload, and timing.
+- **Real-time**: the usage view updates live via SSE as requests complete.
+
+### 📈 Quota Tracker
+
+Watch your provider quotas so you never hit a wall mid-session.
+
+- **Per-provider quota**: remaining tokens/credits and reset countdown.
+- **Auto-ping**: optional scheduled quota checks for Claude Code and Codex accounts.
+- **Reset timers**: 5-hour, daily, weekly, or monthly reset countdowns.
+- **Alerts**: see at a glance when a provider is near its limit so fallback kicks in smoothly.
+
+### 💾 Token Saver
+
+Cut token usage automatically before requests hit the LLM.
+
+- **RTK Token Saver**: compresses `tool_result` output (git diff, grep, ls, logs) losslessly, saving 20-40% input tokens. Toggle per request with `x-oryphemrouter-token-saver: off`.
+- **Headroom**: optional external `/v1/compress` proxy for even more context savings.
+- **Caveman Mode**: terse, caveman-style output, saving up to 65% output tokens.
+- **Ponytail**: "lazy senior dev" prompt that writes minimal, YAGNI-first code.
+- **PXPIPE**: transparent request compression for supported tools.
+
+### 🛠️ CLI Tools
+
+One-click configuration for your coding agents.
+
+- **Auto-detect**: OryphemRouter detects installed CLI tools (Claude Code, Codex, OpenClaw, Cursor, Cline, etc.).
+- **Apply config**: point any tool at the local endpoint with a couple of clicks.
+- **Per-tool settings**: API key selection, endpoint presets, model picker, and config file edits.
+- **Verify status**: see whether each tool is wired up and where its config lives.
 
 ---
 

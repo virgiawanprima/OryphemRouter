@@ -34,6 +34,7 @@
 - [🔄 Cara Kerja](#-cara-kerja)
 - [⚡ Quick Start](#-quick-start)
 - [💡 Fitur Utama](#-fitur-utama)
+- [🧭 Modul Dashboard](#-modul-dashboard)
 - [🎯 Strategi Routing](#-strategi-routing)
 - [🆓 Free-Tier Budget Tracker](#-free-tier-budget-tracker)
 - [💰 Spending Limits](#-spending-limits)
@@ -196,6 +197,88 @@ curl http://localhost:20129/api/health
 | 🎨 **Custom Combos** | Kelompokkan model, pilih strategi per combo | Sesuaikan fallback dengan kebutuhan |
 | 💾 **Cloud Sync** | Sinkronkan config antar perangkat | Setup sama di mana saja |
 | 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Deployment fleksibel |
+
+---
+
+
+## 🧭 Modul Dashboard
+
+Dashboard OryphemRouter terorganisir dalam modul fokus. Berikut penjelasan tiap modul.
+
+### 📡 Providers (Penyedia)
+
+Kelola semua koneksi provider AI dari satu tempat.
+
+- **Hubungkan provider**: Claude Code, Codex, GitHub Copilot, Cursor, Kiro, OpenCode Free, Vertex, GLM, MiniMax, Kimi, dan 40+ lainnya.
+- **Login OAuth**: Login sekali-klik untuk provider subscription (Claude Code, Codex, GitHub, Cursor, Kiro).
+- **API key**: Tambah, edit, jeda, atau hapus API key per provider. Mendukung **bulk add** dengan penamaan otomatis:
+  ```
+  nama1|sk-key1
+  nama2|sk-key2
+  sk-key-otomatis-bernama
+  ```
+- **Multi-account**: Tambah beberapa akun per provider. OryphemRouter memutar antar akun dan fallback ke akun berikutnya jika gagal.
+- **Test koneksi**: Validasi API key sebelum disimpan dengan penguji koneksi bawaan.
+- **Data spesifik provider**: Set base URL, region, atau deployment untuk Azure, Cloudflare AI, Ollama-local, dan endpoint kompatibel.
+
+### 🔌 Endpoint
+
+Pintu depan gateway: satu URL kompatibel-OpenAI untuk semua tools Anda.
+
+- **Endpoint lokal**: `http://localhost:20129/v1` (tools CLI Anda menunjuk ke sini).
+- **API keys**: Buat dan kelola key untuk autentikasi request ke `/v1/*`.
+- **Toggle Require API key**: Terapkan autentikasi `Bearer` pada setiap request.
+- **Cloudflare Tunnel**: Ekspos gateway lokal Anda ke internet sekali-klik (tanpa port forwarding).
+- **Tailscale Funnel**: Akses remote alternatif melalui jaringan Tailscale Anda.
+- **Status realtime**: Dashboard streaming kesehatan tunnel/Tailscale secara live via SSE, tanpa refresh.
+
+### 🎨 Combos
+
+Kelompokkan model di bawah satu nama dan pilih strategi routing.
+
+- **Buat combo**: beri nama, tambah model sesuai prioritas (drag untuk urutkan ulang).
+- **Template**: sekali-klik **Free Combo** (model gratis di depan) atau preset **Premium Combo**.
+- **Strategi per-combo**: Fallback, Round Robin, Fusion, atau Cost-Optimized (lihat Strategi Routing).
+- **Capacity adapter**: pool fallback otomatis untuk vision/audio saat model target kurang kapabilitas.
+- **Pakai di mana saja**: gunakan nama combo sebagai `model` di tool CLI mana pun.
+
+### 📊 Usage & Analytics (Penggunaan & Analitik)
+
+Lacak setiap request yang mengalir melalui gateway.
+
+- **Log request**: request terbaru dengan provider, model, token, biaya, dan status.
+- **Grafik**: penggunaan token dan biaya dari waktu ke waktu (hari ini, 24 jam, 7 hari, 30 hari).
+- **Rincian per-provider**: provider/model mana yang mengonsumsi apa.
+- **Detail request**: drill ke satu request untuk memeriksa header, payload, dan timing.
+- **Real-time**: tampilan usage terupdate live via SSE saat request selesai.
+
+### 📈 Quota Tracker (Pelacak Kuota)
+
+Pantau kuota provider agar Anda tidak berhenti di tengah sesi.
+
+- **Kuota per-provider**: sisa token/kredit dan hitung mundur reset.
+- **Auto-ping**: pemeriksaan kuota terjadwal opsional untuk akun Claude Code dan Codex.
+- **Timer reset**: hitung mundur reset 5 jam, harian, mingguan, atau bulanan.
+- **Peringatan**: lihat sekilas saat provider mendekati batas agar fallback berjalan mulus.
+
+### 💾 Token Saver (Penghemat Token)
+
+Potong penggunaan token otomatis sebelum request sampai ke LLM.
+
+- **RTK Token Saver**: kompres output `tool_result` (git diff, grep, ls, log) tanpa kehilangan, hemat 20-40% token input. Matikan per request dengan `x-oryphemrouter-token-saver: off`.
+- **Headroom**: proxy eksternal `/v1/compress` opsional untuk penghematan konteks lebih.
+- **Caveman Mode**: output terse gaya caveman, hemat hingga 65% token output.
+- **Ponytail**: prompt "senior dev malas" yang menulis kode minimal berprinsip YAGNI.
+- **PXPIPE**: kompresi request transparan untuk tools yang didukung.
+
+### 🛠️ CLI Tools
+
+Konfigurasi sekali-klik untuk coding agent Anda.
+
+- **Auto-detect**: OryphemRouter mendeteksi tools CLI yang terinstal (Claude Code, Codex, OpenClaw, Cursor, Cline, dll).
+- **Terapkan config**: arahkan tool apa pun ke endpoint lokal dengan beberapa klik.
+- **Pengaturan per-tool**: pemilihan API key, preset endpoint, pemilih model, dan edit file config.
+- **Verifikasi status**: lihat apakah tiap tool sudah terhubung dan di mana config-nya.
 
 ---
 
