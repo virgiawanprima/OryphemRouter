@@ -89,3 +89,11 @@ graphify-out/*
 .codegraph/
 .PR/
 .next-analyze/*
+
+# Agent instruction files (internal - not for contributors)
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+**/AGENTS.md
+**/CLAUDE.md
+**/GEMINI.md

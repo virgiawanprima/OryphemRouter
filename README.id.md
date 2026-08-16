@@ -511,7 +511,7 @@ Kontribusi sangat diterima! Berikut caranya:
 
 1. 🍴 **Fork** repository di [GitHub](https://github.com/virgiawanprima/OryphemRouter)
 2. 🌿 **Buat branch**: `git checkout -b feat/fitur-anda`
-3. ✍️ **Buat perubahan** (ikuti panduan di [AGENTS.md](./AGENTS.md))
+3. ✍️ **Buat perubahan** (lihat [Panduan Kontribusi](./CONTRIBUTING.md))
 4. ✅ **Test**: `npx vitest --config tests/vitest.config.js tests/unit/`
 5. 📦 **Build**: `npm run build`
 6. 🔀 **Kirim Pull Request**
