@@ -796,6 +796,7 @@ export default function APIPageClient({ machineId }) {
                 <Input value={`${tunnelPublicUrl || tunnelUrl}/v1`} readOnly className="flex-1 font-mono text-sm" />
                 <button
                   onClick={() => copy(`${tunnelPublicUrl || tunnelUrl}/v1`, "tunnel_url")}
+                  aria-label="Copy tunnel URL"
                   className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded text-text-muted hover:text-primary transition-colors shrink-0"
                 >
                   <span className="material-symbols-outlined text-[18px]">{copied === "tunnel_url" ? "check" : "content_copy"}</span>
@@ -804,7 +805,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => setShowDisableTunnelModal(true)}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Disable Tunnel"
-                >
+                 aria-label="Disable Tunnel">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -818,7 +819,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => setShowDisableTunnelModal(true)}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Disable Tunnel"
-                >
+                 aria-label="Disable Tunnel">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -832,7 +833,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => { setTunnelLoading(false); setTunnelProgress(""); }}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Stop"
-                >
+                 aria-label="Stop">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -854,7 +855,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => setTunnelChecking(false)}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Stop"
-                >
+                 aria-label="Stop">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -896,7 +897,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => setShowDisableTsModal(true)}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Disable Tailscale"
-                >
+                 aria-label="Disable Tailscale">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -910,7 +911,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => setShowDisableTsModal(true)}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Disable Tailscale"
-                >
+                 aria-label="Disable Tailscale">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -933,7 +934,7 @@ export default function APIPageClient({ machineId }) {
                   onClick={() => { setTsLoading(false); setTsConnecting(false); setTsProgress(""); clearUserAuth(); }}
                   className="p-2 hover:bg-red-500/10 rounded text-red-500 transition-colors shrink-0"
                   title="Stop"
-                >
+                 aria-label="Stop">
                   <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
                 </button>
               </>
@@ -1073,6 +1074,7 @@ export default function APIPageClient({ machineId }) {
                       onClick={() => toggleKeyVisibility(key.id)}
                       className="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded text-text-muted hover:text-primary transition-all"
                       title={visibleKeys.has(key.id) ? "Hide key" : "Show key"}
+                      aria-label={visibleKeys.has(key.id) ? "Hide key" : "Show key"}
                     >
                       <span className="material-symbols-outlined text-[14px]">
                         {visibleKeys.has(key.id) ? "visibility_off" : "visibility"}
@@ -1131,7 +1133,7 @@ export default function APIPageClient({ machineId }) {
       <Modal
         isOpen={showAddModal}
         title="Create API Key"
-        onClose={() => {
+        onClose={() = aria-label="Create API Key"> {
           setShowAddModal(false);
           setNewKeyName("");
         }}
