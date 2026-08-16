@@ -163,12 +163,12 @@ export default function CodexToolCard({ tool, isExpanded, onToggle, baseUrl, api
 
     const effectiveSubagentModel = subagentModel || selectedModel;
 
-    const configContent = `# oryphremrouter Configuration for Codex CLI
+    const configContent = `# oryphemrouter Configuration for Codex CLI
 model = "${selectedModel}"
 model_provider = "oryphemrouter"
 
 [model_providers.oryphemrouter]
-name = "oryphremrouter"
+name = "oryphemrouter"
 base_url = "${getEffectiveBaseUrl()}"
 wire_api = "responses"
 

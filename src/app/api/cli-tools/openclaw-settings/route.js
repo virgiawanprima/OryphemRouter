@@ -56,8 +56,8 @@ const readSettings = async () => {
   }
 };
 
-// Check if settings has oryphremrouter config
-const hasoryphremrouterConfig = (settings) => {
+// Check if settings has oryphemrouter config
+const hasoryphemrouterConfig = (settings) => {
   if (!settings || !settings.models || !settings.models.providers) return false;
   return !!settings.models.providers["oryphemrouter"];
 };
@@ -105,7 +105,7 @@ export async function GET() {
       installed: true,
       settings,
       agents: enrichedAgents,
-      hasoryphremrouter: hasoryphremrouterConfig(settings),
+      hasoryphemrouter: hasoryphemrouterConfig(settings),
       settingsPath: getOpenClawSettingsPath(),
     });
   } catch (error) {
@@ -134,7 +134,7 @@ const writeAgentModels = async (agentDir, model, baseUrl, apiKey) => {
   await fs.writeFile(modelsPath, JSON.stringify(existing, null, 2));
 };
 
-// POST - Update oryphremrouter settings (merge with existing settings)
+// POST - Update oryphemrouter settings (merge with existing settings)
 export async function POST(request) {
   try {
     // agentModels: { [agentId]: modelId } for per-agent override
@@ -234,7 +234,7 @@ export async function POST(request) {
   }
 }
 
-// DELETE - Remove oryphremrouter settings only (keep other settings)
+// DELETE - Remove oryphemrouter settings only (keep other settings)
 export async function DELETE() {
   try {
     const settingsPath = getOpenClawSettingsPath();
@@ -254,7 +254,7 @@ export async function DELETE() {
       throw error;
     }
 
-    // Remove oryphremrouter from models.providers
+    // Remove oryphemrouter from models.providers
     if (settings.models && settings.models.providers) {
       delete settings.models.providers["oryphemrouter"];
       
@@ -285,7 +285,7 @@ export async function DELETE() {
 
     return NextResponse.json({
       success: true,
-      message: "oryphremrouter settings removed successfully",
+      message: "oryphemrouter settings removed successfully",
     });
   } catch (error) {
     console.log("Error resetting openclaw settings:", error);

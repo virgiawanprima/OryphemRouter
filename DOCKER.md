@@ -4,7 +4,7 @@ Run OryphemRouter in a container. Published image: [`ghcr.io/virgiawanprima/oryp
 
 ```bash
 docker run -d \
-  --name oryphremrouter \
+  --name oryphemrouter \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
@@ -16,24 +16,24 @@ docker run -d \
 ## Useful commands
 
 ```bash
-docker logs -f oryphremrouter        # view logs
-docker stop oryphremrouter           # stop
-docker start oryphremrouter          # start again
-docker rm -f oryphremrouter          # remove
+docker logs -f oryphemrouter        # view logs
+docker stop oryphemrouter           # stop
+docker start oryphemrouter          # start again
+docker rm -f oryphemrouter          # remove
 ```
 
 ## Build from source
 
 ```bash
 git clone https://github.com/virgiawanprima/OryphemRouter.git
-cd oryphremrouter
-docker build -t oryphremrouter .
+cd oryphemrouter
+docker build -t oryphemrouter .
 docker run -d \
-  --name oryphremrouter \
+  --name oryphemrouter \
   -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" \
   -e DATA_DIR=/app/data \
-  oryphremrouter
+  oryphemrouter
 ```
 
 ## Data persistence

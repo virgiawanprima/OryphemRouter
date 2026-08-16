@@ -58,7 +58,7 @@ function initTray(options) {
  */
 function buildMenuItems(port, autostartEnabled) {
   return [
-    { title: `oryphremrouter (Port ${port})`, tooltip: "Server is running", enabled: false },
+    { title: `oryphemrouter (Port ${port})`, tooltip: "Server is running", enabled: false },
     { title: "Open Dashboard", tooltip: "Open in browser", enabled: true },
     {
       title: autostartEnabled ? "✓ Auto-start Enabled" : "Enable Auto-start",
@@ -121,7 +121,7 @@ function initWindowsTray(options) {
 
     trayInstance = initWinTray({
       iconPath,
-      tooltip: `oryphremrouter - Port ${port}`,
+      tooltip: `oryphemrouter - Port ${port}`,
       items,
       onClick: (index) => {
         handleClick(index, options, (newEnabled) => {
@@ -204,7 +204,7 @@ function initUnixTray(options) {
       // because template mode only uses the alpha channel.
       isTemplateIcon: false,
       title: "",
-      tooltip: `oryphremrouter - Port ${port}`,
+      tooltip: `oryphemrouter - Port ${port}`,
       items
     };
 

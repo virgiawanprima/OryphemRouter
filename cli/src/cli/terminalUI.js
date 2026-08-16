@@ -67,14 +67,14 @@ async function startTerminalUI(port) {
   // Configure API client
   api.configure({ port });
 
-  const basePath = ["oryphremrouter"];
+  const basePath = ["oryphemrouter"];
 
   // Prime header cache before first render
   await refreshHeaderBg(port);
 
   // Main menu
   await showMenuWithBack({
-    title: "📡 oryphremrouter Terminal UI",
+    title: "📡 oryphemrouter Terminal UI",
     breadcrumb: basePath,
     headerContent: () => getHeader(port),
     items: [

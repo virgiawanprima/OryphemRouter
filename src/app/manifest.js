@@ -1,7 +1,7 @@
 export default function manifest() {
   return {
-    name: 'oryphremrouter - AI Infrastructure Management',
-    short_name: 'oryphremrouter',
+    name: 'oryphemrouter - AI Infrastructure Management',
+    short_name: 'oryphemrouter',
     description: 'One endpoint for all your AI providers. Manage keys, monitor usage, and scale effortlessly.',
     start_url: '/',
     display: 'standalone',

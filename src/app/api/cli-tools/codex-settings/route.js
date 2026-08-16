@@ -73,8 +73,8 @@ const readConfig = async () => {
   }
 };
 
-// Check if config has oryphremrouter settings
-const hasoryphremrouterConfig = (config) => {
+// Check if config has oryphemrouter settings
+const hasoryphemrouterConfig = (config) => {
   if (!config) return false;
   return config.includes("model_provider = \"oryphemrouter\"") || config.includes("[model_providers.oryphemrouter]");
 };
@@ -97,7 +97,7 @@ export async function GET() {
     return NextResponse.json({
       installed: true,
       config,
-      hasoryphremrouter: hasoryphremrouterConfig(config),
+      hasoryphemrouter: hasoryphemrouterConfig(config),
       configPath: getCodexConfigPath(),
     });
   } catch (error) {
@@ -106,7 +106,7 @@ export async function GET() {
   }
 }
 
-// POST - Update oryphremrouter settings (merge with existing config)
+// POST - Update oryphemrouter settings (merge with existing config)
 export async function POST(request) {
   try {
     const { baseUrl, apiKey, model, subagentModel } = await request.json();
@@ -128,7 +128,7 @@ export async function POST(request) {
       parsed = parsedToWritable(parseTOML(existingConfig));
     } catch { /* No existing config */ }
 
-    // Update only oryphremrouter related fields (api_key goes to auth.json, not config.toml)
+    // Update only oryphemrouter related fields (api_key goes to auth.json, not config.toml)
     parsed.model = model;
     parsed.model_provider = "oryphemrouter";
 
@@ -136,7 +136,7 @@ export async function POST(request) {
     // Ensure /v1 suffix is added only once
     const normalizedBaseUrl = baseUrl.endsWith("/v1") ? baseUrl : `${baseUrl}/v1`;
     setNestedSection(parsed, "model_providers.oryphemrouter", {
-      name: "oryphremrouter",
+      name: "oryphemrouter",
       base_url: normalizedBaseUrl,
       wire_api: "responses",
     });
@@ -175,7 +175,7 @@ export async function POST(request) {
   }
 }
 
-// DELETE - Remove oryphremrouter settings only (keep other settings)
+// DELETE - Remove oryphemrouter settings only (keep other settings)
 export async function DELETE() {
   try {
     const configPath = getCodexConfigPath();
@@ -195,7 +195,7 @@ export async function DELETE() {
       throw error;
     }
 
-    // Remove oryphremrouter related root fields only if they point to oryphemrouter
+    // Remove oryphemrouter related root fields only if they point to oryphemrouter
     if (parsed.model_provider === "oryphemrouter") {
       delete parsed.model;
       delete parsed.model_provider;
@@ -229,7 +229,7 @@ export async function DELETE() {
 
     return NextResponse.json({
       success: true,
-      message: "oryphremrouter settings removed successfully",
+      message: "oryphemrouter settings removed successfully",
     });
   } catch (error) {
     console.log("Error resetting codex settings:", error);

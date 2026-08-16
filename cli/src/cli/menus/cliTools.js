@@ -277,8 +277,8 @@ async function buildDroidHeader() {
     ].join("\n");
   }
 
-  // Extract oryphremrouter custom model config
-  const custom = settings?.customModels?.find(m => m.id === "custom:oryphremrouter-0");
+  // Extract oryphemrouter custom model config
+  const custom = settings?.customModels?.find(m => m.id === "custom:oryphemrouter-0");
   const lines = [`Status:   ${COLORS.green}✓ Configured${COLORS.reset}`];
   if (custom?.baseUrl) lines.push(`Endpoint: ${COLORS.cyan}${custom.baseUrl}${COLORS.reset}`);
   if (custom?.model)   lines.push(`Model:    ${COLORS.dim}${custom.model}${COLORS.reset}`);
@@ -360,7 +360,7 @@ async function buildOpenClawHeader() {
     ].join("\n");
   }
 
-  // Extract oryphremrouter provider config
+  // Extract oryphemrouter provider config
   const provider = settings?.models?.providers?.["oryphemrouter"];
   const primary = settings?.agents?.defaults?.model?.primary || "";
   const model = primary.startsWith("oryphemrouter/") ? primary.replace("oryphemrouter/", "") : (provider?.models?.[0]?.id || "");
@@ -585,7 +585,7 @@ async function showCliToolsMenu(port, breadcrumb = []) {
   await showMenuWithBack({
     title: "🔧 CLI Tools",
     breadcrumb,
-    headerContent: `Configure CLI tools to use oryphremrouter\nEndpoint: ${endpoint}`,
+    headerContent: `Configure CLI tools to use oryphemrouter\nEndpoint: ${endpoint}`,
     items: [
       {
         label: "Claude Code",

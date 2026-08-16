@@ -47,6 +47,29 @@ function groupByProviderStable(connections) {
   return Array.from(seen.values()).flat();
 }
 
+// Group connections into one entry per provider so the Quota Tracker renders a
+// single card per provider (with an "N API keys" badge). Free/no-auth providers
+// (no saved connection) become empty groups so they still show a card.
+export function groupConnectionsByProvider(connections, freeProviderIds = []) {
+  const groups = [];
+  const byProvider = new Map();
+  for (const conn of connections) {
+    const p = conn.provider || "";
+    if (!byProvider.has(p)) {
+      byProvider.set(p, []);
+      groups.push({ provider: p, connections: byProvider.get(p) });
+    }
+    byProvider.get(p).push(conn);
+  }
+  for (const id of freeProviderIds) {
+    if (!byProvider.has(id)) {
+      byProvider.set(id, []);
+      groups.push({ provider: id, connections: byProvider.get(id) });
+    }
+  }
+  return groups;
+}
+
 export function sortVisibleConnections(
   connections,
   quotaData,

@@ -30,26 +30,26 @@ const readConfig = async () => {
   }
 };
 
-const hasoryphremrouterConfig = (config) => {
+const hasoryphemrouterConfig = (config) => {
   if (!Array.isArray(config)) return false;
-  return config.some((entry) => entry.name === "oryphremrouter");
+  return config.some((entry) => entry.name === "oryphemrouter");
 };
 
-const getoryphremrouterEntry = (config) => {
+const getoryphemrouterEntry = (config) => {
   if (!Array.isArray(config)) return null;
-  return config.find((entry) => entry.name === "oryphremrouter") || null;
+  return config.find((entry) => entry.name === "oryphemrouter") || null;
 };
 
 // GET - Read current copilot config
 export async function GET() {
   try {
     const config = await readConfig();
-    const entry = getoryphremrouterEntry(config);
+    const entry = getoryphemrouterEntry(config);
 
     return NextResponse.json({
       installed: true,
       config,
-      hasoryphremrouter: hasoryphremrouterConfig(config),
+      hasoryphemrouter: hasoryphemrouterConfig(config),
       configPath: getConfigPath(),
       currentModel: entry?.models?.[0]?.id || null,
       currentUrl: entry?.models?.[0]?.url || null,
@@ -60,7 +60,7 @@ export async function GET() {
   }
 }
 
-// POST - Apply oryphremrouter config to chatLanguageModels.json
+// POST - Apply oryphemrouter config to chatLanguageModels.json
 export async function POST(request) {
   try {
     const { baseUrl, apiKey, models } = await request.json();
@@ -84,7 +84,7 @@ export async function POST(request) {
     const keyToUse = apiKey || "sk_oryphemrouter";
 
     const newEntry = {
-      name: "oryphremrouter",
+      name: "oryphemrouter",
       vendor: "azure",
       apiKey: keyToUse,
       models: models.map((id) => ({
@@ -98,8 +98,8 @@ export async function POST(request) {
       })),
     };
 
-    // Replace existing oryphremrouter entry or append
-    const idx = config.findIndex((e) => e.name === "oryphremrouter");
+    // Replace existing oryphemrouter entry or append
+    const idx = config.findIndex((e) => e.name === "oryphemrouter");
     if (idx >= 0) {
       config[idx] = newEntry;
     } else {
@@ -119,7 +119,7 @@ export async function POST(request) {
   }
 }
 
-// DELETE - Remove oryphremrouter entry from chatLanguageModels.json
+// DELETE - Remove oryphemrouter entry from chatLanguageModels.json
 export async function DELETE() {
   try {
     const configPath = getConfigPath();
@@ -136,12 +136,12 @@ export async function DELETE() {
       throw error;
     }
 
-    config = config.filter((e) => e.name !== "oryphremrouter");
+    config = config.filter((e) => e.name !== "oryphemrouter");
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
 
     return NextResponse.json({
       success: true,
-      message: "oryphremrouter removed from Copilot config",
+      message: "oryphemrouter removed from Copilot config",
     });
   } catch (error) {
     console.log("Error resetting copilot settings:", error);

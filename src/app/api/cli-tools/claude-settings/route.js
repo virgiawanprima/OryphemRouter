@@ -101,13 +101,13 @@ export async function GET() {
     }
 
     const settings = await readSettings();
-    const hasoryphremrouter = !!(settings?.env?.ANTHROPIC_BASE_URL);
+    const hasoryphemrouter = !!(settings?.env?.ANTHROPIC_BASE_URL);
     const claudeJson = await readClaudeJson();
 
     return NextResponse.json({
       installed: true,
       settings: settings,
-      hasoryphremrouter: hasoryphremrouter,
+      hasoryphemrouter: hasoryphemrouter,
       exaMcpEnabled: !!claudeJson?.mcpServers?.exa,
       settingsPath: getClaudeSettingsPath(),
     });

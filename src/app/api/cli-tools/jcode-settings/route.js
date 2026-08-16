@@ -44,7 +44,7 @@ const readConfig = async () => {
   }
 };
 
-const hasoryphremrouterConfig = (config) => {
+const hasoryphemrouterConfig = (config) => {
   if (!config || !config.providers) return false;
 
   const providers = config.providers;
@@ -118,12 +118,12 @@ export async function GET() {
   }
 
   const config = await readConfig();
-  const hasoryphremrouter = hasoryphremrouterConfig(config);
+  const hasoryphemrouter = hasoryphemrouterConfig(config);
 
   return NextResponse.json({
     installed: true,
     config,
-    hasoryphremrouter,
+    hasoryphemrouter,
     configPath: getConfigPath(),
   });
 }

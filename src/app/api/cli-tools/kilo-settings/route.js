@@ -44,7 +44,7 @@ const readJson = async (filePath) => {
   }
 };
 
-const hasoryphremrouterConfig = (auth) => {
+const hasoryphemrouterConfig = (auth) => {
   if (!auth) return false;
   const entry = auth["openai-compatible"] || auth["oryphemrouter"];
   if (!entry) return false;
@@ -62,7 +62,7 @@ export async function GET() {
     return NextResponse.json({
       installed: true,
       settings: { auth: auth ? Object.keys(auth) : [] },
-      hasoryphremrouter: hasoryphremrouterConfig(auth),
+      hasoryphemrouter: hasoryphemrouterConfig(auth),
       authPath: getAuthPath(),
     });
   } catch (error) {
@@ -94,7 +94,7 @@ export async function POST(request) {
     // Best-effort: update VS Code extension settings
     try {
       const vscode = (await readJson(getVscodeSettingsPath())) || {};
-      vscode["kilocode.customProvider"] = { name: "oryphremrouter", baseURL: normalizedBaseUrl, apiKey };
+      vscode["kilocode.customProvider"] = { name: "oryphemrouter", baseURL: normalizedBaseUrl, apiKey };
       vscode["kilocode.defaultModel"] = model;
       await fs.writeFile(getVscodeSettingsPath(), JSON.stringify(vscode, null, 2));
     } catch { /* VS Code settings not writable */ }
@@ -125,7 +125,7 @@ export async function DELETE() {
       }
     } catch { /* ignore */ }
 
-    return NextResponse.json({ success: true, message: "oryphremrouter settings removed from Kilo Code" });
+    return NextResponse.json({ success: true, message: "oryphemrouter settings removed from Kilo Code" });
   } catch (error) {
     console.log("Error resetting kilo settings:", error);
     return NextResponse.json({ error: "Failed to reset kilo settings" }, { status: 500 });

@@ -94,7 +94,7 @@ const readEnvFile = async () => {
 };
 
 // Detect oryphemrouter by base_url containing localhost/127.0.0.1 or matching tunnel URL
-const hasoryphremrouterConfig = (modelCfg) => {
+const hasoryphemrouterConfig = (modelCfg) => {
   if (!modelCfg?.base_url) return false;
   return modelCfg.provider === "custom" && /localhost|127\.0\.0\.1|0\.0\.0\.0/.test(modelCfg.base_url);
 };
@@ -110,7 +110,7 @@ export async function GET() {
     return NextResponse.json({
       installed: true,
       settings: { model },
-      hasoryphremrouter: hasoryphremrouterConfig(model),
+      hasoryphemrouter: hasoryphemrouterConfig(model),
       configPath: getHermesConfigPath(),
     });
   } catch (error) {

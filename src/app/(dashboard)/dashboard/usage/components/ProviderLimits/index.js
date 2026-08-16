@@ -127,6 +127,7 @@ function formatTimeRemaining(value) {
 export default function ProviderLimits() {
   const { copied, copy } = useCopyToClipboard();
   const [connections, setConnections] = useState([]);
+  const [freeProviderIds, setFreeProviderIds] = useState([]);
   const [quotaData, setQuotaData] = useState({});
   const [loading, setLoading] = useState({});
   const [errors, setErrors] = useState({});
@@ -198,6 +199,7 @@ export default function ProviderLimits() {
         const nextTotals = getSafeTotals(data.totals, connectionList.length);
 
         setConnections(connectionList);
+        setFreeProviderIds(data.freeProviderIds || []);
         setProviderOptions(getProviderOptions(data.providerOptions));
         setPagination(nextPagination);
         setTotals(nextTotals);
@@ -1021,99 +1023,140 @@ export default function ProviderLimits() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {sortedConnections.map((conn) => {
-          const quota = quotaData[conn.id];
-          const isLoading = loading[conn.id];
-          const error = errors[conn.id];
-
-          // Use table layout for all providers
-          const isInactive = conn.isActive === false;
-          const isCodex = conn.provider === "codex";
-          const resetCreditCount = getCodexResetCreditCount(quota);
-          const isResettingLimit = resettingLimitId === conn.id;
-          const rowBusy = deletingId === conn.id || togglingId === conn.id || isResettingLimit;
-          const rawQuotas = quota?.quotas || [];
-          const visibleQuotas = filterQuotasByVisibility(conn.provider, rawQuotas, quotaVisibility);
-          const hiddenQuotaRows = getHiddenQuotaRows(conn.provider, rawQuotas, quotaVisibility);
+        {providerGroups.map((group) => {
+          const groupConns = group.connections;
+          const isFreeOnly = groupConns.length === 0;
+          const groupInactive =
+            groupConns.length > 0 && groupConns.every((c) => c.isActive === false);
+          const keyBadge = isFreeOnly
+            ? "Free"
+            : `${groupConns.length} API key${groupConns.length !== 1 ? "s" : ""}`;
 
           return (
             <Card
-              key={conn.id}
+              key={group.provider}
               padding="none"
-              className={`min-w-0 ${isInactive ? "opacity-60" : ""}`}
+              className={`min-w-0 ${groupInactive ? "opacity-60" : ""}`}
             >
               <div className="px-3 py-2 border-b border-black/10 dark:border-white/10">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-8 h-8 shrink-0 rounded-md flex items-center justify-center overflow-hidden">
                       <ProviderIcon
-                        src={`/providers/${conn.provider}.png`}
-                        alt={conn.provider}
+                        src={`/providers/${group.provider}.png`}
+                        alt={group.provider}
                         size={32}
                         className="object-contain"
                         fallbackText={
-                          conn.provider?.slice(0, 2).toUpperCase() || "PR"
+                          group.provider?.slice(0, 2).toUpperCase() || "PR"
                         }
                       />
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-sm font-semibold text-text-primary capitalize truncate">
-                        {conn.provider}
+                        {group.provider}
                       </h3>
-                      {getConnectionLabel(conn) ? (
-                        <p className="text-xs text-text-muted truncate">
-                          {getConnectionLabel(conn)}
-                        </p>
-                      ) : null}
-                      {getConnectionSecondaryLabel(conn) ? (
-                        <p className="text-[11px] text-text-muted/80 truncate">
-                          {getConnectionSecondaryLabel(conn)}
-                        </p>
-                      ) : null}
-                      {conn.provider === "kiro" && (
-                        <div className="mt-1 flex flex-wrap items-center gap-1">
-                          <span className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[10px] font-semibold text-brand-600 dark:text-brand-300">
-                            {kiroMethodLabel(conn)}
-                          </span>
-                          {kiroRegion(conn) && (
-                            <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-600 dark:text-blue-400">
-                              {kiroRegion(conn)}
-                            </span>
-                          )}
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                              isInactive
-                                ? "bg-surface-2 text-text-muted"
-                                : conn.testStatus === "active" || conn.testStatus === "success"
-                                  ? "bg-green-500/10 text-green-600 dark:text-green-400"
-                                  : conn.testStatus === "error" || conn.testStatus === "expired" || conn.testStatus === "unavailable"
-                                    ? "bg-red-500/10 text-red-600 dark:text-red-400"
-                                    : "bg-surface-2 text-text-muted"
-                            }`}
-                          >
-                            {isInactive ? "disabled" : conn.testStatus || "unknown"}
-                          </span>
-                          {conn.providerSpecificData?.profileArn && (
-                            <button
-                              type="button"
-                              onClick={() => copy(conn.providerSpecificData.profileArn, conn.id)}
-                              title={conn.providerSpecificData.profileArn}
-                              className="inline-flex max-w-full items-center gap-1 rounded-full border border-border-subtle px-2 py-0.5 text-[10px] text-text-muted transition-colors hover:text-primary"
-                            >
-                              <span className="material-symbols-outlined text-[12px]">
-                                {copied === conn.id ? "check" : "content_copy"}
-                              </span>
-                              <code className="truncate font-mono">
-                                {conn.providerSpecificData.profileArn}
-                              </code>
-                            </button>
-                          )}
-                        </div>
-                      )}
+                      <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-text-muted">
+                        {keyBadge}
+                      </span>
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+              {isFreeOnly ? (
+                <div className="px-3 py-5 text-center">
+                  <span className="material-symbols-outlined text-[24px] text-text-muted opacity-40">
+                    auto_awesome
+                  </span>
+                  <p className="mt-1 text-xs text-text-muted">
+                    Free provider — no API key needed
+                  </p>
+                </div>
+              ) : (
+                <div className="px-2 py-1.5 space-y-2">
+                  {groupConns.map((conn) => {
+                    const quota = quotaData[conn.id];
+                    const isLoading = loading[conn.id];
+                    const error = errors[conn.id];
+
+                    // Use table layout for all providers
+                    const isInactive = conn.isActive === false;
+                    const isCodex = conn.provider === "codex";
+                    const resetCreditCount = getCodexResetCreditCount(quota);
+                    const isResettingLimit = resettingLimitId === conn.id;
+                    const rowBusy = deletingId === conn.id || togglingId === conn.id || isResettingLimit;
+                    const rawQuotas = quota?.quotas || [];
+                    const visibleQuotas = filterQuotasByVisibility(conn.provider, rawQuotas, quotaVisibility);
+                    const hiddenQuotaRows = getHiddenQuotaRows(conn.provider, rawQuotas, quotaVisibility);
+
+                    return (
+                      <div
+                        key={conn.id}
+                        className={`rounded-xl border border-black/10 overflow-hidden dark:border-white/10 ${isInactive ? "opacity-60" : ""}`}
+                      >
+                        <div className="px-3 py-2 border-b border-black/10 dark:border-white/10">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="min-w-0">
+                                {getConnectionLabel(conn) ? (
+                                  <p className="text-xs font-medium text-text-primary truncate">
+                                    {getConnectionLabel(conn)}
+                                  </p>
+                                ) : (
+                                  <p className="text-xs text-text-muted truncate">
+                                    API key
+                                  </p>
+                                )}
+                                {getConnectionSecondaryLabel(conn) ? (
+                                  <p className="text-[11px] text-text-muted/80 truncate">
+                                    {getConnectionSecondaryLabel(conn)}
+                                  </p>
+                                ) : null}
+                                {conn.provider === "kiro" && (
+                                  <div className="mt-1 flex flex-wrap items-center gap-1">
+                                    <span className="rounded-full bg-brand-500/10 px-2 py-0.5 text-[10px] font-semibold text-brand-600 dark:text-brand-300">
+                                      {kiroMethodLabel(conn)}
+                                    </span>
+                                    {kiroRegion(conn) && (
+                                      <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-600 dark:text-blue-400">
+                                        {kiroRegion(conn)}
+                                      </span>
+                                    )}
+                                    <span
+                                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                                        isInactive
+                                          ? "bg-surface-2 text-text-muted"
+                                          : conn.testStatus === "active" || conn.testStatus === "success"
+                                            ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                                            : conn.testStatus === "error" || conn.testStatus === "expired" || conn.testStatus === "unavailable"
+                                              ? "bg-red-500/10 text-red-600 dark:text-red-400"
+                                              : "bg-surface-2 text-text-muted"
+                                      }`}
+                                    >
+                                      {isInactive ? "disabled" : conn.testStatus || "unknown"}
+                                    </span>
+                                    {conn.providerSpecificData?.profileArn && (
+                                      <button
+                                        type="button"
+                                        onClick={() => copy(conn.providerSpecificData.profileArn, conn.id)}
+                                        title={conn.providerSpecificData.profileArn}
+                                        className="inline-flex max-w-full items-center gap-1 rounded-full border border-border-subtle px-2 py-0.5 text-[10px] text-text-muted transition-colors hover:text-primary"
+                                      >
+                                        <span className="material-symbols-outlined text-[12px]">
+                                          {copied === conn.id ? "check" : "content_copy"}
+                                        </span>
+                                        <code className="truncate font-mono">
+                                          {conn.providerSpecificData.profileArn}
+                                        </code>
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-1 shrink-0">
                     {isCodex && (
                       <>
                         <Tooltip
@@ -1232,61 +1275,66 @@ export default function ProviderLimits() {
                         }
                       />
                     </div>
-                  </div>
-                </div>
-              </div>
+                            </div>
+                          </div>
+                        </div>
 
-              <div className="px-2 py-1.5">
-                {isLoading ? (
-                  <div className="text-center py-5 text-text-muted">
-                    <span className="material-symbols-outlined text-[28px] animate-spin">
-                      progress_activity
-                    </span>
-                  </div>
-                ) : error ? (
-                  <div className="text-center py-5">
-                    <span className="material-symbols-outlined text-[28px] text-red-500">
-                      error
-                    </span>
-                    <p className="mt-1.5 text-xs text-text-muted">{error}</p>
-                  </div>
-                ) : quota?.message ? (
-                  <div className="text-center py-5">
-                    <p className="text-xs text-text-muted">{quota.message}</p>
-                  </div>
-                ) : (
-                  <QuotaTable
-                    quotas={visibleQuotas}
-                    compact
-                    sortMode="default"
-                    showSortLabel={
-                      conn.provider === "codex" && quotaSortMode !== "default"
-                    }
-                    onHideQuota={(quotaRow) => handleHideQuota(conn.provider, quotaRow)}
-                  />
-                )}
-                {hiddenQuotaRows.length > 0 && (
-                  <div className="mt-2 flex min-w-0 items-center gap-1 border-t border-black/5 pt-2 text-[10px] text-text-muted dark:border-white/5">
-                    <span className="material-symbols-outlined shrink-0 text-[14px]">
-                      visibility_off
-                    </span>
-                    <span className="shrink-0">Hidden:</span>
-                    <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto whitespace-nowrap pb-2">
-                      {hiddenQuotaRows.map((quotaRow) => (
-                        <button
-                          key={getQuotaVisibilityKey(quotaRow)}
-                          type="button"
-                          onClick={() => handleShowQuota(conn.provider, quotaRow)}
-                          className="shrink-0 rounded-md border border-black/10 px-1.5 py-0.5 transition-colors hover:bg-black/5 hover:text-text-primary dark:border-white/10 dark:hover:bg-white/5"
-                          title="Show this quota row"
-                        >
-                          {quotaRow.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+                        <div className="px-2 py-1.5">
+                          {isLoading ? (
+                            <div className="text-center py-5 text-text-muted">
+                              <span className="material-symbols-outlined text-[28px] animate-spin">
+                                progress_activity
+                              </span>
+                            </div>
+                          ) : error ? (
+                            <div className="text-center py-5">
+                              <span className="material-symbols-outlined text-[28px] text-red-500">
+                                error
+                              </span>
+                              <p className="mt-1.5 text-xs text-text-muted">{error}</p>
+                            </div>
+                          ) : quota?.message ? (
+                            <div className="text-center py-5">
+                              <p className="text-xs text-text-muted">{quota.message}</p>
+                            </div>
+                          ) : (
+                            <QuotaTable
+                              quotas={visibleQuotas}
+                              compact
+                              sortMode="default"
+                              showSortLabel={
+                                conn.provider === "codex" && quotaSortMode !== "default"
+                              }
+                              onHideQuota={(quotaRow) => handleHideQuota(conn.provider, quotaRow)}
+                            />
+                          )}
+                          {hiddenQuotaRows.length > 0 && (
+                            <div className="mt-2 flex min-w-0 items-center gap-1 border-t border-black/5 pt-2 text-[10px] text-text-muted dark:border-white/5">
+                              <span className="material-symbols-outlined shrink-0 text-[14px]">
+                                visibility_off
+                              </span>
+                              <span className="shrink-0">Hidden:</span>
+                              <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto whitespace-nowrap pb-2">
+                                {hiddenQuotaRows.map((quotaRow) => (
+                                  <button
+                                    key={getQuotaVisibilityKey(quotaRow)}
+                                    type="button"
+                                    onClick={() => handleShowQuota(conn.provider, quotaRow)}
+                                    className="shrink-0 rounded-md border border-black/10 px-1.5 py-0.5 transition-colors hover:bg-black/5 hover:text-text-primary dark:border-white/10 dark:hover:bg-white/5"
+                                    title="Show this quota row"
+                                  >
+                                    {quotaRow.name}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </Card>
           );
         })}

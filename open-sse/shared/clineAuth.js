@@ -19,7 +19,7 @@ export function buildClineHeaders(token, extraHeaders = {}) {
   const headers = {
     "HTTP-Referer": "https://cline.bot",
     "X-Title": "Cline",
-    "User-Agent": `oryphremrouter/${APP_VERSION}`,
+    "User-Agent": `oryphemrouter/${APP_VERSION}`,
     "X-PLATFORM": process.platform || "unknown",
     "X-PLATFORM-VERSION": process.version || "unknown",
     "X-CLIENT-TYPE": "oryphemrouter",

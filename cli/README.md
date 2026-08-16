@@ -39,17 +39,17 @@
 **Option 1 — npm (recommended for desktop):**
 
 ```bash
-npm install -g oryphremrouter
-oryphremrouter
+npm install -g oryphemrouter
+oryphemrouter
 
 # Or run directly with npx
-npx oryphremrouter
+npx oryphemrouter
 ```
 
 **Option 2 — Docker (server/VPS):**
 
 ```bash
-docker run -d --name oryphremrouter -p 20129:20129 \
+docker run -d --name oryphemrouter -p 20129:20129 \
   -v "$HOME/.oryphemrouter:/app/data" -e DATA_DIR=/app/data \
   ghcr.io/virgiawanprima/oryphemrouter:latest
 ```
@@ -78,11 +78,11 @@ That's it! Start coding with FREE AI models.
 ## 🚀 CLI Options
 
 ```bash
-oryphremrouter                    # Start with default settings
-oryphremrouter --port 8080        # Custom port
-oryphremrouter --no-browser       # Don't open browser
-oryphremrouter --skip-update      # Skip auto-update check
-oryphremrouter --help             # Show all options
+oryphemrouter                    # Start with default settings
+oryphemrouter --port 8080        # Custom port
+oryphemrouter --no-browser       # Don't open browser
+oryphemrouter --skip-update      # Skip auto-update check
+oryphemrouter --help             # Show all options
 ```
 
 **Dashboard**: `http://localhost:20129/dashboard`

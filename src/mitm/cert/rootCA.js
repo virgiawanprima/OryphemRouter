@@ -53,7 +53,7 @@ function generateRootCA() {
   cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 10);
 
   const attrs = [
-    { name: "commonName", value: "oryphremrouter MITM Root CA" },
+    { name: "commonName", value: "oryphemrouter MITM Root CA" },
     { name: "organizationName", value: "OryphemRouter" },
     { name: "countryName", value: "US" }
   ];

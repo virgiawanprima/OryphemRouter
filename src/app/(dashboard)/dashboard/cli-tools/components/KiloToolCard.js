@@ -48,7 +48,7 @@ export default function KiloToolCard({ tool, isExpanded, onToggle, baseUrl, apiK
 
   const getConfigStatus = () => {
     if (!status?.installed) return null;
-    return status.hasoryphremrouter ? "configured" : "not_configured";
+    return status.hasoryphemrouter ? "configured" : "not_configured";
   };
 
   const configStatus = getConfigStatus();

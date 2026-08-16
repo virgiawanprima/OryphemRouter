@@ -70,7 +70,7 @@ const normalizeSubagentModels = (value) => {
   return result;
 };
 
-const hasoryphremrouterConfig = (settings) => Boolean(settings?.model?.base_url);
+const hasoryphemrouterConfig = (settings) => Boolean(settings?.model?.base_url);
 
 export async function GET() {
   try {
@@ -87,7 +87,7 @@ export async function GET() {
     return NextResponse.json({
       installed: true,
       settings,
-      hasoryphremrouter: hasoryphremrouterConfig(settings),
+      hasoryphemrouter: hasoryphemrouterConfig(settings),
       configPath: getGrokConfigPath(),
     });
   } catch (error) {
