@@ -98,3 +98,7 @@ GEMINI.md
 **/CLAUDE.md
 **/GEMINI.md
 .opencode/
+
+# Playwright artifacts
+test-results/
+playwright-report/
