@@ -2,6 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import { getAdapter } from "../driver.js";
 import { parseJson, stringifyJson } from "../helpers/jsonCol.js";
 
+// Broadcast a "data changed" event so live dashboards refresh without polling.
+const pushLive = () => { global._statsEmitter?.emit("push"); };
+
 function rowToPool(row) {
   if (!row) return null;
   const extra = parseJson(row.data, {});
@@ -74,6 +77,7 @@ export async function createProxyPool(data) {
     updatedAt: now,
   };
   upsert(db, pool);
+  pushLive();
   return pool;
 }
 
@@ -87,6 +91,7 @@ export async function updateProxyPool(id, data) {
     upsert(db, merged);
     result = merged;
   });
+  pushLive();
   return result;
 }
 
@@ -99,5 +104,6 @@ export async function deleteProxyPool(id) {
     removed = rowToPool(row);
     db.run(`DELETE FROM proxyPools WHERE id = ?`, [id]);
   });
+  pushLive();
   return removed;
 }

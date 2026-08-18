@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FREE_PROVIDERS, AI_PROVIDERS } from "@/shared/constants/providers";
+import { findModelName } from "@/shared/constants/models";
 
 // Keep providers without serviceKinds (default LLM) or with "llm" in serviceKinds
 function isLLMProvider(id) {
@@ -39,7 +40,20 @@ function TimeAgo({ timestamp }) {
   return <>{timeAgo(timestamp)}</>;
 }
 
+// FindModel name lookup map for performance (memoized)
+const MODEL_CACHE = new Map();
+
 function RecentRequests({ requests = [] }) {
+  // Get provider name or fallback to ID; also get model display name.
+  const formatRequest = useMemo(() => {
+    return (r) => {
+      const ok = !r.status || r.status === "ok" || r.status === "success";
+      const provider = r.provider ? (AI_PROVIDERS[r.provider]?.name ?? r.provider) : "-";
+      const modelName = findModelName(r.provider, r.model) ?? r.model;
+      return { ok, provider, modelName, ...r };
+    };
+  }, []);
+
   return (
     <Card className="flex min-w-0 flex-col overflow-hidden" padding="sm" style={{ height: 480 }}>
       {/* Header */}
@@ -51,10 +65,11 @@ function RecentRequests({ requests = [] }) {
         <div className="flex-1 flex items-center justify-center text-text-muted text-sm">No requests yet.</div>
       ) : (
         <div className="flex-1 overflow-y-auto">
-          <table className="w-full min-w-[300px] border-collapse text-xs">
+          <table className="w-full min-w-[350px] border-collapse text-xs">
             <thead className="sticky top-0 bg-bg z-10">
               <tr className="border-b border-border">
                 <th className="py-1.5 text-left font-semibold text-text-muted w-2"></th>
+                <th className="py-1.5 text-left font-semibold text-text-muted">Provider</th>
                 <th className="py-1.5 text-left font-semibold text-text-muted">Model</th>
                 <th className="py-1.5 text-right font-semibold text-text-muted whitespace-nowrap">In / Out</th>
                 <th className="py-1.5 text-right font-semibold text-text-muted">When</th>
@@ -62,13 +77,15 @@ function RecentRequests({ requests = [] }) {
             </thead>
             <tbody className="divide-y divide-border/50">
               {requests.map((r, i) => {
-                const ok = !r.status || r.status === "ok" || r.status === "success";
+                const formatted = formatRequest(r);
+                const { ok, provider, modelName } = formatted;
                 return (
                   <tr key={i} className="hover:bg-bg-subtle transition-colors">
                     <td className="py-1.5">
                       <span className={`block w-1.5 h-1.5 rounded-full ${ok ? "bg-success" : "bg-error"}`} />
                     </td>
-                    <td className="py-1.5 font-mono truncate max-w-[120px]" title={r.model}>{r.model}</td>
+                    <td className="py-1.5 text-left truncate max-w-[120px]" title={provider}>{provider}</td>
+                    <td className="py-1.5 font-mono truncate max-w-[120px]" title={modelName}>{modelName}</td>
                     <td className="py-1.5 text-right whitespace-nowrap">
                       <span className="text-primary">{fmt(r.promptTokens)}↑</span>
                       {" "}

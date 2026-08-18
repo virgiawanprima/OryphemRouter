@@ -5,11 +5,11 @@ import { Card, Button } from "@/shared/components";
 import { CONSOLE_LOG_CONFIG } from "@/shared/constants/config";
 
 const LOG_LEVEL_COLORS = {
-  LOG: "text-green-400",
-  INFO: "text-blue-400",
-  WARN: "text-yellow-400",
-  ERROR: "text-red-400",
-  DEBUG: "text-purple-400",
+  LOG: "text-c-green",
+  INFO: "text-c-cyan",
+  WARN: "text-c-orange",
+  ERROR: "text-c-red-600",
+  DEBUG: "text-c-purple",
 };
 
 function colorLine(line) {
@@ -71,14 +71,18 @@ export default function ConsoleLogClient() {
   return (
     <div className="">
       <Card>
-        <div className="flex items-center justify-end px-4 pt-3 pb-2">
+        <div className="flex items-center justify-between px-4 pt-3 pb-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-c-blue-50/10 px-3 py-1 text-[12px] text-c-blue-800 border border-c-blue-600/30">
+            <span className={`size-1.5 rounded-full ${connected ? "bg-c-cyan pulse-dot" : "bg-c-amber-600"}`} />
+            {connected ? "Live" : "Reconnecting"}
+          </span>
           <Button size="sm" variant="outline" icon="delete" onClick={handleClear}>
             Clear
           </Button>
         </div>
         <div
           ref={logRef}
-          className="bg-black rounded-b-lg p-4 text-xs font-mono h-[calc(100vh-220px)] overflow-y-auto"
+          className="bg-[#282a36] rounded-b-lg p-4 text-xs font-mono h-[calc(100vh-220px)] overflow-y-auto"
         >
           {logs.length === 0 ? (
             <span className="text-text-muted">No console logs yet.</span>

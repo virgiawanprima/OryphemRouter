@@ -1,6 +1,9 @@
 import { getAdapter } from "../driver.js";
 import { parseJson, stringifyJson } from "../helpers/jsonCol.js";
 
+// Broadcast a "data changed" event so live dashboards refresh without polling.
+const pushLive = () => { global._statsEmitter?.emit("push"); };
+
 const DEFAULT_MITM_ROUTER_BASE = "http://localhost:20129";
 const DEFAULT_HEADROOM_URL = process.env.HEADROOM_URL || "http://localhost:8787";
 
@@ -113,6 +116,7 @@ export async function updateSettings(updates) {
       [stringifyJson(next)],
     );
   });
+  pushLive();
   return mergeWithDefaults(next);
 }
 

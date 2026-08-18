@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Card, Badge, CardSkeleton } from "@/shared/components";
 import { useNotificationStore } from "@/store/notificationStore";
+import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 
 const TIER_ICONS = {
   kiro: "emoji_events",
@@ -48,25 +49,26 @@ export default function FreeTiersPage() {
   const [loading, setLoading] = useState(true);
   const addNotification = useNotificationStore((s) => s.addNotification);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/free-tiers/stats");
-        if (res.ok) {
-          const d = await res.json();
-          setData(d);
-        }
-      } catch (e) {
-        console.error("Failed to fetch free-tier stats:", e);
-      } finally {
-        setLoading(false);
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await fetch("/api/free-tiers/stats");
+      if (res.ok) {
+        const d = await res.json();
+        setData(d);
       }
-    };
-    fetchStats();
-    // Refresh every 60s
-    const timer = setInterval(fetchStats, 60000);
-    return () => clearInterval(timer);
+    } catch (e) {
+      console.error("Failed to fetch free-tier stats:", e);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  // Live push-driven refresh — no fixed-interval polling
+  useLiveRefresh(fetchStats);
 
   if (loading) {
     return (
@@ -85,7 +87,7 @@ export default function FreeTiersPage() {
         <div>
           <h1 className="text-xl font-bold text-text-main flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">local_atm</span>
-            Free-Tier Budget Tracker
+            Free Tiers
           </h1>
           <p className="text-sm text-text-muted mt-1">
             Track your free usage across all providers.

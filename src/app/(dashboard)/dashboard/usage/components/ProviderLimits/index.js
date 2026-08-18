@@ -29,7 +29,6 @@ import {
   getQuotaCache,
   setQuotaCache,
   QUOTA_CACHE_KEY,
-  REFRESH_INTERVAL_MS,
   CLAUDE_REFRESH_INTERVAL_MS,
   DEPLETED_QUOTA_THRESHOLD,
   AUTO_REFRESH_STORAGE_KEY,
@@ -43,6 +42,7 @@ import Card from "@/shared/components/Card";
 import { ConfirmModal, EditConnectionModal } from "@/shared/components";
 import { USAGE_SUPPORTED_PROVIDERS } from "@/shared/constants/providers";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
+import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 
 // Maps the stored providerSpecificData.authMethod to a human label for Kiro.
 // Values come from the Kiro connect flows: builder-id/idc (device code),
@@ -137,7 +137,6 @@ export default function ProviderLimits() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [hasHydratedAutoRefresh, setHasHydratedAutoRefresh] = useState(false);
   const [refreshingAll, setRefreshingAll] = useState(false);
-  const [countdown, setCountdown] = useState(60);
   const [connectionsLoading, setConnectionsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
@@ -171,8 +170,6 @@ export default function ProviderLimits() {
     providerFilteredConnections: 0,
   });
 
-  const intervalRef = useRef(null);
-  const countdownRef = useRef(null);
   const tickCountRef = useRef(0);
 
   const fetchConnections = useCallback(
@@ -470,7 +467,6 @@ export default function ProviderLimits() {
     if (refreshingAll) return;
 
     setRefreshingAll(true);
-    setCountdown(60);
 
     // Throttle Claude: poll its quota every Nth auto-tick (manual force bypasses)
     const tick = (tickCountRef.current += 1);
@@ -627,65 +623,16 @@ export default function ProviderLimits() {
     updateQuotaVisibility(next, previous);
   }, [quotaVisibility, updateQuotaVisibility]);
 
-  // Auto-refresh interval
-  useEffect(() => {
-    if (!hasHydratedAutoRefresh || !autoRefresh) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      if (countdownRef.current) {
-        clearInterval(countdownRef.current);
-        countdownRef.current = null;
-      }
-      return;
-    }
-
-    // Main refresh interval
-    intervalRef.current = setInterval(() => {
-      refreshAll();
-    }, REFRESH_INTERVAL_MS);
-
-    // Countdown interval
-    countdownRef.current = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) return 60;
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (countdownRef.current) clearInterval(countdownRef.current);
-    };
-  }, [autoRefresh, refreshAll, hasHydratedAutoRefresh]);
-
-  // Pause auto-refresh when tab is hidden (Page Visibility API)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-        if (countdownRef.current) {
-          clearInterval(countdownRef.current);
-          countdownRef.current = null;
-        }
-      } else if (autoRefresh && hasHydratedAutoRefresh) {
-        // Resume auto-refresh when tab becomes visible
-        intervalRef.current = setInterval(() => refreshAll(), REFRESH_INTERVAL_MS);
-        countdownRef.current = setInterval(() => {
-          setCountdown((prev) => (prev <= 1 ? 60 : prev - 1));
-        }, 1000);
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [autoRefresh, refreshAll, hasHydratedAutoRefresh]);
+  // Live push-driven refresh (replaces fixed-interval polling).
+  // When "Live updates" is off, the manual Refresh All button remains available.
+  // Throttled to avoid hammering quota endpoints on every push event.
+  const lastQuotaRefresh = useRef(0);
+  useLiveRefresh(() => {
+    const now = Date.now();
+    if (now - lastQuotaRefresh.current < 2000) return;
+    lastQuotaRefresh.current = now;
+    refreshAll();
+  }, autoRefresh);
 
   const sortedConnections = useMemo(
     () =>
@@ -988,11 +935,11 @@ export default function ProviderLimits() {
             <span className="hidden sm:inline">Turn on Available</span>
           </button>
 
-          {/* Auto-refresh toggle */}
+          {/* Live updates toggle */}
           <button
             onClick={() => setAutoRefresh((prev) => !prev)}
             className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-black/10 px-2 text-xs transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
-            title={autoRefresh ? "Disable auto-refresh" : "Enable auto-refresh"}
+            title={autoRefresh ? "Live updates on" : "Live updates off"}
           >
             <span
               className={`material-symbols-outlined text-[14px] ${
@@ -1002,13 +949,8 @@ export default function ProviderLimits() {
               {autoRefresh ? "toggle_on" : "toggle_off"}
             </span>
             <span className="hidden text-text-primary sm:inline">
-              Auto-refresh
+              Live updates
             </span>
-            {autoRefresh && (
-              <span className="text-[10px] text-text-muted tabular-nums">
-                ({countdown}s)
-              </span>
-            )}
           </button>
 
 

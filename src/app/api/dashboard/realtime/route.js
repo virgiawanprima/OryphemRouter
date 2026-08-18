@@ -23,6 +23,13 @@ export async function GET() {
 
       await state.send();
 
+      // Re-push on every stats event (requests, usage, provider/config mutations)
+      const onStatsEvent = () => state.send();
+      statsEmitter.on("pending", onStatsEvent);
+      statsEmitter.on("update", onStatsEvent);
+      statsEmitter.on("push", onStatsEvent);
+      state.onStatsEvent = onStatsEvent;
+
       state.keepalive = setInterval(() => {
         if (state.closed) { clearInterval(state.keepalive); return; }
         try {
@@ -36,6 +43,11 @@ export async function GET() {
 
     cancel() {
       state.closed = true;
+      if (state.onStatsEvent) {
+        statsEmitter.off("pending", state.onStatsEvent);
+        statsEmitter.off("update", state.onStatsEvent);
+        statsEmitter.off("push", state.onStatsEvent);
+      }
       clearInterval(state.keepalive);
     },
   });

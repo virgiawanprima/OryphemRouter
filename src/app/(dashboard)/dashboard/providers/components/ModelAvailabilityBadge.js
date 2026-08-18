@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/shared/components";
 import { useNotificationStore } from "@/store/notificationStore";
+import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 
 const STATUS_CONFIG = {
   available: { icon: "check_circle", color: "#22c55e", label: "Available" },
@@ -42,9 +43,10 @@ export default function ModelAvailabilityBadge() {
 
   useEffect(() => {
     fetchStatus();
-    const interval = setInterval(fetchStatus, 30000);
-    return () => clearInterval(interval);
   }, [fetchStatus]);
+
+  // Refresh cooldown/availability states live on every push (no polling)
+  useLiveRefresh(fetchStatus);
 
   // Close popover on outside click
   useEffect(() => {

@@ -2,6 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import { getAdapter } from "../driver.js";
 import { parseJson, stringifyJson } from "../helpers/jsonCol.js";
 
+// Broadcast a "data changed" event so live dashboards refresh without polling.
+const pushLive = () => { global._statsEmitter?.emit("push"); };
+
 const OPTIONAL_FIELDS = [
   "displayName", "email", "globalPriority", "defaultModel",
   "accessToken", "refreshToken", "expiresAt", "tokenType",
@@ -185,6 +188,7 @@ export async function createProviderConnection(data) {
     result = conn;
   });
 
+  pushLive();
   return result;
 }
 
@@ -201,6 +205,7 @@ export async function updateProviderConnection(id, data) {
     if (data.priority !== undefined) reorderInTx(db, existing.provider);
     result = merged;
   });
+  pushLive();
   return result;
 }
 
@@ -214,6 +219,7 @@ export async function deleteProviderConnection(id) {
     reorderInTx(db, row.provider);
     ok = true;
   });
+  pushLive();
   return ok;
 }
 
@@ -221,6 +227,7 @@ export async function deleteProviderConnectionsByProvider(providerId) {
   const db = await getAdapter();
   const before = db.get(`SELECT COUNT(*) AS n FROM providerConnections WHERE provider = ?`, [providerId]);
   db.run(`DELETE FROM providerConnections WHERE provider = ?`, [providerId]);
+  pushLive();
   return before?.n || 0;
 }
 

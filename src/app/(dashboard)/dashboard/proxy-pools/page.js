@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Badge, Button, Card, CardSkeleton, Input, Modal, Toggle, ConfirmModal } from "@/shared/components";
 import { useNotificationStore } from "@/store/notificationStore";
+import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 
 function getStatusVariant(status) {
   if (status === "active") return "success";
@@ -83,6 +84,9 @@ export default function ProxyPoolsPage() {
   useEffect(() => {
     fetchProxyPools();
   }, [fetchProxyPools]);
+
+  // Live push-driven refresh — no fixed-interval polling
+  useLiveRefresh(fetchProxyPools);
 
   const resetForm = () => {
     setEditingProxyPool(null);
