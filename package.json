@@ -39,6 +39,8 @@
     "node-machine-id": "^1.1.12",
     "open": "^11.0.0",
     "ora": "^9.1.0",
+    "prism-themes": "^1.9.0",
+    "prismjs": "^1.30.0",
     "prop-types": "^15.8.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -56,6 +58,7 @@
   },
   "comment_better_sqlite3": "kept in optionalDependencies so npm install doesn't fail on systems without build tools — sql.js is used as fallback at runtime",
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.1.18",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
