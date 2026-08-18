@@ -25,29 +25,23 @@ export default function Card({
   return (
     <div
       className={cn(
-        "bg-surface border border-border-500",
-        "rounded-[var(--radius-brand-lg)] shadow-[var(--shadow-soft)]",
-        hover && "card-lift hover:border-brand-500 cursor-pointer",
+        "bg-surface border-[0.5px] border-border",
+        "rounded-[12px]",
+        hover && "hover:border-c-blue-600/30 cursor-pointer",
         paddings[padding],
         className
       )}
       {...props}
     >
       {(title || action) && (
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
             {icon && (
-              <div className="icon-wrap !w-9 !h-9 !rounded-[var(--radius-brand)] text-text-main">
-                <span className="material-symbols-outlined text-[20px]">{icon}</span>
-              </div>
+              <span className="material-symbols-outlined text-[18px] text-c-blue-600">{icon}</span>
             )}
             <div>
-              {title && (
-                <h3 className="text-text-main font-semibold">{title}</h3>
-              )}
-              {subtitle && (
-                <p className="text-sm text-text-muted">{subtitle}</p>
-              )}
+              {title && <h3 className="text-text-main font-medium text-[16px]">{title}</h3>}
+              {subtitle && <p className="text-[13px] text-text-muted">{subtitle}</p>}
             </div>
           </div>
           {action}
@@ -62,7 +56,7 @@ Card.Section = function CardSection({ children, className, ...props }) {
   return (
     <div
       className={cn(
-        "p-4 border border-border-500 rounded-[var(--radius-brand)] shadow-[var(--shadow-sm)]",
+        "p-4 border border-border-500 rounded-[var(--radius-brand)] bg-surface-2",
         className
       )}
       {...props}

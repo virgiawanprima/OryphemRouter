@@ -32,6 +32,8 @@ export {
   setMitmAliasAll,
   getApiKeys,
   createApiKey,
+  getOrCreateDefaultKey,
+  collapseDefaultKeyDuplicates,
   deleteApiKey,
   validateApiKey,
   isCloudEnabled,

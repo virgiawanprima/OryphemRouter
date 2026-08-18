@@ -56,7 +56,7 @@
 
 ## 📖 Tentang
 
-**OryphemRouter** adalah **gerbang routing AI** lokal yang menggabungkan seluruh kebutuhan AI coding Anda ke dalam **satu endpoint**. Dibangun oleh **tim oryphem** sebagai peningkatan dari 9Router, proyek ini menghadirkan:
+**OryphemRouter** adalah **gerbang routing AI** lokal yang menggabungkan seluruh kebutuhan AI coding Anda ke dalam **satu endpoint**. Dibangun oleh **tim oryphem** sebagai peningkatan dari OryphemRouter, proyek ini menghadirkan:
 
 - 🎯 **Auto-fallback** antar provider (Subscription → Cheap → Free) sehingga Anda **tidak pernah berhenti coding**
 - 💸 **Hemat 20-40% token** dengan RTK Token Saver terintegrasi

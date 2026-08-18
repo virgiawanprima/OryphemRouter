@@ -3,18 +3,22 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  default: "border border-border-500 text-text-muted bg-surface-2/50",
-  primary: "border border-brand-500/40 text-brand-700 dark:text-brand-300 bg-brand-500/10",
-  success: "border border-green-500/40 text-green-700 dark:text-green-400 bg-green-500/10",
-  warning: "border border-yellow-500/40 text-yellow-700 dark:text-yellow-400 bg-yellow-500/10",
-  error: "border border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
-  info: "border border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10",
+  default: "border border-border text-text-muted",
+  teal: "bg-c-teal-50/10 text-c-teal-800 border border-c-teal-600/30",
+  blue: "bg-c-blue-50/10 text-c-blue-800 border border-c-blue-600/30",
+  amber: "bg-c-amber-50/10 text-c-amber-800 border border-c-amber-600/30",
+  red: "bg-c-red-50/10 text-c-red-800 border border-c-red-600/30",
+  primary: "bg-c-blue-50/10 text-c-blue-800 border border-c-blue-600/30",
+  success: "bg-c-teal-50/10 text-c-teal-800 border border-c-teal-600/30",
+  warning: "bg-c-amber-50/10 text-c-amber-800 border border-c-amber-600/30",
+  error: "bg-c-red-50/10 text-c-red-800 border border-c-red-600/30",
+  info: "bg-c-blue-50/10 text-c-blue-800 border border-c-blue-600/30",
 };
 
 const sizes = {
-  sm: "px-2 py-0.5 text-[10px]",
-  md: "px-2.5 py-1 text-xs",
-  lg: "px-3 py-1.5 text-sm",
+  sm: "px-3 py-1 text-[12px]",
+  md: "px-3 py-1 text-[13px]",
+  lg: "px-4 py-1.5 text-[14px]",
 };
 
 export default function Badge({

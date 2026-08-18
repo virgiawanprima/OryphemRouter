@@ -8,11 +8,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const ACCENT_OPTIONS = [
-  { id: "green", label: "Green", color: "#4CAF50", colors: { "500": "#4CAF50", "700": "#388E3C", "800": "#2E7D32", "600": "#43A047" } },
-  { id: "blue", label: "Blue", color: "#2196F3", colors: { "500": "#2196F3", "700": "#1976D2", "800": "#1565C0", "600": "#1E88E5" } },
-  { id: "cyan", label: "Cyan", color: "#00B4D8", colors: { "500": "#00B4D8", "700": "#0096C7", "800": "#0077B6", "600": "#00A6C8" } },
-  { id: "red", label: "Red", color: "#EF4444", colors: { "500": "#EF4444", "700": "#DC2626", "800": "#B91C1C", "600": "#E53935" } },
-  { id: "emerald", label: "Emerald", color: "#10B981", colors: { "500": "#10B981", "700": "#059669", "800": "#047857", "600": "#059D74" } },
+  { id: "dracula", label: "Dracula", color: "#bd93f9", colors: { "500": "#bd93f9", "700": "#7c54d6", "800": "#5c3ea8", "600": "#9a6ff0" } },
+  { id: "pink", label: "Pink", color: "#ff79c6", colors: { "500": "#ff79c6", "700": "#e060a0", "800": "#c04080", "600": "#ff95d5" } },
+  { id: "cyan", label: "Cyan", color: "#8be9fd", colors: { "500": "#8be9fd", "700": "#5ec8e0", "800": "#3da0c0", "600": "#a0f0ff" } },
+  { id: "green", label: "Green", color: "#50fa7b", colors: { "500": "#50fa7b", "700": "#3ad060", "800": "#28a048", "600": "#6aff95" } },
+  { id: "amber", label: "Amber", color: "#ffb86c", colors: { "500": "#ffb86c", "700": "#e09840", "800": "#c07820", "600": "#ffc888" } },
 ];
 
 export default function UIFx() {
