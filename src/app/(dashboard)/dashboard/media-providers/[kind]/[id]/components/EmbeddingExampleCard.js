@@ -7,17 +7,6 @@ import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import { Row } from "./exampleShared";
 
-const DEFAULT_RESPONSE_EXAMPLE = `{
-  "object": "list",
-  "data": [{
-    "object": "embedding",
-    "index": 0,
-    "embedding": [0.002301, -0.019212, 0.004815, -0.031249, ...]
-  }],
-  "model": "...",
-  "usage": { "prompt_tokens": 9, "total_tokens": 9 }
-}`;
-
 export function EmbeddingExampleCard({ providerId, customAlias }) {
   const isCustom = isCustomEmbeddingProvider(providerId);
   const providerAlias = isCustom ? (customAlias || providerId) : getProviderAlias(providerId);
@@ -89,18 +78,7 @@ export function EmbeddingExampleCard({ providerId, customAlias }) {
     }
   };
 
-  // Compact embedding array: first 4 values + count
-  const formatResultJson = (data) => {
-    if (!data) return DEFAULT_RESPONSE_EXAMPLE;
-    const clone = JSON.parse(JSON.stringify(data));
-    (clone.data || []).forEach((item) => {
-      if (Array.isArray(item.embedding) && item.embedding.length > 4) {
-        item.embedding = [...item.embedding.slice(0, 4).map((v) => parseFloat(v.toFixed(6))), `... (${item.embedding.length} dims)`];
-      }
-    });
-    return JSON.stringify(clone, null, 2);
-  };
-
+  // Raw payload kept only for the explicit Copy action (not shown in the UI)
   const resultJson = result ? JSON.stringify(result.data, null, 2) : "";
 
   return (
@@ -228,7 +206,7 @@ export function EmbeddingExampleCard({ providerId, customAlias }) {
         {/* Error */}
         {error && <p className="text-xs text-red-500 break-words">{error}</p>}
 
-        {/* Response — default example or real result */}
+        {/* Response — formatted result (no raw JSON), default example or real result */}
         <div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-1.5">
             <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
@@ -244,11 +222,49 @@ export function EmbeddingExampleCard({ providerId, customAlias }) {
               </button>
             )}
           </div>
-          <pre className="bg-sidebar rounded-lg px-3 py-2.5 text-xs font-mono text-text-main overflow-x-auto whitespace-pre-wrap break-all opacity-70">
-            {formatResultJson(result?.data)}
-          </pre>
+          {result ? (
+            <EmbeddingResultView data={result.data} />
+          ) : (
+            <p className="bg-sidebar rounded-lg px-3 py-2.5 text-xs text-text-muted">
+              Run the request to see the embedding dimensions and a vector preview.
+            </p>
+          )}
         </div>
       </div>
     </Card>
+  );
+}
+
+// Formatted embedding result — shows model, dimensions, usage and a vector
+// preview as UI chips instead of a raw JSON block.
+function EmbeddingResultView({ data }) {
+  const items = Array.isArray(data?.data) ? data.data : [];
+  const embedding = items[0]?.embedding;
+  const dims = Array.isArray(embedding) ? embedding.length : null;
+  const preview = Array.isArray(embedding) ? embedding.slice(0, 6).map((v) => (typeof v === "number" ? v.toFixed(6) : String(v))) : [];
+  const usage = data?.usage || {};
+  const badge = "px-1.5 py-0.5 rounded bg-bg-subtle border border-border text-[10px] font-medium text-text-muted";
+
+  return (
+    <div className="bg-sidebar rounded-lg px-3 py-3 text-xs">
+      <div className="flex flex-wrap items-center gap-1.5 mb-2">
+        <span className={badge}>{data?.model || "embedding"}</span>
+        {dims != null && <span className={badge}>{dims} dims</span>}
+        {typeof usage.prompt_tokens === "number" && <span className={badge}>{usage.prompt_tokens} prompt tokens</span>}
+        {typeof usage.total_tokens === "number" && <span className={badge}>{usage.total_tokens} total tokens</span>}
+      </div>
+      {preview.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1">
+          {preview.map((v, i) => (
+            <code key={i} className="rounded bg-black/5 px-1.5 py-0.5 font-mono text-[11px] text-text-main dark:bg-white/5">
+              {v}
+            </code>
+          ))}
+          {dims != null && preview.length < dims && (
+            <span className="text-text-muted">… {dims - preview.length} more</span>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

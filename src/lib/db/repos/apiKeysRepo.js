@@ -19,6 +19,18 @@ export async function getApiKeys() {
   return rows.map(rowToKey);
 }
 
+// Collapse duplicate "Default Key" rows (keep the earliest) so exactly one default
+// key exists. Transactional and safe to call on every list to self-heal old state.
+export async function collapseDefaultKeyDuplicates() {
+  const db = await getAdapter();
+  db.transaction(() => {
+    const rows = db.all(`SELECT * FROM apiKeys WHERE name = ? ORDER BY createdAt ASC`, ["Default Key"]);
+    for (const dup of rows.slice(1)) {
+      db.run(`DELETE FROM apiKeys WHERE id = ?`, [dup.id]);
+    }
+  });
+}
+
 export async function getApiKeyById(id) {
   const db = await getAdapter();
   const row = db.get(`SELECT * FROM apiKeys WHERE id = ?`, [id]);
@@ -43,6 +55,38 @@ export async function createApiKey(name, machineId) {
     [apiKey.id, apiKey.key, apiKey.name, apiKey.machineId, 1, apiKey.createdAt]
   );
   return apiKey;
+}
+
+// Idempotent "Default Key" provisioning. Runs inside one synchronous transaction
+// so concurrent auto-provision calls can never create more than one default key.
+// Existing duplicates (from older race bugs) are collapsed to the earliest row.
+export async function getOrCreateDefaultKey(machineId) {
+  if (!machineId) throw new Error("machineId is required");
+  const db = await getAdapter();
+  const { generateApiKeyWithMachine } = await import("@/shared/utils/apiKey");
+  return db.transaction(() => {
+    const rows = db.all(`SELECT * FROM apiKeys WHERE name = ? ORDER BY createdAt ASC`, ["Default Key"]);
+    const keep = rows[0] || null;
+    for (const dup of rows.slice(1)) {
+      db.run(`DELETE FROM apiKeys WHERE id = ?`, [dup.id]);
+    }
+    if (keep) return rowToKey(keep);
+
+    const result = generateApiKeyWithMachine(machineId);
+    const apiKey = {
+      id: uuidv4(),
+      name: "Default Key",
+      key: result.key,
+      machineId,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    };
+    db.run(
+      `INSERT INTO apiKeys(id, key, name, machineId, isActive, createdAt) VALUES(?, ?, ?, ?, ?, ?)`,
+      [apiKey.id, apiKey.key, apiKey.name, apiKey.machineId, 1, apiKey.createdAt]
+    );
+    return apiKey;
+  });
 }
 
 export async function updateApiKey(id, data) {

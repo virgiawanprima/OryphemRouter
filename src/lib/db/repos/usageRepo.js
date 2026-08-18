@@ -734,15 +734,31 @@ export async function getRecentLogs(limit = 200) {
       for (const c of connections) connMap[c.id] = c.name || c.email || "";
     } catch {}
 
+    // Build map of provider ids to display names once
+    const AI_PROVIDERS = await import("@/shared/constants/providers").then(m => m.AI_PROVIDERS);
+    const { findModelName } = await import("@/shared/constants/models");
+
     return rows.map((r) => {
-      const ts = formatLogDate(new Date(r.timestamp));
-      const p = r.provider?.toUpperCase() || "-";
-      const m = r.model || "-";
+      const ts = r.timestamp; // ISO timestamp
+      const provider = AI_PROVIDERS[r.provider]?.name ?? r.provider;
+      // Show the documented model display name when known, fall back to raw id.
+      const rawModel = r.model || "-";
+      const model = findModelName(r.provider, rawModel) || rawModel;
       const account = connMap[r.connectionId] || (r.connectionId ? r.connectionId.slice(0, 8) : "-");
       const tk = r.tokens ? parseJson(r.tokens, {}) : {};
       const sent = r.promptTokens ?? tk.prompt_tokens ?? "-";
       const received = r.completionTokens ?? tk.completion_tokens ?? "-";
-      return `${ts} | ${m} | ${p} | ${account} | ${sent} | ${received} | ${r.status || "-"}`;
+      const statusText = r.status || "-";
+      
+      return {
+        timestamp: ts,
+        model: model,
+        provider: provider,
+        account: account,
+        sent: sent,
+        received: received,
+        status: statusText,
+      };
     });
   } catch (e) {
     console.error("[usageRepo] getRecentLogs failed:", e.message);

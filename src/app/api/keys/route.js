@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { getApiKeys, createApiKey } from "@/lib/localDb";
+import { getApiKeys, collapseDefaultKeyDuplicates, getOrCreateDefaultKey, createApiKey } from "@/lib/localDb";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/keys - List API keys
+// GET /api/keys - List API keys (self-heals duplicate "Default Key" rows)
 export async function GET() {
   try {
+    await collapseDefaultKeyDuplicates();
     const keys = await getApiKeys();
     return NextResponse.json({ keys });
   } catch (error) {
@@ -27,7 +28,10 @@ export async function POST(request) {
 
     // Always get machineId from server
     const machineId = await getConsistentMachineId();
-    const apiKey = await createApiKey(name, machineId);
+    // "Default Key" is the auto-provisioned first key: never more than one.
+    const apiKey = name === "Default Key"
+      ? await getOrCreateDefaultKey(machineId)
+      : await createApiKey(name, machineId);
 
     return NextResponse.json({
       key: apiKey.key,

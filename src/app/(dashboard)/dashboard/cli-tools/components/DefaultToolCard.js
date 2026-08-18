@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card, ModelSelectModal } from "@/shared/components";
+import DraculaCodeBlock from "@/shared/components/DraculaCodeBlock";
 import { getProviderIconSrc, markProviderIconMissing } from "@/shared/utils/providerIcon";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import Image from "next/image";
@@ -198,9 +199,10 @@ export default function DefaultToolCard({ toolId, tool, isExpanded, onToggle, ba
                 {copiedField === "codeblock" ? "Copied!" : "Copy"}
               </button>
             </div>
-            <pre className="p-4 bg-bg-secondary rounded-lg border border-border overflow-x-auto">
-              <code className="text-sm font-mono whitespace-pre">{replaceVars(tool.codeBlock.code)}</code>
-            </pre>
+            <DraculaCodeBlock
+              code={replaceVars(tool.codeBlock.code)}
+              language={tool.codeBlock.language || "json"}
+            />
           </div>
         )}
       </div>

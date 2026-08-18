@@ -518,21 +518,6 @@ export function TtsExampleCard({ providerId }) {
                 </a>
               </div>
               <audio controls src={audioUrl} className="w-full" />
-              
-              {/* JSON Response (if format is json) */}
-              {jsonResponse && (
-                <div className="mt-3">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">JSON Response</span>
-                  </div>
-                  <pre className="bg-sidebar rounded-lg px-3 py-2.5 text-xs font-mono text-text-main overflow-x-auto whitespace-pre-wrap break-all">
-                    {JSON.stringify({
-                      format: jsonResponse.format,
-                      audio: jsonResponse.audio ? `${jsonResponse.audio.substring(0, 100)}...` : ""
-                    }, null, 2)}
-                  </pre>
-                </div>
-              )}
             </div>
           ) : (
             <div>

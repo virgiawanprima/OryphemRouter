@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import PropTypes from "prop-types";
 import Modal from "./Modal";
+import Button from "./Button";
 import ProviderIcon from "./ProviderIcon";
 import CapacityBadges from "./CapacityBadges";
 import { useModelCaps } from "@/shared/hooks/useModelCaps";
@@ -467,12 +468,19 @@ export default function ModelSelectModal({
       title={title}
       size="md"
       className="p-4!"
-      footer={null}
+      footer={closeOnSelect ? null : (
+        <Button
+          onClick={() => { onClose(); setSearchQuery(""); }}
+          size="sm"
+        >
+          Save
+        </Button>
+      )}
     >
       {/* Info bar */}
       <div className="flex items-center gap-2 mb-3 px-2.5 py-2 bg-primary/8 border border-primary/20 rounded-[var(--radius-brand)] text-xs text-text-muted">
         <span className="material-symbols-outlined text-primary shrink-0" style={{ fontSize: "14px" }}>info</span>
-        <span>Click to add, click again to remove. Changes are saved automatically.</span>
+        <span>{closeOnSelect ? "Click to select a model." : "Click to add models, then Save to confirm."}</span>
       </div>
 
       {/* Search - compact */}

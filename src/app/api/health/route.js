@@ -7,7 +7,7 @@ const CORS_HEADERS = {
 };
 
 export async function GET() {
-  return NextResponse.json({ ok: true }, { headers: CORS_HEADERS });
+  return NextResponse.json({ ok: true, uptimeSec: Math.round(process.uptime()) }, { headers: CORS_HEADERS });
 }
 
 export async function OPTIONS() {
