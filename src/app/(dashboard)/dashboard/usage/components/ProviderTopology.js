@@ -23,7 +23,11 @@ const KAME_PARTICLE_COUNT = 6;
 const SPARK_COUNT = 5;
 
 function getProviderConfig(providerId) {
-  return AI_PROVIDERS[providerId] || { color: "#6b7280", name: providerId };
+  const provider = AI_PROVIDERS[providerId] || {};
+  const label = provider.name || providerId;
+  const textIcon = provider.textIcon || "";
+  const color = provider.color || "#6b7280";
+  return { label, textIcon, color };
 }
 
 function getProviderImageUrl(providerId) {
@@ -94,7 +98,7 @@ ProviderNode.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
-// Center oryphemrouter node — pulse/glow on card only (no expanding rings)
+// Center OryphemRouter node, powered state glows only while requests are active
 function RouterNode({ data }) {
   const powering = (data.activeCount || 0) > 0;
   return (
@@ -111,14 +115,21 @@ function RouterNode({ data }) {
       <Handle type="source" position={Position.Right} id="right" className="!bg-transparent !border-0 !w-0 !h-0" />
 
       <img
-        src="/favicon.svg"
-        alt="oryphemrouter"
-        className={`w-6 h-6 mr-2 ${powering ? "topology-router-icon" : ""}`}
+        src="/images/logo-oryphem-hitam.png"
+        alt="OryphemRouter"
+        className={`w-6 h-6 mr-2 object-contain ${powering ? "topology-router-icon" : ""} hidden dark:block`}
+        loading="lazy"
+        decoding="async"
+      />
+      <img
+        src="/images/logo-oryphem-putih.png"
+        alt="OryphemRouter"
+        className={`w-6 h-6 mr-2 object-contain ${powering ? "topology-router-icon" : ""} block dark:hidden`}
         loading="lazy"
         decoding="async"
       />
       <span className={`text-sm font-bold ${powering ? "topology-router-label text-yellow-300" : "text-primary"}`}>
-        oryphemrouter
+        OryphemRouter
       </span>
       {data.activeCount > 0 && (
         <span className="ml-2 px-1.5 py-0.5 rounded-full bg-yellow-400 text-black text-xs font-bold topology-router-badge">

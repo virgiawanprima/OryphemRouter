@@ -23,10 +23,10 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata = {
-  title: "oryphemrouter - AI Infrastructure Management",
+  title: "OryphemRouter",
   description: "One endpoint for all your AI providers. Manage keys, monitor usage, and scale effortlessly.",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/images/logo-oryphem-putih.png",
   },
 };
 
@@ -41,6 +41,12 @@ export default function RootLayout({ children }) {
         <script
           dangerouslySetInnerHTML={{
             __html: `if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){document.documentElement.classList.add('fonts-loaded')})}else{document.documentElement.classList.add('fonts-loaded')}`,
+          }}
+        />
+        {/* Apply persisted theme before hydration to avoid flash; default dark */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var raw=localStorage.getItem('theme');var t=raw?((JSON.parse(raw).state||{}).theme||'dark'):'dark';var dark=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);}catch(e){document.documentElement.classList.add('dark')}})()`,
           }}
         />
       </head>

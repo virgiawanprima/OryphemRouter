@@ -109,8 +109,15 @@ const getPageInfo = (pathname) => {
   if (pathname.includes("/mitm"))
     return {
       title: "MITM Proxy",
-      description: "Intercept CLI tool traffic and route through oryphemrouter",
+      description: "Intercept CLI tool traffic and route through OryphemRouter",
       icon: "security",
+      breadcrumbs: [],
+    };
+  if (pathname.includes("/free-tiers"))
+    return {
+      title: "Free Tiers",
+      description: "Track your free-tier budget and usage",
+      icon: "local_atm",
       breadcrumbs: [],
     };
   if (pathname.includes("/token-saver"))
@@ -137,7 +144,7 @@ const getPageInfo = (pathname) => {
   if (pathname.includes("/skills"))
     return {
       title: "Agent Skills",
-      description: "Copy a link and paste to your AI to use oryphemrouter, no install needed",
+      description: "Copy a link and paste to your AI to use OryphemRouter, no install needed",
       icon: "extension",
       breadcrumbs: [],
     };
@@ -171,9 +178,9 @@ const getPageInfo = (pathname) => {
     };
   if (pathname === "/dashboard")
     return {
-      title: "Endpoint",
-      description: "API endpoint configuration",
-      icon: "api",
+      title: "Overview",
+      description: "AI Router Cockpit: real-time provider & usage monitoring",
+      icon: "space_dashboard",
       breadcrumbs: [],
     };
   return { title: "", description: "", breadcrumbs: [] };
@@ -272,7 +279,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
                         fallbackText={crumb.label.slice(0, 2).toUpperCase()}
                       />
                     )}
-                    <h1 className="text-base lg:text-2xl font-semibold text-text-main tracking-tight truncate">
+                    <h1 className="text-[22px] font-medium text-text-main tracking-tight truncate">
                       {translate(crumb.label)}
                     </h1>
                   </div>
@@ -288,7 +295,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
                   {icon}
                 </span>
               )}
-              <h1 className="text-base lg:text-2xl font-semibold tracking-tight truncate">
+              <h1 className="text-[22px] font-medium tracking-tight truncate">
                 {translate(title)}
               </h1>
             </div>

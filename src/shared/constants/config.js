@@ -2,7 +2,7 @@ import pkg from "../../../package.json" with { type: "json" };
 
 // App configuration
 export const APP_CONFIG = {
-  name: "oryphemrouter Proxy",
+  name: "OryphemRouter",
   description: "AI Infrastructure Management",
   version: pkg.version,
 };
@@ -35,7 +35,7 @@ export const UPDATER_CONFIG = {
 // Theme configuration
 export const THEME_CONFIG = {
   storageKey: "theme",
-  defaultTheme: "system", // "light" | "dark" | "system"
+  defaultTheme: "dark", // "light" | "dark" | "system" — terminal defaults to dark
 };
 
 // Subscription

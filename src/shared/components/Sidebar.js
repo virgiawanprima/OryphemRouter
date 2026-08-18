@@ -6,53 +6,70 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/utils/cn";
 import { APP_CONFIG, UPDATER_CONFIG } from "@/shared/constants/config";
-import { MEDIA_PROVIDER_KINDS } from "@/shared/constants/providers";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import Button from "./Button";
 import { ConfirmModal } from "./Modal";
-import NineRemotePromoModal from "./NineRemotePromoModal";
+import RemotePromoModal from "./RemotePromoModal";
 
-// const VISIBLE_MEDIA_KINDS = ["embedding", "image", "imageToText", "tts", "stt", "webSearch", "webFetch", "video", "music"];
-const VISIBLE_MEDIA_KINDS = ["embedding", "image", "video", "tts", "stt"];
-// Combined entry: webSearch + webFetch share one page at /dashboard/media-providers/web
-const COMBINED_WEB_ITEM = { id: "web", label: "Web Fetch & Search", icon: "travel_explore", href: "/dashboard/media-providers/web" };
 
 const navItems = [
+  { href: "/dashboard", label: "Overview", icon: "space_dashboard" },
   { href: "/dashboard/endpoint", label: "Endpoint & Key", icon: "api" },
   { href: "/dashboard/providers", label: "Providers", icon: "dns" },
-  // { href: "/dashboard/basic-chat", label: "Basic Chat", icon: "chat" }, // Hidden
   { href: "/dashboard/combos", label: "Combo & Vision Adapter", icon: "layers" },
   { href: "/dashboard/usage", label: "Usage", icon: "bar_chart" },
   { href: "/dashboard/quota", label: "Quota Tracker", icon: "data_usage" },
-  { href: "/dashboard/free-tiers", label: "Free Tiers", icon: "local_atm" },
   { href: "/dashboard/token-saver", label: "Token Saver", icon: "savings" },
-  // { href: "/dashboard/pxpipe", label: "PXPIPE", icon: "image" },
   { href: "/dashboard/cli-tools", label: "CLI Tools", icon: "terminal" },
-];
-
-const debugItems = [
-  { href: "/dashboard/console-log", label: "Console Log", icon: "terminal" },
-  { href: "/dashboard/translator", label: "Translator", icon: "translate" },
 ];
 
 const systemItems = [
   { href: "/dashboard/proxy-pools", label: "Proxy Pools", icon: "lan" },
   { href: "/dashboard/skills", label: "Skills", icon: "extension" },
+  { href: "/dashboard/console-log", label: "Console Log", icon: "terminal" },
+  { href: "/dashboard/profile", label: "Settings", icon: "settings" },
+];
+
+const MEDIA_SUBITEMS = [
+  { href: "/dashboard/media-providers/embedding", label: "Embedding", icon: "data_array" },
+  { href: "/dashboard/media-providers/image", label: "Text to Image", icon: "brush" },
+  { href: "/dashboard/media-providers/tts", label: "Text To Speech", icon: "record_voice_over" },
+  { href: "/dashboard/media-providers/stt", label: "Speech To Text", icon: "mic" },
+  { href: "/dashboard/media-providers/video", label: "Video", icon: "movie" },
+  { href: "/dashboard/media-providers/web", label: "Web Fetch & Search", icon: "travel_explore" },
 ];
 
 export default function Sidebar({ onClose }) {
   const pathname = usePathname();
-  const [mediaOpen, setMediaOpen] = useState(false);
   const [showRemoteModal, setShowRemoteModal] = useState(false);
+  const [mediaOpen, setMediaOpen] = useState(false);
   const [isDisconnected, setIsDisconnected] = useState(false);
   const [updateInfo, setUpdateInfo] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [shutdownCountdown, setShutdownCountdown] = useState(0);
   const [enableTranslator, setEnableTranslator] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { copied, copy } = useCopyToClipboard(2000);
 
   const INSTALL_CMD = UPDATER_CONFIG.installCmdLatest;
+
+  // Restore collapse preference
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem("oryphem:sidebar") === "collapsed");
+    } catch { /* ignore */ }
+  }, []);
+
+  const toggleCollapse = () => {
+    setCollapsed((v) => {
+      const next = !v;
+      try {
+        localStorage.setItem("oryphem:sidebar", next ? "collapsed" : "expanded");
+      } catch { /* ignore */ }
+      return next;
+    });
+  };
 
   useEffect(() => {
     fetch("/api/settings")
@@ -70,8 +87,11 @@ export default function Sidebar({ onClose }) {
   }, []);
 
   const isActive = (href) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
+    }
     if (href === "/dashboard/endpoint") {
-      return pathname === "/dashboard" || pathname.startsWith("/dashboard/endpoint");
+      return pathname.startsWith("/dashboard/endpoint");
     }
     return pathname.startsWith(href);
   };
@@ -110,28 +130,53 @@ export default function Sidebar({ onClose }) {
 
   return (
     <>
-      <aside className="flex w-72 flex-col border-r border-border-subtle bg-vibrancy backdrop-blur-xl transition-colors duration-300 min-h-full">
-        {/* Traffic lights */}
-        <div className="flex items-center gap-2 px-6 pt-5 pb-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-          <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+      <aside className={`flex flex-col border-r border-border-subtle bg-vibrancy backdrop-blur-xl transition-all duration-200 min-h-full ${collapsed ? "w-[68px]" : "w-64"}`}>
+        {/* Traffic lights + collapse toggle */}
+        <div className={`flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-4"} pt-4 pb-2`}>
+          {!collapsed && (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+              <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+              <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+            </div>
+          )}
+          <button
+            onClick={toggleCollapse}
+            className="text-text-subtle hover:text-text-main transition-colors p-0.5"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              {collapsed ? "keyboard_double_arrow_right" : "keyboard_double_arrow_left"}
+            </span>
+          </button>
         </div>
 
         {/* Logo */}
-        <div className="px-6 py-4 flex flex-col gap-2">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="flex items-center justify-center size-9 rounded-[var(--radius-brand)] bg-gradient-to-br from-brand-800 to-brand-500 shadow-[var(--shadow-warm)]">
-              <span className="material-symbols-outlined text-white text-[20px]">hub</span>
+        <div className={`px-4 py-4 flex flex-col gap-2 ${collapsed ? "items-center" : ""}`}>
+          <Link href="/dashboard" className={`flex items-center gap-3 group ${collapsed ? "justify-center" : ""}`}>
+            <div className="flex items-center justify-center size-9 shrink-0">
+              <img
+                src="/images/logo-oryphem-putih.png"
+                alt="OryphemRouter"
+                className="hidden dark:block size-9 object-contain"
+              />
+              <img
+                src="/images/logo-oryphem-hitam.png"
+                alt="OryphemRouter"
+                className="block dark:hidden size-9 object-contain"
+              />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-lg font-semibold tracking-tight text-text-main">
-                {APP_CONFIG.name}
-              </h1>
-              <span className="text-xs text-text-muted">v{APP_CONFIG.version}</span>
-            </div>
+            {!collapsed && (
+              <div className="flex flex-col">
+                <span className="text-base font-medium tracking-tight text-text-main">
+                  {APP_CONFIG.name}
+                </span>
+                <span className="text-[13px] text-text-muted">v{APP_CONFIG.version}</span>
+              </div>
+            )}
           </Link>
-          {updateInfo && (
+          {updateInfo && !collapsed && (
             <div className="flex flex-col gap-1.5 -m-1">
               <span className="text-xs font-semibold text-green-600 dark:text-amber-500">
                 ↑ New version available: v{updateInfo.latestVersion}
@@ -158,199 +203,107 @@ export default function Sidebar({ onClose }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
           {navItems.map((item) => (
-            <Link
+            <NavLink
               key={item.href}
               href={item.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group",
-                isActive(item.href)
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span
-                className={cn(
-                  "material-symbols-outlined text-[18px]",
-                  isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                )}
-              >
-                {item.icon}
-              </span>
-              <span className="text-[13px] font-medium">{item.label}</span>
-            </Link>
+              icon={item.icon}
+              label={item.label}
+              active={isActive(item.href)}
+              collapsed={collapsed}
+              onNavigate={onClose}
+            />
           ))}
 
           {/* System section */}
           <div className="pt-3 mt-2 space-y-0.5">
-            <p className="px-4 text-xs font-semibold text-text-muted/60 uppercase tracking-wider mb-2">
-              System
-            </p>
+            {!collapsed && (
+              <p className="px-4 text-[13px] text-text-muted mb-2">
+                System
+              </p>
+            )}
 
-            {/* Media Providers accordion */}
+            {/* Media Providers collapsible group */}
             <button
               onClick={() => setMediaOpen((v) => !v)}
+              title={collapsed ? "Media Providers" : undefined}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group",
+                "relative w-full flex items-center gap-3 px-3 py-2 rounded-[8px] transition-colors group",
+                collapsed && "justify-center px-0",
                 pathname.startsWith("/dashboard/media-providers")
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-c-blue-50/10 text-c-blue-600"
                   : "text-text-muted hover:bg-surface-2 hover:text-text-main"
               )}
             >
-              <span className="material-symbols-outlined text-[18px]">perm_media</span>
-              <span className="text-[13px] font-medium flex-1 text-left">Media Providers</span>
-              <span className="material-symbols-outlined text-[14px] transition-transform" style={{ transform: mediaOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
-                expand_more
-              </span>
+              {pathname.startsWith("/dashboard/media-providers") && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-c-blue-600" />
+              )}
+              <span className="material-symbols-outlined text-[18px] shrink-0">perm_media</span>
+              {!collapsed && (
+                <>
+                  <span className="text-[14px] flex-1 text-left">Media Providers</span>
+                  <span className="material-symbols-outlined text-[16px]" style={{ transform: mediaOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+                    expand_more
+                  </span>
+                </>
+              )}
             </button>
-            {mediaOpen && (
-              <div className="pl-4">
-                {MEDIA_PROVIDER_KINDS.filter((k) => VISIBLE_MEDIA_KINDS.includes(k.id)).map((kind) => (
-                  <Link
-                    key={kind.id}
-                    href={`/dashboard/media-providers/${kind.id}`}
-                    onClick={onClose}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-1.5 rounded-[var(--radius-brand)] transition-all group",
-                      pathname.startsWith(`/dashboard/media-providers/${kind.id}`)
-                        ? "bg-primary/10 text-primary"
-                        : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                    )}
-                  >
-                    <span className="material-symbols-outlined text-[16px]">{kind.icon}</span>
-                    <span className="text-sm">{kind.label}</span>
-                  </Link>
+            {mediaOpen && !collapsed && (
+              <div className="pl-3 space-y-0.5">
+                {MEDIA_SUBITEMS.map((sub) => (
+                  <NavLink
+                    key={sub.href}
+                    href={sub.href}
+                    icon={sub.icon}
+                    label={sub.label}
+                    active={pathname.startsWith(sub.href)}
+                    collapsed={false}
+                    small
+                    onNavigate={onClose}
+                  />
                 ))}
-                <Link
-                  key={COMBINED_WEB_ITEM.id}
-                  href={COMBINED_WEB_ITEM.href}
-                  onClick={onClose}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-1.5 rounded-[var(--radius-brand)] transition-all group",
-                    pathname.startsWith(COMBINED_WEB_ITEM.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                  )}
-                >
-                  <span className="material-symbols-outlined text-[16px]">{COMBINED_WEB_ITEM.icon}</span>
-                  <span className="text-sm">{COMBINED_WEB_ITEM.label}</span>
-                </Link>
               </div>
             )}
 
             {systemItems.map((item) => (
-              <Link
+              <NavLink
                 key={item.href}
                 href={item.href}
-                onClick={onClose}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group",
-                  isActive(item.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                )}
-              >
-                <span
-                  className={cn(
-                    "material-symbols-outlined text-[18px]",
-                    isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                  )}
-                >
-                  {item.icon}
-                </span>
-                <span className="text-[13px] font-medium">{item.label}</span>
-              </Link>
+                icon={item.icon}
+                label={item.label}
+                active={isActive(item.href)}
+                collapsed={collapsed}
+                onNavigate={onClose}
+              />
             ))}
 
-            {/* Debug items (inside System section, before Settings) */}
-            {debugItems.map((item) => {
-              const show = item.href !== "/dashboard/translator" || enableTranslator;
-              return show ? (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group",
-                    isActive(item.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "material-symbols-outlined text-[18px]",
-                      isActive(item.href) ? "fill-1" : "group-hover:text-primary transition-colors"
-                    )}
-                  >
-                    {item.icon}
-                  </span>
-                  <span className="text-[13px] font-medium">{item.label}</span>
-                </Link>
-              ) : null;
-            })}
-
-            {/* Remote */}
+            {/* Remote promo */}
             <button
               onClick={() => setShowRemoteModal(true)}
+              title={collapsed ? "Remote" : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group w-full",
+                "relative w-full flex items-center gap-3 px-3 py-2 rounded-[8px] transition-colors group",
+                collapsed && "justify-center px-0",
                 "text-text-muted hover:bg-surface-2 hover:text-text-main"
               )}
             >
-              <span className="material-symbols-outlined text-[18px] group-hover:text-primary transition-colors">
-                computer
-              </span>
-              <span className="text-[13px] font-medium">9Remote</span>
+              <span className="material-symbols-outlined text-[18px] shrink-0">computer</span>
+              {!collapsed && <span className="text-[14px]">Remote</span>}
             </button>
 
-            {/* 9English */}
-            <a
-              href="https://9english.net/"
-              target="_blank"
-              rel="noreferrer"
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group w-full",
-                "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span className="material-symbols-outlined text-[18px] group-hover:text-primary transition-colors">
-                translate
-              </span>
-              <span className="text-[13px] font-medium">9English</span>
-            </a>
+            </div>
 
-            {/* Settings */}
-            <Link
-              href="/dashboard/profile"
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-1.5 rounded-[var(--radius-brand)] transition-all group",
-                isActive("/dashboard/profile")
-                  ? "bg-primary/10 text-primary"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
-              )}
-            >
-              <span
-                className={cn(
-                  "material-symbols-outlined text-[18px]",
-                  isActive("/dashboard/profile") ? "fill-1" : "group-hover:text-primary transition-colors"
-                )}
-              >
-                settings
-              </span>
-              <span className="text-[13px] font-medium">Settings</span>
-            </Link>
+          {/* Bottom: language + theme toggles */}
+          <div className="mt-auto pt-3 border-t border-border-subtle px-3">
           </div>
         </nav>
 
       </aside>
 
       {/* Remote Promo Modal */}
-      <NineRemotePromoModal isOpen={showRemoteModal} onClose={() => setShowRemoteModal(false)} />
+      <RemotePromoModal isOpen={showRemoteModal} onClose={() => setShowRemoteModal(false)} />
+
 
       {/* Update Confirmation Modal */}
       <ConfirmModal
@@ -395,6 +348,52 @@ export default function Sidebar({ onClose }) {
   );
 }
 
+function NavLink({ href, icon, label, active, collapsed, small, onNavigate }) {
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      title={collapsed ? label : undefined}
+      className={cn(
+        "relative flex items-center gap-3 px-3 py-2 rounded-[8px] transition-colors group",
+        collapsed && "justify-center px-0",
+        small && "px-4",
+        active
+          ? "bg-c-blue-50/10 text-c-blue-600"
+          : "text-text-muted hover:bg-surface-2 hover:text-text-main"
+      )}
+    >
+      {/* Left accent bar for active item */}
+      {active && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-c-blue-600" />
+      )}
+      <span
+        className={cn(
+          "material-symbols-outlined shrink-0",
+          small ? "text-[16px]" : "text-[18px]"
+        )}
+      >
+        {icon}
+      </span>
+      {!collapsed && (
+        <span className={cn("text-[14px]", small ? "text-[13px]" : "")}>
+          {label}
+        </span>
+      )}
+    </Link>
+  );
+}
+
+NavLink.propTypes = {
+  href: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  active: PropTypes.bool,
+  collapsed: PropTypes.bool,
+  small: PropTypes.bool,
+  onNavigate: PropTypes.func,
+};
+
 Sidebar.propTypes = {
   onClose: PropTypes.func,
 };
@@ -408,7 +407,7 @@ function ManualUpdatePanel({ latestVersion, installCmd, copied, onCopyAndShutdow
           <span className="material-symbols-outlined text-[24px]">content_copy</span>
         </div>
         <div>
-          <h2 className="text-lg font-semibold">Update oryphemrouter{latestVersion ? ` to v${latestVersion}` : ""}</h2>
+          <h2 className="text-lg font-semibold">Update OryphemRouter{latestVersion ? ` to v${latestVersion}` : ""}</h2>
           <p className="text-xs text-white/60">
             {isDisconnected
               ? "Server stopped. Paste the command into a terminal to install."
