@@ -16,15 +16,15 @@ test.describe(`Media Providers — ${TITLE}`, () => {
 
   test("sidebar media group expands to submenu", async ({ page }) => {
     await login(page);
-    await page.getByRole("button", { name: /Media Providers/ }).click();
-    await expect(page.getByRole("link", { name: new RegExp(TITLE) })).toBeVisible();
+    await page.getByRole("button", { name: /Media Providers/ }).first().click();
+    await expect(page.getByRole("link", { name: new RegExp(TITLE) }).first()).toBeVisible();
   });
 
   test("SPA navigation without full reload", async ({ page }) => {
     await login(page);
     await page.evaluate(() => { (window as any).__marker = 1; });
-    await page.getByRole("button", { name: /Media Providers/ }).click();
-    await page.getByRole("link", { name: new RegExp(TITLE) }).click();
+    await page.getByRole("button", { name: /Media Providers/ }).first().click();
+    await page.getByRole("link", { name: new RegExp(TITLE) }).first().click();
     await page.waitForURL(new RegExp(`/dashboard/media-providers/${KIND}`));
     expect(await page.evaluate(() => (window as any).__marker)).toBe(1);
   });
