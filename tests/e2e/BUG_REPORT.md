@@ -1,7 +1,7 @@
 # Bug Hunting Report — OryphemRouter Codebase Analysis
 
 **Date:** 2026-08-19  
-**Scope:** Full codebase review + systematic bug hunt using `systematic-debugging` & `antislop` skills
+**Scope:** Full codebase review + systematic bug hunt using `systematic-debugging` skills
 
 ---
 
