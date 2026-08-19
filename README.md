@@ -595,9 +595,10 @@ Contributions are welcome! Here's how:
 1. 🍴 **Fork** the repository on [GitHub](https://github.com/virgiawanprima/OryphemRouter)
 2. 🌿 **Create a branch**: `git checkout -b feat/your-feature`
 3. ✍️ **Make your changes** (see the [Contributing Guide](./CONTRIBUTING.md))
-4. ✅ **Test**: `npx vitest --config tests/vitest.config.js tests/unit/`
-5. 📦 **Build**: `npm run build`
-6. 🔀 **Submit a Pull Request**
+4. ✅ **Test** (unit): `npx vitest --config tests/vitest.config.js tests/unit/`
+5. ✅ **Test** (E2E): `npx playwright test tests/e2e/` (start the server first: `npm run dev` on port 20129)
+6. 📦 **Build**: `npm run build`
+7. 🔀 **Submit a Pull Request**
 
 **Atomic & Conventional commits** required: `feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`.
 
