@@ -8,6 +8,7 @@ const variants = {
   ghost: "text-text-muted hover:bg-surface-2 hover:text-text-main disabled:text-text-muted",
   danger: "border border-c-red-600/40 text-c-red-600 bg-c-red-50/10 hover:bg-c-red-600 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
   success: "border border-c-teal-600/40 text-c-teal-600 bg-c-teal-50/10 hover:bg-c-teal-600 hover:text-white disabled:bg-surface-3 disabled:text-text-muted",
+  outline: "border border-border text-text-main bg-transparent hover:border-c-blue-600/40 hover:text-text-main disabled:bg-surface-3 disabled:text-text-muted",
 };
 
 const sizes = {

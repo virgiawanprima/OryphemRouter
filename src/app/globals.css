@@ -33,9 +33,13 @@
   --color-sidebar: rgba(33, 34, 44, 0.94);
   --color-border: #44475a; --color-border-500: #44475a; --color-border-subtle: #383a49;
   --color-text: #f8f8f2; --color-text-main: #f8f8f2;
-  --color-text-muted: #6272a4; --color-text-subtle: #555a75;
+  --color-text-muted: #a8adc4; --color-text-subtle: #8b91ab;
   --color-danger: var(--c-red-600); --color-success: var(--c-teal-600);
   --color-warning: var(--c-amber-600); --color-info: var(--c-cyan);
+
+  --color-bg-subtle: #2c2e3a; --color-bg-secondary: #2c2e3a;
+  --color-bg-tertiary: #343746; --color-bg-hover: #343746;
+  --color-input: #2c2e3a;
 
   --radius-brand: 12px; --radius-brand-lg: 12px;
   --shadow-sm: none; --shadow-soft: none; --shadow-md: none; --shadow-warm: none;
@@ -154,6 +158,11 @@ html:not(.dark) {
   --color-text-main: var(--color-text-main);
   --color-text-muted: var(--color-text-muted);
   --color-text-subtle: var(--color-text-subtle);
+  --color-bg-subtle: var(--color-bg-subtle);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+  --color-bg-hover: var(--color-bg-hover);
+  --color-input: var(--color-input);
   --color-accent: var(--color-brand-500);
   --color-danger: var(--color-danger);
   --color-success: var(--color-success);
@@ -702,6 +711,15 @@ body.cursor-link #cursor-ring { width: 54px; height: 54px; border-color: var(--c
 .status-bar .status-error { color: var(--c-red-600); }
 .status-bar .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 .status-bar .status-dot-live { background: var(--c-teal-600); }
+
+/* Respect reduced motion preference — stop constant animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 /* ---- Landing blob animation ---- */
 @keyframes blob {
