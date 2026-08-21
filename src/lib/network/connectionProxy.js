@@ -6,6 +6,17 @@ function normalizeString(value) {
   return String(value).trim();
 }
 
+// Validate a proxy URL scheme — only http/https/socks5 allowed.
+function isValidProxyUrl(raw) {
+  if (!raw) return false;
+  try {
+    const u = new URL(raw);
+    return ["http:", "https:", "socks5:", "socks5h:"].includes(u.protocol);
+  } catch {
+    return false;
+  }
+}
+
 // ─── Proxy pool rotation state (in-memory) ─────────────────────────
 const rotateState = new Map(); // providerId → { index }
 
@@ -91,7 +102,8 @@ export async function resolveConnectionProxyConfig(
       const isValidPool =
         proxyPool &&
         proxyPool.isActive === true &&
-        proxyUrl;
+        proxyUrl &&
+        isValidProxyUrl(proxyUrl);
 
       if (isValidPool) {
         /**
