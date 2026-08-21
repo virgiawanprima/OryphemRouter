@@ -131,7 +131,15 @@ export async function handleVideoCreate(request, action) {
       return errorResponse(lastStatus || HTTP_STATUS.SERVICE_UNAVAILABLE, lastError || "All accounts unavailable");
     }
 
-    const refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+    let refreshedCredentials;
+      try {
+        refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+      } catch (refreshErr) {
+        excludeConnectionIds.add(credentials.connectionId);
+        lastError = refreshErr?.message || "Token refresh failed";
+        lastStatus = HTTP_STATUS.UNAUTHORIZED;
+        continue;
+      }
 
     const result = await handleVideoProxyCore({
       provider,
