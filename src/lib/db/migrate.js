@@ -92,11 +92,25 @@ function syncSchemaFromTables(adapter) {
           .replace(/PRIMARY KEY( AUTOINCREMENT)?/i, "")
           .replace(/UNIQUE/i, "")
           .trim();
-        try {
-          adapter.exec(`ALTER TABLE ${tableName} ADD COLUMN ${colName} ${safeDef}`);
-          console.log(`[DB][sync] +column ${tableName}.${colName}`);
-        } catch (e) {
-          console.warn(`[DB][sync] add column ${tableName}.${colName} failed: ${e.message}`);
+        // SQLite ADD COLUMN with NOT NULL requires a non-NULL DEFAULT;
+        // synthesize one based on the column type if missing.
+        if (/\bNOT\s+NULL\b/i.test(safeDef) && !/\bDEFAULT\b/i.test(safeDef)) {
+          const typeHint = colDef.match(/(\w+)/)?.[1]?.toUpperCase() || "TEXT";
+          const defaultVal = typeHint.includes("INT") ? "0" : typeHint.includes("REAL") ? "0.0" : "''";
+          const withDefault = safeDef.replace(/\bNOT\s+NULL\b/i, `NOT NULL DEFAULT ${defaultVal}`);
+          try {
+            adapter.exec(`ALTER TABLE ${tableName} ADD COLUMN ${colName} ${withDefault}`);
+            console.log(`[DB][sync] +column ${tableName}.${colName}`);
+          } catch (e) {
+            console.warn(`[DB][sync] add column ${tableName}.${colName} failed: ${e.message}`);
+          }
+        } else {
+          try {
+            adapter.exec(`ALTER TABLE ${tableName} ADD COLUMN ${colName} ${safeDef}`);
+            console.log(`[DB][sync] +column ${tableName}.${colName}`);
+          } catch (e) {
+            console.warn(`[DB][sync] add column ${tableName}.${colName} failed: ${e.message}`);
+          }
         }
       }
     }
