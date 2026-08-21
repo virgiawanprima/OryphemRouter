@@ -6,7 +6,11 @@ const PID_FILE = path.join(TUNNEL_DIR, "cloudflared.pid");
 
 export function savePid(pid) {
   ensureTunnelDir();
-  fs.writeFileSync(PID_FILE, pid.toString());
+  // Atomic write: write to temp then rename so concurrent spawns don't
+  // see a half-written PID file.
+  const tmp = PID_FILE + ".tmp";
+  fs.writeFileSync(tmp, pid.toString());
+  fs.renameSync(tmp, PID_FILE);
 }
 
 export function loadPid() {
