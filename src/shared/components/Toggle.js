@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/shared/utils/cn";
+import { useId } from "react";
 
 export default function Toggle({
   checked = false,
@@ -10,7 +11,11 @@ export default function Toggle({
   disabled = false,
   size = "md",
   className,
+  ...props
 }) {
+  const id = useId();
+  const labelId = `${id}-label`;
+
   const sizes = {
     sm: { track: "w-8 h-4", thumb: "size-3", translate: "translate-x-4" },
     md: { track: "w-11 h-6", thumb: "size-5", translate: "translate-x-5" },
@@ -33,6 +38,8 @@ export default function Toggle({
         type="button"
         role="switch"
         aria-checked={checked}
+        aria-labelledby={label ? labelId : undefined}
+        aria-label={!label ? props["aria-label"] : undefined}
         disabled={disabled}
         onClick={handleClick}
         className={cn(
@@ -43,6 +50,7 @@ export default function Toggle({
           sizes[size].track,
           disabled && "cursor-not-allowed"
         )}
+        {...props}
       >
         <span
           className={cn(
@@ -57,7 +65,7 @@ export default function Toggle({
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
-            <span className="text-sm font-medium text-text-main">{label}</span>
+            <span id={labelId} className="text-sm font-medium text-text-main">{label}</span>
           )}
           {description && (
             <span className="text-xs text-text-muted">{description}</span>
