@@ -73,8 +73,9 @@ export function getSamlBaseUrl(request, settings) {
   }
 
   if (request) {
-    const forwardedProto = request?.headers?.get?.("x-forwarded-proto") || "";
-    const forwardedHost = request?.headers?.get?.("x-forwarded-host") || "";
+    const trustForwarded = process.env.TRUST_PROXY === "true" || hasTrustedPeerHeaders(request);
+    const forwardedProto = trustForwarded ? (request?.headers?.get?.("x-forwarded-proto") || "") : "";
+    const forwardedHost = trustForwarded ? (request?.headers?.get?.("x-forwarded-host") || "") : "";
     const host = forwardedHost || request?.headers?.get?.("host") || "";
     if (host) {
       const protocol = (forwardedProto || new URL(request.url).protocol || "http:").replace(/:$/, "");
@@ -99,8 +100,9 @@ export function createSamlInstance(settings, origin) {
     callbackUrl: callbackUrl,
     acceptedClockSkewMs: 60000,
     wantAssertionsSigned: true,
-    validateInResponseTo: "never",
-    requestIdExpirationMs: 28800000, // 8 hours
+    wantResponseSigned: true,
+    validateInResponseTo: "always",
+    requestIdExpirationMs: 900000, // 15 minutes
   });
 }
 
