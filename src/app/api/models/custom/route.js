@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getCustomModels, addCustomModel, deleteCustomModel } from "@/models";
 
@@ -17,7 +18,7 @@ export async function GET() {
 // POST /api/models/custom - Add custom model
 export async function POST(request) {
   try {
-    const { providerAlias, id, type, name } = await request.json();
+    const { providerAlias, id, type, name } = await parseJson(request);
     if (!providerAlias || !id) {
       return NextResponse.json({ error: "providerAlias and id required" }, { status: 400 });
     }

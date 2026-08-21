@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { parseJson } from "@/lib/utils/parseJson";
 import { exportDb, getSettings, importDb } from "@/lib/localDb";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
 import { verifyDashboardPassword } from "@/lib/auth/dashboardSession";
@@ -26,7 +26,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const { password, ...payload } = await request.json();
+    const { password, ...payload } = await parseJson(request);
     if (!isCliRequest(request) && !(await verifyDashboardPassword(password))) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }

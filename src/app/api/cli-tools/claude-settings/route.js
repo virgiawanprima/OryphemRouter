@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -123,7 +124,7 @@ export async function GET() {
 // POST - Backup old fields and write new settings
 export async function POST(request) {
   try {
-    const { env, exaMcpEnabled, maxContextTokens } = await request.json();
+    const { env, exaMcpEnabled, maxContextTokens } = await parseJson(request);
     
     if (!env || typeof env !== "object") {
       return NextResponse.json(

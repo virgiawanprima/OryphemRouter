@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getSettings } from "@/lib/localDb";
@@ -19,7 +20,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json().catch(() => ({}));
+    const body = await parseJson(request).catch(() => ({}));
     const settings = await getSettings();
 
     const samlEntryPoint = String(body.samlEntryPoint || settings.samlEntryPoint || "").trim();

@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProxyPool, getProviderConnections, getProxyPools } from "@/models";
 
@@ -77,7 +78,7 @@ export async function GET(request) {
 // POST /api/proxy-pools - Create proxy pool
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const normalized = normalizeProxyPoolInput(body);
 
     if (normalized.error) {

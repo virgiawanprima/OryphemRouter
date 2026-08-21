@@ -1,10 +1,11 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { LOCALE_COOKIE, normalizeLocale, isSupportedLocale } from "@/i18n/config";
 
 export async function POST(request) {
   try {
-    const { locale } = await request.json();
+    const { locale } = await parseJson(request);
     
     if (!locale || !isSupportedLocale(locale)) {
       return NextResponse.json(

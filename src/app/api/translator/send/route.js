@@ -1,4 +1,4 @@
-import { getProviderConnections, updateProviderConnection } from "@/lib/localDb.js";
+import { parseJson } from "@/lib/utils/parseJson";
 import { getExecutor } from "open-sse/index.js";
 
 async function persistRefreshedCredentials(connection, newCredentials) {
@@ -34,7 +34,7 @@ async function persistRefreshedCredentials(connection, newCredentials) {
 
 export async function POST(request) {
   try {
-    const { provider, model, body } = await request.json();
+    const { provider, model, body } = await parseJson(request);
 
     if (!provider || !model || !body) {
       return Response.json({ success: false, error: "provider, model, and body required" }, { status: 400 });

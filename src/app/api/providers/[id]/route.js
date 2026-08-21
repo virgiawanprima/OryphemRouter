@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import {
   getProviderConnectionById,
@@ -87,7 +88,7 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     const { id } = await params;
-    const body = await request.json();
+    const body = await parseJson(request);
     const {
       name,
       priority,

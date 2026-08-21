@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -90,7 +91,7 @@ export async function GET() {
 // POST - Apply oryphemrouter as openai-compatible provider (multi-model support)
 export async function POST(request) {
   try {
-    const { baseUrl, apiKey, model, models, activeModel, subagentModel } = await request.json();
+    const { baseUrl, apiKey, model, models, activeModel, subagentModel } = await parseJson(request);
 
     // Accept either `model` (string, legacy) or `models` (array of strings)
     const modelsArray = Array.isArray(models) ? models.slice() : (typeof model === "string" ? [model] : []);
@@ -175,7 +176,7 @@ export async function POST(request) {
 // PATCH - Update specific settings (e.g., clear active model)
 export async function PATCH(request) {
   try {
-    const { clearActiveModel } = await request.json();
+    const { clearActiveModel } = await parseJson(request);
     const configPath = getConfigPath();
 
     let config = {};

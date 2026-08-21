@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -98,7 +99,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { baseUrl, apiKey, model, contextWindow, subagentModels } = await request.json();
+    const { baseUrl, apiKey, model, contextWindow, subagentModels } = await parseJson(request);
     const selectedModel = typeof model === "string" ? model.trim() : "";
     if (!baseUrl || !selectedModel) {
       return NextResponse.json({ error: "baseUrl and model are required" }, { status: 400 });

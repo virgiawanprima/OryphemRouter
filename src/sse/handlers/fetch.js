@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import {
   getProviderCredentials,
   markAccountUnavailable,
@@ -24,7 +25,7 @@ import { assertPublicUrl } from "@/shared/utils/ssrfGuard.js";
 export async function handleFetch(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     log.warn("FETCH", "Invalid JSON body");
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");

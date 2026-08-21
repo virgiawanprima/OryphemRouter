@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { assertPublicUrl } from "@/shared/utils/ssrfGuard.js";
 import { isLocalRequest } from "@/dashboardGuard";
@@ -54,7 +55,7 @@ const getChatErrorMessage = (status) => {
 // POST /api/provider-nodes/validate - Validate API key against base URL
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const { baseUrl, apiKey, type, modelId } = body;
 
     if (!baseUrl || !apiKey) {

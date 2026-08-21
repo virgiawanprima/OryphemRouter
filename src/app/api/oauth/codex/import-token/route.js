@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProviderConnection } from "@/models";
 import { extractCodexAccountInfo } from "@/lib/oauth/providers";
@@ -11,7 +12,7 @@ import { extractCodexAccountInfo } from "@/lib/oauth/providers";
  */
 export async function POST(request) {
   try {
-    const { accessToken, name } = await request.json();
+    const { accessToken, name } = await parseJson(request);
 
     if (!accessToken || typeof accessToken !== "string") {
       return NextResponse.json(

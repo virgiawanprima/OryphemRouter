@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getSettings } from "@/lib/localDb";
 import bcrypt from "bcryptjs";
@@ -29,7 +30,7 @@ export async function POST(request) {
       );
     }
 
-    const { password } = await request.json();
+    const { password } = await parseJson(request);
     const settings = await getSettings();
 
     // Block login via tunnel/tailscale if dashboard access is disabled

@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getProviderNodeById } from "@/models";
 import { isOpenAICompatibleProvider, isAnthropicCompatibleProvider, isCustomEmbeddingProvider, AI_PROVIDERS } from "@/shared/constants/providers";
@@ -84,7 +85,7 @@ async function probeMediaProvider(provider, apiKey) {
 // POST /api/providers/validate - Validate API key with provider
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const provider = normalizeProviderId(body.provider);
     const { apiKey, providerSpecificData } = body;
 

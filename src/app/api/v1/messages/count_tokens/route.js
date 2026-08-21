@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -75,7 +76,7 @@ export function estimateAnthropicInputTokens(body = {}) {
 export async function POST(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
       status: 400,

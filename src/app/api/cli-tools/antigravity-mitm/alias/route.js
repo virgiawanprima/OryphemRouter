@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -21,7 +22,7 @@ export async function GET(request) {
 // PUT - Save MITM aliases for a specific tool
 export async function PUT(request) {
   try {
-    const { tool, mappings } = await request.json();
+    const { tool, mappings } = await parseJson(request);
 
     if (!tool || !mappings || typeof mappings !== "object") {
       return NextResponse.json({ error: "tool and mappings required" }, { status: 400 });

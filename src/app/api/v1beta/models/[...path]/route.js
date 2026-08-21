@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { handleChat } from "@/sse/handlers/chat.js";
 import {
   clearAccountError,
@@ -82,7 +83,7 @@ export async function POST(request, { params }) {
         .replace(":generateContent", "");
     }
 
-    const body = await request.json();
+    const body = await parseJson(request);
 
     if (isGeminiNativeTtsRequest(model, body)) {
       return await forwardGeminiNativeRequest(request, body, model, action);

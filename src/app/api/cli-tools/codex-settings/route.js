@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -109,7 +110,7 @@ export async function GET() {
 // POST - Update oryphemrouter settings (merge with existing config)
 export async function POST(request) {
   try {
-    const { baseUrl, apiKey, model, subagentModel } = await request.json();
+    const { baseUrl, apiKey, model, subagentModel } = await parseJson(request);
     
     if (!baseUrl || !apiKey || !model) {
       return NextResponse.json({ error: "baseUrl, apiKey and model are required" }, { status: 400 });

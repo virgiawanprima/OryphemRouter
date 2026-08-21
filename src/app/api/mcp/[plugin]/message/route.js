@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { sendToChild, findPlugin } from "@/lib/mcp/stdioSseBridge";
 
@@ -10,7 +11,7 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: `Unknown plugin: ${plugin}` }, { status: 404 });
   }
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     sendToChild(plugin, body);
     return new Response(null, { status: 202 });
   } catch (e) {

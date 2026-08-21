@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -63,7 +64,7 @@ export async function GET() {
 // POST - Apply oryphemrouter config to chatLanguageModels.json
 export async function POST(request) {
   try {
-    const { baseUrl, apiKey, models } = await request.json();
+    const { baseUrl, apiKey, models } = await parseJson(request);
 
     if (!baseUrl || !models?.length) {
       return NextResponse.json({ error: "baseUrl and models are required" }, { status: 400 });

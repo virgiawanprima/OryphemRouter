@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { parseJson } from "@/lib/utils/parseJson";
 import { detectFormat, getTargetFormat } from "open-sse/services/provider.js";
 import { translateRequest } from "open-sse/translator/index.js";
 import { FORMATS } from "open-sse/translator/formats.js";
@@ -8,7 +8,7 @@ import { getExecutor } from "open-sse/executors/index.js";
 
 export async function POST(request) {
   try {
-    const { step, body } = await request.json();
+    const { step, body } = await parseJson(request);
 
     if (!step || !body) {
       return NextResponse.json({ success: false, error: "Step and body required" }, { status: 400 });

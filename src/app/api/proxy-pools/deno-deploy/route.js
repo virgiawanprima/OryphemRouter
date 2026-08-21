@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProxyPool } from "@/models";
 
@@ -46,7 +47,7 @@ const DENO_RELAY_CODE = `Deno.serve(async (request) => {
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const denoToken = body.denoToken?.trim();
     const orgDomain = body.orgDomain?.trim();
     const projectName = body.projectName?.trim() || `relay-${Date.now().toString(36)}`;

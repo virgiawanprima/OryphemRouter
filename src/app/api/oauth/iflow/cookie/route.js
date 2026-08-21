@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProviderConnection } from "@/models";
 
@@ -8,7 +9,7 @@ import { createProviderConnection } from "@/models";
  */
 export async function POST(request) {
   try {
-    const { cookie } = await request.json();
+    const { cookie } = await parseJson(request);
 
     if (!cookie || typeof cookie !== "string") {
       return NextResponse.json({ error: "Cookie is required" }, { status: 400 });

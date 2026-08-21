@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -84,7 +85,7 @@ export async function GET() {
 // Also accepts `activeModel` to set which model is active/primary
 export async function POST(request) {
   try {
-    const { baseUrl, apiKey, model, models, activeModel } = await request.json();
+    const { baseUrl, apiKey, model, models, activeModel } = await parseJson(request);
     
     // Accept either `models` (array) or `model` (string, legacy)
     const modelsArray = Array.isArray(models) ? models.slice() : (typeof model === "string" ? [model] : []);

@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProviderConnection } from "@/models";
 
@@ -11,7 +12,7 @@ export async function POST(request) {
   try {
     let body;
     try {
-      body = await request.json();
+      body = await parseJson(request);
     } catch {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }

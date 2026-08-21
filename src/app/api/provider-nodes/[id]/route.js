@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { deleteProviderConnectionsByProvider, deleteProviderNode, getProviderConnections, getProviderNodeById, updateProviderConnection, updateProviderNode } from "@/models";
 
@@ -5,7 +6,7 @@ import { deleteProviderConnectionsByProvider, deleteProviderNode, getProviderCon
 export async function PUT(request, { params }) {
   try {
     const { id } = await params;
-    const body = await request.json();
+    const body = await parseJson(request);
     const { name, prefix, apiType, baseUrl } = body;
     const node = await getProviderNodeById(id);
 

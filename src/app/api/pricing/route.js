@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getPricing, updatePricing, resetPricing, resetAllPricing } from "@/lib/localDb.js";
 import { getDefaultPricing } from "open-sse/providers/pricing.js";
@@ -26,7 +27,7 @@ export async function GET() {
  */
 export async function PATCH(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
 
     // Validate body structure
     if (typeof body !== "object" || body === null) {

@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import {
   extractApiKey, isValidApiKey,
   getProviderCredentials, markAccountUnavailable,
@@ -21,7 +22,7 @@ const CREDENTIALED_PROVIDERS = new Set(
 export async function handleTts(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");
   }

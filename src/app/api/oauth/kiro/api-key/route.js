@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { KiroService } from "@/lib/oauth/services/kiro";
 import { createProviderConnection } from "@/models";
@@ -10,7 +11,7 @@ import { createProviderConnection } from "@/models";
  */
 export async function POST(request) {
   try {
-    const { apiKey, region } = await request.json();
+    const { apiKey, region } = await parseJson(request);
 
     if (!apiKey || typeof apiKey !== "string" || !apiKey.trim()) {
       return NextResponse.json(

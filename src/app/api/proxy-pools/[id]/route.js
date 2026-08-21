@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import {
   deleteProxyPool,
@@ -76,7 +77,7 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Proxy pool not found" }, { status: 404 });
     }
 
-    const body = await request.json();
+    const body = await parseJson(request);
     const normalized = normalizeProxyPoolUpdate(body);
 
     if (normalized.error) {

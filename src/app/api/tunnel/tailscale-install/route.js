@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import os from "os";
@@ -15,7 +16,7 @@ function hasBrew() {
 }
 
 export async function POST(request) {
-  const body = await request.json().catch(() => ({}));
+  const body = await parseJson(request).catch(() => ({}));
   const platform = os.platform();
   const isWindows = platform === "win32";
   const isBrew = platform === "darwin" && hasBrew();

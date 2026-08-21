@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProxyPool } from "@/models";
 
@@ -49,7 +50,7 @@ export default {
 // POST /api/proxy-pools/cloudflare-deploy
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const accountId = body.accountId?.trim();
     const apiToken = body.apiToken?.trim();
     const projectName = body.projectName?.trim() || `relay-${Date.now().toString(36)}`;

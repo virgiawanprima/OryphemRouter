@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import {
   getProviderCredentials,
   markAccountUnavailable,
@@ -23,7 +24,7 @@ import { handleComboChat, getComboModelsFromData } from "open-sse/services/combo
 export async function handleSearch(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     log.warn("SEARCH", "Invalid JSON body");
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");

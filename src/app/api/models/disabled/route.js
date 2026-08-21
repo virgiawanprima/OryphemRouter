@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getDisabledModels, disableModels, enableModels } from "@/lib/disabledModelsDb";
 
@@ -20,7 +21,7 @@ export async function GET(request) {
 // POST /api/models/disabled  body: { providerAlias, ids: [...] }
 export async function POST(request) {
   try {
-    const { providerAlias, ids } = await request.json();
+    const { providerAlias, ids } = await parseJson(request);
     if (!providerAlias || !Array.isArray(ids)) {
       return NextResponse.json({ error: "providerAlias and ids[] required" }, { status: 400 });
     }

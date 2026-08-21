@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProviderConnection } from "@/models";
 import { normalizeKiroExternalIdpAuth } from "@/lib/oauth/kiroExternalIdp";
@@ -8,7 +9,7 @@ import { normalizeKiroExternalIdpAuth } from "@/lib/oauth/kiroExternalIdp";
  */
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const rawAuth = body?.cliProxyAuth ?? body?.auth ?? body?.json ?? body;
     const tokenData = normalizeKiroExternalIdpAuth(rawAuth);
 

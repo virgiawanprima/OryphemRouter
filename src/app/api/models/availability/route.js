@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import {
   getProviderConnections,
@@ -65,7 +66,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { action, provider, model } = await request.json();
+    const { action, provider, model } = await parseJson(request);
 
     if (action !== "clearCooldown" || !provider || !model) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });

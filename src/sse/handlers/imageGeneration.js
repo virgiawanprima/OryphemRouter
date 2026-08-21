@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import {
   getProviderCredentials,
   markAccountUnavailable,
@@ -24,7 +25,7 @@ const NO_AUTH_PROVIDERS = new Set(["sdwebui", "comfyui"]);
 export async function handleImageGeneration(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");
   }

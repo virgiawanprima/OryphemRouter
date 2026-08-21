@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { CursorService } from "@/lib/oauth/services/cursor";
 import { createProviderConnection } from "@/models";
@@ -12,7 +13,7 @@ import { createProviderConnection } from "@/models";
  */
 export async function POST(request) {
   try {
-    const { accessToken, machineId } = await request.json();
+    const { accessToken, machineId } = await parseJson(request);
 
     if (!accessToken || typeof accessToken !== "string") {
       return NextResponse.json(

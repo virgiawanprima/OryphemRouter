@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import {
   getProviderCredentials,
   markAccountUnavailable,
@@ -32,7 +33,7 @@ function exactEmbeddingUsage(raw) {
 export async function handleEmbeddings(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     log.warn("EMBEDDINGS", "Invalid JSON body");
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");

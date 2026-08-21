@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { handleChat } from "@/sse/handlers/chat.js";
 import { initTranslators } from "open-sse/translator/index.js";
 
@@ -26,7 +27,7 @@ export async function OPTIONS() {
  */
 export async function POST(request) {
   await ensureInitialized();
-  const body = await request.json();
+  const body = await parseJson(request);
   body._compact = true;
   const newRequest = new Request(request.url, {
     method: "POST",

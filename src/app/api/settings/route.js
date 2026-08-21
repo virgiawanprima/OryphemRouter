@@ -3,6 +3,7 @@ import { getSettings, updateSettings } from "@/lib/localDb";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
 import { resetComboRotation } from "open-sse/services/combo.js";
 import bcrypt from "bcryptjs";
+import { parseJson } from "@/lib/utils/parseJson";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -37,7 +38,7 @@ export async function GET() {
 
 export async function PATCH(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
 
     // Strip protected secrets before any internal handling sets them
     for (const key of PROTECTED_SETTING_KEYS) delete body[key];

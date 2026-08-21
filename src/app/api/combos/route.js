@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getCombos, createCombo, getComboByName } from "@/lib/localDb";
 
@@ -20,7 +21,7 @@ export async function GET() {
 // POST /api/combos - Create new combo
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const { name, models, kind } = body;
 
     if (!name) {

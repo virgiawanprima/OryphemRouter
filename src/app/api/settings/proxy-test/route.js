@@ -1,9 +1,10 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { testProxyUrl } from "@/lib/network/proxyTest";
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const result = await testProxyUrl({
       proxyUrl: body?.proxyUrl,
       testUrl: body?.testUrl,

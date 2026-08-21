@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getProviderConnections } from "@/models";
 import {
@@ -42,7 +43,7 @@ function isCompatibleProvider(providerId) {
 // POST /api/providers/test-batch - Test multiple connections by group
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const { mode, providerId } = body;
 
     if (!mode) {

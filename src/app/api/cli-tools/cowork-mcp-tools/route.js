@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -83,7 +84,7 @@ async function probeMcp(url) {
 
 export async function POST(request) {
   try {
-    const { url } = await request.json();
+    const { url } = await parseJson(request);
     if (!url || typeof url !== "string") {
       return NextResponse.json({ error: "url required" }, { status: 400 });
     }

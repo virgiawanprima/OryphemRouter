@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getApiKeys, collapseDefaultKeyDuplicates, getOrCreateDefaultKey, createApiKey } from "@/lib/localDb";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
@@ -19,7 +20,7 @@ export async function GET() {
 // POST /api/keys - Create new API key
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const { name } = body;
 
     if (!name) {

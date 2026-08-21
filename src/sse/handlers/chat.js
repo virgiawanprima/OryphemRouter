@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import "open-sse/index.js";
 
 import {
@@ -31,7 +32,7 @@ import { getProjectIdForConnection } from "open-sse/services/projectId.js";
 export async function handleChat(request, clientRawRequest = null) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch {
     log.warn("CHAT", "Invalid JSON body");
     return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid JSON body");

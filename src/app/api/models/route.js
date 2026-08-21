@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getModelAliases, setModelAlias } from "@/models";
 import { getDisabledModels } from "@/lib/disabledModelsDb";
@@ -47,7 +48,7 @@ export async function GET() {
 // PUT /api/models - Update model alias
 export async function PUT(request) {
   try {
-    const body = await request.json();
+    const body = await parseJson(request);
     const { model, alias } = body;
 
     if (!model || !alias) {

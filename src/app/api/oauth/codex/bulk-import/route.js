@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProviderConnection } from "@/models";
 import { extractCodexAccountInfo } from "@/lib/oauth/providers";
@@ -19,7 +20,7 @@ import { extractCodexAccountInfo } from "@/lib/oauth/providers";
 export async function POST(request) {
   let body;
   try {
-    body = await request.json();
+    body = await parseJson(request);
   } catch (err) {
     return NextResponse.json(
       { error: `Invalid JSON body: ${err.message}` },

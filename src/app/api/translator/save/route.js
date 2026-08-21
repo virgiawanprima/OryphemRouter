@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
+import { parseJson } from "@/lib/utils/parseJson";
+
 import path from "path";
 
 export async function POST(request) {
   try {
-    const { file, content } = await request.json();
+    const { file, content } = await parseJson(request);
 
     if (!file || content === undefined) {
       return NextResponse.json({ success: false, error: "File and content required" }, { status: 400 });

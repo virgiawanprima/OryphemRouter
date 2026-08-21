@@ -1,3 +1,4 @@
+import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
@@ -138,7 +139,7 @@ const writeAgentModels = async (agentDir, model, baseUrl, apiKey) => {
 export async function POST(request) {
   try {
     // agentModels: { [agentId]: modelId } for per-agent override
-    const { baseUrl, apiKey, model, agentModels = {} } = await request.json();
+    const { baseUrl, apiKey, model, agentModels = {} } = await parseJson(request);
     
     if (!baseUrl || !model) {
       return NextResponse.json({ error: "baseUrl and model are required" }, { status: 400 });
