@@ -155,13 +155,15 @@ export default function APIPageClient({ machineId }) {
       } catch { /* ignore parse errors */ }
     };
     evtSource.onerror = () => {
-      if (!closed) console.log("SSE error, reconnecting...");
-      closed = true;
+      console.log("SSE error, will reconnect...");
       evtSource.close();
-      // Try reconnect after a brief delay
+      // Reconnect after a brief delay by creating a new EventSource
       setTimeout(() => {
         if (!closed) {
-          evtSource.connect();
+          const newSource = new EventSource("/api/dashboard/realtime");
+          newSource.onmessage = evtSource.onmessage;
+          newSource.onerror = evtSource.onerror;
+          evtSource = newSource;
         }
       }, 5000);
     };
