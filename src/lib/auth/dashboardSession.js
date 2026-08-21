@@ -23,10 +23,14 @@ function loadJwtSecret() {
 const SECRET = new TextEncoder().encode(loadJwtSecret());
 
 export function shouldUseSecureCookie(request) {
+  // OryphemRouter runs on localhost without a reverse proxy by default.
+  // Secure cookies are dropped by browsers over plain HTTP, so only
+  // enable when behind HTTPS (forwarded-proto) or explicitly forced.
   const forceSecureCookie = process.env.AUTH_COOKIE_SECURE === "true";
   const forwardedProto = request?.headers?.get?.("x-forwarded-proto");
   const isHttpsRequest = forwardedProto === "https";
-  return forceSecureCookie || isHttpsRequest;
+  // Only set Secure if behind HTTPS proxy — never on direct localhost HTTP
+  return isHttpsRequest || (forceSecureCookie && isHttpsRequest);
 }
 
 export async function createDashboardAuthToken(claims = {}) {
