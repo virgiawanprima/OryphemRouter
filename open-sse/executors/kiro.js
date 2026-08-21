@@ -787,12 +787,17 @@ export class KiroExecutor extends BaseExecutor {
       eventCounts[eventCountKey] = (eventCounts[eventCountKey] || 0) + 1;
       if (eventType === "assistantResponseEvent" && typeof event.payload?.content === "string") {
         let content = event.payload.content;
+        // Buffer content when searching for thinking tags so a split
+        // </thinking> tag across chunk boundaries doesn't drop all content.
         if (state.inThinking) {
-          const end = content.indexOf("</thinking>");
-          if (end < 0) content = "";
-          else {
+          state.thinkingBuffer = (state.thinkingBuffer || "") + content;
+          const end = state.thinkingBuffer.indexOf("</thinking>");
+          if (end < 0) {
+            content = "";
+          } else {
             state.inThinking = false;
-            content = content.slice(end + 11).replace(/^\n/u, "");
+            content = state.thinkingBuffer.slice(end + 11).replace(/^\n/u, "");
+            state.thinkingBuffer = "";
           }
         } else {
           const start = content.indexOf("<thinking>");
@@ -800,6 +805,7 @@ export class KiroExecutor extends BaseExecutor {
             const end = content.indexOf("</thinking>", start + 10);
             if (end < 0) {
               state.inThinking = true;
+              state.thinkingBuffer = content.slice(start + 10);
               content = content.slice(0, start);
             } else {
               content = content.slice(0, start) + content.slice(end + 11).replace(/^\n/u, "");
