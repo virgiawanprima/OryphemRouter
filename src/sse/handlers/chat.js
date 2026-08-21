@@ -337,14 +337,22 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
       // Detect source format by endpoint + body
       sourceFormatOverride: request?.url ? detectFormatByEndpoint(new URL(request.url).pathname, body) : null,
       onCredentialsRefreshed: async (newCreds) => {
-        await updateProviderCredentials(credentials.connectionId, {
-          ...newCreds,
-          existingProviderSpecificData: credentials.providerSpecificData,
-          testStatus: "active"
-        });
+        try {
+          await updateProviderCredentials(credentials.connectionId, {
+            ...newCreds,
+            existingProviderSpecificData: credentials.providerSpecificData,
+            testStatus: "active"
+          });
+        } catch (err) {
+          log.warn("CHAT", "Failed to persist refreshed credentials", { error: err?.message });
+        }
       },
       onRequestSuccess: async () => {
-        await clearAccountError(credentials.connectionId, credentials, model);
+        try {
+          await clearAccountError(credentials.connectionId, credentials, model);
+        } catch (err) {
+          log.warn("CHAT", "Failed to clear account error on success", { error: err?.message });
+        }
       }
     });
 
