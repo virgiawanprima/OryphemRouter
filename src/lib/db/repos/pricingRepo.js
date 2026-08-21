@@ -6,8 +6,12 @@ const pricingKv = makeKv("pricing");
 const CACHE_TTL_MS = 5000;
 
 let cache = { value: null, expiresAt: 0 };
+// Generation counter to prevent stale in-flight reads from repopulating
+// the cache after an invalidation.
+let cacheGen = 0;
 
 function invalidate() {
+  cacheGen++;
   cache = { value: null, expiresAt: 0 };
 }
 
@@ -19,6 +23,7 @@ export async function getPricing() {
   const now = Date.now();
   if (cache.value && cache.expiresAt > now) return cache.value;
 
+  const myGen = cacheGen;
   const userPricing = await getUserPricing();
   const { PROVIDER_PRICING } = await import("open-sse/providers/pricing.js");
   const merged = {};
@@ -44,7 +49,10 @@ export async function getPricing() {
     }
   }
 
-  cache = { value: merged, expiresAt: now + CACHE_TTL_MS };
+  // Only write cache if no invalidation happened during the awaits
+  if (myGen === cacheGen) {
+    cache = { value: merged, expiresAt: now + CACHE_TTL_MS };
+  }
   return merged;
 }
 
