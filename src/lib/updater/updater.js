@@ -66,7 +66,7 @@ function setPhase(phase) {
 
 // HTTP server exposing status (browser polls this while Next server is dead)
 const server = http.createServer((req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", `http://localhost:${port}`);
   res.setHeader("Cache-Control", "no-store");
   if (req.url === "/update/status" || req.url === "/") {
     res.setHeader("Content-Type", "application/json");
