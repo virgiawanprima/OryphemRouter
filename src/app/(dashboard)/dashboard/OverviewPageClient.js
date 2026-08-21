@@ -138,7 +138,7 @@ export default function OverviewPageClient() {
             <div className="mt-2">
               <p className="flex items-center gap-0.5 font-mono text-[13px] text-c-green">
                 {typed}
-                <span aria-hidden="true" className={`inline-block h-4 w-[7px] rounded-[1px] bg-c-green ${typed.length < TERMINAL_CMD.length ? "animate-pulse" : "opacity-60"}`} />
+                <span aria-hidden="true" className={`inline-block h-4 w-[7px] rounded-[1px] bg-c-green ${typed.length < TERMINAL_CMD.length ? "animate-cursor-blink" : "animate-cursor-blink opacity-60"}`} />
               </p>
               <p className="mt-1 text-[13px] text-text-muted">monitor your AI router status, providers, and usage.</p>
             </div>

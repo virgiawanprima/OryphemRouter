@@ -712,12 +712,25 @@ body.cursor-link #cursor-ring { width: 54px; height: 54px; border-color: var(--c
 .status-bar .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 .status-bar .status-dot-live { background: var(--c-teal-600); }
 
-/* Respect reduced motion preference — stop constant animations */
+/* Terminal cursor blink — visible on/off, not subtle opacity fade */
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Respect reduced motion preference — stop heavy animations but keep cursor blink */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  /* Keep the terminal cursor blinking even with reduced motion */
+  .animate-cursor-blink {
+    animation: cursor-blink 1.2s step-end infinite !important;
   }
 }
 
