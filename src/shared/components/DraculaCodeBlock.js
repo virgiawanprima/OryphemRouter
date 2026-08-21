@@ -13,7 +13,11 @@ import "prismjs/components/prism-yaml";
 let stylesInjected = false;
 
 export default function DraculaCodeBlock({ code, language = "json", className }) {
-  const [html, setHtml] = useState("");
+  // Initialize with escaped code so the first render (before Prism runs)
+  // doesn't inject raw, potentially user-controlled HTML via dangerouslySetInnerHTML.
+  const escapeHtml = (str) =>
+    str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const [html, setHtml] = useState(() => escapeHtml(code || ""));
 
   useEffect(() => {
     if (!stylesInjected && typeof document !== "undefined") {
