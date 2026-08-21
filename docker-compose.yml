@@ -1,10 +1,10 @@
 services:
   oryphremrouter:
-    image: ghcr.io/virgiawanprima/oryphemrouter:latest
+    image: ghcr.io/virgiawanprima/oryphemrouter:v1.0
     container_name: oryphremrouter
     restart: always
     ports:
-      - "20129:20129"
+      - "127.0.0.1:20129:20129"
     volumes:
       - oryphremrouter-data:/app/data
     env_file:
@@ -17,13 +17,28 @@ services:
       HEADROOM_URL: http://headroom:8787
     depends_on:
       - headroom
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:20129/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   headroom:
-    image: ghcr.io/chopratejas/headroom:latest
+    image: ghcr.io/chopratejas/headroom:v0.1
     container_name: headroom
     restart: always
-    ports:
-      - "8787:8787"
+    # No port mapping — only accessible via Docker internal DNS
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
 
 volumes:
   oryphremrouter-data:
