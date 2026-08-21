@@ -114,17 +114,22 @@ export function createErrorResult(statusCode, message, resetsAtMs) {
  * @returns {Response}
  */
 export function unavailableResponse(statusCode, message, retryAfter, retryAfterHuman) {
-  const retryAfterSec = Math.max(Math.ceil((new Date(retryAfter).getTime() - Date.now()) / 1000), 1);
-  const msg = `${message} (${retryAfterHuman})`;
+  const retryMs = new Date(retryAfter).getTime();
+  const retryAfterSec = Number.isFinite(retryMs)
+    ? Math.max(Math.ceil((retryMs - Date.now()) / 1000), 1)
+    : 1;
+  const msg = `${message} (${retryAfterHuman || "retry later"})`;
+  const headers = {
+    "Content-Type": "application/json",
+    "Retry-After": String(retryAfterSec)
+  };
+  // Add CORS header to match errorResponse (unavailableResponse was missing it)
+  if (!headers["Access-Control-Allow-Origin"]) {
+    headers["Access-Control-Allow-Origin"] = "*";
+  }
   return new Response(
     JSON.stringify({ error: { message: msg } }),
-    {
-      status: statusCode,
-      headers: {
-        "Content-Type": "application/json",
-        "Retry-After": String(retryAfterSec)
-      }
-    }
+    { status: statusCode, headers }
   );
 }
 
