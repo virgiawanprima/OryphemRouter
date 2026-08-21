@@ -2,7 +2,7 @@ import { getUsageStats, statsEmitter, getActiveRequests } from "@/lib/usageDb";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request) {
   const encoder = new TextEncoder();
   const state = { closed: false, keepalive: null, send: null, sendPending: null, cachedStats: null };
 
@@ -59,6 +59,12 @@ export async function GET() {
           clearInterval(state.keepalive);
         }
       }, 25000);
+
+      request.signal.addEventListener("abort", () => {
+        statsEmitter.off("update", state.send);
+        statsEmitter.off("pending", state.sendPending);
+        clearInterval(state.keepalive);
+      }, { once: true });
     },
 
     cancel() {

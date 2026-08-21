@@ -2,7 +2,7 @@ import { statsEmitter, trackPendingRequest, getActiveRequests } from "@/lib/db/i
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request) {
   const encoder = new TextEncoder();
   const state = { closed: false, send: null, keepalive: null };
 
@@ -39,6 +39,18 @@ export async function GET() {
           clearInterval(state.keepalive);
         }
       }, 30000);
+
+      // Next.js does not always invoke ReadableStream.cancel() on client
+      // disconnect; the abort signal is the reliable cleanup path.
+      const onAbort = () => {
+        if (state.onStatsEvent) {
+          statsEmitter.off("pending", state.onStatsEvent);
+          statsEmitter.off("update", state.onStatsEvent);
+          statsEmitter.off("push", state.onStatsEvent);
+        }
+        clearInterval(state.keepalive);
+      };
+      request.signal.addEventListener("abort", onAbort, { once: true });
     },
 
     cancel() {
