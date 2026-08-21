@@ -706,7 +706,7 @@ export default function APIPageClient({ machineId }) {
         try {
           const res = await fetch(`/api/keys/${id}`, { method: "DELETE" });
           if (res.ok) {
-            setKeys(keys.filter((k) => k.id !== id));
+            setKeys(prev => prev.filter((k) => k.id !== id));
             setVisibleKeys(prev => {
               const next = new Set(prev);
               next.delete(id);
