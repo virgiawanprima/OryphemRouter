@@ -78,6 +78,10 @@ async function loadActiveConnections() {
 }
 
 async function refreshOne(connection) {
+  if (!connection?.provider) {
+    // Skip connections with missing provider field (corrupt data, migration artifact)
+    return null;
+  }
   const { checkAndRefreshToken } = await import("./tokenRefresh.js");
   return checkAndRefreshToken(connection.provider, connection, { force: true });
 }
