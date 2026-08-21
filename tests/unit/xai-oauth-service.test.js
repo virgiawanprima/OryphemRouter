@@ -64,7 +64,14 @@ describe("xai/oauth service", () => {
   });
 
   it("generates dashboard auth data with CLIProxyAPI PKCE size and discovered endpoints", async () => {
-    fetch.mockResolvedValueOnce({
+    // Force a fresh module evaluation so the open-sse/index.js side-effect
+    // (which reassigns global.fetch) runs while our stub is active, not a
+    // cached copy from an earlier test run in this worker.
+    vi.resetModules();
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { generateAuthData } = await import("../../src/lib/oauth/providers.js");
+    fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         authorization_endpoint: "https://auth.x.ai/oauth2/authorize-from-discovery",
@@ -72,7 +79,6 @@ describe("xai/oauth service", () => {
       }),
     });
 
-    const { generateAuthData } = await import("../../src/lib/oauth/providers.js");
     const data = await generateAuthData("xai", "http://127.0.0.1:56121/callback");
     const parsed = new URL(data.authUrl);
 
@@ -82,10 +88,16 @@ describe("xai/oauth service", () => {
     expect(parsed.searchParams.get("code_challenge_method")).toBe("S256");
     expect(parsed.searchParams.get("plan")).toBe("generic");
     expect(parsed.searchParams.get("referrer")).toBe("cli-proxy-api");
-  });
+  }, 20000);
 
   it("exchanges dashboard codes against the discovered xAI token endpoint", async () => {
-    const fetchMock = fetch;
+    // Same module-cache busting as the test above: providers.js's import of
+    // open-sse/index.js reassigns global.fetch, so we must load it with the
+    // fresh stub active and then attach the chained responses.
+    vi.resetModules();
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { exchangeTokens } = await import("../../src/lib/oauth/providers.js");
     fetchMock
       .mockResolvedValueOnce({
         ok: true,
@@ -103,7 +115,6 @@ describe("xai/oauth service", () => {
         }),
       });
 
-    const { exchangeTokens } = await import("../../src/lib/oauth/providers.js");
     const tokens = await exchangeTokens(
       "xai",
       "auth-code",
@@ -121,5 +132,5 @@ describe("xai/oauth service", () => {
       refreshToken: "refresh-token",
       expiresIn: 3600,
     });
-  });
+  }, 20000);
 });

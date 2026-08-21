@@ -1,5 +1,5 @@
 // Guards the deduped Antigravity OAuth client: same values across all 3 sources after refactor.
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 const EXPECTED = {
   clientId: "test-antigravity-client-id",
@@ -11,6 +11,14 @@ const GOOGLE = {
 };
 
 describe("antigravity oauth client (deduped)", () => {
+  beforeEach(() => {
+    process.env.ANTIGRAVITY_OAUTH_CLIENT_ID = EXPECTED.clientId;
+    process.env.ANTIGRAVITY_OAUTH_CLIENT_SECRET = EXPECTED.clientSecret;
+    process.env.GOOGLE_OAUTH_CLIENT_ID = GOOGLE.clientId;
+    process.env.GOOGLE_OAUTH_CLIENT_SECRET = GOOGLE.clientSecret;
+    vi.resetModules();
+  });
+
   it("shared source holds the canonical credentials", async () => {
     const { ANTIGRAVITY_OAUTH_CLIENT } = await import("../../open-sse/providers/shared.js");
     expect(ANTIGRAVITY_OAUTH_CLIENT).toEqual(EXPECTED);
