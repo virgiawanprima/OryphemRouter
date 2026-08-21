@@ -1,5 +1,5 @@
-import { parseJson } from "@/lib/utils/parseJson";
 "use server";
+import { parseJson } from "@/lib/utils/parseJson";
 
 import { NextResponse } from "next/server";
 import { getMitmAlias, setMitmAliasAll } from "@/models";

@@ -1,5 +1,5 @@
-import { parseJson } from "@/lib/utils/parseJson";
 "use server";
+import { parseJson } from "@/lib/utils/parseJson";
 
 import os from "os";
 import { execSync } from "child_process";

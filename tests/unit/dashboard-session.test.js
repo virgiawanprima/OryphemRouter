@@ -46,11 +46,13 @@ describe("dashboardSession", () => {
     expect(await getDashboardAuthSession(null)).toBeNull();
   });
 
-  it("shouldUseSecureCookie respects AUTH_COOKIE_SECURE=true", () => {
+  it("shouldUseSecureCookie ignores AUTH_COOKIE_SECURE=true without HTTPS", () => {
     const original = process.env.AUTH_COOKIE_SECURE;
     process.env.AUTH_COOKIE_SECURE = "true";
     const req = { headers: { get: () => null } };
-    expect(shouldUseSecureCookie(req)).toBe(true);
+    // On localhost HTTP, AUTH_COOKIE_SECURE=true should NOT set Secure
+    // because browsers drop Secure cookies over HTTP.
+    expect(shouldUseSecureCookie(req)).toBe(false);
     if (original === undefined) delete process.env.AUTH_COOKIE_SECURE;
     else process.env.AUTH_COOKIE_SECURE = original;
   });
