@@ -80,7 +80,8 @@ export function createSSEStream(options = {}) {
     transform(chunk, controller) {
       if (!ttftAt) ttftAt = Date.now();
       const text = decoder.decode(chunk, { stream: true });
-      buffer += text;
+      // Normalize \r\n → \n so \r doesn't corrupt data: line detection
+      buffer += text.replace(/\r\n/g, "\n");
       reqLogger?.appendProviderChunk?.(text);
 
       const lines = buffer.split("\n");
@@ -461,7 +462,7 @@ export function createSSEStream(options = {}) {
           }, state?.usage, ttftAt);
         }
       } catch (error) {
-        console.log("Error in flush:", error);
+        console.error("Error in flush:", error);
       }
     }
   });
