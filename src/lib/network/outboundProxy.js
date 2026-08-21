@@ -83,3 +83,26 @@ export function applyOutboundProxyEnv(
     delete process.env.NINE_ROUTER_PROXY_MANAGED;
   }
 }
+
+/**
+ * Build a child-process environment that strips proxy credentials from
+ * HTTP_PROXY/HTTPS_PROXY/ALL_PROXY/NINE_ROUTER_PROXY_URL so downloaded
+ * third-party binaries (cloudflared, tailscaled) cannot exfiltrate them.
+ */
+export function childEnvWithoutProxyCreds(baseEnv = process.env) {
+  const env = { ...baseEnv };
+  for (const key of ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NINE_ROUTER_PROXY_URL"]) {
+    if (env[key]) {
+      try {
+        const u = new URL(env[key]);
+        // Strip userinfo (user:pass@) from the URL
+        u.username = "";
+        u.password = "";
+        env[key] = u.toString();
+      } catch {
+        // Not a URL with credentials — leave as-is
+      }
+    }
+  }
+  return env;
+}
