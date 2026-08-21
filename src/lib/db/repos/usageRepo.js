@@ -239,17 +239,19 @@ export async function getActiveRequests() {
 }
 
 export async function saveRequestUsage(entry) {
-  try {
-    const db = await getAdapter();
+  // Retry up to 3 times on SQLITE_BUSY (transient lock contention under WAL)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const db = await getAdapter();
 
-    if (!entry.timestamp) entry.timestamp = new Date().toISOString();
-    entry.cost = await calculateCost(entry.provider, entry.model, entry.tokens);
+      if (!entry.timestamp) entry.timestamp = new Date().toISOString();
+      entry.cost = await calculateCost(entry.provider, entry.model, entry.tokens);
 
-    const tokens = entry.tokens || {};
-    const promptTokens = tokens.prompt_tokens || tokens.input_tokens || 0;
-    const completionTokens = tokens.completion_tokens || tokens.output_tokens || 0;
+      const tokens = entry.tokens || {};
+      const promptTokens = tokens.prompt_tokens || tokens.input_tokens || 0;
+      const completionTokens = tokens.completion_tokens || tokens.output_tokens || 0;
 
-    let inserted = false;
+      let inserted = false;
 
     // All 3 writes (history insert, daily upsert, lifetime counter) in ONE transaction.
     // better-sqlite3 is sync → no JS yield mid-transaction → no race in same process.
@@ -287,8 +289,15 @@ export async function saveRequestUsage(entry) {
       pushToRing(entry);
       scheduleStatsEvent("update", 250);
     }
+    break; // success — exit retry loop
   } catch (e) {
+    if (attempt < 2 && String(e?.message || "").includes("SQLITE_BUSY")) {
+      await new Promise((r) => setTimeout(r, 50 * (attempt + 1)));
+      continue;
+    }
     console.error("Failed to save usage stats:", e);
+    break;
+  }
   }
 }
 
