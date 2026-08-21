@@ -19,6 +19,8 @@ function normalizeScopes(value) {
   return (value || DEFAULT_SCOPES).trim() || DEFAULT_SCOPES;
 }
 
+import { hasTrustedPeerHeaders } from "./trustedPeer.js";
+
 export function getPublicOrigin(request) {
   const configuredBaseUrl =
     process.env.BASE_URL ||
@@ -29,8 +31,12 @@ export function getPublicOrigin(request) {
     return trimTrailingSlashes(configuredBaseUrl);
   }
 
-  const forwardedProto = request?.headers?.get?.("x-forwarded-proto") || "";
-  const forwardedHost = request?.headers?.get?.("x-forwarded-host") || "";
+  // Only trust forwarded headers when the request came through the
+  // custom-server wrapper (peer token proves the header was stamped
+  // from the TCP socket, not spoofed by the client).
+  const trustForwarded = process.env.TRUST_PROXY === "true" || hasTrustedPeerHeaders(request);
+  const forwardedProto = trustForwarded ? (request?.headers?.get?.("x-forwarded-proto") || "") : "";
+  const forwardedHost = trustForwarded ? (request?.headers?.get?.("x-forwarded-host") || "") : "";
   const host = forwardedHost || request?.headers?.get?.("host") || "";
   if (host) {
     const protocol = (forwardedProto || new URL(request.url).protocol || "http:").replace(/:$/, "");
