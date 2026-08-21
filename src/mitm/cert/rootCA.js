@@ -48,7 +48,7 @@ function generateRootCA() {
   // Create Root CA certificate
   const cert = forge.pki.createCertificate();
   cert.publicKey = keys.publicKey;
-  cert.serialNumber = "01";
+  cert.serialNumber = crypto.randomBytes(16).toString("hex");
   cert.validity.notBefore = new Date();
   cert.validity.notAfter = new Date();
   cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 10);
@@ -120,7 +120,7 @@ function generateLeafCert(domain, rootCA) {
   // Create leaf certificate
   const cert = forge.pki.createCertificate();
   cert.publicKey = keys.publicKey;
-  cert.serialNumber = Math.floor(Math.random() * 1000000).toString();
+  cert.serialNumber = crypto.randomBytes(16).toString("hex");
   cert.validity.notBefore = new Date();
   cert.validity.notAfter = new Date();
   cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
