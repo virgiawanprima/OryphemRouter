@@ -140,7 +140,15 @@ export default function KiloToolCard({ tool, isExpanded, onToggle, baseUrl, apiK
 
   return (
     <Card padding="xs" className="overflow-hidden">
-      <div className="flex items-start justify-between gap-3 hover:cursor-pointer sm:items-center" onClick={onToggle}>
+        <div
+        role="button"
+        tabIndex={0}
+        aria-label="Toggle Kilo tool"
+        aria-expanded={isExpanded}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); } }}
+        className="flex items-start justify-between gap-3 hover:cursor-pointer sm:items-center"
+        onClick={onToggle}
+      >
         <div className="flex min-w-0 items-center gap-3">
           <div className="size-8 flex items-center justify-center shrink-0">
             <Image src="/providers/kilocode.png" alt={tool.name} width={32} height={32} className="size-8 object-contain rounded-lg" sizes="32px" onError={(e) => { e.target.style.display = "none"; }} loading="lazy" decoding="async" />
@@ -155,7 +163,7 @@ export default function KiloToolCard({ tool, isExpanded, onToggle, baseUrl, apiK
           </div>
         </div>
         <span className={`material-symbols-outlined text-text-muted text-[20px] transition-transform ${isExpanded ? "rotate-180" : ""}`}>expand_more</span>
-      </div>
+</div>
 
       {isExpanded && (
         <div className="mt-4 pt-4 border-t border-border flex flex-col gap-4">

@@ -249,7 +249,15 @@ export default function GrokBuildToolCard({
 
   return (
     <Card padding="xs" className="overflow-hidden">
-      <div className="flex items-start justify-between gap-3 hover:cursor-pointer sm:items-center" onClick={onToggle}>
+      <div
+          role="button"
+          tabIndex={0}
+          aria-label="Toggle Grok Build tool"
+          aria-expanded={isExpanded}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); } }}
+          className="flex items-start justify-between gap-3 hover:cursor-pointer sm:items-center"
+          onClick={onToggle}
+        >
         <div className="flex min-w-0 items-center gap-3">
           <div className="size-8 flex items-center justify-center shrink-0">
             <Image
