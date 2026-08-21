@@ -31,8 +31,8 @@ export async function GET() {
       hasPassword: !!password
     }, { headers: SETTINGS_RESPONSE_HEADERS });
   } catch (error) {
-    console.log("Error getting settings:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error getting settings:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -113,7 +113,7 @@ export async function PATCH(request) {
     safeSettings.oidcConfigured = !!(safeSettings.oidcIssuerUrl && safeSettings.oidcClientId && oidcClientSecret);
     return NextResponse.json(safeSettings, { headers: SETTINGS_RESPONSE_HEADERS });
   } catch (error) {
-    console.log("Error updating settings:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error updating settings:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
