@@ -34,8 +34,12 @@ export function copyStandaloneAssets({ projectRoot = process.cwd(), distDir = pr
   const serverWrapperSource = resolve(projectRoot, "custom-server.js");
   const serverWrapperDestination = resolve(standaloneDir, "custom-server.js");
   if (existsSync(serverWrapperSource)) {
-    cpSync(serverWrapperSource, serverWrapperDestination, { force: true });
-    console.log(`[standalone-assets] Copied custom-server.js to ${serverWrapperDestination}`);
+    try {
+      cpSync(serverWrapperSource, serverWrapperDestination, { force: true });
+      console.log(`[standalone-assets] Copied custom-server.js to ${serverWrapperDestination}`);
+    } catch (e) {
+      throw new Error(`[standalone-assets] Failed to copy custom-server.js — standalone build would be insecure; aborting: ${e.message}`);
+    }
   }
 }
 
