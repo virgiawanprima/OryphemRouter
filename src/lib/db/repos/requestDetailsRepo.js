@@ -92,7 +92,9 @@ async function flushToDatabase() {
   try {
     // Drain entire buffer (loop in case more pushed during await)
     while (writeBuffer.length > 0) {
-      const items = writeBuffer.splice(0, writeBuffer.length);
+      // Snapshot the current buffer but DON'T splice yet — only remove
+      // items after a successful transaction so a failure doesn't lose data.
+      const items = writeBuffer.slice();
       const db = await getAdapter();
       const config = await getObservabilityConfig();
 
@@ -132,6 +134,8 @@ async function flushToDatabase() {
           );
         }
       });
+      // Only remove the flushed items after a successful transaction
+      writeBuffer.splice(0, items.length);
     }
   } catch (e) {
     console.error("[requestDetailsRepo] Batch write failed:", e);
