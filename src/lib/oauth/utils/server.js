@@ -485,7 +485,7 @@ export function startTraeProxy() {
         return;
       }
       const cbState = url.searchParams.get("state");
-      if (cbState && session.state && cbState !== session.state) {
+      if (!cbState || !session.state || cbState !== session.state) {
         session.status = "error";
         session.error = "Trae callback state mismatch";
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
