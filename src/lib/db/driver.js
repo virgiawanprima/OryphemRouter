@@ -69,7 +69,14 @@ async function initAdapter() {
   }
 
   const { runMigrationOnce } = await import("./migrate.js");
-  await runMigrationOnce(adapter);
+  try {
+    await runMigrationOnce(adapter);
+  } catch (e) {
+    // Close the partially-initialized adapter so we don't leak file handles,
+    // checkpoint timers, and signal handlers when the caller retries.
+    try { adapter.close?.(); } catch { /* best-effort */ }
+    throw e;
+  }
   return adapter;
 }
 
