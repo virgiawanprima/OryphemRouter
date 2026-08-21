@@ -4,6 +4,24 @@ import { useState, useEffect } from "react";
 import Card from "./Card";
 import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 
+// Render time-ago display (1s tick for live) — hoisted to module scope
+// so it doesn't remount on every parent re-render (was inside the component).
+function TimeAgo({ timestamp }) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  if (!timestamp) return "--";
+  const now = Date.now();
+  const then = new Date(timestamp).getTime();
+  if (isNaN(then)) return "--";
+  const diffSec = Math.floor((now - then) / 1000);
+  if (diffSec < 60) return `${diffSec}s ago`;
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+  return `${Math.floor(diffSec / 3600)}h ago`;
+}
+
 export default function RequestLogger() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
