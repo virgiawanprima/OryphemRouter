@@ -92,6 +92,6 @@ export async function POST(request) {
     });
   } catch (error) {
     console.log("Codex access token import error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

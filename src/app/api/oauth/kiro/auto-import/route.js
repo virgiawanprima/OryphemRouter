@@ -125,7 +125,7 @@ export async function GET() {
   } catch (error) {
     console.log("Kiro auto-import error:", error);
     return NextResponse.json(
-      { found: false, error: error.message },
+      { found: false, error: "Internal server error" },
       { status: 500 }
     );
   }
