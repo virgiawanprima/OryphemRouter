@@ -245,7 +245,7 @@ export default function OverviewPageClient() {
           <div className="text-[13px] max-h-60 overflow-y-auto">
             {logs.map((log, i) => (
               <div key={i} className="flex items-center gap-2 px-2 py-1 border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
-                <span className="text-text-muted shrink-0">{new Date(log.timestamp || log.createdAt).toLocaleTimeString("en-GB")}</span>
+                <span className="text-text-muted shrink-0">{(() => { const ts = log.timestamp || log.createdAt; return ts ? new Date(ts).toLocaleTimeString("en-GB") : "--:--:--"; })()}</span>
                 <span className={log.status === "error" ? "text-c-red-600" : "text-c-teal-600"}>{log.status || "200"}</span>
                 <span className="text-c-blue-600 truncate">{log.provider || "?"}</span>
                 <span className="text-text-muted truncate flex-1">{log.model || ""}</span>
