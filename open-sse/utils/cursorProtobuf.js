@@ -674,10 +674,13 @@ export function decodeVarint(buffer, offset) {
 
   while (pos < buffer.length) {
     const b = buffer[pos];
-    result |= (b & 0x7F) << shift;
+    // Use multiplication instead of bitwise shift for values beyond 32 bits
+    // (JS bitwise operators work on 32-bit integers, corrupting 64-bit varints)
+    result += (b & 0x7F) * Math.pow(2, shift);
     pos++;
     if (!(b & 0x80)) break;
     shift += 7;
+    if (shift > 63) break; // cap at 64-bit
   }
 
   return [result, pos];
