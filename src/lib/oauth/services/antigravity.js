@@ -274,6 +274,10 @@ export class AntigravityService {
         throw new Error(callbackParams.error_description || callbackParams.error);
       }
 
+      if (callbackParams.state !== state) {
+        throw new Error("Invalid state parameter");
+      }
+
       if (!callbackParams.code) {
         throw new Error("No authorization code received");
       }
