@@ -120,7 +120,15 @@ export async function handleEmbeddings(request) {
 
     log.info("AUTH", `\x1b[32mUsing ${provider} account: ${credentials.connectionName}\x1b[0m`);
 
-    const refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+    let refreshedCredentials;
+      try {
+        refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+      } catch (refreshErr) {
+        excludeConnectionIds.add(credentials.connectionId);
+        lastError = refreshErr?.message || "Token refresh failed";
+        lastStatus = HTTP_STATUS.UNAUTHORIZED;
+        continue;
+      }
 
     const result = await handleEmbeddingsCore({
       body: { ...body, model: `${provider}/${model}` },
