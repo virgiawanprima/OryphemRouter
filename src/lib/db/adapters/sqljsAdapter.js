@@ -105,11 +105,13 @@ export async function createSqlJsAdapter(filePath) {
     db.close();
   }
 
-  // Flush on shutdown
+  // Flush on shutdown — use once (not on) to prevent handler accumulation
+  // across re-init, and call process.exit so the process terminates
+  // (matching the other adapters).
   const flush = () => { if (dirty) try { persist(); } catch {} };
-  process.on("beforeExit", flush);
-  process.on("SIGINT", flush);
-  process.on("SIGTERM", flush);
+  process.once("beforeExit", flush);
+  process.once("SIGINT", () => { flush(); process.exit(0); });
+  process.once("SIGTERM", () => { flush(); process.exit(0); });
 
   return { driver: "sql.js", run, get, all, exec, transaction, close, raw: db };
 }
