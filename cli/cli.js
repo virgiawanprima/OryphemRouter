@@ -407,24 +407,28 @@ function killProcessOnPort(port) {
             timeout: 5000
           }).trim();
           const lines = output.split('\n').filter(l => l.includes('LISTENING'));
-          if (lines.length > 0) {
-            pid = lines[0].trim().split(/\s+/).pop();
-            execSync(`taskkill /F /PID ${pid} 2>nul`, { stdio: 'ignore', shell: true, windowsHide: true, timeout: 3000 });
+            if (lines.length > 0) {
+              pid = lines[0].trim().split(/\s+/).pop();
+              if (pid && !isNaN(pid)) {
+                execSync(`taskkill /F /PID ${pid} 2>nul`, { stdio: 'ignore', shell: true, windowsHide: true, timeout: 3000 });
+              }
+            }
+          } catch (e) {
+            // Port is free or error
           }
-        } catch (e) {
-          // Port is free or error
-        }
-      } else {
-        // macOS/Linux
-        try {
-          const pidOutput = execSync(`lsof -ti:${port}`, {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore']
-          }).trim();
-          if (pidOutput) {
-            pid = pidOutput.split('\n')[0];
-            execSync(`kill -9 ${pid} 2>/dev/null`, { stdio: 'ignore', timeout: 3000 });
-          }
+        } else {
+          // macOS/Linux
+          try {
+            const pidOutput = execSync(`lsof -ti:${port}`, {
+              encoding: 'utf8',
+              stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            if (pidOutput) {
+              pid = pidOutput.split('\n')[0];
+              if (pid && !isNaN(pid)) {
+                process.kill(parseInt(pid, 10), "SIGKILL");
+              }
+            }
         } catch (e) {
           // Port is free or error
         }
