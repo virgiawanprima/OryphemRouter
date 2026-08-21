@@ -39,7 +39,8 @@ export default function ConsoleLogClient() {
     es.onopen = () => setConnected(true);
 
     es.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
+      let msg;
+      try { msg = JSON.parse(e.data); } catch { return; }
       if (msg.type === "init") {
         setLogs(msg.logs.slice(-CONSOLE_LOG_CONFIG.maxLines));
       } else if (msg.type === "line") {
