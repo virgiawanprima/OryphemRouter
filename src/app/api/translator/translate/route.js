@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { parseJson } from "@/lib/utils/parseJson";
 import { detectFormat, getTargetFormat } from "open-sse/services/provider.js";
 import { translateRequest } from "open-sse/translator/index.js";

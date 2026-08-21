@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { parseJson } from "@/lib/utils/parseJson";
 import { exportDb, getSettings, importDb } from "@/lib/localDb";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
