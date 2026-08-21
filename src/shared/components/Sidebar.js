@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -50,6 +50,7 @@ export default function Sidebar({ onClose }) {
   const [shutdownCountdown, setShutdownCountdown] = useState(0);
   const [enableTranslator, setEnableTranslator] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const countdownRef = useRef(null);
   const { copied, copy } = useCopyToClipboard(2000);
 
   const INSTALL_CMD = UPDATER_CONFIG.installCmdLatest;
@@ -108,11 +109,13 @@ export default function Sidebar({ onClose }) {
     copy(INSTALL_CMD);
     let remaining = UPDATER_CONFIG.shutdownCountdownSec;
     setShutdownCountdown(remaining);
-    const timer = setInterval(() => {
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
       remaining -= 1;
       setShutdownCountdown(remaining);
       if (remaining <= 0) {
-        clearInterval(timer);
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
         fetch("/api/version/shutdown", { method: "POST" }).catch(() => {});
         setIsDisconnected(true);
       }
@@ -122,6 +125,7 @@ export default function Sidebar({ onClose }) {
   const handleCancelUpdate = () => {
     setIsUpdating(false);
     setShutdownCountdown(0);
+    if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null; }
   };
 
   // Note: legacy updater poll removed. New flow: copy install cmd + shutdown server,
