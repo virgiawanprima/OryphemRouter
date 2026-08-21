@@ -141,6 +141,7 @@ function runInstall() {
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
     shell: isWin,
+    timeout: 300000, // 5-minute cap so a hung npm install doesn't stall forever
   });
 
   child.stdout.on("data", (buf) => {
