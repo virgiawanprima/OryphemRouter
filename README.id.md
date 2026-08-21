@@ -631,6 +631,26 @@ Setiap dukungan membantu kami terus mengembangkan fitur baru dan pemeliharaan se
 
 ---
 
+## 🔒 Error Handling & Aksesibilitas
+
+### `parseJson`
+
+Semua API route dan SSE handler kini memakai `parseJson(request)` dari
+`src/lib/utils/parseJson.js` ketika membaca body JSON. Utility ini membungkus
+`request.json()` dan melempar `Error("Invalid JSON payload")` yang normalisasi
+sehingga handler bisa menangkapnya dan mengembalikan `400 Bad Request` alih‑alih
+`500 Internal Server Error` akibat `SyntaxError` yang tidak tertangani.
+
+### Aksesibilitas UI
+
+Komponen yang dapat diklik (`<div onClick>`) telah diperbaiki menjadi elemen
+yang dapat diakses keyboard: ditambahkan `role="button"`, `tabIndex`, `aria‑label`,
+`aria‑expanded`, dan handler `onKeyDown` (Enter/Space). Overlay modal juga
+mendapat `role="dialog"` + `aria‑modal`. Ini berlaku untuk kartu CLI‑tool, area
+"Copy" di landing, dan modal MCP kustom.
+
+---
+
 ## 📧 Kontak
 
 - 🌐 **Website**: https://oryphem.com
