@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/shared/utils/cn";
+import { useId } from "react";
 
 export default function Input({
   label,
@@ -17,10 +18,13 @@ export default function Input({
   inputClassName,
   ...props
 }) {
+  const id = useId();
+  const errorId = `${id}-error`;
+
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       {label && (
-        <label className="text-sm font-medium text-text-main">
+        <label htmlFor={id} className="text-sm font-medium text-text-main">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -32,11 +36,14 @@ export default function Input({
           </div>
         )}
         <input
+          id={id}
           type={type}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
           disabled={disabled}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
           className={cn(
             "w-full py-2.5 px-3 text-sm text-text-main border border-border-500 bg-surface rounded-[var(--radius-brand)] placeholder-text-muted/70 focus:outline-none focus:ring-2 focus:ring-brand-600/40 focus:border-brand-600/40 transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed",
             // iOS zoom fix
@@ -49,7 +56,7 @@ export default function Input({
         />
       </div>
       {error && (
-        <p className="text-xs text-red-500 flex items-center gap-1">
+        <p id={errorId} role="alert" className="text-xs text-red-500 flex items-center gap-1">
           <span className="material-symbols-outlined text-[14px]">error</span>
           {error}
         </p>
