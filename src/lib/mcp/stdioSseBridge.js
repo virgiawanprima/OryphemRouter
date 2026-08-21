@@ -121,6 +121,11 @@ function getOrSpawn(name) {
   // Parse newline-delimited JSON-RPC from child stdout, broadcast to all sessions.
   proc.stdout.on("data", (chunk) => {
     entry.buffer += chunk.toString("utf8");
+    // Cap buffer to prevent unbounded growth from a misbehaving child that
+    // emits output without newlines. Drop the oldest data beyond 1 MB.
+    if (entry.buffer.length > 1_048_576) {
+      entry.buffer = entry.buffer.slice(-524_288);
+    }
     let idx;
     while ((idx = entry.buffer.indexOf("\n")) >= 0) {
       const raw = entry.buffer.slice(0, idx).trim();

@@ -3,14 +3,19 @@ import { NextResponse } from "next/server";
 import { assertPublicUrl } from "@/shared/utils/ssrfGuard.js";
 import { isLocalRequest } from "@/dashboardGuard";
 
-// Fetch with timeout wrapper
-const fetchWithTimeout = (url, options, timeout = 10000) => {
-  return Promise.race([
-    fetch(url, options),
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("Request timeout")), timeout)
-    )
-  ]);
+// Fetch with timeout wrapper (aborts the underlying request and clears the
+// timer so losing races don't leak sockets/timers).
+const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(new Error("Request timeout")), timeout);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (e) {
+    if (controller.signal.aborted) throw new Error("Request timeout");
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
 };
 
 // Validate URL format

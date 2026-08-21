@@ -128,12 +128,16 @@ export async function GET(request, { params }) {
       if (!appPort) {
         return NextResponse.json({ error: "Missing app_port" }, { status: 400 });
       }
+      const parsedPort = Number(appPort);
+      if (!Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) {
+        return NextResponse.json({ error: "app_port must be an integer 1-65535" }, { status: 400 });
+      }
       const state = searchParams.get("state");
       const codeVerifier = searchParams.get("code_verifier");
       const redirectUri = searchParams.get("redirect_uri");
       const result = provider === "xai"
-        ? await startXaiProxy(Number(appPort))
-        : await startCodexProxy(Number(appPort));
+        ? await startXaiProxy(parsedPort)
+        : await startCodexProxy(parsedPort);
       let serverSide = false;
       if (result.success && state && codeVerifier && redirectUri) {
         serverSide = provider === "xai"
