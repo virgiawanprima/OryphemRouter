@@ -1,5 +1,6 @@
 import { SAML } from "@node-saml/node-saml";
 import { getSettings } from "../db/repos/settingsRepo.js";
+import { hasTrustedPeerHeaders } from "./trustedPeer.js";
 
 /**
  * Formats a raw Base64 string or unformatted X.509 certificate into standard PEM format.
