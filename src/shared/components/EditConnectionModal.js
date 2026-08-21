@@ -173,6 +173,8 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
       }
       
       await onSave(updates);
+    } catch (error) {
+      setError(error?.message || "Failed to save connection");
     } finally {
       setSaving(false);
     }
