@@ -2,10 +2,13 @@
 export function transformToOllama(response, model) {
   let buffer = "";
   let pendingToolCalls = {};
-  
+  // Hoist a single TextDecoder with stream:true so multi-byte UTF-8 characters
+  // split across chunk boundaries are not corrupted with replacement bytes.
+  const decoder = new TextDecoder("utf-8", { fatal: false });
+   
   const transform = new TransformStream({
     transform(chunk, controller) {
-      const text = new TextDecoder().decode(chunk);
+      const text = decoder.decode(chunk, { stream: true });
       buffer += text;
       const lines = buffer.split("\n");
       buffer = lines.pop() || "";
