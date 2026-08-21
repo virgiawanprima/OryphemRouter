@@ -201,7 +201,12 @@ export async function handleVideoGet(request, requestId) {
     return errorResponse(HTTP_STATUS.BAD_REQUEST, `No credentials for provider: ${provider}`);
   }
 
-  const refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+  let refreshedCredentials;
+  try {
+    refreshedCredentials = await checkAndRefreshToken(provider, credentials);
+  } catch (refreshErr) {
+    return errorResponse(HTTP_STATUS.UNAUTHORIZED, refreshErr?.message || "Token refresh failed");
+  }
 
   const result = await handleVideoProxyCore({
     provider,
