@@ -1,4 +1,4 @@
-const { exec } = require("child_process");
+const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
@@ -299,21 +299,21 @@ function killTray() {
 }
 
 /**
- * Open browser
+ * Open browser — uses spawn with argument array to prevent shell injection
  */
 function openBrowser(url) {
   const platform = process.platform;
-  let cmd;
+  let cmd, args;
 
   if (platform === "darwin") {
-    cmd = `open "${url}"`;
+    cmd = "open"; args = [url];
   } else if (platform === "win32") {
-    cmd = `start "" "${url}"`;
+    cmd = "cmd"; args = ["/c", "start", "", url];
   } else {
-    cmd = `xdg-open "${url}"`;
+    cmd = "xdg-open"; args = [url];
   }
 
-  exec(cmd);
+  spawn(cmd, args, { detached: true, stdio: "ignore" }).unref();
 }
 
 module.exports = {
