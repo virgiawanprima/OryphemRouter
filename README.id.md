@@ -4,9 +4,9 @@
 
 **AI Router & Token Saver: Jangan pernah berhenti coding. Hemat token, uang, dan rate limit.**
 
-[![npm version](https://img.shields.io/npm/v/oryphemrouter.svg)](https://www.npmjs.com/package/oryphemrouter)
+[![npm](https://img.shields.io/badge/npm-coming%20soon-orange?logo=npm)](https://www.npmjs.com/package/oryphemrouter)
 [![Node](https://img.shields.io/badge/node-20%2B-brightgreen)](https://nodejs.org)
-[![Docker Pulls](https://img.shields.io/docker/pulls/virgiawanprima/oryphemrouter.svg?logo=docker)](https://github.com/virgiawanprima/OryphemRouter/pkgs/container/oryphemrouter)
+[![Docker](https://img.shields.io/badge/ghcr.io-available-blue?logo=docker)](https://github.com/virgiawanprima/OryphemRouter/pkgs/container/oryphemrouter)
 [![Stars](https://img.shields.io/github/stars/virgiawanprima/OryphemRouter?style=flat&color=yellow)](https://github.com/virgiawanprima/OryphemRouter)
 [![Forks](https://img.shields.io/github/forks/virgiawanprima/OryphemRouter?style=flat&color=blue)](https://github.com/virgiawanprima/OryphemRouter)
 [![Last Commit](https://img.shields.io/github/last-commit/virgiawanprima/OryphemRouter)](https://github.com/virgiawanprima/OryphemRouter)
@@ -14,7 +14,7 @@
 
 **Hubungkan Semua Tools AI Coding** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **ke 40+ Provider AI & 100+ Model.**
 
-![Dashboard](https://via.placeholder.com/900x450/0f172a/e2e8f0?text=OryphemRouter+Dashboard)
+![Dashboard](public/images/overview.png)
 
 </div>
 

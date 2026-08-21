@@ -1,6 +1,6 @@
 services:
   oryphremrouter:
-    image: ghcr.io/virgiawanprima/oryphemrouter:v1.0
+    image: ghcr.io/virgiawanprima/oryphemrouter:latest
     container_name: oryphremrouter
     restart: always
     ports:
@@ -31,7 +31,7 @@ services:
       retries: 3
 
   headroom:
-    image: ghcr.io/chopratejas/headroom:v0.1
+    image: ghcr.io/chopratejas/headroom:latest
     container_name: headroom
     restart: always
     # No port mapping — only accessible via Docker internal DNS
