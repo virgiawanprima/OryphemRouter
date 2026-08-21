@@ -438,6 +438,8 @@ export default function OAuthModal({ isOpen, provider, providerInfo, onSuccess, 
         fetch("/api/oauth/zed/stop-proxy").catch(() => {});
       }
     }
+    // Cleanup: abort polling if component unmounts while modal is still open
+    return () => { pollingAbortRef.current = true; };
   }, [isOpen, provider, startOAuthFlow]);
 
   // Server-side proxy mode (codex/xai fixed-port + trae/windsurf dynamic-port):
