@@ -181,7 +181,7 @@ export async function POST(request) {
   } catch (error) {
     console.error("Error configuring jcode:", error);
     return NextResponse.json(
-      { error: error.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -210,7 +210,7 @@ export async function DELETE() {
   } catch (error) {
     console.error("Error removing jcode configuration:", error);
     return NextResponse.json(
-      { error: error.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

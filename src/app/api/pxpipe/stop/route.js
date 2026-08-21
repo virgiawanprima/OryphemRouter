@@ -11,6 +11,6 @@ export async function POST() {
     const wasLoaded = unloadPxpipe();
     return NextResponse.json({ stopped: wasLoaded, ...getPxpipeStatus() });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -38,7 +38,7 @@ export default {
         headers: response.headers,
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
         status: 502,
         headers: { "content-type": "application/json" },
       });
@@ -140,7 +140,7 @@ export async function POST(request) {
 
     return NextResponse.json({ proxyPool, deployUrl }, { status: 201 });
   } catch (error) {
-    console.log("Error deploying Cloudflare relay:", error);
-    return NextResponse.json({ error: error.message || "Deploy failed" }, { status: 500 });
+    console.error("Error deploying Cloudflare relay:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

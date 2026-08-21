@@ -427,7 +427,7 @@ const PROVIDER_MODELS_CONFIG = {
       });
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("Error fetching models from ollama-local:", errorText);
+        console.error("Error fetching models from ollama-local:", errorText);
         return { error: `Failed to fetch models: ${response.status}`, status: response.status };
       }
       const data = await response.json();
@@ -592,7 +592,7 @@ export async function GET(request, { params }) {
       models
     });
   } catch (error) {
-    console.log("Error fetching provider models:", error);
+    console.error("Error fetching provider models:", error);
     return NextResponse.json({ error: "Failed to fetch models" }, { status: 500 });
   }
 }

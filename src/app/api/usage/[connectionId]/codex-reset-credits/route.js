@@ -114,7 +114,7 @@ export async function GET(_request, { params }) {
   } catch (error) {
     const provider = connection?.provider ?? "unknown";
     console.warn(`[Codex Reset Credits] ${provider}: ${error.message}`);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -151,6 +151,6 @@ export async function POST(request, { params }) {
   } catch (error) {
     const provider = connection?.provider ?? "unknown";
     console.warn(`[Codex Reset Credits] ${provider}: ${error.message}`);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

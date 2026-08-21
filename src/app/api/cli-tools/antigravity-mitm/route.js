@@ -86,7 +86,7 @@ export async function GET() {
         DEFAULT_MITM_ROUTER_BASE,
     });
   } catch (error) {
-    console.log("Error getting MITM status:", error.message);
+    console.error("Error getting MITM status:", error.message);
     return NextResponse.json({ error: "Failed to get MITM status" }, { status: 500 });
   }
 }
@@ -128,14 +128,14 @@ export async function POST(request) {
 
     return NextResponse.json({ success: true, running: result.running, pid: result.pid });
   } catch (error) {
-    console.log("Error starting MITM server:", error.message);
+    console.error("Error starting MITM server:", error.message);
     if (error.code === "PORT_443_BUSY") {
       return NextResponse.json(
         { error: error.message, code: "PORT_443_BUSY", portOwner: error.portOwner },
         { status: 409 }
       );
     }
-    return NextResponse.json({ error: error.message || "Failed to start MITM server" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -155,8 +155,8 @@ export async function DELETE(request) {
 
     return NextResponse.json({ success: true, running: false });
   } catch (error) {
-    console.log("Error stopping MITM server:", error.message);
-    return NextResponse.json({ error: error.message || "Failed to stop MITM server" }, { status: 500 });
+    console.error("Error stopping MITM server:", error.message);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -197,7 +197,7 @@ export async function PATCH(request) {
     const status = await getMitmStatus();
     return NextResponse.json({ success: true, dnsStatus: status.dnsStatus });
   } catch (error) {
-    console.log("Error toggling DNS:", error.message);
-    return NextResponse.json({ error: error.message || "Failed to toggle DNS" }, { status: 500 });
+    console.error("Error toggling DNS:", error.message);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -9,6 +9,6 @@ export async function GET(request) {
     const recentLimit = Math.min(Number(searchParams.get("limit")) || 100, 500);
     return NextResponse.json(getPxpipeStats({ recentLimit }));
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
