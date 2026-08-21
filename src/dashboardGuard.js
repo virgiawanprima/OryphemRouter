@@ -39,25 +39,25 @@ const PUBLIC_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/api/v1beta", "/codex"];
 // Always require JWT token regardless of requireLogin setting
 const ALWAYS_PROTECTED = [
   "/api/shutdown",
+  "/api/settings",
   "/api/settings/database",
+  "/api/keys",
+  "/api/oauth",
   "/api/version/shutdown",
   "/api/version/update",
   "/api/oauth/cursor/auto-import",
   "/api/oauth/kiro/auto-import",
+  "/api/providers",
+  "/api/proxy-pools",
+  "/api/cloud",
 ];
 
 // Require auth, but allow through if requireLogin is disabled
 const PROTECTED_API_PATHS = [
-  "/api/settings",
-  "/api/keys",
-  "/api/providers",
   "/api/provider-nodes",
-  "/api/proxy-pools",
   "/api/combos",
   "/api/models",
   "/api/usage",
-  "/api/oauth",
-  "/api/cloud",
   "/api/media-providers",
   "/api/pricing",
   "/api/tags",
