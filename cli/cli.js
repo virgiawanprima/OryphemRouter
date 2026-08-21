@@ -508,24 +508,20 @@ function checkForUpdate() {
   });
 }
 
-// Open browser
+// Open browser — uses spawn with argument array to prevent shell injection
 function openBrowser(url) {
   const platform = process.platform;
-  let cmd;
+  let cmd, args;
 
   if (platform === "darwin") {
-    cmd = `open "${url}"`;
+    cmd = "open"; args = [url];
   } else if (platform === "win32") {
-    cmd = `start "" "${url}"`;
+    cmd = "cmd"; args = ["/c", "start", "", url];
   } else {
-    cmd = `xdg-open "${url}"`;
+    cmd = "xdg-open"; args = [url];
   }
 
-  exec(cmd, { windowsHide: true }, (err) => {
-    if (err) {
-      console.log(`Open browser manually: ${url}`);
-    }
-  });
+  spawn(cmd, args, { windowsHide: true, detached: true, stdio: "ignore" }).unref();
 }
 
 // Find standalone server (bundled in bin/app for published package).
