@@ -26,6 +26,7 @@ describe("refreshAccessToken — config-driven profiles", () => {
   afterEach(() => { global.fetch = originalFetch; });
 
   it("iflow: Basic Auth header from clientId:clientSecret, form body keeps client_secret", async () => {
+    process.env.IFLOW_OAUTH_CLIENT_SECRET = "test-iflow-secret";
     const fm = mockFetchOnce({ access_token: "if-acc", refresh_token: "if-rot", expires_in: 3600 });
     const { refreshAccessToken } = await import("open-sse/services/tokenRefresh/providers.js");
 
