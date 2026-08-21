@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const forge = require("node-forge");
 const { MITM_DIR } = require("../paths");
 
