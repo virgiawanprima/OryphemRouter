@@ -2,8 +2,23 @@ import { parseJson } from "@/lib/utils/parseJson";
 "use server";
 
 import { NextResponse } from "next/server";
+import { assertPublicUrl } from "@/shared/utils/ssrfGuard";
 
 const TIMEOUT_MS = 8000;
+
+// Validate an MCP URL before probing: http/https only, no private/internal hosts.
+function validateMcpUrl(raw) {
+  const parsed = new URL(raw);
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("url must use http or https");
+  }
+  // Local/loopback MCP servers are a legitimate dev use-case, so private
+  // hosts are blocked but loopback is explicitly allowed here.
+  if (parsed.hostname !== "localhost" && !parsed.hostname.endsWith(".localhost")) {
+    assertPublicUrl(parsed.toString());
+  }
+  return parsed.toString();
+}
 
 // Probe MCP server: initialize + tools/list. No auth header — works for authless servers.
 // OAuth servers return 401, signal client to skip tool listing.
@@ -88,7 +103,13 @@ export async function POST(request) {
     if (!url || typeof url !== "string") {
       return NextResponse.json({ error: "url required" }, { status: 400 });
     }
-    const result = await probeMcp(url);
+    let safeUrl;
+    try {
+      safeUrl = validateMcpUrl(url);
+    } catch {
+      return NextResponse.json({ error: "invalid url" }, { status: 400 });
+    }
+    const result = await probeMcp(safeUrl);
     return NextResponse.json(result);
   } catch (e) {
     return NextResponse.json({ error: e.message, tools: [] }, { status: 500 });

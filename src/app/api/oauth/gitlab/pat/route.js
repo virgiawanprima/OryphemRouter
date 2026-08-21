@@ -1,8 +1,21 @@
 import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { createProviderConnection } from "@/models";
+import { assertPublicUrl } from "@/shared/utils/ssrfGuard";
 
 const GITLAB_DEFAULT_BASE = "https://gitlab.com";
+
+// Resolve and validate the GitLab base URL before any server-side fetch:
+// must be https and must not target loopback/private/internal hosts (SSRF).
+function resolveGitLabBase(rawBaseUrl) {
+  const candidate = (rawBaseUrl?.trim() || GITLAB_DEFAULT_BASE).replace(/\/$/, "");
+  const parsed = new URL(candidate);
+  if (parsed.protocol !== "https:") {
+    throw new Error("baseUrl must use https");
+  }
+  assertPublicUrl(parsed.toString());
+  return parsed.origin;
+}
 
 /**
  * POST /api/oauth/gitlab/pat
@@ -22,7 +35,12 @@ export async function POST(request) {
       return NextResponse.json({ error: "Personal Access Token is required" }, { status: 400 });
     }
 
-    const base = (baseUrl?.trim() || GITLAB_DEFAULT_BASE).replace(/\/$/, "");
+    let base;
+    try {
+      base = resolveGitLabBase(baseUrl);
+    } catch {
+      return NextResponse.json({ error: "Invalid GitLab base URL" }, { status: 400 });
+    }
 
     // Verify token by fetching current user
     const userRes = await fetch(`${base}/api/v4/user`, {
@@ -30,8 +48,8 @@ export async function POST(request) {
     });
 
     if (!userRes.ok) {
-      const err = await userRes.text();
-      return NextResponse.json({ error: `GitLab token verification failed: ${err}` }, { status: 401 });
+      // Don't reflect upstream response text — it can leak internal details.
+      return NextResponse.json({ error: "GitLab token verification failed" }, { status: 401 });
     }
 
     const user = await userRes.json();

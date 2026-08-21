@@ -67,6 +67,15 @@ export async function startHeadroomProxy({ port = DEFAULT_PORT, codeAware = fals
   ensureDir();
   // spawn stdio requires fd numbers, not WriteStream objects.
   const outFd = fs.openSync(LOG_FILE, "a");
+  // Guard against double-close: the exit handler below and the success path
+  // at the bottom both close the fd; a second closeSync would throw EBADF
+  // inside an event callback and crash the server process.
+  let fdClosed = false;
+  const closeFd = () => {
+    if (fdClosed) return;
+    fdClosed = true;
+    try { fs.closeSync(outFd); } catch { /* already closed */ }
+  };
 
   const args = ["proxy", "--port", String(safePort), ...extrasProxyArgs({ codeAware, kompress })];
   const child = spawn(binary, args, {
@@ -77,7 +86,7 @@ export async function startHeadroomProxy({ port = DEFAULT_PORT, codeAware = fals
   });
 
   if (!child.pid) {
-    fs.closeSync(outFd);
+    closeFd();
     const err = new Error("Failed to spawn headroom proxy");
     err.code = "SPAWN_FAILED";
     throw err;
@@ -96,7 +105,7 @@ export async function startHeadroomProxy({ port = DEFAULT_PORT, codeAware = fals
     child.once("exit", (code) => {
       clearTimeout(startupTimer);
       clearPid();
-      fs.closeSync(outFd);
+      closeFd();
       const e = new Error(`headroom proxy exited early (code=${code}) — see proxy.log`);
       e.code = "EARLY_EXIT";
       reject(e);
@@ -104,7 +113,7 @@ export async function startHeadroomProxy({ port = DEFAULT_PORT, codeAware = fals
   });
 
   // Close parent's copy of the fd; child retains its own after unref.
-  fs.closeSync(outFd);
+  closeFd();
 
   return { pid: child.pid, alreadyRunning: false };
 }

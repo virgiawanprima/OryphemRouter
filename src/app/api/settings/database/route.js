@@ -3,13 +3,14 @@ import { parseJson } from "@/lib/utils/parseJson";
 import { exportDb, getSettings, importDb } from "@/lib/localDb";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
 import { verifyDashboardPassword } from "@/lib/auth/dashboardSession";
+import { hasValidCliToken } from "@/shared/utils/cliToken";
 
-const CLI_TOKEN_HEADER = "x-9r-cli-token";
 const PASSWORD_HEADER = "x-9r-password";
 
 // CLI token requests are already trusted (local machine); skip password re-auth.
+// The token VALUE is verified against the machine id, not just its presence.
 function isCliRequest(request) {
-  return Boolean(request.headers.get(CLI_TOKEN_HEADER));
+  return hasValidCliToken(request);
 }
 
 export async function GET(request) {

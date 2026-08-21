@@ -435,8 +435,12 @@ function transformOpenAISSEToGeminiSSE(upstreamResponse, model) {
 
   const transformStream = new TransformStream({
     transform(chunk, controller) {
-      const text = decoder.decode(chunk, { stream: true });
-      const lines = text.split("\n");
+      // Carry over partial lines across chunk boundaries so a data: line
+      // split in the middle isn't silently dropped.
+      this.partial = (this.partial || "") + decoder.decode(chunk, { stream: true });
+      const lines = this.partial.split("\n");
+      // The last element may be incomplete — keep it for the next chunk.
+      this.partial = lines.pop();
 
       for (const line of lines) {
         if (!line.startsWith("data:")) continue;
