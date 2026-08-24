@@ -60,7 +60,9 @@ let isFlushing = false;
 
 function sanitizeHeaders(headers) {
   if (!headers || typeof headers !== "object") return {};
-  const sensitiveKeys = ["authorization", "x-api-key", "cookie", "token", "api-key"];
+  // "password" catches x-9r-password (plaintext dashboard password sent by the
+  // profile page); "goog" catches x-goog-api-key. x-9r-real-ip stays (not secret).
+  const sensitiveKeys = ["authorization", "x-api-key", "cookie", "token", "api-key", "password", "goog"];
   const sanitized = { ...headers };
   for (const key of Object.keys(sanitized)) {
     if (sensitiveKeys.some((s) => key.toLowerCase().includes(s))) delete sanitized[key];
@@ -90,11 +92,15 @@ async function flushToDatabase() {
   if (writeBuffer.length === 0) return;
   isFlushing = true;
   try {
-    // Drain entire buffer (loop in case more pushed during await)
-    while (writeBuffer.length > 0) {
-      // Snapshot the current buffer but DON'T splice yet — only remove
-      // items after a successful transaction so a failure doesn't lose data.
-      const items = writeBuffer.slice();
+    // Drain entire buffer using an offset pointer instead of slice+splice.
+    // splice(0, N) shifts the remaining array on every iteration → O(n²).
+    // An index avoids touching the array until the very end.
+    let offset = 0;
+    while (offset < writeBuffer.length) {
+      // Items [offset … writeBuffer.length) need flushing, but we cap the
+      // batch to avoid an unbounded transaction for huge buffers.
+      const end = Math.min(offset + 500, writeBuffer.length);
+      const items = writeBuffer.slice(offset, end);
       const db = await getAdapter();
       const config = await getObservabilityConfig();
 
@@ -134,9 +140,12 @@ async function flushToDatabase() {
           );
         }
       });
-      // Only remove the flushed items after a successful transaction
-      writeBuffer.splice(0, items.length);
+      // Advance offset past flushed items
+      offset = end;
     }
+    // After successful flush, remove all processed items from the buffer.
+    // This runs at most once, replacing O(n²) splice-in-loop with O(1) truncation.
+    writeBuffer.splice(0, offset);
   } catch (e) {
     console.error("[requestDetailsRepo] Batch write failed:", e);
   } finally {

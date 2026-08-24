@@ -24,6 +24,11 @@ import * as log from "../utils/logger.js";
 import { updateProviderCredentials, checkAndRefreshToken } from "../services/tokenRefresh.js";
 import { getProjectIdForConnection } from "open-sse/services/projectId.js";
 
+// H6: In-memory cache for spending-limit queries to avoid two full-history
+// queries (getUsageStats("30d") + getUsageStats("today")) on every chat request.
+const SPENDING_LIMITS_CACHE_TTL_MS = 15_000;
+const spendingLimitsCache = new Map(); // key → { monthly, daily, ts }
+
 /**
  * Handle chat completion request
  * Supports: OpenAI, Claude, Gemini, OpenAI Responses API formats
@@ -80,13 +85,29 @@ export async function handleChat(request, clientRawRequest = null) {
   }
 
   // Spending limits enforcement
+  // TODO(H6): getUsageStats("30d") and getUsageStats("today") each scan the
+  // entire usageDaily table or full usageHistory window. Cache results with
+  // TTL ~15s to avoid two full-history queries per chat request. See the
+  // spendingLimitsCache Map added below in this file.
   const spendingLimits = settings.spendingLimits || {};
   if (spendingLimits.maxCostPerMonth || spendingLimits.maxCostPerDay) {
-    const { getUsageStats } = await import("@/lib/usageDb");
-    const monthlyStats = await getUsageStats("30d");
-    const dailyStats = await getUsageStats("today");
-    const totalMonthCost = monthlyStats?.totalCost || 0;
-    const totalDayCost = dailyStats?.totalCost || 0;
+    const cacheKey = `${settings.id || "default"}`;
+    let cached = spendingLimitsCache.get(cacheKey);
+    if (!cached || Date.now() - cached.ts > SPENDING_LIMITS_CACHE_TTL_MS) {
+      const { getUsageStats } = await import("@/lib/usageDb");
+      const [monthlyStats, dailyStats] = await Promise.all([
+        getUsageStats("30d"),
+        getUsageStats("today"),
+      ]);
+      cached = {
+        monthly: { totalCost: monthlyStats?.totalCost || 0 },
+        daily: { totalCost: dailyStats?.totalCost || 0 },
+        ts: Date.now(),
+      };
+      spendingLimitsCache.set(cacheKey, cached);
+    }
+    const totalMonthCost = cached.monthly.totalCost;
+    const totalDayCost = cached.daily.totalCost;
 
     const maxMonth = parseFloat(spendingLimits.maxCostPerMonth) || 0;
     const maxDay = parseFloat(spendingLimits.maxCostPerDay) || 0;
@@ -199,7 +220,13 @@ export async function handleChat(request, clientRawRequest = null) {
  * Handle single model chat request
  */
 async function handleSingleModelChat(body, modelStr, clientRawRequest = null, request = null, apiKey = null) {
-  const modelInfo = await getModelInfo(modelStr);
+  let modelInfo;
+  try {
+    modelInfo = await getModelInfo(modelStr);
+  } catch (e) {
+    log.warn("CHAT", "Model resolution failed", { error: e?.message });
+    return errorResponse(e?.status || HTTP_STATUS.BAD_REQUEST, e?.message || "Invalid model");
+  }
 
   // If provider is null, this might be a combo name - check and handle
   if (!modelInfo.provider) {
