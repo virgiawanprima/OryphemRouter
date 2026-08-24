@@ -10,8 +10,17 @@ const CIRCUIT_BREAKER_THRESHOLD = 5;     // errors before circuit opens
 const CIRCUIT_BREAKER_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown
 const CIRCUIT_BREAKER_RESET_MS = 10 * 60 * 1000;   // 10 minutes to reset error count after last error
 
-// Mutex to prevent race conditions during account selection
-let selectionMutex = Promise.resolve();
+// Mutex to prevent race conditions during account selection. Per-provider so
+// concurrent requests to different providers don't serialize against each other
+// (a slow DB read for provider A no longer stalls routing for provider B).
+const selectionMutexes = new Map();
+
+function lockSelection(providerId) {
+  const prev = selectionMutexes.get(providerId) || Promise.resolve();
+  let release;
+  selectionMutexes.set(providerId, new Promise((resolve) => { release = resolve; }));
+  return { prev, release };
+}
 
 const GITHUB_MONTHLY_USAGE_LIMIT = "you've reached your additional usage limit for your plan";
 
@@ -35,13 +44,11 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
     ? excludeConnectionIds
     : (excludeConnectionIds ? new Set([excludeConnectionIds]) : new Set());
   const preferredConnectionId = options?.preferredConnectionId || null;
-  // Acquire mutex to prevent race conditions
-  const currentMutex = selectionMutex;
-  let resolveMutex;
-  selectionMutex = new Promise(resolve => { resolveMutex = resolve; });
+  // Acquire per-provider mutex to prevent race conditions
+  const { prev, release } = lockSelection(String(provider || "").toLowerCase());
 
   try {
-    await currentMutex;
+    await prev;
 
     // Resolve alias to provider ID (e.g., "kc" -> "kilocode")
     const providerId = resolveProviderId(provider);
@@ -207,7 +214,7 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
       _connection: connection
     };
   } finally {
-    if (resolveMutex) resolveMutex();
+    release();
   }
 }
 
