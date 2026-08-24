@@ -21,9 +21,10 @@ export default {
   models: [
     { id: "morph-v3-large", name: "Morph v3 Large" },
     { id: "morph-v3-fast", name: "Morph v3 Fast" },
-    { id: "morph-qwen35-397b", name: "Qwen 3.5 397B (Morph)", contextLength: 262144 },
-    { id: "morph-minimax27-230b", name: "MiniMax M2.7 (Morph)", contextLength: 200704 },
-    { id: "morph-qwen36-27b", name: "Qwen 3.6 27B (Morph)", contextLength: 262144 },
-    { id: "morph-dsv4flash", name: "DeepSeek V4 Flash (Morph)", contextLength: 1048576 },
+    // Morph gateway tokens mapped to the real underlying model ids (wire keeps the token).
+    { id: "qwen3.5-397b-a17b", name: "Qwen 3.5 397B (A17B)", contextLength: 262144, upstreamModelId: "morph-qwen35-397b" },
+    { id: "minimax-m2.7", name: "MiniMax M2.7", contextLength: 200704, upstreamModelId: "morph-minimax27-230b" },
+    { id: "qwen3.6-27b", name: "Qwen 3.6 27B", contextLength: 262144, upstreamModelId: "morph-qwen36-27b" },
+    { id: "deepseek-v4-flash", name: "DeepSeek V4 Flash", contextLength: 1048576, upstreamModelId: "morph-dsv4flash" },
   ],
 };

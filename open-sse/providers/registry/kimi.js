@@ -56,7 +56,7 @@ export default {
   models: [
     // Flagship K3 — platform.kimi.ai id `kimi-k3`, Kimi Code OAuth id `k3` (up to 1M)
     { id: "kimi-k3", name: "Kimi K3" },
-    { id: "k3", name: "Kimi K3 (Code)" },
+    { id: "kimi-k3-code", name: "Kimi K3 (Code)", upstreamModelId: "k3" },
     // Kimi Code subscription stable ids (map to K2.7 Code backend)
     { id: "kimi-for-coding", name: "Kimi for Coding" },
     { id: "kimi-for-coding-highspeed", name: "Kimi for Coding Highspeed" },

@@ -26,7 +26,7 @@ export default {
     clientVersion: "3.12.17",
   },
   models: [
-    { id: "default", name: "Auto (Server Picks)" },
+    { id: "default", name: "Managed — Auto (server memilih model)" },
     { id: "claude-4.5-opus-high-thinking", name: "Claude 4.5 Opus High Thinking" },
     { id: "claude-4.5-opus-high", name: "Claude 4.5 Opus High" },
     { id: "claude-4.5-sonnet-thinking", name: "Claude 4.5 Sonnet Thinking" },

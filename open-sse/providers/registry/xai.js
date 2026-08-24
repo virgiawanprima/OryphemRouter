@@ -29,7 +29,8 @@ export default {
   models: [
     { id: "grok-4", name: "Grok 4" },
     { id: "grok-4-fast-reasoning", name: "Grok 4 Fast Reasoning" },
-    { id: "grok-code-fast-1", name: "Grok Code Fast" },
+    { id: "grok-4.20-0309-reasoning", name: "Grok 4.20 Reasoning (0309)" },
+    { id: "grok-code-fast-1", name: "Grok Code Fast 1" },
     { id: "grok-3", name: "Grok 3" },
     { id: "grok-2-image-1212", name: "Grok 2 Image", params: ["n","response_format"], kind: "image" },
     { id: "grok-imagine-video", name: "Grok Imagine Video", params: ["duration","aspect_ratio","resolution"], kind: "video" },
@@ -40,7 +41,8 @@ export default {
   // Docs: https://docs.x.ai/developers/rest-api-reference/inference/videos
   videoConfig: { baseUrl: "https://api.x.ai/v1/videos" },
   searchViaChat: {
-    defaultModel: "grok-4.20-reasoning",
+    // Real xAI id (was the shortened "grok-4.20-reasoning").
+    defaultModel: "grok-4.20-0309-reasoning",
     endpoint: "https://api.x.ai/v1/responses",
     pricingUrl: "https://x.ai/api#pricing",
   },
