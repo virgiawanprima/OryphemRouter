@@ -13,15 +13,15 @@ const TIMEOUT_MS = 90000;
 
 // All antigravity models (from providers/registry/antigravity.js)
 const AG_MODELS = [
-  "ag/gemini-3-flash-agent",
-  "ag/gemini-3.5-flash-low",
-  "ag/gemini-3.5-flash-extra-low",
-  "ag/gemini-pro-agent",
-  "ag/gemini-3.1-pro-low",
-  "ag/claude-sonnet-4-6",
-  "ag/claude-opus-4-6-thinking",
-  "ag/gpt-oss-120b-medium",
-  "ag/gemini-3-flash",
+  "antigravity/gemini-3.5-flash-high",
+  "antigravity/gemini-3.5-flash-low",
+  "antigravity/gemini-3.5-flash-extra-low",
+  "antigravity/gemini-pro-agent",
+  "antigravity/gemini-3.1-pro-low",
+  "antigravity/claude-sonnet-4-6",
+  "antigravity/claude-opus-4-6-thinking",
+  "antigravity/gpt-oss-120b-medium",
+  "antigravity/gemini-3-flash",
 ];
 
 // Simple text prompt — no tools
