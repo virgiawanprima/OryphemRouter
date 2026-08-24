@@ -76,7 +76,7 @@ export function getSamlBaseUrl(request, settings) {
     const trustForwarded = process.env.TRUST_PROXY === "true" || hasTrustedPeerHeaders(request);
     const forwardedProto = trustForwarded ? (request?.headers?.get?.("x-forwarded-proto") || "") : "";
     const forwardedHost = trustForwarded ? (request?.headers?.get?.("x-forwarded-host") || "") : "";
-    const host = forwardedHost || request?.headers?.get?.("host") || "";
+    const host = forwardedHost || (trustForwarded ? request?.headers?.get?.("host") : "") || "";
     if (host) {
       const protocol = (forwardedProto || new URL(request.url).protocol || "http:").replace(/:$/, "");
       return `${protocol}://${host}`.replace(/\/+$/, "");
