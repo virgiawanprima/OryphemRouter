@@ -144,7 +144,6 @@ async function handleSingleProviderSearch(body, providerInput, request, apiKey, 
       credentials: null,
       log
     });
-    if (result.success) return result.response;
     return result.response;
   }
 
@@ -173,7 +172,16 @@ async function handleSingleProviderSearch(body, providerInput, request, apiKey, 
 
     log.info("AUTH", `\x1b[32mUsing ${providerId} account: ${credentials.connectionName}\x1b[0m`);
 
-    const refreshedCredentials = await checkAndRefreshToken(providerId, credentials);
+    let refreshedCredentials;
+    try {
+      refreshedCredentials = await checkAndRefreshToken(providerId, credentials);
+    } catch (refreshErr) {
+      log.warn("FALLBACK", `⇄ ACC:${credentials.connectionName} TOKEN REFRESH FAILED → NEXT ACCOUNT`);
+      excludeConnectionIds.add(credentials.connectionId);
+      lastError = refreshErr?.message || "Token refresh failed";
+      lastStatus = HTTP_STATUS.UNAUTHORIZED;
+      continue;
+    }
 
     const result = await handleSearchCore({
       body: coreBody,

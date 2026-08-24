@@ -86,7 +86,7 @@ export async function handleFetch(request) {
 
   // SSRF guard: reject internal/private/metadata targets
   try {
-    assertPublicUrl(targetUrl);
+    await assertPublicUrl(targetUrl);
   } catch (err) {
     log.warn("FETCH", "Blocked URL", { url: targetUrl });
     return errorResponse(HTTP_STATUS.BAD_REQUEST, err.message);
@@ -183,7 +183,16 @@ async function handleSingleProviderFetch(body, providerInput, request, apiKey, s
 
     log.info("AUTH", `\x1b[32mUsing ${providerId} account: ${credentials.connectionName}\x1b[0m`);
 
-    const refreshedCredentials = await checkAndRefreshToken(providerId, credentials);
+    let refreshedCredentials;
+    try {
+      refreshedCredentials = await checkAndRefreshToken(providerId, credentials);
+    } catch (refreshErr) {
+      log.warn("FALLBACK", `⇄ ACC:${credentials.connectionName} TOKEN REFRESH FAILED → NEXT ACCOUNT`);
+      excludeConnectionIds.add(credentials.connectionId);
+      lastError = refreshErr?.message || "Token refresh failed";
+      lastStatus = HTTP_STATUS.UNAUTHORIZED;
+      continue;
+    }
 
     const result = await handleFetchCore({
       url: targetUrl,

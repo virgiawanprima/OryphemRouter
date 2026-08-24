@@ -186,9 +186,14 @@ export function createSSEStream(options = {}) {
                 injectedUsage = true;
               }
             } catch {
-              // Skip non-JSON data lines silently — don't forward garbage to clients.
-              // Upstream providers sometimes return plain-text errors (HTML, rate-limit
-              // messages) in the SSE stream that would break downstream JSON decoders.
+              // Log non-JSON data lines instead of silently dropping them.
+              // Silently skipping means clients see a truncated response as "success".
+              // Track consecutive errors and log a warning when threshold is exceeded.
+              sseParseErrors = (sseParseErrors || 0) + 1;
+              if (sseParseErrors === 1 || sseParseErrors % 10 === 0) {
+                const preview = trimmed.length > 120 ? trimmed.slice(0, 120) + "…" : trimmed;
+                console.warn(`[SSE] Non-JSON data line (#${sseParseErrors}): ${preview}`);
+              }
               continue;
             }
           }
