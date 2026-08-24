@@ -50,8 +50,8 @@ function lookup(fullId, requestedKind) {
   const providerId = ALIAS_TO_ID[alias] || alias;
   const providerInfo = AI_PROVIDERS[providerId];
 
-  // PROVIDER_MODELS lookup (by alias key, fallback to providerId)
-  const list = PROVIDER_MODELS[alias] || PROVIDER_MODELS[providerId] || [];
+  // PROVIDER_MODELS lookup (by full provider id)
+  const list = PROVIDER_MODELS[providerId] || [];
   const m = requestedKind
     ? list.find((x) => x.id === modelId && getModelKind(x, "llm") === requestedKind)
     : list.find((x) => x.id === modelId);

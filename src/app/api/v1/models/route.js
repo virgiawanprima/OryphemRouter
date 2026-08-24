@@ -122,6 +122,23 @@ const LIVE_MODEL_RESOLVERS = {
         })),
     };
   },
+  opencode: async () => {
+    // OpenCode Free — public no-auth catalog (no connection needed).
+    try {
+      const res = await fetch("https://opencode.ai/zen/v1/models", {
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : data?.data || [];
+      const models = list
+        .filter((m) => m?.id)
+        .map((m) => ({ id: m.id, name: m.name || m.id }));
+      return models.length ? { models } : null;
+    } catch {
+      return null;
+    }
+  },
 };
 
 const parseOpenAIStyleModels = (data) => {
@@ -290,6 +307,18 @@ export async function buildModelsList(kindFilter, options = {}) {
     }
   }
 
+  // Include no-auth free/passthrough providers (e.g. opencode) even without a
+  // saved connection, so their live catalogs surface in /v1/models.
+  for (const [providerId, info] of Object.entries(AI_PROVIDERS)) {
+    if (info.noAuth && info.passthroughModels && !activeConnectionByProvider.has(providerId)) {
+      activeConnectionByProvider.set(providerId, {
+        provider: providerId,
+        isActive: true,
+        providerSpecificData: {},
+      });
+    }
+  }
+
   const models = [];
 
   // Combos first (filtered by kind). Web combos expose `kind` so AI knows search vs fetch.
@@ -341,6 +370,27 @@ export async function buildModelsList(kindFilter, options = {}) {
         owned_by: providerAlias,
       });
     }
+
+    // No-auth free/passthrough providers (e.g. opencode) surface their live
+    // catalog even with zero saved connections.
+    for (const [providerId, info] of Object.entries(AI_PROVIDERS)) {
+      if (!info.noAuth || !info.passthroughModels) continue;
+      const liveResolver = LIVE_MODEL_RESOLVERS[providerId];
+      if (!liveResolver) continue;
+      try {
+        const live = await liveResolver({ provider: providerId, providerSpecificData: {} });
+        if (live?.models?.length) {
+          for (const m of live.models) {
+            if (!m?.id) continue;
+            models.push({
+              id: `${providerId}/${m.id}`,
+              object: "model",
+              owned_by: providerId,
+            });
+          }
+        }
+      } catch { /* fail-open */ }
+    }
   } else {
     for (const [providerId, conn] of activeConnectionByProvider.entries()) {
       if (!providerMatchesKinds(providerId, kindFilter)) continue;
@@ -348,7 +398,7 @@ export async function buildModelsList(kindFilter, options = {}) {
       const staticAlias = PROVIDER_ID_TO_ALIAS[providerId] || providerId;
       const outputAlias = (
         conn?.providerSpecificData?.prefix
-        || getProviderAlias(providerId)
+        || providerId
         || staticAlias
       ).trim();
       const providerModels = PROVIDER_MODELS[staticAlias] || [];
