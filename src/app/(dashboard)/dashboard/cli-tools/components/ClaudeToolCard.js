@@ -54,7 +54,7 @@ export default function ClaudeToolCard({
   const hasInitializedModels = useRef(false);
 
   const getConfigStatus = () => {
-    if (!claudeStatus?.installed) return null;
+    if (!claudeStatus?.installed && !claudeStatus?.checkFailed) return null;
     const currentUrl = claudeStatus.settings?.env?.ANTHROPIC_BASE_URL;
     if (!currentUrl) return "not_configured";
     if (matchKnownEndpoint(currentUrl, { tunnelPublicUrl, tailscaleUrl, cloudUrl: cloudEnabled ? CLOUD_URL : null })) return "configured";
@@ -141,10 +141,15 @@ export default function ClaudeToolCard({
     try {
       const res = await fetch("/api/cli-tools/claude-settings");
       const data = await res.json();
-      setClaudeStatus(data);
-      setExaMcpEnabled(!!data.exaMcpEnabled);
+      if (!res.ok) {
+        setClaudeStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+        setExaMcpEnabled(false);
+      } else {
+        setClaudeStatus(data);
+        setExaMcpEnabled(!!data.exaMcpEnabled);
+      }
     } catch (error) {
-      setClaudeStatus({ installed: false, error: error.message });
+      setClaudeStatus({ checkFailed: true, error: error.message });
     } finally {
       setCheckingClaude(false);
     }
@@ -291,7 +296,7 @@ export default function ClaudeToolCard({
             </div>
           )}
 
-          {!checkingClaude && claudeStatus && !claudeStatus.installed && (
+          {!checkingClaude && claudeStatus && !claudeStatus.checkFailed && claudeStatus.installed === false && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                 <div className="flex items-start gap-3">

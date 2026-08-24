@@ -38,7 +38,7 @@ export default function DeepSeekTuiToolCard({
   const hasInitializedModel = useRef(false);
 
   const getConfigStatus = () => {
-    if (!deepseekStatus?.installed) return null;
+    if (!deepseekStatus?.installed && !deepseekStatus?.checkFailed) return null;
     const openaiSection = deepseekStatus.settings?.["providers.openai"];
     if (!openaiSection?.base_url) return "not_configured";
     if (matchKnownEndpoint(openaiSection.base_url, { tunnelPublicUrl, tailscaleUrl })) return "configured";
@@ -87,9 +87,13 @@ export default function DeepSeekTuiToolCard({
     try {
       const res = await fetch(ENDPOINT);
       const data = await res.json();
-      setDeepseekStatus(data);
+      if (!res.ok) {
+        setDeepseekStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setDeepseekStatus(data);
+      }
     } catch (error) {
-      setDeepseekStatus({ installed: false, error: error.message });
+      setDeepseekStatus({ checkFailed: true, error: error.message });
     } finally {
       setChecking(false);
     }
@@ -218,7 +222,7 @@ model = "${selectedModel || "provider/model-id"}"
             </div>
           )}
 
-          {!checking && deepseekStatus && !deepseekStatus.installed && (
+          {!checking && deepseekStatus && !deepseekStatus.checkFailed && deepseekStatus.installed === false && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                 <div className="flex items-start gap-3">

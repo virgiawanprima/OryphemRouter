@@ -130,11 +130,16 @@ export default function GrokBuildToolCard({
     try {
       const res = await fetch(ENDPOINT);
       const status = await res.json();
-      setGrokStatus(status);
-      hasFetchedStatus.current = true;
-      if (hydrate) hydrateForm(status);
+      if (!res.ok) {
+        setGrokStatus({ checkFailed: true, error: status?.error || `Request failed (${res.status})` });
+        hasFetchedStatus.current = true;
+      } else {
+        setGrokStatus(status);
+        hasFetchedStatus.current = true;
+        if (hydrate) hydrateForm(status);
+      }
     } catch (error) {
-      setGrokStatus({ installed: false, error: error.message });
+      setGrokStatus({ checkFailed: true, error: error.message });
     } finally {
       setChecking(false);
     }
@@ -289,7 +294,7 @@ export default function GrokBuildToolCard({
         <div className="mt-4 pt-4 border-t border-border flex flex-col gap-4">
           {checking && <div className="flex items-center gap-2 text-text-muted"><span className="material-symbols-outlined animate-spin">progress_activity</span><span>Checking Grok Build...</span></div>}
 
-          {!checking && grokStatus && !grokStatus.installed && (
+          {!checking && grokStatus && !grokStatus.checkFailed && grokStatus.installed === false && (
             <div className="flex flex-col gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-yellow-500">warning</span>

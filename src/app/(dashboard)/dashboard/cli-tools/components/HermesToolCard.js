@@ -38,7 +38,7 @@ export default function HermesToolCard({
   const hasInitializedModel = useRef(false);
 
   const getConfigStatus = () => {
-    if (!hermesStatus?.installed) return null;
+    if (!hermesStatus?.installed && !hermesStatus?.checkFailed) return null;
     const cfg = hermesStatus.settings?.model;
     if (!cfg?.base_url) return "not_configured";
     if (matchKnownEndpoint(cfg.base_url, { tunnelPublicUrl, tailscaleUrl })) return "configured";
@@ -87,9 +87,13 @@ export default function HermesToolCard({
     try {
       const res = await fetch(ENDPOINT);
       const data = await res.json();
-      setHermesStatus(data);
+      if (!res.ok) {
+        setHermesStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setHermesStatus(data);
+      }
     } catch (error) {
-      setHermesStatus({ installed: false, error: error.message });
+      setHermesStatus({ checkFailed: true, error: error.message });
     } finally {
       setChecking(false);
     }
@@ -216,7 +220,7 @@ export default function HermesToolCard({
             </div>
           )}
 
-          {!checking && hermesStatus && !hermesStatus.installed && (
+          {!checking && hermesStatus && !hermesStatus.checkFailed && hermesStatus.installed === false && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                 <div className="flex items-start gap-3">

@@ -100,9 +100,13 @@ export default function CoworkToolCard({
     try {
       const res = await fetch(ENDPOINT);
       const data = await res.json();
-      setStatus(data);
+      if (!res.ok) {
+        setStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setStatus(data);
+      }
     } catch (error) {
-      setStatus({ installed: false, error: error.message });
+      setStatus({ checkFailed: true, error: error.message });
     } finally {
       setChecking(false);
     }
@@ -281,7 +285,19 @@ export default function CoworkToolCard({
             </div>
           )}
 
-          {!checking && status && !status.installed && (
+                    {!checking && status?.checkFailed && (
+            <div className="flex flex-col gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <div className="flex items-start gap-3">
+                <span className="material-symbols-outlined text-red-500">error</span>
+                <div className="flex-1">
+                  <p className="font-medium text-red-600 dark:text-red-400">Could not check CLI status</p>
+                  <p className="text-sm text-text-muted">{status.error || "An error occurred while checking the local installation."}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+{!checking && status && !status.checkFailed && status.installed === false && (
             <div className="flex flex-col gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-yellow-500">warning</span>

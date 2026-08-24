@@ -100,9 +100,14 @@ export default function CopilotToolCard({ tool, isExpanded, onToggle, baseUrl, a
     try {
       const res = await fetch("/api/cli-tools/copilot-settings");
       const data = await res.json();
-      setStatus(data);
+      if (!res.ok) {
+        // API error (e.g. 403/401/500) — do NOT misreport as "not installed".
+        setStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setStatus(data);
+      }
     } catch (error) {
-      setStatus({ error: error.message });
+      setStatus({ checkFailed: true, error: error.message });
     } finally {
       setChecking(false);
     }
