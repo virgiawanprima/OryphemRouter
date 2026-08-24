@@ -2,11 +2,16 @@
 // Provider entries that ship their own `name` always win; this is only a fallback for terse entries.
 
 // Capitalize a hyphen/space separated token group: "coder-plus" → "Coder Plus".
+// Digit-prefixed version tokens like "v4" become "V4" (kept lowercase digits alone).
 function titleCase(s) {
   return s
     .split(/[-_\s]+/)
     .filter(Boolean)
-    .map((w) => (/^\d/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+    .map((w) => {
+      if (/^\d/.test(w)) return w;
+      if (/^[a-z]\d/.test(w)) return w.charAt(0).toUpperCase() + w.slice(1);
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
     .join(" ");
 }
 
