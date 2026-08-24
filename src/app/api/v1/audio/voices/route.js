@@ -46,8 +46,8 @@ export async function GET(request) {
       ? (data.voices || [])
       : Object.values(data.byLang || {}).flatMap((l) => l.voices || []);
 
-    // Use provider alias for /v1/audio/speech model param (matches skill convention e.g. el/, dg/, edge-tts/)
-    const alias = AI_PROVIDERS[provider]?.alias || provider;
+    // Use provider ID for /v1/audio/speech model param
+    const alias = provider;
     const data_out = rawVoices.map((v) => ({
       id: v.id,
       name: v.name,

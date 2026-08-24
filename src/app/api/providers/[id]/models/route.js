@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getProviderConnectionById } from "@/models";
 import { isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
+import { deriveModelName } from "open-sse/providers/models/namePatterns.js";
 import { GEMINI_CONFIG } from "@/lib/oauth/constants/oauth";
 import { refreshGoogleToken, refreshCodexToken, updateProviderCredentials } from "@/sse/services/tokenRefresh";
 import { resolveOllamaLocalHost } from "open-sse/config/providers.js";
@@ -472,7 +473,13 @@ export async function GET(request, { params }) {
       }
 
       const data = await response.json();
-      const models = data.data || data.models || [];
+      const raw = data.data || data.models || [];
+      // Normalize: ensure every model has an id and an honest display name.
+      const models = raw.map((m) => {
+        if (typeof m === "string") return { id: m, name: deriveModelName(m) };
+        const id = m.id ?? m.model ?? "";
+        return { ...m, id, name: m.name || deriveModelName(id) };
+      });
 
       return NextResponse.json({
         provider: connection.provider,
@@ -513,7 +520,12 @@ export async function GET(request, { params }) {
       }
 
       const data = await response.json();
-      const models = data.data || data.models || [];
+      const raw = data.data || data.models || [];
+      const models = raw.map((m) => {
+        if (typeof m === "string") return { id: m, name: deriveModelName(m) };
+        const id = m.id ?? m.model ?? "";
+        return { ...m, id, name: m.name || deriveModelName(id) };
+      });
 
       return NextResponse.json({
         provider: connection.provider,
