@@ -9,6 +9,7 @@ import CapacityBadges from "./CapacityBadges";
 import { useModelCaps } from "@/shared/hooks/useModelCaps";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
 import { OAUTH_PROVIDERS, APIKEY_PROVIDERS, FREE_PROVIDERS, FREE_TIER_PROVIDERS, AI_PROVIDERS, isOpenAICompatibleProvider, isAnthropicCompatibleProvider, getProviderAlias } from "@/shared/constants/providers";
+import { getPricingForModel } from "open-sse/providers/pricing.js";
 
 // Provider order: OAuth first, then Free Tier, then API Key (matches dashboard/providers)
 const PROVIDER_ORDER = [
@@ -20,6 +21,31 @@ const PROVIDER_ORDER = [
 
 // Providers that need no auth — always show in model selector
 const NO_AUTH_PROVIDER_IDS = Object.keys(FREE_PROVIDERS).filter(id => FREE_PROVIDERS[id].noAuth);
+
+// Price tier classification for models. Uses real pricing data from pricing.js;
+// models without pricing data are classed as "free" if the provider is noAuth.
+function getModelPriceTier(providerId, modelId) {
+  const provider = AI_PROVIDERS[providerId];
+  // Free-tier built-in models must never be classed as "cheap":
+  //  - noAuth providers (e.g. opencode) are free by design
+  //  - ids carrying a free marker (`-free`, `:free`, `/free`) are the provider's
+  //    free tier, not a paid model with a low price
+  const id = String(modelId || "").toLowerCase();
+  const isFreeMarker = id.endsWith("-free") || id.includes(":free") || id.endsWith("/free");
+  if (provider?.noAuth || isFreeMarker) return "free";
+
+  try {
+    const pricing = getPricingForModel(providerId, modelId);
+    if (pricing) {
+      const input = pricing.input ?? 0;
+      if (input === 0) return "free";
+      if (input < 1) return "cheap";
+      if (input <= 5) return "medium";
+      return "expensive";
+    }
+  } catch { /* fallback below */ }
+  return null;
+}
 
 export default function ModelSelectModal({
   isOpen,
@@ -46,11 +72,55 @@ export default function ModelSelectModal({
   }, [activeProviders, kindFilter]);
   const { getCaps } = useModelCaps();
   const [searchQuery, setSearchQuery] = useState("");
+  const [priceFilter, setPriceFilter] = useState("all");
   const [combos, setCombos] = useState([]);
   const [providerNodes, setProviderNodes] = useState([]);
   const [customModels, setCustomModels] = useState([]);
   const [disabledModels, setDisabledModels] = useState({});
   const [cursorModels, setCursorModels] = useState([]);
+  const [liveCatalogModels, setLiveCatalogModels] = useState({}); // providerId -> [{id,name}]
+
+  // Fetch live catalogs so providers with an empty static registry list are not
+  // a dead end ("No models found"):
+  //  1. /api/v1/models — server-side aggregate covering EVERY registered provider
+  //     with a live resolver (opencode, openrouter, kiro, qoder, cursor, github,
+  //     grok-cli, zed, kimchi, clinepass) plus static + custom models.
+  //  2. Direct public fallback for noAuth passthrough providers (opencode).
+  useEffect(() => {
+    if (!isOpen) { setLiveCatalogModels({}); return undefined; }
+    let cancelled = false;
+    (async () => {
+      const results = {};
+      try {
+        const r = await fetch("/api/v1/models", { cache: "no-store", signal: AbortSignal.timeout(10000) });
+        if (r.ok) {
+          const d = await r.json();
+          const list = Array.isArray(d) ? d : d?.data || [];
+          for (const m of list) {
+            const owner = m.owned_by;
+            if (!owner || typeof m.id !== "string" || !m.id.includes("/")) continue;
+            if (!results[owner]) results[owner] = [];
+            const modelId = m.id.slice(m.id.indexOf("/") + 1);
+            if (modelId) results[owner].push({ id: modelId, name: m.name || modelId });
+          }
+        }
+      } catch { /* fail open */ }
+
+      const publicFetchers = { opencode: "https://opencode.ai/zen/v1/models" };
+      await Promise.all(Object.entries(publicFetchers).map(async ([providerId, url]) => {
+        try {
+          const r = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(8000) });
+          if (!r.ok) return;
+          const d = await r.json();
+          const list = Array.isArray(d) ? d : d?.data || [];
+          results[providerId] = list.filter((m) => m?.id).map((m) => ({ id: m.id, name: m.name || m.id }));
+        } catch { /* fail open */ }
+      }));
+
+      if (!cancelled) setLiveCatalogModels(results);
+    })();
+    return () => { cancelled = true; };
+  }, [isOpen]);
 
   // Cursor exposes the usable catalog per account. Keep the static catalog only
   // as a fallback, since it quickly becomes stale and different accounts can
@@ -202,9 +272,17 @@ export default function ModelSelectModal({
     });
 
     sortedProviderIds.forEach((providerId) => {
-      const alias = getProviderAlias(providerId);
+      const alias = providerId;
       const providerInfo = allProviders[providerId] || { name: providerId, color: "#666" };
       const isCustomProvider = isOpenAICompatibleProvider(providerId) || isAnthropicCompatibleProvider(providerId);
+      // Custom models & named aliases may be stored under the SHORT alias
+      // (e.g. "oc/...") while the canonical id is "opencode" — match both, but
+      // always emit the canonical full-id form so the router accepts them.
+      const shortAlias = getProviderAlias(providerId);
+      const stripPrefix = (fullModel) => {
+        const slash = fullModel.indexOf("/");
+        return slash >= 0 ? fullModel.slice(slash + 1) : fullModel;
+      };
 
       // For provider-as-model kinds (webSearch/webFetch): emit a single entry where value === providerId
       if (kindFilter && PROVIDER_AS_MODEL_KINDS.has(kindFilter)) {
@@ -218,15 +296,18 @@ export default function ModelSelectModal({
       }
 
       if (providerInfo.passthroughModels) {
+        // Custom models & named aliases may be stored under the SHORT alias
+        // (e.g. "oc/...") while the canonical id is "opencode". Match both, but
+        // always emit the canonical full-id form so the router accepts them.
         const aliasModels = Object.entries(modelAliases)
-          .filter(([, fullModel]) => fullModel.startsWith(`${alias}/`))
+          .filter(([, fullModel]) => fullModel.startsWith(`${alias}/`) || (shortAlias && fullModel.startsWith(`${shortAlias}/`)))
           .map(([aliasName, fullModel]) => ({
-            id: fullModel.replace(`${alias}/`, ""),
+            id: stripPrefix(fullModel),
             name: aliasName,
-            value: fullModel,
+            value: `${alias}/${stripPrefix(fullModel)}`,
           }));
         const customRegisteredModels = customModels
-          .filter((m) => m.providerAlias === alias)
+          .filter((m) => m.providerAlias === alias || (shortAlias && m.providerAlias === shortAlias))
           .map((m) => ({
             id: m.id,
             name: m.name || m.id,
@@ -252,7 +333,7 @@ export default function ModelSelectModal({
             if (supports) combined = [{ id: providerId, name: providerInfo.name, value: alias }];
           }
         } else {
-          // LLM/null kind: merge hardcoded models (e.g. mimo-free → mimo-auto) with user-added models
+          // LLM/null kind: merge hardcoded models with user-added models
           const registeredLlms = customRegisteredModels.filter((m) => !getModelKind(m) || getModelKind(m) === "llm");
           const seen = new Set([...aliasModels, ...registeredLlms].map((m) => m.value));
           const hardcoded = getModelsByProviderId(providerId)
@@ -260,6 +341,15 @@ export default function ModelSelectModal({
             .map((m) => ({ id: m.id, name: m.name, value: `${alias}/${m.id}`, kind: getModelKind(m) }))
             .filter((m) => !seen.has(m.value));
           combined = [...registeredLlms, ...aliasModels.filter((m) => !registeredLlms.some((registered) => registered.value === m.value)), ...hardcoded];
+        }
+
+        // Passthrough providers with an empty static catalog still expose a live
+        // public catalog (e.g. opencode) — surface it so the selector isn't empty.
+        if (combined.length === 0) {
+          const live = liveCatalogModels[providerId];
+          if (live?.length) {
+            combined = live.map((m) => ({ id: m.id, name: m.name || m.id, value: `${alias}/${m.id}` }));
+          }
         }
 
         if (combined.length > 0) {
@@ -334,19 +424,19 @@ export default function ModelSelectModal({
         const hasHardcoded = hardcodedModels.length > 0;
         const customAliasModels = Object.entries(modelAliases)
           .filter(([aliasName, fullModel]) =>
-            fullModel.startsWith(`${alias}/`) &&
-            (hasHardcoded ? aliasName === fullModel.replace(`${alias}/`, "") : true) &&
-            !hardcodedIds.has(fullModel.replace(`${alias}/`, ""))
+            (fullModel.startsWith(`${alias}/`) || (shortAlias && fullModel.startsWith(`${shortAlias}/`))) &&
+            (hasHardcoded ? aliasName === stripPrefix(fullModel) : true) &&
+            !hardcodedIds.has(stripPrefix(fullModel))
           )
           .map(([aliasName, fullModel]) => {
-            const modelId = fullModel.replace(`${alias}/`, "");
-            return { id: modelId, name: aliasName, value: fullModel, isCustom: true };
+            const modelId = stripPrefix(fullModel);
+            return { id: modelId, name: aliasName, value: `${alias}/${modelId}`, isCustom: true };
           });
 
         // Custom models registered via /api/models/custom (provider "Add Model" button)
         const customAliasIds = new Set(customAliasModels.map((m) => m.id));
         const customRegisteredModels = customModels
-          .filter((m) => m.providerAlias === alias && !hardcodedIds.has(m.id) && !customAliasIds.has(m.id))
+          .filter((m) => (m.providerAlias === alias || (shortAlias && m.providerAlias === shortAlias)) && !hardcodedIds.has(m.id) && !customAliasIds.has(m.id))
           .map((m) => ({ id: m.id, name: m.name || m.id, value: `${alias}/${m.id}`, isCustom: true }));
 
         const merged = [
@@ -371,6 +461,16 @@ export default function ModelSelectModal({
           }
         }
 
+        // Providers whose real catalog is fetched live (kiro, qoder, cursor,
+        // github, grok-cli, kimchi, clinepass, opencode, ...): fall back to the
+        // aggregated /api/v1/models catalog when the static seed is empty.
+        if (allModels.length === 0 && !kindFilter) {
+          const live = liveCatalogModels[providerId];
+          if (live?.length) {
+            allModels = live.map((m) => ({ id: m.id, name: m.name || m.id, value: `${alias}/${m.id}` }));
+          }
+        }
+
         if (allModels.length > 0) {
           groups[providerId] = {
             name: providerInfo.name,
@@ -384,7 +484,7 @@ export default function ModelSelectModal({
 
     // Filter out disabled models per provider (disabled keyed by storage alias OR providerId)
     Object.entries(groups).forEach(([providerId, group]) => {
-      const aliasKey = getProviderAlias(providerId);
+      const aliasKey = providerId;
       const disabledIds = new Set([
         ...(disabledModels[aliasKey] || []),
         ...(disabledModels[providerId] || []),
@@ -395,7 +495,7 @@ export default function ModelSelectModal({
     });
 
     return groups;
-  }, [filteredActiveProviders, modelAliases, allProviders, providerNodes, customModels, disabledModels, kindFilter, activeProviders, cursorModels]);
+  }, [filteredActiveProviders, modelAliases, allProviders, providerNodes, customModels, disabledModels, kindFilter, activeProviders, cursorModels, liveCatalogModels]);
 
   // Filter combos by search query (and hide combos when kindFilter is set — combos are LLM-only by design)
   const filteredCombos = useMemo(() => {
@@ -424,6 +524,17 @@ export default function ModelSelectModal({
         models = models.filter((m) => getCaps(m.value)?.[capFilter] === true);
         if (models.length === 0) return;
       }
+      // Filter by price tier.
+      if (priceFilter !== "all") {
+        // Only filter models with a KNOWN tier; models without pricing data
+        // (custom/compatible/passthrough/unknown) stay visible so they don't
+        // silently disappear when a price tier is selected.
+        models = models.filter((m) => {
+          const tier = getModelPriceTier(providerId, m.id);
+          return tier == null || tier === priceFilter;
+        });
+        if (models.length === 0) return;
+      }
       if (query) {
         const providerNameMatches = group.name.toLowerCase().includes(query);
         models = models.filter(
@@ -440,7 +551,7 @@ export default function ModelSelectModal({
     });
 
     return filtered;
-  }, [groupedModels, searchQuery, addedModelValues]);
+  }, [groupedModels, searchQuery, priceFilter, addedModelValues, capFilter]);
 
   const handleSelect = (model) => {
     const value = model?.value || model?.name || model;
@@ -462,15 +573,16 @@ export default function ModelSelectModal({
     <Modal
       isOpen={isOpen}
       onClose={() => {
-        onClose();
-        setSearchQuery("");
-      }}
-      title={title}
-      size="md"
-      className="p-4!"
-      footer={closeOnSelect ? null : (
-        <Button
-          onClick={() => { onClose(); setSearchQuery(""); }}
+onClose();
+      setSearchQuery("");
+      setPriceFilter("all");
+    }}
+    title={title}
+    size="md"
+    className="p-4!"
+    footer={closeOnSelect ? null : (
+      <Button
+        onClick={() => { onClose(); setSearchQuery(""); setPriceFilter("all"); }}
           size="sm"
         >
           Save
@@ -497,6 +609,30 @@ export default function ModelSelectModal({
             className="w-full pl-8 pr-3 py-1.5 bg-surface border border-border rounded-[var(--radius-brand)] text-xs focus:outline-none focus:ring-1 focus:ring-primary/50"
           />
         </div>
+      </div>
+
+      {/* Price tier filter */}
+      <div className="flex flex-wrap gap-1 mb-3">
+        {[
+          { key: "all", label: "All", icon: "all_inclusive" },
+          { key: "free", label: "Free", icon: "eco" },
+          { key: "cheap", label: "Cheap", icon: "payments" },
+          { key: "medium", label: "Medium", icon: "sell" },
+          { key: "expensive", label: "Expensive", icon: "workspace_premium" },
+        ].map(({ key, label, icon }) => (
+          <button
+            key={key}
+            onClick={() => setPriceFilter(key)}
+            className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border transition-all ${
+              priceFilter === key
+                ? "bg-primary text-white border-primary"
+                : "bg-surface text-text-muted border-border hover:border-primary/40 hover:text-text-main"
+            }`}
+          >
+            <span className="material-symbols-outlined text-[12px]">{icon}</span>
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Models grouped by provider - compact */}
@@ -555,6 +691,23 @@ export default function ModelSelectModal({
               <span className="text-[10px] text-text-muted">
                 ({group.models.length})
               </span>
+              {/* "Add All" button — only in multi-select mode (closeOnSelect=false) */}
+              {!closeOnSelect && group.models.length > 0 && (
+                <button
+                  onClick={() => {
+                    // Add all models from this provider that are not already added
+                    for (const model of group.models) {
+                      if (!addedModelValues.includes(model.value) && !model.isPlaceholder) {
+                        onSelect(model);
+                      }
+                    }
+                  }}
+                  className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                  title={`Add all ${group.models.length} models from ${group.name}`}
+                >
+                  +All
+                </button>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-1.5">

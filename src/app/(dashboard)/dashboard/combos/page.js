@@ -22,16 +22,6 @@ const CAPACITY_ADAPTER_CAPS = [
   // pdf, videoInput temporarily hidden — no translator support yet for those blocks.
   { key: "audioInput", label: "Audio", icon: "graphic_eq", desc: "Audio input" },
 ];
-const DEFAULT_FALLBACK_MODEL = "oc/mimo-v2.5-free";
-// Template for free combo: gratis models on top, paid below (fallback strategy)
-const FREE_TEMPLATE_MODELS = [
-  "oc/mimo-v2.5-free",
-  "kr/claude-sonnet-4.5",
-  "kr/glm-5",
-  "kr/qwen3-coder-next",
-  "kr/deepseek-3.2",
-];
-const FREE_TEMPLATE_COMBO = { name: "free-combo", models: [...FREE_TEMPLATE_MODELS] };
 const EMPTY_CAP_ENTRY = { enabled: true, roundRobin: false, models: [] };
 const EMPTY_CAPACITY_ADAPTER = {
   vision: { ...EMPTY_CAP_ENTRY },
@@ -466,7 +456,7 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps }) 
 
   const handleRemove = (index) => {
     const next = models.filter((_, i) => i !== index);
-    patch({ models: next.length === 0 ? [DEFAULT_FALLBACK_MODEL] : next });
+    patch({ models: next.length === 0 ? [] : next });
   };
 
   const handleMove = (index, delta) => {
@@ -565,40 +555,14 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps }) 
   );
 }
 
-function ModelItem({ id, index, model, isFirst, isLast, onMoveUp, onMoveDown, onRemove }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({ id });
+function ModelItem({ index, model, isFirst, isLast, onMoveUp, onMoveDown, onRemove }) {
   // Extract provider prefix from model name e.g. "kr/claude-sonnet-4.5" -> "kr"
   const providerPrefix = model.includes("/") ? model.split("/")[0] : "";
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    // no transition, prevents the CSS settle animation from fighting React's re-render on drop
-    opacity: isDragging ? 0.4 : 1,
-    zIndex: isDragging ? 999 : undefined,
-  };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`group flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 bg-black/[0.02] hover:bg-black/[0.04] dark:bg-white/[0.02] dark:hover:bg-white/[0.04] transition-colors ${isDragging ? "shadow-md ring-1 ring-primary/30" : ""}`}
-    >
-      {/* Drag handle */}
-      <button
-        {...attributes}
-        {...listeners}
-        type="button"
-        className="cursor-grab touch-none p-0.5 rounded text-text-muted hover:text-primary active:cursor-grabbing shrink-0"
-        title="Drag to reorder"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <circle cx="9" cy="4" r="2"/><circle cx="15" cy="4" r="2"/>
-          <circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/>
-          <circle cx="9" cy="20" r="2"/><circle cx="15" cy="20" r="2"/>
-        </svg>
-      </button>
-
+    <div className="group flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 bg-black/[0.02] hover:bg-black/[0.04] dark:bg-white/[0.02] dark:hover:bg-white/[0.04] transition-colors">
       {/* Index badge */}
-      <span className="text-[10px] font-medium text-text-muted w-3 text-center shrink-0">{index + 1}</span>
+      <span className="text-[10px] font-medium text-text-muted w-4 text-center shrink-0">{index + 1}</span>
 
       {/* Provider badge */}
       {providerPrefix && (
@@ -607,8 +571,8 @@ function ModelItem({ id, index, model, isFirst, isLast, onMoveUp, onMoveDown, on
         </span>
       )}
 
-      {/* Read-only model value (provider prefix + model id are locked) */}
-      <div className="min-w-0 flex-1 truncate rounded px-1.5 py-0.5 font-mono text-xs text-text-main">
+      {/* Full model value — no truncation, wraps naturally */}
+      <div className="min-w-0 flex-1 rounded px-1.5 py-0.5 font-mono text-xs text-text-main break-all whitespace-normal leading-relaxed">
         {model}
       </div>
 
@@ -620,7 +584,7 @@ function ModelItem({ id, index, model, isFirst, isLast, onMoveUp, onMoveDown, on
           className={`p-0.5 rounded ${isFirst ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`}
           title="Move up"
         >
-          <span className="material-symbols-outlined text-[12px]">arrow_upward</span>
+          <span className="material-symbols-outlined text-[14px]">arrow_upward</span>
         </button>
         <button
           onClick={onMoveDown}
@@ -628,7 +592,7 @@ function ModelItem({ id, index, model, isFirst, isLast, onMoveUp, onMoveDown, on
           className={`p-0.5 rounded ${isLast ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`}
           title="Move down"
         >
-          <span className="material-symbols-outlined text-[12px]">arrow_downward</span>
+          <span className="material-symbols-outlined text-[14px]">arrow_downward</span>
         </button>
       </div>
 
@@ -638,8 +602,77 @@ function ModelItem({ id, index, model, isFirst, isLast, onMoveUp, onMoveDown, on
         className="p-0.5 hover:bg-red-500/10 rounded text-text-muted hover:text-red-500 transition-all"
         title="Remove"
       >
-        <span className="material-symbols-outlined text-[12px]">close</span>
+        <span className="material-symbols-outlined text-[14px]">close</span>
       </button>
+    </div>
+  );
+}
+
+// Group models by provider prefix, preserving order within each group
+function groupModelsByProvider(models) {
+  const groups = {};
+  const groupOrder = [];
+  for (const m of models) {
+    const prefix = m.includes("/") ? m.split("/")[0] : "__nolabel__";
+    if (!groups[prefix]) {
+      groups[prefix] = { provider: prefix, models: [] };
+      groupOrder.push(prefix);
+    }
+    groups[prefix].models.push(m);
+  }
+  return { groups, groupOrder };
+}
+
+// Extract models at a flat index from group order
+function getFlatIndex(modelPositions, groupOrder, groups, providerIndex, modelIndex) {
+  let idx = 0;
+  for (let gi = 0; gi < groupOrder.length; gi++) {
+    const g = groups[groupOrder[gi]];
+    for (let mi = 0; mi < g.models.length; mi++) {
+      if (gi === providerIndex && mi === modelIndex) return idx;
+      idx++;
+    }
+  }
+  return -1;
+}
+
+function ProviderGroupHeader({ provider, modelCount, isFirst, isLast, onMoveUp, onMoveDown }) {
+  return (
+    <div className="flex items-center gap-2 py-1.5 px-2 bg-black/[0.03] dark:bg-white/[0.03] rounded-md">
+      {/* Drag handle */}
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-text-muted/40 shrink-0">
+        <circle cx="9" cy="4" r="2"/><circle cx="15" cy="4" r="2"/>
+        <circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/>
+        <circle cx="9" cy="20" r="2"/><circle cx="15" cy="20" r="2"/>
+      </svg>
+
+      {/* Provider icon/name */}
+      <div className="flex items-center gap-1.5 flex-1 min-w-0">
+        <span className="text-[11px] font-bold uppercase px-1.5 py-0.5 bg-brand-500/15 text-brand-600 dark:text-brand-300 leading-none tracking-wider rounded">
+          {provider}
+        </span>
+        <span className="text-[11px] text-text-muted">{modelCount} model{modelCount > 1 ? 's' : ''}</span>
+      </div>
+
+      {/* Move all models up/down */}
+      <div className="flex items-center gap-0.5 shrink-0">
+        <button
+          onClick={onMoveUp}
+          disabled={isFirst}
+          className={`p-0.5 rounded text-[11px] ${isFirst ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`}
+          title="Move provider group up"
+        >
+          <span className="material-symbols-outlined text-[14px]">expand_less</span>
+        </button>
+        <button
+          onClick={onMoveDown}
+          disabled={isLast}
+          className={`p-0.5 rounded text-[11px] ${isLast ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`}
+          title="Move provider group down"
+        >
+          <span className="material-symbols-outlined text-[14px]">expand_more</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -658,18 +691,20 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // Use stable index-based IDs so duplicates and similar names are handled correctly
-  const modelItems = models.map((model, i) => ({ uid: `item-${i}`, model }));
+  // Derive provider groups from flat models array
+  const { groups: providerGroups, groupOrder } = groupModelsByProvider(models);
+  // Build a flat list of [providerIndex, modelIndex] pairs for array operations
+  const flatPositions = [];
+  for (let gi = 0; gi < groupOrder.length; gi++) {
+    const g = providerGroups[groupOrder[gi]];
+    for (let mi = 0; mi < g.models.length; mi++) {
+      flatPositions.push({ providerIndex: gi, modelIndex: mi });
+    }
+  }
 
   const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = modelItems.findIndex((m) => m.uid === active.id);
-      const newIndex = modelItems.findIndex((m) => m.uid === over.id);
-      if (oldIndex !== -1 && newIndex !== -1) {
-        setModels((prev) => arrayMove(prev, oldIndex, newIndex));
-      }
-    }
+    // Currently disabled for provider-grouped layout
+    // Full DnD with groups coming in future update
   };
 
   const fetchModalData = async () => {
@@ -713,25 +748,54 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
     }
   };
 
+  /* === Add ALL models from a provider === */
+  const handleAddAllProviderModels = (providerId) => {
+    // Close the selector and re-open with provider filter
+    setShowModelSelect(false);
+    // We use setTimeout so state changes batch properly
+    setTimeout(() => {
+      setShowModelSelect(true);
+    }, 100);
+  };
+
   const handleDeselectModel = (model) => {
     setModels(models.filter((m) => m !== model.value));
   };
 
-  const handleRemoveModel = (index) => {
-    setModels(models.filter((_, i) => i !== index));
+  const handleRemoveModel = (flatIndex) => {
+    setModels(models.filter((_, i) => i !== flatIndex));
   };
 
-  const handleMoveUp = (index) => {
-    if (index === 0) return;
+  /* === Move individual model up/down === */
+  const handleModelMove = (flatIndex, delta) => {
+    const target = flatIndex + delta;
+    if (target < 0 || target >= models.length) return;
     const newModels = [...models];
-    [newModels[index - 1], newModels[index]] = [newModels[index], newModels[index - 1]];
+    [newModels[flatIndex], newModels[target]] = [newModels[target], newModels[flatIndex]];
     setModels(newModels);
   };
 
-  const handleMoveDown = (index) => {
-    if (index === models.length - 1) return;
+  /* === Move entire provider group up/down === */
+  const handleProviderGroupMove = (providerIndex, delta) => {
+    const targetGroup = providerIndex + delta;
+    if (targetGroup < 0 || targetGroup >= groupOrder.length) return;
+
+    const fromProvider = groupOrder[providerIndex];
+    const toProvider = groupOrder[targetGroup];
+    const fromModels = providerGroups[fromProvider].models;
+    const toModels = providerGroups[toProvider].models;
+
+    // Calculate flat positions for the provider groups
+    const fromFlatStart = flatPositions.findIndex(p => p.providerIndex === providerIndex);
+    const fromFlatEnd = fromFlatStart + fromModels.length;
+    const toFlatStart = flatPositions.findIndex(p => p.providerIndex === targetGroup);
+
     const newModels = [...models];
-    [newModels[index], newModels[index + 1]] = [newModels[index + 1], newModels[index]];
+    // Extract all models of the fromProvider
+    const moved = newModels.splice(fromFlatStart, fromModels.length);
+    // Insert at the toProvider's position
+    const insertAt = targetGroup > providerIndex ? toFlatStart + toModels.length : toFlatStart;
+    newModels.splice(insertAt, 0, ...moved);
     setModels(newModels);
   };
 
@@ -744,12 +808,18 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
 
   const isEdit = !!combo;
 
+  // Recount after potential mutations
+  const groups = groupModelsByProvider(models);
+  const { groups: currentGroups, groupOrder: currentOrder } = groups;
+
   return (
     <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
         title={isEdit ? "Edit Combo" : "Create Combo"}
+        size="lg"
+        className="min-w-[600px]!"
       >
         <div className="flex flex-col gap-3">
           {/* Name */}
@@ -768,7 +838,10 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
 
           {/* Models */}
           <div>
-            <label className="text-sm font-medium mb-1.5 block">Models</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-sm font-medium">Models</label>
+              <span className="text-[11px] text-text-muted">{models.length} model{models.length !== 1 ? 's' : ''}</span>
+            </div>
 
             {models.length === 0 ? (
               <div className="text-center py-4 border border-dashed border-black/10 dark:border-white/10 rounded-lg bg-black/[0.01] dark:bg-white/[0.01]">
@@ -776,25 +849,46 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
                 <p className="text-xs text-text-muted">No models added yet</p>
               </div>
             ) : (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis, restrictToParentElement]}>
-              <SortableContext items={modelItems.map((m) => m.uid)} strategy={verticalListSortingStrategy}>
-                <div className="flex max-h-[55vh] min-w-0 flex-col gap-1 overflow-y-auto sm:max-h-[350px]">
-                  {modelItems.map(({ uid, model }, index) => (
-                    <ModelItem
-                      key={uid}
-                      id={uid}
-                      index={index}
-                      model={model}
-                      isFirst={index === 0}
-                      isLast={index === modelItems.length - 1}
-                      onMoveUp={() => handleMoveUp(index)}
-                      onMoveDown={() => handleMoveDown(index)}
-                      onRemove={() => handleRemoveModel(index)}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
+              <div className="flex max-h-[55vh] min-w-0 flex-col gap-2 overflow-y-auto sm:max-h-[400px]">
+                {currentOrder.map((provider, gi) => {
+                  const group = currentGroups[provider];
+                  let flatStart = 0;
+                  for (let i = 0; i < gi; i++) flatStart += currentGroups[currentOrder[i]].models.length;
+
+                  return (
+                    <div key={provider} className="flex flex-col gap-1">
+                      {/* Provider group header */}
+                      <ProviderGroupHeader
+                        provider={provider}
+                        modelCount={group.models.length}
+                        isFirst={gi === 0}
+                        isLast={gi === currentOrder.length - 1}
+                        onMoveUp={() => handleProviderGroupMove(gi, -1)}
+                        onMoveDown={() => handleProviderGroupMove(gi, 1)}
+                      />
+
+                      {/* Models in this provider group */}
+                      <div className="flex flex-col gap-0.5 ml-2 pl-2 border-l-2 border-black/5 dark:border-white/5">
+                        {group.models.map((model, mi) => {
+                          const flatIndex = flatStart + mi;
+                          return (
+                            <ModelItem
+                              key={`${provider}-${mi}`}
+                              index={flatIndex}
+                              model={model}
+                              isFirst={flatIndex === 0}
+                              isLast={flatIndex === models.length - 1}
+                              onMoveUp={() => handleModelMove(flatIndex, -1)}
+                              onMoveDown={() => handleModelMove(flatIndex, 1)}
+                              onRemove={() => handleRemoveModel(flatIndex)}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
 
             {/* Add Model button */}
@@ -805,29 +899,6 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
               <span className="material-symbols-outlined text-[16px]">add</span>
               Add Model
             </button>
-
-            {/* Template buttons (for new combos only) */}
-            {!isEdit && (
-              <div className="flex flex-wrap gap-1 mt-1">
-                <button
-                  onClick={() => setModels([...FREE_TEMPLATE_MODELS])}
-                  className="text-xs px-2 py-1 border border-green-600/30 text-green-600 hover:bg-green-600/10 transition-colors flex items-center gap-1"
-                >
-                  <span className="material-symbols-outlined text-[14px]">eco</span>
-                  Free Template
-                </button>
-                <button
-                  onClick={() => setModels(["cc/claude-opus-4-7", "cx/gpt-5.5", "glm/glm-5.1", "minimax/MiniMax-M2.7"])}
-                  className="text-xs px-2 py-1 border border-amber-600/30 text-amber-600 hover:bg-amber-600/10 transition-colors flex items-center gap-1"
-                >
-                  <span className="material-symbols-outlined text-[14px]">workspace_premium</span>
-                  Premium Template
-                </button>
-                <span className="text-[10px] text-text-muted self-center ml-1">
-                  Template otomatis urutkan gratis di atas, berbayar di bawah
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Actions */}

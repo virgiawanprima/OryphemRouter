@@ -8,33 +8,75 @@ import ModelSelectModal from "./ModelSelectModal";
 
 const VALID_NAME_REGEX = /^[a-zA-Z0-9_.\-]+$/;
 
-// Read-only model item (model id + provider prefix are locked)
+// Group models by provider prefix, preserving order within each group
+function groupModelsByProvider(models) {
+  const groups = {};
+  const groupOrder = [];
+  for (const m of models) {
+    const prefix = m.includes("/") ? m.split("/")[0] : "__nolabel__";
+    if (!groups[prefix]) {
+      groups[prefix] = { provider: prefix, models: [] };
+      groupOrder.push(prefix);
+    }
+    groups[prefix].models.push(m);
+  }
+  return { groups, groupOrder };
+}
+
 function ModelItem({ index, model, isFirst, isLast, onMoveUp, onMoveDown, onRemove }) {
   const providerPrefix = model.includes("/") ? model.split("/")[0] : "";
   return (
     <div className="group flex min-w-0 items-center gap-1.5 rounded-md bg-black/[0.02] px-2 py-1 transition-colors hover:bg-black/[0.04] dark:bg-white/[0.02] dark:hover:bg-white/[0.04]">
-      <span className="text-[10px] font-medium text-text-muted w-3 text-center shrink-0">{index + 1}</span>
+      <span className="text-[10px] font-medium text-text-muted w-4 text-center shrink-0">{index + 1}</span>
       {providerPrefix && (
         <span className="text-[9px] font-bold uppercase px-1 py-0.5 bg-brand-500/10 text-brand-600 dark:text-brand-300 shrink-0 leading-none tracking-wider">
           {providerPrefix}
         </span>
       )}
-      <div className="min-w-0 flex-1 truncate rounded px-1.5 py-0.5 font-mono text-xs text-text-main">
+      <div className="min-w-0 flex-1 rounded px-1.5 py-0.5 font-mono text-xs text-text-main break-all whitespace-normal leading-relaxed">
         {model}
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
         <button onClick={onMoveUp} disabled={isFirst}
           className={`p-0.5 rounded ${isFirst ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`} title="Move up">
-          <span className="material-symbols-outlined text-[12px]">arrow_upward</span>
+          <span className="material-symbols-outlined text-[14px]">arrow_upward</span>
         </button>
         <button onClick={onMoveDown} disabled={isLast}
           className={`p-0.5 rounded ${isLast ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`} title="Move down">
-          <span className="material-symbols-outlined text-[12px]">arrow_downward</span>
+          <span className="material-symbols-outlined text-[14px]">arrow_downward</span>
         </button>
       </div>
       <button onClick={onRemove} className="p-0.5 hover:bg-red-500/10 rounded text-text-muted hover:text-red-500 transition-all" title="Remove">
-        <span className="material-symbols-outlined text-[12px]">close</span>
+        <span className="material-symbols-outlined text-[14px]">close</span>
       </button>
+    </div>
+  );
+}
+
+function ProviderGroupHeader({ provider, modelCount, isFirst, isLast, onMoveUp, onMoveDown }) {
+  return (
+    <div className="flex items-center gap-2 py-1.5 px-2 bg-black/[0.03] dark:bg-white/[0.03] rounded-md">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-text-muted/40 shrink-0">
+        <circle cx="9" cy="4" r="2"/><circle cx="15" cy="4" r="2"/>
+        <circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/>
+        <circle cx="9" cy="20" r="2"/><circle cx="15" cy="20" r="2"/>
+      </svg>
+      <div className="flex items-center gap-1.5 flex-1 min-w-0">
+        <span className="text-[11px] font-bold uppercase px-1.5 py-0.5 bg-brand-500/15 text-brand-600 dark:text-brand-300 leading-none tracking-wider rounded">
+          {provider}
+        </span>
+        <span className="text-[11px] text-text-muted">{modelCount} model{modelCount > 1 ? 's' : ''}</span>
+      </div>
+      <div className="flex items-center gap-0.5 shrink-0">
+        <button onClick={onMoveUp} disabled={isFirst}
+          className={`p-0.5 rounded text-[11px] ${isFirst ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`} title="Move group up">
+          <span className="material-symbols-outlined text-[14px]">expand_less</span>
+        </button>
+        <button onClick={onMoveDown} disabled={isLast}
+          className={`p-0.5 rounded text-[11px] ${isLast ? "text-text-muted/20 cursor-not-allowed" : "text-text-muted hover:text-primary hover:bg-black/5 dark:hover:bg-white/5"}`} title="Move group down">
+          <span className="material-symbols-outlined text-[14px]">expand_more</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -89,6 +131,40 @@ export default function ComboFormModal({ isOpen, combo, onClose, onSave, activeP
     const a = [...models]; [a[i], a[i + 1]] = [a[i + 1], a[i]]; setModels(a);
   };
 
+  // === Provider-grouped move helpers ===
+  const { groups: currentGroups, groupOrder: currentOrder } = groupModelsByProvider(models);
+
+  const handleProviderGroupMove = (providerIndex, delta) => {
+    const targetGroup = providerIndex + delta;
+    if (targetGroup < 0 || targetGroup >= currentOrder.length) return;
+    const fromProvider = currentOrder[providerIndex];
+    const toProvider = currentOrder[targetGroup];
+    const fromLen = currentGroups[fromProvider].models.length;
+    // Count flat start of target group
+    let fromFlatStart = 0, toFlatStart = 0;
+    for (let gi = 0; gi < currentOrder.length; gi++) {
+      if (gi === providerIndex) break;
+      fromFlatStart += currentGroups[currentOrder[gi]].models.length;
+    }
+    for (let gi = 0; gi < currentOrder.length; gi++) {
+      if (gi === targetGroup) break;
+      toFlatStart += currentGroups[currentOrder[gi]].models.length;
+    }
+    const newModels = [...models];
+    const moved = newModels.splice(fromFlatStart, fromLen);
+    const insertAt = targetGroup > providerIndex ? toFlatStart + currentGroups[toProvider].models.length : toFlatStart;
+    newModels.splice(insertAt, 0, ...moved);
+    setModels(newModels);
+  };
+
+  const handleModelMoveWithGroup = (flatIndex, delta) => {
+    const target = flatIndex + delta;
+    if (target < 0 || target >= models.length) return;
+    const newModels = [...models];
+    [newModels[flatIndex], newModels[target]] = [newModels[target], newModels[flatIndex]];
+    setModels(newModels);
+  };
+
   const handleSave = async () => {
     if (!validateName(name)) return;
     setSaving(true);
@@ -122,21 +198,47 @@ export default function ComboFormModal({ isOpen, combo, onClose, onSave, activeP
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1.5 block">Models</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-sm font-medium">Models</label>
+              <span className="text-[11px] text-text-muted">{models.length} model{models.length !== 1 ? 's' : ''}</span>
+            </div>
             {models.length === 0 ? (
               <div className="text-center py-4 border border-dashed border-black/10 dark:border-white/10 rounded-lg bg-black/[0.01] dark:bg-white/[0.01]">
                 <span className="material-symbols-outlined text-text-muted text-xl mb-1">layers</span>
                 <p className="text-xs text-text-muted">No models added yet</p>
               </div>
             ) : (
-              <div className="flex max-h-[55vh] min-w-0 flex-col gap-1 overflow-y-auto sm:max-h-[350px]">
-                {models.map((model, index) => (
-                  <ModelItem key={index} index={index} model={model}
-                    isFirst={index === 0} isLast={index === models.length - 1}
-                    onMoveUp={() => handleMoveUp(index)}
-                    onMoveDown={() => handleMoveDown(index)}
-                    onRemove={() => handleRemoveModel(index)} />
-                ))}
+              <div className="flex max-h-[55vh] min-w-0 flex-col gap-2 overflow-y-auto sm:max-h-[400px]">
+                {currentOrder.map((provider, gi) => {
+                  const group = currentGroups[provider];
+                  let flatStart = 0;
+                  for (let i = 0; i < gi; i++) flatStart += currentGroups[currentOrder[i]].models.length;
+                  return (
+                    <div key={provider} className="flex flex-col gap-1">
+                      <ProviderGroupHeader
+                        provider={provider}
+                        modelCount={group.models.length}
+                        isFirst={gi === 0}
+                        isLast={gi === currentOrder.length - 1}
+                        onMoveUp={() => handleProviderGroupMove(gi, -1)}
+                        onMoveDown={() => handleProviderGroupMove(gi, 1)}
+                      />
+                      <div className="flex flex-col gap-0.5 ml-2 pl-2 border-l-2 border-black/5 dark:border-white/5">
+                        {group.models.map((model, mi) => {
+                          const flatIndex = flatStart + mi;
+                          return (
+                            <ModelItem key={`${provider}-${mi}`} index={flatIndex} model={model}
+                              isFirst={flatIndex === 0} isLast={flatIndex === models.length - 1}
+                              onMoveUp={() => handleModelMoveWithGroup(flatIndex, -1)}
+                              onMoveDown={() => handleModelMoveWithGroup(flatIndex, 1)}
+                              onRemove={() => handleRemoveModel(flatIndex)}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
             <button onClick={() => setShowModelSelect(true)}
