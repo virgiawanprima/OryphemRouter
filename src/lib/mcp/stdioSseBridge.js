@@ -132,8 +132,12 @@ function getOrSpawn(name) {
       entry.buffer = entry.buffer.slice(idx + 1);
       if (!raw) continue;
       const line = filterFrame(raw);
-      for (const send of entry.sessions.values()) {
-        try { send(`event: message\ndata: ${line}\n\n`); } catch { /* ignore broken pipe */ }
+      for (const [sid, send] of entry.sessions) {
+        try { send(`event: message\ndata: ${line}\n\n`);
+              // H5: Refresh session timestamp on data activity to prevent
+              // TTL-based reaping of active sessions.
+              entry.sessionTs?.set(sid, Date.now());
+        } catch { /* ignore broken pipe */ }
       }
     }
   });
@@ -141,6 +145,12 @@ function getOrSpawn(name) {
   proc.stderr.on("data", (d) => console.log(`[mcp:${name}]`, d.toString().trim()));
   proc.on("exit", (code) => {
     console.log(`[mcp:${name}] exited`, code);
+    store.delete(name);
+  });
+  // M01: Handle spawn errors (ENOENT, permission denied) — prevents
+  // uncaught exception crash when the plugin binary is missing.
+  proc.on("error", (err) => {
+    console.error(`[mcp:${name}] spawn error:`, err.message);
     store.delete(name);
   });
 
@@ -151,6 +161,9 @@ function registerSession(name, sendFn) {
   const entry = getOrSpawn(name);
   const sid = crypto.randomUUID();
   entry.sessions.set(sid, sendFn);
+  if (!entry.sessionTs) entry.sessionTs = new Map();
+  entry.sessionTs.set(sid, Date.now());
+  startSweep();
   return sid;
 }
 
@@ -158,11 +171,48 @@ function unregisterSession(name, sid) {
   const entry = getStore().get(name);
   if (!entry) return;
   entry.sessions.delete(sid);
+  entry.sessionTs?.delete(sid);
   // No sessions left → kill child to avoid idle orphan process leak.
   if (entry.sessions.size === 0) {
     try { entry.proc.kill(); } catch { /* ignore */ }
     getStore().delete(name);
   }
+}
+
+// A dropped SSE socket can die without `abort`/`cancel` firing (silent TCP
+// reset), which would otherwise leave a child process + session entry alive
+// forever. Sweep sessions idle longer than the TTL and reap empty bridges.
+const SESSION_TTL_MS = 10 * 60 * 1000;
+const SWEEP_INTERVAL_MS = 60 * 1000;
+
+function startSweep() {
+  if (globalThis[`${G_KEY}_sweep`]) return;
+  const timer = setInterval(() => {
+    const store = getStore();
+    const now = Date.now();
+    for (const [name, entry] of store) {
+      const ts = entry.sessionTs;
+      if (ts) {
+        for (const [sid, t] of ts) {
+          if (now - t > SESSION_TTL_MS) {
+            ts.delete(sid);
+            entry.sessions.delete(sid);
+          }
+        }
+      }
+      if (entry.sessions.size === 0) {
+        try { entry.proc.kill(); } catch { /* ignore */ }
+        store.delete(name);
+      }
+    }
+    // Stop sweeping when no bridges remain.
+    if (store.size === 0 && globalThis[`${G_KEY}_sweep`]) {
+      clearInterval(globalThis[`${G_KEY}_sweep`]);
+      delete globalThis[`${G_KEY}_sweep`];
+    }
+  }, SWEEP_INTERVAL_MS);
+  if (timer.unref) timer.unref();
+  globalThis[`${G_KEY}_sweep`] = timer;
 }
 
 // Kill all spawned MCP children — called on app shutdown to prevent orphans.
