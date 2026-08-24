@@ -30,7 +30,7 @@ describe("grok-cli registry", () => {
     expect(oauth.scope).toContain("conversations:write");
     expect(oauth.referrer).toBe("grok-build");
 
-    expect(PROVIDER_MODELS.gcli?.some((m) => m.id === "grok-build")).toBe(true);
+    expect(PROVIDER_MODELS["grok-cli"]?.some((m) => m.id === "grok-build-0.1")).toBe(true);
   });
 
   it("is listed as oauth provider for dashboard", () => {
@@ -48,7 +48,7 @@ describe("grok-cli registry", () => {
   it("routes bare grok-build to the subscription provider", async () => {
     await expect(getModelInfoCore("grok-build", {})).resolves.toEqual({
       provider: "grok-cli",
-      model: "grok-build",
+      model: "grok-build-0.1",
     });
   });
 

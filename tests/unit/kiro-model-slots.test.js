@@ -43,7 +43,7 @@ describe("Kiro MITM model slots", () => {
 
 describe("Kiro static provider models", () => {
   it("includes Claude Sonnet 5 and its synthetic Kiro variants", () => {
-    const ids = (PROVIDER_MODELS.kr || []).map((model) => model.id);
+    const ids = (PROVIDER_MODELS.kiro || []).map((model) => model.id);
     expect(ids).toEqual(expect.arrayContaining([
       "claude-sonnet-5",
       "claude-sonnet-5-thinking",
@@ -53,7 +53,7 @@ describe("Kiro static provider models", () => {
   });
 
   it("includes GPT-5.6 family and synthetic Kiro variants", () => {
-    const models = new Map((PROVIDER_MODELS.kr || []).map((model) => [model.id, model]));
+    const models = new Map((PROVIDER_MODELS.kiro || []).map((model) => [model.id, model]));
     const ids = [...models.keys()];
     expect(ids).toEqual(expect.arrayContaining([
       "gpt-5.6-sol",

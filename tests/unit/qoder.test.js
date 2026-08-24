@@ -36,7 +36,7 @@ describe("QODER_MODEL_MAP", () => {
   });
 
   it("exposes Qoder's latest model in the static provider catalog", () => {
-    expect(PROVIDER_MODELS.qd.some((model) => model.id === "qmodel_latest")).toBe(true);
+    expect(PROVIDER_MODELS.qoder.some((model) => model.id === "qwen3.7-max")).toBe(true);
   });
 });
 

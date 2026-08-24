@@ -31,7 +31,7 @@ describe("Grok CLI live models", () => {
       }],
     })).toEqual([
       expect.objectContaining({
-        id: "grok-build",
+        id: "grok-build-0.1",
         name: "Grok Build",
         contextLength: 500000,
         maxOutputTokens: 64000,
@@ -60,7 +60,7 @@ describe("Grok CLI live models", () => {
 
     expect(result.models).toEqual([
       expect.objectContaining({
-        id: "grok-build",
+        id: "grok-build-0.1",
         contextLength: 500000,
         maxOutputTokens: 64000,
       }),
