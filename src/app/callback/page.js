@@ -23,7 +23,9 @@ function CallbackContent() {
       state,
       error,
       errorDescription,
-      fullUrl: window.location.href,
+      // NOTE: intentionally no fullUrl — it would leak the raw callback URL
+      // (containing code/token) into localStorage/BroadcastChannel. Consumers
+      // (OAuthModal.handleCallback) only need code/token/state/error.
     };
 
     let relayed = false;
@@ -68,6 +70,11 @@ function CallbackContent() {
     try {
       localStorage.setItem("oauth_callback", JSON.stringify({ ...callbackData, timestamp: Date.now() }));
       relayed = true;
+      // Auto-cleanup: if no dashboard tab reads the entry (OAuthModal removes it
+      // on read), don't leave the OAuth code/token lying in localStorage forever.
+      setTimeout(() => {
+        try { localStorage.removeItem("oauth_callback"); } catch { /* ignore */ }
+      }, 60000);
     } catch (e) {
       console.log("localStorage failed:", e);
     }
