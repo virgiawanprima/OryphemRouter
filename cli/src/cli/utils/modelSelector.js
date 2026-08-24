@@ -2,22 +2,22 @@ const api = require("../api/client");
 const { prompt } = require("./input");
 const { clearScreen } = require("./display");
 
-// Provider alias order: OAuth first, then API Key (matches ModelSelectModal)
+// Provider order: OAuth first, then API Key (matches ModelSelectModal) — full IDs only
 const PROVIDER_ALIAS_ORDER = [
-  "cc", "ag", "cx", "if", "qw", "gc", "gh", "kr",
+  "claude", "antigravity", "codex", "iflow", "qwen", "gemini-cli", "github", "kiro",
   "openrouter", "glm", "kimi", "minimax", "openai", "anthropic", "gemini"
 ];
 
-// Alias to display name mapping
+// Provider ID to display name mapping
 const PROVIDER_ALIAS_NAMES = {
-  cc: "Claude Code",
-  ag: "Antigravity", 
-  cx: "OpenAI Codex",
-  if: "iFlow AI",
-  qw: "Qwen Code",
-  gc: "Gemini CLI",
-  gh: "GitHub Copilot",
-  kr: "Kiro AI",
+  claude: "Claude Code",
+  antigravity: "Antigravity", 
+  codex: "OpenAI Codex",
+  iflow: "iFlow AI",
+  qwen: "Qwen Code",
+  "gemini-cli": "Gemini CLI",
+  github: "GitHub Copilot",
+  kiro: "Kiro AI",
   openrouter: "OpenRouter",
   glm: "GLM Coding",
   kimi: "Kimi Coding",

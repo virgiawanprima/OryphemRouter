@@ -59,7 +59,6 @@ const PROVIDER_MODELS = {
     { id: "gemini-3.6-flash-high" },
     { id: "gemini-3.6-flash-medium" },
     { id: "gemini-3.6-flash-low" },
-    { id: "gemini-3-flash-agent" },
     { id: "gemini-3.5-flash-low" },
     { id: "gemini-3.5-flash-extra-low" },
     { id: "gemini-pro-agent" },
@@ -254,17 +253,20 @@ async function showProvidersMenu(breadcrumb = []) {
  */
 function buildProviderHeader(providerId) {
   const provider = ALL_PROVIDERS[providerId];
-  const alias = provider.alias || providerId;
+  // Full provider ID for display (no short aliases). Lookup still uses the
+  // static map's alias key for the model list, but the prefix shown is the
+  // canonical id.
+  const displayId = providerId;
   
   const lines = [];
-  lines.push(`Alias: ${COLORS.cyan}${alias}${COLORS.reset}`);
+  lines.push(`Provider: ${COLORS.cyan}${provider?.name || displayId}${COLORS.reset}`);
   
   // Get models from static config
-  const models = PROVIDER_MODELS[alias] || [];
+  const models = PROVIDER_MODELS[provider?.alias || providerId] || [];
   if (models.length > 0) {
     const modelList = models
       .slice(0, 5)
-      .map(m => `${alias}/${m.id}`)
+      .map(m => `${displayId}/${m.id}`)
       .join(", ");
     const more = models.length > 5 ? ` (+${models.length - 5} more)` : "";
     lines.push(`Models: ${COLORS.dim}${modelList}${more}${COLORS.reset}`);
