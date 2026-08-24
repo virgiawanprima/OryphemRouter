@@ -72,15 +72,13 @@ describe("injectReasoningContent — DeepSeek thinking round-trip", () => {
     expect(out.messages[0].reasoning_content).toBeUndefined();
   });
 
-  it("maps deepseek-v4-pro-none alias to disabled thinking and strips reasoning_effort", () => {
+  it("injects deepseek reasoning_content placeholder on assistant messages", () => {
     const out = injectReasoningContent({
       provider: "deepseek",
-      model: "deepseek-v4-pro-none",
-      body: bodyWith([{ role: "user", content: "hi" }]),
+      model: "deepseek-v4-pro",
+      body: { model: "deepseek-v4-pro", messages: [{ role: "assistant", content: "answer" }] },
     });
-    expect(out.model).toBe("deepseek-v4-pro");
-    expect(out.extra_body.thinking.type).toBe("disabled");
-    expect(out.reasoning_effort).toBeUndefined();
+    expect(out.messages[0].reasoning_content).toBe(" ");
   });
 });
 

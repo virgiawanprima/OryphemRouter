@@ -98,7 +98,7 @@ describe("handleVideoCreate", () => {
 
   it("rejects providers without video support", async () => {
     const res = await handleVideoCreate(
-      makeRequest({ model: "openai/sora-alike", prompt: "x" }),
+      makeRequest({ model: "openai/gpt-5.4", prompt: "x" }),
       "generations"
     );
     expect(res.status).toBe(400);
