@@ -117,7 +117,7 @@ export default function ModelsCard({ providerId, kindFilter, providerAliasOverri
   const [testError, setTestError] = useState("");
   const [showAddCustomModel, setShowAddCustomModel] = useState(false);
 
-  const providerAlias = providerAliasOverride || getProviderAlias(providerId);
+  const providerAlias = providerAliasOverride || providerId;
   const effectiveType = kindFilter || "llm";
 
   const fetchData = useCallback(async () => {

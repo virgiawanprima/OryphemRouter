@@ -135,7 +135,7 @@ export default function FreeTiersPage() {
                   <Badge variant={tier.type === "unlimited" ? "success" : "warning"} size="sm">
                     {tier.type === "unlimited" ? "Unlimited" : "Limited"}
                   </Badge>
-                  <span className="text-[10px] text-text-muted font-mono">{tier.alias}</span>
+                  <span className="text-[10px] text-text-muted font-mono">{tier.provider}</span>
                 </div>
                 <p className="text-xs text-text-muted mt-1">{tier.description}</p>
                 <div className="mt-2">
