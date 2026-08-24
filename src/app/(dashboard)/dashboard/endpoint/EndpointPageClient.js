@@ -59,6 +59,13 @@ export default function APIPageClient({ machineId }) {
   const [showTsModal, setShowTsModal] = useState(false);
   const [showDisableTsModal, setShowDisableTsModal] = useState(false);
   const tsLogRef = useRef(null);
+  // Set false on unmount so poll loops stop calling setState on a dead component.
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   // Debounce reachable=false: server may briefly return false during background refresh.
   // Only flip UI to "reconnecting" after N consecutive misses to avoid spinner flicker.
@@ -123,7 +130,7 @@ export default function APIPageClient({ machineId }) {
   // Real-time SSE updates for dashboard: provider status, usage, keys, tunnel
   useEffect(() => {
     let closed = false;
-    const evtSource = new EventSource("/api/dashboard/realtime");
+    let evtSource = new EventSource("/api/dashboard/realtime");
     evtSource.onmessage = (event) => {
       if (closed) return;
       try {
@@ -342,14 +349,15 @@ export default function APIPageClient({ machineId }) {
     setTunnelProgress("Waiting for tunnel ready...");
     const targets = urls.filter(Boolean).map((u) => `${u}/api/health`);
     const start = Date.now();
-    while (Date.now() - start < TUNNEL_PING_MAX_MS) {
+    while (mountedRef.current && Date.now() - start < TUNNEL_PING_MAX_MS) {
       await new Promise((r) => setTimeout(r, TUNNEL_PING_INTERVAL_MS));
+      if (!mountedRef.current) return false;
       const ok = await Promise.any(targets.map(async (h) => {
         const p = await fetch(h, { mode: "cors", cache: "no-store" });
         if (p.ok) return true;
         throw new Error("not ready");
       })).catch(() => false);
-      if (ok) {
+      if (ok && mountedRef.current) {
         setTunnelEnabled(true);
         setTunnelLoading(false);
         setTunnelProgress("");
@@ -361,7 +369,7 @@ export default function APIPageClient({ machineId }) {
           const statusRes = await fetch("/api/tunnel/status");
           if (statusRes.ok) {
             const status = await statusRes.json();
-            if (!status.tunnel?.enabled) {
+            if (!status.tunnel?.enabled && mountedRef.current) {
               setTunnelStatus({ type: "error", message: "Tunnel process stopped unexpectedly." });
               setTunnelLoading(false);
               setTunnelProgress("");
@@ -371,9 +379,11 @@ export default function APIPageClient({ machineId }) {
         } catch { /* ignore */ }
       }
     }
-    setTunnelStatus({ type: "error", message: "Tunnel created but not reachable. Please try again." });
-    setTunnelLoading(false);
-    setTunnelProgress("");
+    if (mountedRef.current) {
+      setTunnelStatus({ type: "error", message: "Tunnel created but not reachable. Please try again." });
+      setTunnelLoading(false);
+      setTunnelProgress("");
+    }
     return false;
   };
 
@@ -386,14 +396,14 @@ export default function APIPageClient({ machineId }) {
     // Poll download progress while enable request is pending
     let polling = true;
     const pollProgress = async () => {
-      while (polling) {
+      while (polling && mountedRef.current) {
         try {
           const r = await fetch("/api/tunnel/status");
           if (r.ok) {
             const s = await r.json();
-            if (s.download?.downloading) {
+            if (s.download?.downloading && mountedRef.current) {
               setTunnelProgress(`Downloading cloudflared... ${s.download.progress}%`);
-            } else if (polling) {
+            } else if (polling && mountedRef.current) {
               setTunnelProgress("Creating tunnel...");
             }
           }
@@ -485,6 +495,7 @@ export default function APIPageClient({ machineId }) {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        if (!mountedRef.current) return;
         buffer += decoder.decode(value, { stream: true });
         const parts = buffer.split("\n\n");
         buffer = parts.pop() || "";
@@ -524,8 +535,9 @@ export default function APIPageClient({ machineId }) {
     setTsProgress("Waiting for Tailscale ready...");
     const healthUrl = `${url}/api/health`;
     const start = Date.now();
-    while (Date.now() - start < TUNNEL_PING_MAX_MS) {
+    while (mountedRef.current && Date.now() - start < TUNNEL_PING_MAX_MS) {
       await new Promise((r) => setTimeout(r, TUNNEL_PING_INTERVAL_MS));
+      if (!mountedRef.current) return false;
       try {
         const ping = await fetch(healthUrl, { mode: "no-cors", cache: "no-store" });
         if (ping.ok || ping.type === "opaque") return true;
@@ -570,6 +582,7 @@ export default function APIPageClient({ machineId }) {
         setTsProgress("Login required: click \"Open Login Page\" to continue");
         for (let i = 0; i < 40; i++) {
           await new Promise((r) => setTimeout(r, 3000));
+          if (!mountedRef.current) return;
           try {
             const r2 = await fetch("/api/tunnel/tailscale-check");
             if (r2.ok) {
@@ -620,6 +633,7 @@ export default function APIPageClient({ machineId }) {
     setTsProgress("Click \"Open Funnel Settings\" to enable Funnel...");
     for (let i = 0; i < 40; i++) {
       await new Promise((r) => setTimeout(r, 3000));
+      if (!mountedRef.current) return;
       try {
         const res = await fetch("/api/tunnel/tailscale-enable", { method: "POST" });
         const data = await res.json();
@@ -892,6 +906,7 @@ export default function APIPageClient({ machineId }) {
                 <button
                   onClick={() => copy(`${tsUrl}/v1`, "ts_url")}
                   className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded text-text-muted hover:text-primary transition-colors shrink-0"
+                  aria-label="Copy Tailscale URL"
                 >
                   <span className="material-symbols-outlined text-[18px]">{copied === "ts_url" ? "check" : "content_copy"}</span>
                 </button>
@@ -1085,6 +1100,7 @@ export default function APIPageClient({ machineId }) {
                     <button
                       onClick={() => copy(key.key, key.id)}
                       className="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded text-text-muted hover:text-primary transition-all"
+                      aria-label="Copy API key"
                     >
                       <span className="material-symbols-outlined text-[14px]">
                         {copied === key.id ? "check" : "content_copy"}
@@ -1121,6 +1137,7 @@ export default function APIPageClient({ machineId }) {
                   <button
                     onClick={() => handleDeleteKey(key.id)}
                     className="p-2 hover:bg-red-500/10 rounded text-red-500 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all"
+                    aria-label="Delete API key"
                   >
                     <span className="material-symbols-outlined text-[18px]">delete</span>
                   </button>
