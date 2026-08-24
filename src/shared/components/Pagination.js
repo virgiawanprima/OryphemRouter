@@ -54,8 +54,10 @@ export default function Pagination({
         {/* Page size selector */}
         {onPageSizeChange && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-text-muted">Rows:</span>
+            <label htmlFor="pagination-rows" className="text-sm text-text-muted">Rows:</label>
             <select
+              id="pagination-rows"
+              aria-label="Rows per page"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               className={cn(
@@ -81,6 +83,7 @@ export default function Pagination({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
+              aria-label="Previous page"
               className="w-9 px-0"
             >
               <span className="material-symbols-outlined text-[18px]">chevron_left</span>
@@ -108,6 +111,7 @@ export default function Pagination({
                 variant={currentPage === page ? "primary" : "ghost"}
                 size="sm"
                 onClick={() => onPageChange(page)}
+                aria-current={currentPage === page ? "page" : undefined}
                 className={cn(
                   "w-9 px-0",
                   currentPage === page ? "inline-flex" : "hidden sm:inline-flex"
@@ -138,6 +142,7 @@ export default function Pagination({
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
+              aria-label="Next page"
               className="w-9 px-0"
             >
               <span className="material-symbols-outlined text-[18px]">chevron_right</span>

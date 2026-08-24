@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { cn } from "@/shared/utils/cn";
 
 export default function Select({
@@ -16,19 +17,28 @@ export default function Select({
   selectClassName,
   ...props
 }) {
+  const generatedId = useId();
+  const inputId = props.id || generatedId;
+  const describedBy = [error ? `${inputId}-error` : null, hint && !error ? `${inputId}-hint` : null]
+    .filter(Boolean)
+    .join(" ") || undefined;
+
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       {label && (
-        <label className="text-sm font-medium text-text-main">
+        <label htmlFor={inputId} className="text-sm font-medium text-text-main">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       <div className="relative">
         <select
+          id={inputId}
           value={value}
           onChange={onChange}
           disabled={disabled}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
           className={cn(
             "w-full py-2.5 px-3 pr-10 text-sm text-text-main border border-border-500 bg-surface rounded-[var(--radius-brand)] appearance-none",
             "focus:outline-none focus:ring-2 focus:ring-brand-600/40 focus:border-brand-600/40 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed",
@@ -52,13 +62,13 @@ export default function Select({
         </div>
       </div>
       {error && (
-        <p className="text-xs text-red-500 flex items-center gap-1">
+        <p id={`${inputId}-error`} className="text-xs text-red-500 flex items-center gap-1">
           <span className="material-symbols-outlined text-[14px]">error</span>
           {error}
         </p>
       )}
       {hint && !error && (
-        <p className="text-xs text-text-muted">{hint}</p>
+        <p id={`${inputId}-hint`} className="text-xs text-text-muted">{hint}</p>
       )}
     </div>
   );
