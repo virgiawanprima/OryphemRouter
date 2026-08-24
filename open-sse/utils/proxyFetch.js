@@ -244,6 +244,18 @@ async function createBypassRequest(parsedUrl, realIP, options) {
 
   return new Promise((resolve, reject) => {
     const socket = new net.Socket();
+    let req; // hoisted so onAbort can destroy it
+
+    // Honor caller's abort signal — destroy socket + req on abort
+    const onAbort = () => {
+      socket.destroy();
+      if (req) req.destroy();
+    };
+    if (options.signal?.aborted) {
+      onAbort();
+    } else {
+      options.signal?.addEventListener("abort", onAbort, { once: true });
+    }
 
     socket.connect(HTTPS_PORT, realIP, () => {
       const reqOptions = {
@@ -263,7 +275,7 @@ async function createBypassRequest(parsedUrl, realIP, options) {
         },
       };
 
-      const req = https.request(reqOptions, (res) => {
+      req = https.request(reqOptions, (res) => {
         const response = {
           ok: res.statusCode >= HTTP_SUCCESS_MIN && res.statusCode < HTTP_SUCCESS_MAX,
           status: res.statusCode,
@@ -298,8 +310,14 @@ export async function proxyAwareFetch(url, options = {}, proxyOptions = null) {
   const vercelRelayUrl = normalizeString(proxyOptions?.vercelRelayUrl);
   if (vercelRelayUrl) {
     const parsed = new URL(targetUrl);
+    // A `Headers` instance has no enumerable own properties, so spreading it
+    // would silently drop Authorization/identity headers. Normalize first.
+    const headersObj =
+      options.headers instanceof Headers
+        ? Object.fromEntries(options.headers.entries())
+        : { ...(options.headers || {}) };
     const relayHeaders = {
-      ...options.headers,
+      ...headersObj,
       "x-relay-target": `${parsed.protocol}//${parsed.host}`,
       "x-relay-path": `${parsed.pathname}${parsed.search}`,
     };

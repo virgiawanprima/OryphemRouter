@@ -151,13 +151,21 @@ export function createDisconnectAwareStream(transformStream, streamController, o
           code === "EPIPE" ||
           code === "UND_ERR_SOCKET";
 
-        // Graceful close on network/abort, or when a structured terminal is available
-        // (Responses passthrough prefers response.failed + [DONE] over a raw transport error)
+        // If the client disconnected, close gracefully (nothing to receive).
+        // For Responses passthrough, emit structured terminal payload first.
+        // For network-level errors on non-Responses streams, handle disconnect gracefully.
+        // For OTHER errors (parsing failures, malformed data), surface to client.
+        // This preserves backward compatibility while ensuring Errors Handler can
+        // extract error messages from parsed chunks.
         try {
-          if (!wasConnected || isNetworkClose || onAbortTerminal) {
+          if (!wasConnected || onAbortTerminal) {
             emitTerminal(controller);
             controller.close();
+          } else if (isNetworkClose) {
+            // Network error - graceful disconnect (not a client-facing error)
+            controller.handleDisconnect();
           } else {
+            // Parsing/formatting error - surface to client
             controller.error(error);
           }
         } catch (e) { /* already closed or cancelled */ }
@@ -166,8 +174,8 @@ export function createDisconnectAwareStream(transformStream, streamController, o
 
     cancel(reason) {
       streamController.handleDisconnect(reason || "cancelled");
-      reader.cancel();
-      writer.abort();
+      reader.cancel().catch(() => {});
+      writer.abort().catch(() => {});
     }
   });
 }
