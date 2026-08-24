@@ -255,10 +255,6 @@ export default function OverviewPageClient() {
           </div>
         )}
       </Card>
-
-      <div className="flex items-center justify-end text-[13px] text-text-muted">
-        <Badge size="sm" variant="teal" dot>live</Badge>
-      </div>
     </div>
   );
 }
