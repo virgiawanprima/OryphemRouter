@@ -70,6 +70,8 @@ export default {
     {
       id: GROK_CLI_MODEL,
       name: "Grok Build",
+      // cli-chat-proxy.grok.com still expects the short token on the wire.
+      upstreamModelId: "grok-build",
       contextLength: 500000,
       maxOutputTokens: 64000,
     },

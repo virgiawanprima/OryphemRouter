@@ -26,19 +26,17 @@ export default {
     },
   },
   models: [
-    { id: "ultimate", name: "Ultimate" },
-    { id: "auto", name: "Auto" },
-    { id: "performance", name: "Performance" },
-    { id: "efficient", name: "Efficient" },
-    { id: "qmodel_preview", name: "Qwen3.8-Max-Preview" },
-    { id: "qmodel_latest", name: "Qwen3.7-Max" },
-    { id: "qmodel", name: "Qwen3.7-Plus" },
-    { id: "kmodel_latest", name: "Kimi-K3" },
-    { id: "kmodel", name: "Kimi-K2.7-Code" },
-    { id: "gm51model", name: "GLM-5.2" },
-    { id: "dmodel", name: "DeepSeek-V4-Pro" },
-    { id: "dfmodel", name: "DeepSeek-V4-Flash" },
-    { id: "mmodel", name: "MiniMax-M3" },
+    // Opaque tier keys with no identifiable real model were removed (unclear).
+    // Wire tokens are preserved via upstreamModelId (the Qoder API requires them);
+    // the canonical ids below are the real models users actually get.
+    { id: "qwen3.8-max-preview", name: "Qwen 3.8 Max (Preview)", upstreamModelId: "qmodel_preview" },
+    { id: "qwen3.7-max", name: "Qwen 3.7 Max", upstreamModelId: "qmodel_latest" },
+    { id: "qwen3.7-plus", name: "Qwen 3.7 Plus", upstreamModelId: "qmodel" },
+    { id: "kimi-k3", name: "Kimi K3", upstreamModelId: "kmodel_latest" },
+    { id: "kimi-k2.7-code", name: "Kimi K2.7 Code", upstreamModelId: "kmodel" },
+    { id: "deepseek-v4-pro", name: "DeepSeek V4 Pro", upstreamModelId: "dmodel" },
+    { id: "deepseek-v4-flash", name: "DeepSeek V4 Flash", upstreamModelId: "dfmodel" },
+    { id: "minimax-m3", name: "MiniMax M3", upstreamModelId: "mmodel" },
   ],
   oauth: {
     openApiBaseUrl: "https://openapi.qoder.sh",
