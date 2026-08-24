@@ -98,7 +98,11 @@ GEMINI.md
 **/CLAUDE.md
 **/GEMINI.md
 .opencode/
-
+opencode.json
+opencode
+opencode.*
+**/opencode
 # Playwright artifacts
 test-results/
 playwright-report/
+scripts/dev.sh
