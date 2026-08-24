@@ -176,6 +176,20 @@ const getPageInfo = (pathname) => {
       icon: "monitor",
       breadcrumbs: [],
     };
+  if (pathname.includes("/basic-chat"))
+    return {
+      title: "Basic Chat",
+      description: "Quick chat with any configured provider",
+      icon: "smart_toy",
+      breadcrumbs: [],
+    };
+  if (pathname.includes("/pxpipe"))
+    return {
+      title: "PX Pipe",
+      description: "Provider-extraction pipe for structured output",
+      icon: "layers",
+      breadcrumbs: [],
+    };
   if (pathname === "/dashboard")
     return {
       title: "Overview",
@@ -241,6 +255,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
           <button
             onClick={onMenuClick}
             className="text-text-main hover:text-primary transition-colors"
+            aria-label="Open menu"
           >
             <span className="material-symbols-outlined">menu</span>
           </button>
@@ -289,18 +304,20 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
           </div>
         ) : title ? (
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {icon && (
-                <span className="material-symbols-outlined text-primary text-xl lg:text-2xl">
-                  {icon}
+                <span className="inline-flex items-center justify-center size-8 rounded-lg bg-c-blue-50/10 text-primary shadow-glow">
+                  <span className="material-symbols-outlined text-lg lg:text-xl">
+                    {icon}
+                  </span>
                 </span>
               )}
-              <h1 className="text-[22px] font-medium tracking-tight truncate">
+              <h1 className="text-[22px] font-semibold tracking-tight truncate">
                 {translate(title)}
               </h1>
             </div>
             {description && (
-              <p className="hidden lg:block text-sm text-text-muted truncate">
+              <p className="hidden lg:block text-sm text-text-muted truncate pl-[42px]">
                 {translate(description)}
               </p>
             )}
