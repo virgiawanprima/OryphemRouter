@@ -22,29 +22,31 @@ const fmtTokens = (n) => {
 
 const fmtCost = (n) => `$${(n || 0).toFixed(4)}`;
 
-export default function UsageChart({ period = "7d" }) {
+export default function UsageChart({ period = "7d", realtimeTick = 0 }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState("tokens");
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/usage/chart?period=${period}`);
-      if (res.ok) {
-        const json = await res.json();
-        setData(json);
-      }
-    } catch (e) {
-      console.error("Failed to fetch chart data:", e);
-    } finally {
-      setLoading(false);
-    }
-  }, [period]);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    // Ignore stale responses when the period changes rapidly. Re-runs on
+    // `realtimeTick` (throttled by the parent) so the chart stays live.
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/usage/chart?period=${period}`);
+        if (res.ok && !cancelled) {
+          const json = await res.json();
+          setData(json);
+        }
+      } catch (e) {
+        if (!cancelled) console.error("Failed to fetch chart data:", e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [period, realtimeTick]);
 
   const hasData = data.some((d) => d.tokens > 0 || d.cost > 0);
 

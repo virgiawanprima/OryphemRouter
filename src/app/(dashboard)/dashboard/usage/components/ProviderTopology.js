@@ -117,14 +117,14 @@ function RouterNode({ data }) {
       <img
         src="/images/logo-oryphem-hitam.png"
         alt="OryphemRouter"
-        className={`w-6 h-6 mr-2 object-contain ${powering ? "topology-router-icon" : ""} hidden dark:block`}
+        className={`w-6 h-6 mr-2 object-contain ${powering ? "topology-router-icon" : ""} block dark:hidden`}
         loading="lazy"
         decoding="async"
       />
       <img
         src="/images/logo-oryphem-putih.png"
         alt="OryphemRouter"
-        className={`w-6 h-6 mr-2 object-contain ${powering ? "topology-router-icon" : ""} block dark:hidden`}
+        className={`w-6 h-6 mr-2 object-contain ${powering ? "topology-router-icon" : ""} hidden dark:block`}
         loading="lazy"
         decoding="async"
       />

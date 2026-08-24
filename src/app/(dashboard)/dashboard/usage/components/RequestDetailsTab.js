@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Card from "@/shared/components/Card";
 import Button from "@/shared/components/Button";
 import Drawer from "@/shared/components/Drawer";
 import Pagination from "@/shared/components/Pagination";
 import { cn } from "@/shared/utils/cn";
+import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 import { AI_PROVIDERS, getProviderByAlias } from "@/shared/constants/providers";
 
 let providerNameCache = null;
@@ -161,6 +162,20 @@ export default function RequestDetailsTab() {
   useEffect(() => {
     fetchDetails();
   }, [fetchDetails]);
+
+  // Realtime: refresh the request-details table on SSE pushes (debounced 1s so
+  // bursts of completed requests coalesce into a single refetch).
+  const refreshTimerRef = useRef(null);
+  const scheduleRefresh = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(() => {
+      fetchDetails();
+    }, 1000);
+  }, [fetchDetails]);
+  useLiveRefresh(scheduleRefresh);
+  useEffect(() => () => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+  }, []);
 
   const handleViewDetail = (detail) => {
     setSelectedDetail(detail);
