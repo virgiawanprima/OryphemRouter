@@ -38,7 +38,7 @@ export function getPublicOrigin(request) {
   const trustForwarded = process.env.TRUST_PROXY === "true" || hasTrustedPeerHeaders(request);
   const forwardedProto = trustForwarded ? (request?.headers?.get?.("x-forwarded-proto") || "") : "";
   const forwardedHost = trustForwarded ? (request?.headers?.get?.("x-forwarded-host") || "") : "";
-  const host = forwardedHost || request?.headers?.get?.("host") || "";
+  const host = forwardedHost || (trustForwarded ? request?.headers?.get?.("host") : "") || "";
   if (host) {
     const protocol = (forwardedProto || new URL(request.url).protocol || "http:").replace(/:$/, "");
     return `${protocol}://${host}`.replace(/\/+$/, "");
@@ -71,7 +71,9 @@ export async function getOidcRuntimeConfig() {
 
 export async function fetchOidcDiscovery(issuerUrl) {
   const discoveryUrl = `${trimTrailingSlashes(issuerUrl)}/.well-known/openid-configuration`;
-  const res = await fetch(discoveryUrl, { cache: "no-store" });
+  // SSRF guard: the discovery URL must point at a public https endpoint,
+  // and any redirect hop is re-validated (no internal redirect targets).
+  const res = await fetchPublicUrl(discoveryUrl, { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Failed to load OIDC discovery document from ${discoveryUrl}`);
   }
@@ -133,7 +135,10 @@ export async function exchangeOidcCode({
     body.set("client_secret", clientSecret);
   }
 
-  const res = await fetch(tokenEndpoint, {
+  // SSRF guard: the token endpoint comes from the (admin-configurable) discovery
+  // document — it must be a public endpoint, never an internal/metadata address.
+  // fetchPublicUrl validates every redirect hop with assertPublicUrl.
+  const res = await fetchPublicUrl(tokenEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
@@ -171,7 +176,8 @@ export async function probeOidcClientSecret({
     code_verifier: "__oidc_test_invalid_verifier__",
   });
 
-  const res = await fetch(tokenEndpoint, {
+  // SSRF guard on the discovery-provided token endpoint.
+  const res = await fetchPublicUrl(tokenEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
@@ -223,7 +229,12 @@ export async function verifyOidcIdToken({
   jwksUri,
   nonce,
 }) {
-  const jwks = createRemoteJWKSet(new URL(jwksUri));
+  // Fetch JWKS via SSRF-guarded endpoint (redirect:manual + hop validation)
+  // instead of using createRemoteJWKSet which performs its own unrestricted fetch.
+  const response = await fetchPublicUrl(jwksUri);
+  if (!response.ok) throw new Error(`JWKS fetch failed (${response.status})`);
+  const jwksJson = await response.json();
+  const jwks = createLocalJWKSet(jwksJson);
   const { payload } = await jwtVerify(idToken, jwks, {
     issuer,
     audience,
