@@ -67,6 +67,9 @@ export async function PATCH(request) {
 
       const salt = await bcrypt.genSalt(10);
       body.password = await bcrypt.hash(body.newPassword, salt);
+      // Rotate the password version so every previously-issued session JWT
+      // (which carries the old `pwv`) is rejected by verifyDashboardAuthToken.
+      body.passwordVersion = (settings.passwordVersion || 0) + 1;
       delete body.newPassword;
       delete body.currentPassword;
     }

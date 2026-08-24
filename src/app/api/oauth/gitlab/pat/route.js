@@ -7,13 +7,13 @@ const GITLAB_DEFAULT_BASE = "https://gitlab.com";
 
 // Resolve and validate the GitLab base URL before any server-side fetch:
 // must be https and must not target loopback/private/internal hosts (SSRF).
-function resolveGitLabBase(rawBaseUrl) {
+async function resolveGitLabBase(rawBaseUrl) {
   const candidate = (rawBaseUrl?.trim() || GITLAB_DEFAULT_BASE).replace(/\/$/, "");
   const parsed = new URL(candidate);
   if (parsed.protocol !== "https:") {
     throw new Error("baseUrl must use https");
   }
-  assertPublicUrl(parsed.toString());
+  await assertPublicUrl(parsed.toString());
   return parsed.origin;
 }
 
@@ -37,7 +37,7 @@ export async function POST(request) {
 
     let base;
     try {
-      base = resolveGitLabBase(baseUrl);
+      base = await resolveGitLabBase(baseUrl);
     } catch {
       return NextResponse.json({ error: "Invalid GitLab base URL" }, { status: 400 });
     }

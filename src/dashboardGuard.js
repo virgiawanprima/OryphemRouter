@@ -34,7 +34,9 @@ const PUBLIC_API_PATHS = [
 ];
 
 // Public top-level prefixes (LLM API endpoints with their own API key auth).
-const PUBLIC_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/api/v1beta", "/codex"];
+// `/responses` and `/codex` are rewritten (next.config.mjs) into the same
+// `/api/v1` handlers as `/v1`, so they must share the same API-key gate.
+const PUBLIC_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/api/v1beta", "/codex", "/responses"];
 
 // Always require JWT token regardless of requireLogin setting
 const ALWAYS_PROTECTED = [
@@ -69,7 +71,20 @@ const PROTECTED_API_PATHS = [
 
 // Routes that spawn child processes or read host secrets — restrict to localhost.
 const LOCAL_ONLY_PATHS = [
+  "/api/cli-tools/claude-settings",
+  "/api/cli-tools/cline-settings",
+  "/api/cli-tools/codex-settings",
+  "/api/cli-tools/copilot-settings",
   "/api/cli-tools/cowork-settings",
+  "/api/cli-tools/deepseek-tui-settings",
+  "/api/cli-tools/devin-settings",
+  "/api/cli-tools/droid-settings",
+  "/api/cli-tools/grok-build-settings",
+  "/api/cli-tools/hermes-settings",
+  "/api/cli-tools/jcode-settings",
+  "/api/cli-tools/kilo-settings",
+  "/api/cli-tools/openclaw-settings",
+  "/api/cli-tools/opencode-settings",
   "/api/cli-tools/antigravity-mitm",
   "/api/mcp/",
   "/api/tunnel/tailscale-install",
@@ -83,6 +98,7 @@ const LOCAL_ONLY_PATHS = [
   "/api/auth/reset-password",
   "/api/headroom/start",
   "/api/headroom/stop",
+  "/api/headroom/restart",
   "/api/headroom/proxy",
 ];
 
@@ -117,7 +133,7 @@ function isLoopbackPeer(request) {
   return false;
 }
 
-export function isLocalRequest(request) {
+export async function isLocalRequest(request) {
   // Stamped by custom-server.js when forwarding headers exist: request came through
   // a reverse proxy, so the loopback socket is the proxy hop, not the end-user.
   if (request.headers.get("x-9r-via-proxy")) return false;
@@ -126,9 +142,15 @@ export function isLocalRequest(request) {
   if (origin) {
     try {
       if (!isLoopbackHostname(new URL(origin).hostname)) return false;
+      // Browser on the host with a loopback Origin — genuine local user.
+      return true;
     } catch { return false; }
   }
-  return true;
+  // Non-browser client (curl/CLI/script): only treated as local when it presents
+  // the machine-bound CLI token. A bare loopback TCP peer without an Origin could
+  // be a same-host port-forward, which must NOT unlock local-only powers (e.g. the
+  // default-password '123' login gate).
+  return await hasValidCliToken(request);
 }
 
 function isPublicLlmApi(pathname) {
@@ -152,7 +174,7 @@ async function hasValidApiKey(request) {
 }
 
 async function canAccessPublicLlmApi(request) {
-  if (isLocalRequest(request)) return true;
+  if (await isLocalRequest(request)) return true;
   if (await hasValidCliToken(request)) return true;
   return await hasValidApiKey(request);
 }
@@ -160,7 +182,7 @@ async function canAccessPublicLlmApi(request) {
 async function canAccessLocalOnlyRoute(request) {
   if (await hasValidCliToken(request)) return true;
   // Browser on host: loopback Host + Origin (blocks tunnel/CSRF) + auth (JWT or requireLogin=false)
-  if (isLocalRequest(request) && await isAuthenticated(request)) return true;
+  if ((await isLocalRequest(request)) && (await isAuthenticated(request))) return true;
   return false;
 }
 
@@ -203,6 +225,20 @@ export async function proxy(request) {
 
   // Local-only gate for spawn-capable / host-secret routes.
   if (LOCAL_ONLY_PATHS.some((p) => pathname.startsWith(p))) {
+    const method = (request.method || "GET").toUpperCase();
+    // GET status reads on cli-tools/*-settings (e.g. "is this CLI installed?")
+    // are harmless — they only read local config. Allow them with a valid JWT so
+    // the dashboard can detect installed CLIs from any origin (localhost, LAN IP,
+    // tunnel). Write operations (POST/PUT/PATCH/DELETE) that mutate host config
+    // files stay strictly local-only.
+    const isSettingsStatusRead =
+      method === "GET" && /^\/api\/cli-tools\/[a-z0-9-]+-settings$/.test(pathname);
+    if (isSettingsStatusRead) {
+      if ((await hasValidCliToken(request)) || (await hasValidToken(request))) {
+        return NextResponse.next();
+      }
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     if (!(await canAccessLocalOnlyRoute(request))) {
       return NextResponse.json({ error: "Local only: CLI token required" }, { status: 403 });
     }
