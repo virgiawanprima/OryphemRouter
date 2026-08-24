@@ -545,12 +545,17 @@ export function openaiResponsesToOpenAIResponse(chunk, state) {
       state.error = error;
       state.finishReasonSent = true;
 
-      // Surface the error as an OpenAI-compatible error chunk
-      return buildChunk(
-        { id: state.chatId || `chatcmpl-${Date.now()}`, created: state.created || Math.floor(Date.now() / 1000), model: state.model || MODEL_FALLBACK },
-        { content: `[Error] ${error.message || JSON.stringify(error)}` },
-        OPENAI_FINISH.STOP
-      );
+      // Surface the error as an OpenAI-compatible error chunk — the error must
+      // not become assistant text content (chat history pollution, false success
+      // accounting, and it bypasses fallback/capacity handling downstream).
+      return {
+        id: state.chatId || `chatcmpl-${Date.now()}`,
+        object: "chat.completion.chunk",
+        created: state.created || Math.floor(Date.now() / 1000),
+        model: state.model || MODEL_FALLBACK,
+        choices: [{ index: 0, delta: {}, finish_reason: OPENAI_FINISH.STOP }],
+        error: { message: `[Error] ${error.message || JSON.stringify(error)}`, type: "upstream_error" },
+      };
     }
     return null;
   }
