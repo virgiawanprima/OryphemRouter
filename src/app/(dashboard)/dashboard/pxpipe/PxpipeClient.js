@@ -127,9 +127,9 @@ export default function PxpipeClient() {
         />
         <SummaryCard label="Version" value={status?.version ? `v${status.version}` : "-"} sub="pxpipe-proxy" />
         <SummaryCard label="Uptime" value={fmtUptime(status?.uptimeMs)} sub="module loaded" />
-        <SummaryCard label="Requests" value={w ? w.requests.toLocaleString() : "-"} />
-        <SummaryCard label="Compressed" value={w ? w.compressed.toLocaleString() : "-"} tone="text-success" />
-        <SummaryCard label="Bypassed" value={w ? w.bypassed.toLocaleString() : "-"} />
+        <SummaryCard label="Requests" value={(w?.requests ?? 0).toLocaleString()} />
+        <SummaryCard label="Compressed" value={(w?.compressed ?? 0).toLocaleString()} tone="text-success" />
+        <SummaryCard label="Bypassed" value={(w?.bypassed ?? 0).toLocaleString()} />
       </div>
 
       <Card className="p-4">
@@ -166,14 +166,14 @@ export default function PxpipeClient() {
           </div>
           <div>
             <p className="text-xs text-text-muted">Reduction</p>
-            <p className="text-lg font-semibold text-success">{w ? `${w.savedPct}%` : "-"}</p>
+            <p className="text-lg font-semibold text-success">{(w?.savedPct ?? 0)}%</p>
           </div>
         </div>
         <p className="text-xs text-text-muted mt-3">
           Estimates from body size before/after imaging; billed usage per request
           (recorded on the Usage page) remains the ground truth. Images generated:{" "}
-          {w ? w.imagesGenerated.toLocaleString() : "-"} · avg compression time:{" "}
-          {w ? `${w.avgCompressionMs}ms` : "-"} · errors: {w ? w.errors : "-"}
+          {(w?.imagesGenerated ?? 0).toLocaleString()} · avg compression time:{" "}
+          {(w?.avgCompressionMs ?? 0)}ms · errors: {(w?.errors ?? 0)}
         </p>
       </Card>
 
