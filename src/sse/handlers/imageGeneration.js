@@ -73,7 +73,13 @@ export async function handleImageGeneration(request) {
 }
 
 async function handleSingleModelImage(body, modelStr, { wantsStream, binaryOutput, preferredConnectionId } = {}) {
-  const modelInfo = await getModelInfo(modelStr);
+  let modelInfo;
+  try {
+    modelInfo = await getModelInfo(modelStr);
+  } catch (e) {
+    log.warn("IMAGE", "Model resolution failed", { error: e?.message });
+    return errorResponse(e?.status || HTTP_STATUS.BAD_REQUEST, e?.message || "Invalid model");
+  }
   if (!modelInfo.provider) return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid model format");
 
   const { provider, model } = modelInfo;

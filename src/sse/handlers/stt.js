@@ -39,7 +39,13 @@ export async function handleStt(request) {
   if (!modelStr) return errorResponse(HTTP_STATUS.BAD_REQUEST, "Missing model");
   if (!formData.get("file")) return errorResponse(HTTP_STATUS.BAD_REQUEST, "Missing required field: file");
 
-  const modelInfo = await getModelInfo(modelStr);
+  let modelInfo;
+  try {
+    modelInfo = await getModelInfo(modelStr);
+  } catch (e) {
+    log.warn("STT", "Model resolution failed", { error: e?.message });
+    return errorResponse(e?.status || HTTP_STATUS.BAD_REQUEST, e?.message || "Invalid model");
+  }
   if (!modelInfo.provider) return errorResponse(HTTP_STATUS.BAD_REQUEST, "Invalid model format");
 
   const { provider, model } = modelInfo;
