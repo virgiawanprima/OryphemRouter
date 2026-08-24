@@ -441,7 +441,11 @@ export class DevinCliExecutor extends BaseExecutor {
             `data: ${JSON.stringify({ error: { message: msg, type: "devin_cli_error", code: "spawn_failed" } })}\n\n`
           );
           emit("data: [DONE]\n\n");
+          // Mark finished so the subsequent `close` event doesn't call
+          // finish()/emit() on the already-closed controller (crash).
+          finished = true;
           controller.close();
+          cleanupMcp();
         });
 
         if (signal) {

@@ -323,12 +323,15 @@ async function wrapQoderSSE(response, model) {
     const inner = typeof envelope.body === "string" ? envelope.body : "";
     if (statusVal !== 200) {
       const msg = inner || `upstream status ${statusVal}`;
+      // Emit an error frame, not assistant content — the error must not become
+      // the model's reply (chat history pollution / false success accounting).
       const errChunk = JSON.stringify({
         id: `qoder-error-${Date.now()}`,
         object: "chat.completion.chunk",
         created: Math.floor(Date.now() / 1000),
         model,
-        choices: [{ index: 0, delta: { content: `\n[qoder error ${statusVal}: ${truncate(msg, 200)}]` }, finish_reason: "stop" }],
+        choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+        error: { message: `[qoder error ${statusVal}: ${truncate(msg, 200)}]`, type: "upstream_error" },
       });
       controller.enqueue(encoder.encode(`data: ${errChunk}\n\n`));
       controller.enqueue(encoder.encode(SSE_DONE));
