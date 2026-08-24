@@ -12,6 +12,18 @@ export async function GET(request, { params }) {
   const encoder = new TextEncoder();
   let sid;
 
+  const cleanup = () => {
+    if (sid) {
+      unregisterSession(plugin, sid);
+      sid = null;
+    }
+  };
+
+  // Next.js does not always invoke ReadableStream.cancel() on client disconnect;
+  // the abort signal is the reliable cleanup path. Without this, dropped SSE
+  // clients leave orphaned MCP child processes + session entries (leak).
+  request.signal.addEventListener("abort", cleanup, { once: true });
+
   const stream = new ReadableStream({
     start(controller) {
       const send = (chunk) => controller.enqueue(encoder.encode(chunk));
@@ -20,7 +32,7 @@ export async function GET(request, { params }) {
       send(`event: endpoint\ndata: /api/mcp/${plugin}/message?sessionId=${sid}\n\n`);
     },
     cancel() {
-      if (sid) unregisterSession(plugin, sid);
+      cleanup();
     },
   });
 

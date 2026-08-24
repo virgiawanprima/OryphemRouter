@@ -1,6 +1,8 @@
 // Free OpenCode models that don't use the "-free" id suffix
 const KNOWN_FREE_OPENCODE_MODELS = ["big-pickle"];
 
+import { deriveModelName } from "open-sse/providers/models/namePatterns.js";
+
 export const FILTERS = {
   "openrouter-free": (models) =>
     models
@@ -16,11 +18,7 @@ export const FILTERS = {
   "opencode-free": (models) =>
     models
       .filter((m) => m.id?.endsWith("-free") || KNOWN_FREE_OPENCODE_MODELS.includes(m.id))
-      .map((m) => ({ id: m.id, name: m.id })),
-
-  // models.dev returns a large catalog; keep only mimo models
-  "mimo-free": (models) =>
-    (Array.isArray(models) ? models : [])
-      .filter((m) => m.id?.startsWith("mimo") || m.name?.toLowerCase().includes("mimo"))
-      .map((m) => ({ id: m.id, name: m.name || m.id })),
+      // Derive an honest display name from the id (e.g. "deepseek-v4-flash-free"
+      // → "DeepSeek V4 Flash Free") instead of showing the raw id.
+      .map((m) => ({ id: m.id, name: deriveModelName(m.id) })),
 };

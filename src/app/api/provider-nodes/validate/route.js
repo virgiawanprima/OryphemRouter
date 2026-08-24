@@ -4,12 +4,29 @@ import { assertPublicUrl } from "@/shared/utils/ssrfGuard.js";
 import { isLocalRequest } from "@/dashboardGuard";
 
 // Fetch with timeout wrapper (aborts the underlying request and clears the
-// timer so losing races don't leak sockets/timers).
+// timer so losing races don't leak sockets/timers). SSRF-safe: follows redirects
+// manually and re-validates every hop so a public baseUrl can't 3xx into an
+// internal/metadata address.
 const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(new Error("Request timeout")), timeout);
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
+    let current = url;
+    for (let hop = 0; hop <= 4; hop++) {
+      const res = await fetch(current, { ...options, signal: controller.signal, redirect: "manual" });
+      if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
+        const next = new URL(res.headers.get("location"), current).toString();
+        try {
+          await assertPublicUrl(next);
+        } catch {
+          return res; // redirect to a non-public host — return the 3xx so callers reject it
+        }
+        current = next;
+        continue;
+      }
+      return res;
+    }
+    throw new Error("Too many redirects");
   } catch (e) {
     if (controller.signal.aborted) throw new Error("Request timeout");
     throw e;
@@ -73,9 +90,9 @@ export async function POST(request) {
     }
 
     // SSRF guard for remote callers; local host keeps self-hosted nodes (e.g. ollama-local)
-    if (!isLocalRequest(request)) {
+    if (!(await isLocalRequest(request))) {
       try {
-        assertPublicUrl(baseUrl);
+        await assertPublicUrl(baseUrl);
       } catch {
         return NextResponse.json({ error: "URL not allowed" }, { status: 400 });
       }
@@ -128,7 +145,22 @@ export async function POST(request) {
         }
       });
 
-      if (res.ok) return NextResponse.json({ valid: true });
+      if (res.ok) {
+        // Anti-fraud: confirm a supplied modelId exists in the real catalog.
+        if (modelId) {
+          const data = await res.json().catch(() => null);
+          const list = data?.data || data?.models || [];
+          const ids = list.map((m) => (typeof m === "string" ? m : m?.id ?? m?.model ?? ""));
+          if (ids.length && !ids.includes(modelId)) {
+            return NextResponse.json({
+              valid: true,
+              modelVerified: false,
+              warning: `Model '${modelId}' was not found in this provider's /models catalog`,
+            });
+          }
+        }
+        return NextResponse.json({ valid: true, modelVerified: !!modelId });
+      }
 
       // Auth errors - no point trying chat fallback
       if (res.status === 401 || res.status === 403) {
@@ -170,7 +202,22 @@ export async function POST(request) {
       headers: { "Authorization": `Bearer ${apiKey}` },
     });
 
-    if (res.ok) return NextResponse.json({ valid: true });
+    if (res.ok) {
+      // Anti-fraud: confirm a supplied modelId actually exists in the real catalog.
+      if (modelId) {
+        const data = await res.json().catch(() => null);
+        const list = data?.data || data?.models || [];
+        const ids = list.map((m) => (typeof m === "string" ? m : m?.id ?? m?.model ?? ""));
+        if (ids.length && !ids.includes(modelId)) {
+          return NextResponse.json({
+            valid: true,
+            modelVerified: false,
+            warning: `Model '${modelId}' was not found in this provider's /models catalog`,
+          });
+        }
+      }
+      return NextResponse.json({ valid: true, modelVerified: !!modelId });
+    }
 
     // Auth errors - no point trying chat fallback
     if (res.status === 401 || res.status === 403) {
