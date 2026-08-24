@@ -92,17 +92,20 @@ const comboRotationState = new Map();
 // Cost-optimized model ordering: predefined relative costs per provider
 // Lower = cheaper. Free providers get the lowest tier.
 const PROVIDER_COST_TIERS = {
-  "oc": 0,      // OpenCode Free - FREE
-  "kr": 1,      // Kiro - FREE (50 credits/mo)
-  "vertex": 2,  // Vertex - FREE ($300 credits)
-  "felo": 3,    // Felo - FREE
-  "minimax": 10, // Cheap ($0.2/1M)
-  "glm": 11,    // Cheap ($0.6/1M)
-  "kimi": 12,   // Cheap ($9/mo flat)
-  "cc": 20,     // Subscription (Claude Code)
-  "cx": 21,     // Subscription (Codex)
-  "gh": 22,     // Subscription (GitHub Copilot)
-  "cu": 23,     // Subscription (Cursor)
+  // Free tiers
+  "oc": 0,        "opencode": 0,
+  "kr": 1,        "kiro": 1,
+  "vertex": 2,
+  "felo": 3,
+  // Cheap providers
+  "minimax": 10,
+  "glm": 11,
+  "kimi": 12,
+  // Subscription providers
+  "cc": 20,       "claude": 20,       "anthropic": 20,
+  "cx": 21,       "codex": 21,
+  "gh": 22,       "github": 22,
+  "cu": 23,       "cursor": 23,
 };
 
 // Reorder models by cost tier (cheapest first), then by position

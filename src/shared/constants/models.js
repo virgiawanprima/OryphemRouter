@@ -23,13 +23,10 @@ const PASSTHROUGH_PROVIDERS = new Set(
     .map(([key]) => key)
 );
 
-// Wrap isValidModel with passthrough providers
+// Wrap isValidModel with passthrough providers (core resolves alias → full id)
 export function isValidModel(aliasOrId, modelId) {
   if (isOpenAICompatibleProvider(aliasOrId)) return true;
-  if (PASSTHROUGH_PROVIDERS.has(aliasOrId)) return true;
-  const models = MODELS[aliasOrId];
-  if (!models) return false;
-  return models.some(m => m.id === modelId);
+  return isValidModelCore(aliasOrId, modelId, PASSTHROUGH_PROVIDERS);
 }
 
 // Legacy AI_MODELS for backward compatibility
