@@ -7,7 +7,7 @@ import { assertPublicUrl } from "@/shared/utils/ssrfGuard";
 const TIMEOUT_MS = 8000;
 
 // Validate an MCP URL before probing: http/https only, no private/internal hosts.
-function validateMcpUrl(raw) {
+async function validateMcpUrl(raw) {
   const parsed = new URL(raw);
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
     throw new Error("url must use http or https");
@@ -15,7 +15,7 @@ function validateMcpUrl(raw) {
   // Local/loopback MCP servers are a legitimate dev use-case, so private
   // hosts are blocked but loopback is explicitly allowed here.
   if (parsed.hostname !== "localhost" && !parsed.hostname.endsWith(".localhost")) {
-    assertPublicUrl(parsed.toString());
+    await assertPublicUrl(parsed.toString());
   }
   return parsed.toString();
 }
@@ -105,7 +105,7 @@ export async function POST(request) {
     }
     let safeUrl;
     try {
-      safeUrl = validateMcpUrl(url);
+      safeUrl = await validateMcpUrl(url);
     } catch {
       return NextResponse.json({ error: "invalid url" }, { status: 400 });
     }
