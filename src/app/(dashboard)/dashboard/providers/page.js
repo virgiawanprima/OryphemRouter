@@ -100,6 +100,7 @@ export default function ProvidersPage() {
   const [connections, setConnections] = useState([]);
   const [providerNodes, setProviderNodes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showAllApikey, setShowAllApikey] = useState(false);
   const [showAddCompatibleModal, setShowAddCompatibleModal] = useState(false);
   const [showAddAnthropicCompatibleModal, setShowAddAnthropicCompatibleModal] =
@@ -159,6 +160,7 @@ export default function ProvidersPage() {
       if (nodesRes.ok) setProviderNodes(nodesData.nodes || []);
     } catch (error) {
       console.log("Error fetching data:", error);
+      setError("Failed to load providers. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -377,6 +379,13 @@ export default function ProvidersPage() {
             search_off
           </span>
           <p className="text-text-muted text-sm">No providers match your search</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-red-300 dark:border-red-800 bg-red-500/5 text-sm text-red-600 dark:text-red-400">
+          <span className="material-symbols-outlined text-lg">error</span>
+          <span>{error}</span>
         </div>
       )}
 
