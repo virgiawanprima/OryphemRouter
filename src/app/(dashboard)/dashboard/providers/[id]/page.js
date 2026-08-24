@@ -192,7 +192,7 @@ export default function ProviderDetailPage() {
   })();
   const providerDisplayAlias = isCompatible
     ? (providerNode?.prefix || providerId)
-    : providerAlias;
+    : providerId;
 
   const fetchDisabledModels = useCallback(async () => {
     try {
