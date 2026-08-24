@@ -19,7 +19,13 @@ export async function POST(request) {
       case 1: {
         // Detect provider + formats from 1_req_client.json
         const clientBody = body.body || body;
-        const { provider, model } = await getModelInfo(clientBody.model);
+        let modelInfo;
+        try {
+          modelInfo = await getModelInfo(clientBody.model);
+        } catch (e) {
+          return NextResponse.json({ success: false, error: e?.message || "Invalid model" }, { status: e?.status || 400 });
+        }
+        const { provider, model } = modelInfo;
         const sourceFormat = detectFormat(clientBody);
         const targetFormat = getTargetFormat(provider);
         return NextResponse.json({ success: true, result: { provider, model, sourceFormat, targetFormat } });
@@ -29,7 +35,13 @@ export async function POST(request) {
         // source → OpenAI intermediate (mirrors 3_req_openai.json)
         // Translate source→openai only (half of the pipeline)
         const clientBody = body.body || body;
-        const { provider, model } = await getModelInfo(clientBody.model);
+        let modelInfo;
+        try {
+          modelInfo = await getModelInfo(clientBody.model);
+        } catch (e) {
+          return NextResponse.json({ success: false, error: e?.message || "Invalid model" }, { status: e?.status || 400 });
+        }
+        const { provider, model } = modelInfo;
         const sourceFormat = detectFormat(clientBody);
         const stream = clientBody.stream !== false;
 

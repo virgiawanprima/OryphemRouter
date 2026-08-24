@@ -640,9 +640,34 @@ export async function POST(request) {
       isValid = false;
     }
 
+    // Model authenticity check: fetch the provider's real catalog and diff it
+    // against our advertised models (anti-fraud). Fail-open — never invalidates a
+    // good key, only reports verified/corrected/missing.
+    let modelsReport = null;
+    if (isValid && !isNoAuth) {
+      try {
+        const { verifyProviderModels } = await import("open-sse/services/modelVerifier.js");
+        modelsReport = await verifyProviderModels({
+          provider,
+          credentials: { apiKey, providerSpecificData },
+        });
+      } catch {
+        modelsReport = null;
+      }
+    }
+
     return NextResponse.json({
       valid: isValid,
       error: isValid ? null : (error || "Invalid API key"),
+      models: modelsReport
+        ? {
+            live: !!modelsReport.live,
+            verified: modelsReport.verified,
+            corrected: modelsReport.corrected,
+            missing: modelsReport.missing,
+            catalogCount: modelsReport.catalog.length,
+          }
+        : null,
     });
   } catch (error) {
     console.log("Error validating API key:", error);

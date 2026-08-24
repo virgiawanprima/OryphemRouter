@@ -1,6 +1,8 @@
 import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getCustomModels, addCustomModel, deleteCustomModel } from "@/models";
+import { getProviderModels } from "open-sse/config/providerModels.js";
+import { AI_PROVIDERS } from "@/shared/constants/providers";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,21 @@ export async function POST(request) {
     if (!providerAlias || !id) {
       return NextResponse.json({ error: "providerAlias and id required" }, { status: 400 });
     }
+
+    // Anti-fraud: for KNOWN (non-passthrough) providers, reject model ids that
+    // are not in the advertised catalog. Unknown prefixes (custom compatible
+    // nodes) and passthrough providers are left open. Use "Import from /models"
+    // to add real ids from the provider's live catalog.
+    const knownModels = getProviderModels(providerAlias);
+    const isKnownProvider = knownModels.length > 0;
+    const isPassthrough = AI_PROVIDERS[providerAlias]?.passthroughModels === true;
+    if (isKnownProvider && !isPassthrough && !knownModels.some((m) => m.id === id)) {
+      return NextResponse.json({
+        error: `Model '${id}' is not in the ${providerAlias} catalog. Use "Import from /models" to add real models from the provider's catalog.`,
+        code: "unknown_model",
+      }, { status: 400 });
+    }
+
     const added = await addCustomModel({ providerAlias, id, type: type || "llm", name });
     return NextResponse.json({ success: true, added });
   } catch (error) {

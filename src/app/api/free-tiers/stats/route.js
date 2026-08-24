@@ -15,7 +15,7 @@ export async function GET() {
         type: "credits",
         total: 50,
         unit: "credits/mo",
-        used: stats?.byProvider?.["kr"]?.cost || 0,
+        used: stats?.byProvider?.["kiro"]?.cost || stats?.byProvider?.["kr"]?.cost || 0,
         reset: "Monthly (1st)",
         description: "Claude 4.5 + GLM-5 + MiniMax free",
         link: "/dashboard/providers",
