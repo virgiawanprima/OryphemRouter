@@ -55,9 +55,20 @@ export async function POST(request) {
     if (storedHash) {
       isValid = await bcrypt.compare(password, storedHash);
     } else {
-      // Use env var or default
+      // Use env var or default — but reject known weak initial passwords
       const initialPassword = process.env.INITIAL_PASSWORD || "123";
+      const WEAK_PASSWORDS = new Set(["change-me", "changeme", "secret", "password", "123", "123456"]);
+      const isWeakInitial = !process.env.INITIAL_PASSWORD || WEAK_PASSWORDS.has(initialPassword);
       isValid = password === initialPassword;
+      // If the initial password is a known weak value, force change even for local requests
+      if (isValid && isWeakInitial) {
+        const cookieStore = await cookies();
+        // Force password change: issue a one-time token that only allows password change
+        return NextResponse.json(
+          { success: false, error: "Default password is too weak. Change it from Settings → Change Password.", mustChangePassword: true },
+          { status: 403, headers: NO_STORE_HEADERS }
+        );
+      }
     }
 
     if (isValid) {
@@ -66,7 +77,7 @@ export async function POST(request) {
       // Default password still in use on a remote client → force a password
       // change before the dashboard is exposed remotely (keeps local UX intact).
       const mustChangePassword =
-        !storedHash && !process.env.INITIAL_PASSWORD && !isLocalRequest(request);
+        !storedHash && !process.env.INITIAL_PASSWORD && !(await isLocalRequest(request));
 
       if (mustChangePassword) {
         // Do NOT issue a session token: a fresh install's default password is

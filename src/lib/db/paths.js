@@ -13,6 +13,10 @@ export const LEGACY_FILES = {
 };
 export function ensureDirs() {
   for (const dir of [DATA_DIR, DB_DIR, BACKUPS_DIR]) {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+  }
+  // Fix existing directories that may have been created with default permissions
+  for (const dir of [DATA_DIR, DB_DIR, BACKUPS_DIR]) {
+    try { fs.chmodSync(dir, 0o700); } catch { /* ignore */ }
   }
 }
