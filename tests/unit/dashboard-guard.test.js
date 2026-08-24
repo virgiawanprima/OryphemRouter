@@ -64,7 +64,10 @@ describe("dashboard guard public LLM API access", () => {
   });
 
   it("allows loopback public LLM API without API key", async () => {
-    const response = await proxy(localRequest("/v1/chat/completions", { host: "localhost:20129" }));
+    const response = await proxy(localRequest("/v1/chat/completions", {
+      host: "localhost:20129",
+      origin: "http://localhost:20129",
+    }));
 
     expect(response).toBe(mocks.nextResponse);
     expect(mocks.validateApiKey).not.toHaveBeenCalled();
@@ -84,6 +87,7 @@ describe("dashboard guard public LLM API access", () => {
     const response = await proxy(localRequest("/v1/chat/completions", {
       host: "localhost:20129",
       "x-9r-real-ip": "127.0.0.1",
+      origin: "http://localhost:20129",
     }));
 
     expect(response).toBe(mocks.nextResponse);
@@ -98,7 +102,10 @@ describe("dashboard guard public LLM API access", () => {
   });
 
   it("allows loopback rewritten public LLM API without API key", async () => {
-    const response = await proxy(localRequest("/api/v1/chat/completions", { host: "localhost:20129" }));
+    const response = await proxy(localRequest("/api/v1/chat/completions", {
+      host: "localhost:20129",
+      origin: "http://localhost:20129",
+    }));
 
     expect(response).toBe(mocks.nextResponse);
     expect(mocks.validateApiKey).not.toHaveBeenCalled();

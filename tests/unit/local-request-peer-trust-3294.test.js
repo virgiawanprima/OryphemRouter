@@ -108,6 +108,7 @@ describe("peer header trust", () => {
       host: "localhost:20129",
       "x-9r-real-ip": "127.0.0.1",
       "x-9r-peer-token": PEER_TOKEN,
+      origin: "http://localhost:20129",
     }));
 
     expect(response).toBe(mocks.nextResponse);
@@ -123,6 +124,7 @@ describe("peer header trust", () => {
         host: "localhost:20129",
         "x-9r-real-ip": peerIp,
         "x-9r-peer-token": PEER_TOKEN,
+        origin: "http://localhost:20129",
       }));
 
       expect(response).toBe(mocks.nextResponse);
@@ -167,7 +169,10 @@ describe("peer header trust", () => {
   it("accepts the legacy Host fallback only in development", async () => {
     process.env.NODE_ENV = "development";
 
-    const response = await proxy(request("/api/v1/models", { host: "localhost:20129" }));
+    const response = await proxy(request("/api/v1/models", {
+      host: "localhost:20129",
+      origin: "http://localhost:20129",
+    }));
 
     expect(response).toBe(mocks.nextResponse);
   });

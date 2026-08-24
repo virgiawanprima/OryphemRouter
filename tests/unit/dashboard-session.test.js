@@ -20,6 +20,8 @@ import { getSettings } from "@/lib/localDb";
 describe("dashboardSession", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default settings carry passwordVersion 0 (missing key also defaults to 0).
+    getSettings.mockResolvedValue({ passwordVersion: 0 });
   });
 
   it("createDashboardAuthToken → verifyDashboardAuthToken returns true", async () => {
@@ -46,13 +48,47 @@ describe("dashboardSession", () => {
     expect(await getDashboardAuthSession(null)).toBeNull();
   });
 
-  it("shouldUseSecureCookie ignores AUTH_COOKIE_SECURE=true without HTTPS", () => {
+  it("rejects a token minted before a password change (pwv bump)", async () => {
+    const token = await createDashboardAuthToken({ userId: "u1" });
+    // Password was changed → passwordVersion advanced to 1.
+    getSettings.mockResolvedValue({ passwordVersion: 1 });
+    expect(await verifyDashboardAuthToken(token)).toBe(false);
+    expect(await getDashboardAuthSession(token)).toBeNull();
+  });
+
+  it("accepts a token minted after the password change (same pwv)", async () => {
+    getSettings.mockResolvedValue({ passwordVersion: 1 });
+    const token = await createDashboardAuthToken({ userId: "u1" });
+    expect(await verifyDashboardAuthToken(token)).toBe(true);
+    expect((await getDashboardAuthSession(token)).userId).toBe("u1");
+  });
+
+  it("treats a missing pwv on legacy tokens as version 0", async () => {
+    // Simulate a pre-upgrade token: sign without pwv, verify against version 0.
+    const { SignJWT } = await import("jose");
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const secretFile = path.join("/tmp/oryphemrouter-test-data", "jwt-secret");
+    const secret = fs.readFileSync(secretFile, "utf8").trim();
+    const legacy = await new SignJWT({ authenticated: true })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("30d")
+      .sign(new TextEncoder().encode(secret));
+    getSettings.mockResolvedValue({ passwordVersion: 0 });
+    expect(await verifyDashboardAuthToken(legacy)).toBe(true);
+    // Once a password change bumps the version, the legacy token dies.
+    getSettings.mockResolvedValue({ passwordVersion: 1 });
+    expect(await verifyDashboardAuthToken(legacy)).toBe(false);
+  });
+
+  it("shouldUseSecureCookie forces Secure when AUTH_COOKIE_SECURE=true (operator opt-in)", () => {
     const original = process.env.AUTH_COOKIE_SECURE;
     process.env.AUTH_COOKIE_SECURE = "true";
     const req = { headers: { get: () => null } };
-    // On localhost HTTP, AUTH_COOKIE_SECURE=true should NOT set Secure
-    // because browsers drop Secure cookies over HTTP.
-    expect(shouldUseSecureCookie(req)).toBe(false);
+    // AUTH_COOKIE_SECURE is an explicit operator opt-in (e.g. HTTPS tunnel that
+    // does not stamp x-forwarded-proto); it must force the Secure flag.
+    expect(shouldUseSecureCookie(req)).toBe(true);
     if (original === undefined) delete process.env.AUTH_COOKIE_SECURE;
     else process.env.AUTH_COOKIE_SECURE = original;
   });
