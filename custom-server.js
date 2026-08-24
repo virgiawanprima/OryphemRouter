@@ -67,6 +67,14 @@ http.createServer = (...args) => {
     delete req.headers["x-forwarded-for"];
     delete req.headers["x-9r-via-proxy"];
     delete req.headers["x-9r-peer-token"];
+    if (!(isLoopbackProxy && viaProxy)) {
+      // Direct/public peers (or a remote peer that merely appended XFF to look
+      // proxied) must not spoof forwarded host/proto headers — OIDC/SAML derive
+      // their origin (ACS URL / redirect_uri) from them. Only a genuine loopback
+      // reverse proxy with real forwarding headers keeps them.
+      delete req.headers["x-forwarded-host"];
+      delete req.headers["x-forwarded-proto"];
+    }
     req.headers["x-9r-real-ip"] = ip;
     req.headers["x-9r-peer-token"] = PEER_TOKEN;
     if (viaProxy) req.headers["x-9r-via-proxy"] = "1";
