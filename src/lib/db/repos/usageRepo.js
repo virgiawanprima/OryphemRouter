@@ -270,6 +270,13 @@ export async function saveRequestUsage(entry) {
       );
 
       const dateKey = getLocalDateKey(entry.timestamp);
+      // TODO(M18): usageDaily full-JSON rewrite. Each saveRequestUsage call
+      // reads the entire day blob, parses JSON, mutates it, re-stringifies,
+      // and writes it back. For high-traffic deployments this causes
+      // write-amplification and contention. Consider increment-only columns
+      // (promptTokens + N, completionTokens + N, cost + N, requests + 1) and
+      // deferred background recomputation of the nested byProvider/byModel
+      // breakdown.
       const row = db.get(`SELECT data FROM usageDaily WHERE dateKey = ?`, [dateKey]);
       const day = row ? parseJson(row.data, {}) : {
         requests: 0, promptTokens: 0, completionTokens: 0, cost: 0,

@@ -35,6 +35,9 @@ const DEFAULT_SETTINGS = {
   },
   requireLogin: true,
   requireApiKey: true,
+  // Monotonic counter bumped on every password change/reset. JWTs carry it as
+  // `pwv` so old sessions die the moment the credential rotates.
+  passwordVersion: 0,
   tunnelDashboardAccess: true,
   authMode: "password",
   ssoType: "oidc",

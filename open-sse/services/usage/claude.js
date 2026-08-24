@@ -27,6 +27,15 @@ const usageCache = new Map(); // token -> { promise } | { result, expiresAt }
 export async function getClaudeUsage(accessToken, proxyOptions = null, options = {}) {
   const force = options?.force === true;
 
+  // Bound memory: drop expired entries from both maps on access.
+  const now = Date.now();
+  for (const [k, v] of usageCache) {
+    if (v?.expiresAt && v.expiresAt <= now) usageCache.delete(k);
+  }
+  for (const [k, until] of oauthCooldown) {
+    if (until <= now) oauthCooldown.delete(k);
+  }
+
   // Serve in-flight or fresh cached result (skip on manual force)
   if (!force && accessToken) {
     const hit = usageCache.get(accessToken);
@@ -46,7 +55,10 @@ export async function getClaudeUsage(accessToken, proxyOptions = null, options =
       });
       return result;
     }
-    // Soft failure (429/error): prefer the last good read over a transient error
+    // Soft failure (429/error): drop the {promise} entry so the next call
+    // re-fetches instead of being pinned to this settled promise forever.
+    if (accessToken) usageCache.delete(accessToken);
+    // Prefer the last good read over a transient error.
     if (stale) return stale;
     return result;
   })();
