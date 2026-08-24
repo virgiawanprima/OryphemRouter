@@ -86,6 +86,30 @@ async function refreshOne(connection) {
   return checkAndRefreshToken(connection.provider, connection, { force: true });
 }
 
+// A hung refresh (dead proxy, stalled TLS) must never pin tickRunning forever —
+// otherwise the whole scheduler dies. Race each refresh against a timeout so the
+// tick always settles and future intervals keep running.
+const REFRESH_TIMEOUT_MS = 60 * 1000;
+
+async function refreshWithTimeout(refresh, conn) {
+  let timer;
+  const timeout = new Promise((resolve) => {
+    timer = setTimeout(() => {
+      log.warn("BG_TOKEN_REFRESH", "Connection refresh timed out (swallowed)", {
+        id: conn?.id,
+        provider: conn?.provider,
+      });
+      resolve(null);
+    }, REFRESH_TIMEOUT_MS);
+    if (timer.unref) timer.unref();
+  });
+  try {
+    return await Promise.race([Promise.resolve().then(() => refresh(conn)), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
  * One scheduler tick. Fail-open at top level and per connection.
  * @param {{ loadConnections?: Function, refreshConnection?: Function }} [deps]
@@ -118,7 +142,7 @@ export async function runBackgroundTokenRefreshTick(deps = {}) {
     await Promise.allSettled(
       due.map(async (conn) => {
         try {
-          await refresh(conn);
+          await refreshWithTimeout(refresh, conn);
           log.info("BG_TOKEN_REFRESH", "Connection refresh finished", {
             id: conn.id,
             provider: conn.provider,
