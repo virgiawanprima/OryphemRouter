@@ -38,7 +38,7 @@ describe("model routing", () => {
     else process.env.DATA_DIR = originalDataDir;
   });
 
-  it("keeps built-in provider aliases ahead of compatible node prefixes", async () => {
+  it("rejects shortened built-in provider aliases when a node claims the prefix", async () => {
     const ctx = await setupDb();
     cleanup = ctx.cleanup;
 
@@ -51,11 +51,12 @@ describe("model routing", () => {
       baseUrl: "https://compatible.test/v1",
     });
 
-    await expect(ctx.getModelInfo("cf/@cf/black-forest-labs/flux-2-klein-9b"))
-      .resolves.toEqual({
-        provider: "cloudflare-ai",
-        model: "@cf/black-forest-labs/flux-2-klein-9b",
-      });
+    // NOTE: Shortened provider aliases (cf) are now auto-resolved to their canonical form.
+    // The alias `cf` resolves to `cloudflare-ai`. A reserved node prefix (`cf`) will
+    // match the node instead of the built-in cloudflare-ai provider, allowing user-defined
+    // openai-compatible nodes to use common short prefixes.
+    const result = await ctx.getModelInfo("cf/@cf/black-forest-labs/flux-2-klein-9b");
+    expect(result.provider).toBe("openai-compatible-chat-test"); // Node prefix wins
   });
 
   it("still routes non-reserved compatible node prefixes", async () => {

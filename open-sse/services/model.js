@@ -18,7 +18,8 @@ for (const entry of REGISTRY) {
 }
 
 const BUILTIN_MODEL_ALIASES = {
-  "grok-build": "gcli/grok-build",
+  "grok-build": "grok-cli/grok-build-0.1",
+  "grok-build-0.1": "grok-cli/grok-build-0.1",
 };
 
 /**
@@ -123,12 +124,16 @@ export async function getModelInfoCore(modelStr, aliasesOrGetter) {
 }
 
 // Config-driven prefix → provider inference (first match wins, fallback "openai").
+// Uses the full canonical provider id so bare model names route to the real provider.
 const MODEL_PREFIX_PROVIDERS = [
   [/^claude-/, "anthropic"],
   [/^gemini-/, "gemini"],
   [/^gpt-/, "openai"],
   [/^o[134]/, "openai"],
-  [/^deepseek-/, "openrouter"],
+  [/^deepseek-/, "deepseek"],
+  [/^grok-/, "xai"],
+  [/^minimax-/, "minimax"],
+  [/^kimi-/, "kimi"],
 ];
 
 /**
