@@ -87,8 +87,9 @@ export function openaiToClaudeResponse(chunk, state) {
     const cacheCreateTokens = typeof cacheCreationTokens === "number" ? cacheCreationTokens : 0;
 
     // input_tokens = prompt_tokens - cached_tokens - cache_creation_tokens
-    // Because OpenAI's prompt_tokens includes all prompt-side tokens
-    const inputTokens = promptTokens - cacheReadTokens - cacheCreateTokens;
+    // Because OpenAI's prompt_tokens includes all prompt-side tokens. Clamp so
+    // providers that report prompt_tokens EXCLUDING cache never go negative.
+    const inputTokens = Math.max(0, promptTokens - cacheReadTokens - cacheCreateTokens);
 
     state.usage = {
       input_tokens: inputTokens,
@@ -221,8 +222,10 @@ export function openaiToClaudeResponse(chunk, state) {
     }
   }
 
-  // Finish
-  if (choice.finish_reason) {
+  // Finish — guarded so a provider echoing finish_reason on a second (usage-only)
+  // chunk cannot emit a duplicate message_delta + message_stop (protocol corruption).
+  if (choice.finish_reason && !state.finishReasonSent) {
+    state.finishReasonSent = true;
     stopThinkingBlock(state, results);
     stopTextBlock(state, results);
 
