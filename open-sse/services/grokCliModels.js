@@ -30,10 +30,15 @@ export function parseGrokCliModels(data) {
     if (!id || seen.has(id)) continue;
     seen.add(id);
 
+    // The cli-chat-proxy returns the short wire id ("grok-build"); normalize it to
+    // the canonical real model id ("grok-build-0.1") so the catalog stays honest.
+    // The executor maps back via upstreamModelId on the wire.
+    const canonicalId = id === "grok-build" ? GROK_CLI_MODEL : id;
+
     const model = {
       ...item,
-      id,
-      name: item.display_name ?? item.displayName ?? item.name ?? id,
+      id: canonicalId,
+      name: item.display_name ?? item.displayName ?? item.name ?? canonicalId,
     };
     const contextLength = Number(
       item.context_length ?? item.contextLength ?? item.context_window ?? item.contextWindow,
@@ -43,7 +48,7 @@ export function parseGrokCliModels(data) {
     if (Number.isFinite(maxOutputTokens) && maxOutputTokens > 0) {
       model.maxOutputTokens = maxOutputTokens;
     }
-    if (id === GROK_CLI_MODEL) {
+    if (canonicalId === GROK_CLI_MODEL) {
       model.contextLength ||= 500000;
       model.maxOutputTokens ||= 64000;
     }
