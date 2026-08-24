@@ -1,5 +1,8 @@
 // Public API barrel — all DB functions
+import fs from "node:fs";
+import path from "node:path";
 import { getAdapter } from "./driver.js";
+import { BACKUPS_DIR, ensureDirs } from "./paths.js";
 import { stringifyJson, parseJson } from "./helpers/jsonCol.js";
 
 // Settings
@@ -97,6 +100,20 @@ export async function importDb(payload) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     throw new Error("Invalid database payload");
   }
+
+  // Safety net: snapshot the current database to JSON before destroying any
+  // live data, so a bad/empty import can always be recovered.
+  try {
+    ensureDirs();
+    const backup = await exportDb();
+    const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const dest = path.join(BACKUPS_DIR, `pre-import-${stamp}.json`);
+    fs.writeFileSync(dest, JSON.stringify(backup, null, 2), { mode: 0o600 });
+    console.log(`[DB] Pre-import backup written to ${dest}`);
+  } catch (e) {
+    console.warn(`[DB] Pre-import backup failed (continuing): ${e?.message || e}`);
+  }
+
   const db = await getAdapter();
 
   db.transaction(() => {
