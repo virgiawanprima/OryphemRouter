@@ -28,6 +28,7 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
   const [validating, setValidating] = useState(false);
   const [validationResult, setValidationResult] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (connection) {
@@ -56,6 +57,7 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
       }
       setTestResult(null);
       setValidationResult(null);
+      setError(null);
     }
   }, [connection]);
 
@@ -285,6 +287,12 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
                 {testResult === "success" ? "Valid" : "Failed"}
               </Badge>
             )}
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3 text-sm text-red-700 dark:text-red-300">
+            {error}
           </div>
         )}
 

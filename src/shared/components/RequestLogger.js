@@ -26,22 +26,6 @@ export default function RequestLogger() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Render time-ago display (1s tick for live)
-  const TimeAgo = ({ timestamp }) => {
-    const [tick, setTick] = useState(0);
-    useEffect(() => {
-      const timer = setInterval(() => setTick(t => t + 1), 1000);
-      return () => clearInterval(timer);
-    }, []);
-    if (!timestamp) return "--";
-    const now = Date.now();
-    const then = new Date(timestamp).getTime();
-    const diffSec = Math.floor((now - then) / 1000);
-    if (diffSec < 60) return `${diffSec}s ago`;
-    if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
-    return `${Math.floor(diffSec / 3600)}h ago`;
-  };
-
   const fetchLogs = async () => {
     try {
       const res = await fetch("/api/usage/request-logs");
@@ -90,7 +74,8 @@ export default function RequestLogger() {
                   <th className="px-3 py-2 border-r border-border">Model</th>
                   <th className="px-3 py-2 border-r border-border">Provider</th>
                   <th className="px-3 py-2 border-r border-border">Account</th>
-                  <th className="px-3 py-2 border-r border-border text-right">In / Out</th>
+                  <th className="px-3 py-2 border-r border-border text-right">In</th>
+                  <th className="px-3 py-2 border-r border-border text-right">Out</th>
                   <th className="px-3 py-2">Status</th>
                 </tr>
               </thead>

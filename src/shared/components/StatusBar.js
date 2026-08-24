@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLiveRefresh } from "@/shared/hooks/useRealtime";
+import { useTheme } from "@/shared/hooks/useTheme";
 
 function Clock() {
   const [now, setNow] = useState(null);
@@ -27,6 +28,7 @@ export default function StatusBar() {
   const [port, setPort] = useState("----");
   const [, setTick] = useState(0);
   const upAtRef = useRef(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setPort(window.location.port || "80");
@@ -103,7 +105,7 @@ export default function StatusBar() {
       </div>
       <div className="flex items-center">
         <span className="status-item hidden md:flex">port <span className="text-text-main">{port}</span></span>
-        <span className="status-item hidden md:flex">theme <span className="text-brand-300">dracula</span></span>
+        <span className="status-item hidden md:flex">theme <span className="text-brand-300">{theme === "dark" ? "dracula" : "light"}</span></span>
         <span className="status-segment">
           <Clock />
         </span>

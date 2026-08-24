@@ -230,9 +230,11 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
   const [tableView, setTableView] = useState("model");
   const [viewMode, setViewMode] = useState("costs");
   const [providers, setProviders] = useState([]);
+  const [realtimeTick, setRealtimeTick] = useState(0);
   const [periodLocal, setPeriodLocal] = useState("today");
   const isInitialLoad = useRef(true);
   const hasLoadedStats = useRef(false);
+  const lastChartTick = useRef(0);
   const period = periodProp ?? periodLocal;
   const setPeriod = setPeriodProp ?? setPeriodLocal;
 
@@ -278,31 +280,47 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
       setFetching(true);
     }
 
+    // Ignore stale responses: rapid period switching must not let an old
+    // period's response overwrite the currently selected one.
+    let cancelled = false;
+
     fetch(`/api/usage/stats?period=${period}`)
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
-        if (data) {
+        if (data && !cancelled) {
           hasLoadedStats.current = true;
           setStats((prev) => ({ ...prev, ...data }));
         }
       })
       .catch(() => {})
       .finally(() => {
-        setLoading(false);
-        setFetching(false);
+        if (!cancelled) {
+          setLoading(false);
+          setFetching(false);
+        }
       });
+
+    return () => { cancelled = true; };
   }, [period]);
 
-  // SSE connection - real-time updates for activeRequests + recentRequests only
+  // SSE connection - real-time updates. The server pushes both lightweight
+  // realtime fields (active/recent/error) AND a full stats snapshot (aggregates,
+  // byProvider, totals) on every event — merge the full payload so charts,
+  // tables, cards and topology all stay live, not just the request tail.
   useEffect(() => {
     const es = new EventSource("/api/usage/stream");
 
     es.onmessage = (e) => {
       try {
         const data = JSON.parse(e.data);
-        // Always merge only real-time fields, never overwrite full stats from REST
         setStats((prev) => {
           if (!prev) return prev;
+          const isFull = data.byProvider !== undefined || data.totals !== undefined;
+          if (isFull) {
+            // Full snapshot: replace aggregates but preserve realtime fields.
+            return { ...data, activeRequests: data.activeRequests, recentRequests: data.recentRequests, errorProvider: data.errorProvider, pending: data.pending };
+          }
+          // Lightweight frame: only realtime fields.
           return {
             ...prev,
             activeRequests: data.activeRequests,
@@ -312,6 +330,13 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
           };
         });
         if (hasLoadedStats.current) setLoading(false);
+        // Throttled realtime signal for the chart (max once per 15s) so the
+        // daily series refreshes without hammering /api/usage/chart.
+        const now = Date.now();
+        if (now - lastChartTick.current > 15000) {
+          lastChartTick.current = now;
+          setRealtimeTick((t) => t + 1);
+        }
       } catch (err) {
         console.error("[SSE CLIENT] parse error:", err);
       }
@@ -498,7 +523,7 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
       )}
 
       {/* Token / Cost chart - sync period */}
-      {loading ? spinner : <UsageChart period={period} />}
+      {loading ? spinner : <UsageChart period={period} realtimeTick={realtimeTick} />}
 
       {/* Table with dropdown selector */}
       <div className="flex flex-col gap-3">
