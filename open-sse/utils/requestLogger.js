@@ -1,3 +1,55 @@
+// Sensitive query-parameter names whose values must be redacted from logged URLs.
+const SENSITIVE_QUERY_PARAMS = new Set(["key", "api_key", "api-key", "token", "secret", "password", "signature", "sig", "access_token", "refresh_token"]);
+
+/**
+ * Sanitize a URL for logging: redact sensitive query-parameter values.
+ * Returns the original string if URL parsing fails.
+ * @param {string} urlStr
+ * @returns {string}
+ */
+function sanitizeUrl(urlStr) {
+  if (!urlStr || typeof urlStr !== "string") return urlStr;
+  try {
+    const u = new URL(urlStr);
+    let redacted = false;
+    for (const [key] of u.searchParams) {
+      if (SENSITIVE_QUERY_PARAMS.has(key.toLowerCase())) {
+        u.searchParams.set(key, "<REDACTED>");
+        redacted = true;
+      }
+    }
+    return redacted ? u.toString() : urlStr;
+  } catch {
+    return urlStr;
+  }
+}
+
+/**
+ * Redact Bearer/Authorization tokens and other secret patterns from a
+ * request-body string or object (mutates plain objects in place).
+ * @param {*} body
+ * @returns {*}
+ */
+function sanitizeBody(body) {
+  if (!body) return body;
+  if (typeof body === "string") {
+    return body.replace(
+      /(Bearer\s+)[A-Za-z0-9\-._~+/]+(=*)/gi,
+      "$1<REDACTED>"
+    );
+  }
+  if (typeof body === "object" && body !== null) {
+    // Walk top-level string fields looking for sensitive keys.
+    for (const key of Object.keys(body)) {
+      const lower = key.toLowerCase();
+      if (["token", "secret", "password", "api_key", "api-key"].includes(lower) && typeof body[key] === "string") {
+        body[key] = "<REDACTED>";
+      }
+    }
+  }
+  return body;
+}
+
 // Check if running in Node.js environment (has fs module)
 const isNode = typeof process !== "undefined" && process.versions?.node && typeof window === "undefined";
 
@@ -40,7 +92,7 @@ async function createLogSession(sourceFormat, targetFormat, model) {
   
   try {
     if (!fs.existsSync(LOGS_DIR)) {
-      fs.mkdirSync(LOGS_DIR, { recursive: true });
+      fs.mkdirSync(LOGS_DIR, { recursive: true, mode: 0o700 });
     }
     
     const timestamp = formatTimestamp();
@@ -69,25 +121,23 @@ function writeJsonFile(sessionPath, filename, data) {
   }
 }
 
-// Mask sensitive data in headers (DISABLED - keep full token for testing)
+// Mask sensitive data in headers (tokens/keys/cookies must never hit disk).
 function maskSensitiveHeaders(headers) {
   if (!headers) return {};
-  return { ...headers };
-  
-  // Old masking code (disabled):
-  // const masked = { ...headers };
-  // const sensitiveKeys = ["authorization", "x-api-key", "cookie", "token"];
-  // 
-  // for (const key of Object.keys(masked)) {
-  //   const lowerKey = key.toLowerCase();
-  //   if (sensitiveKeys.some(sk => lowerKey.includes(sk))) {
-  //     const value = masked[key];
-  //     if (value && value.length > 20) {
-  //       masked[key] = value.slice(0, 10) + "..." + value.slice(-5);
-  //     }
-  //   }
-  // }
-  // return masked;
+  const masked = { ...headers };
+  const sensitiveKeys = ["authorization", "x-api-key", "cookie", "token", "password", "secret", "goog"];
+  for (const key of Object.keys(masked)) {
+    const lowerKey = key.toLowerCase();
+    if (sensitiveKeys.some((sk) => lowerKey.includes(sk))) {
+      const value = masked[key];
+      if (typeof value === "string" && value.length > 20) {
+        masked[key] = `${value.slice(0, 10)}...${value.slice(-5)}`;
+      } else {
+        masked[key] = "<REDACTED>";
+      }
+    }
+  }
+  return masked;
 }
 
 // No-op logger when logging is disabled
@@ -130,9 +180,9 @@ export async function createRequestLogger(sourceFormat, targetFormat, model) {
     logClientRawRequest(endpoint, body, headers = {}) {
       writeJsonFile(sessionPath, "1_req_client.json", {
         timestamp: new Date().toISOString(),
-        endpoint,
+        endpoint: sanitizeUrl(endpoint),
         headers: maskSensitiveHeaders(headers),
-        body
+        body: sanitizeBody(body)
       });
     },
     
@@ -141,7 +191,7 @@ export async function createRequestLogger(sourceFormat, targetFormat, model) {
       writeJsonFile(sessionPath, "2_req_source.json", {
         timestamp: new Date().toISOString(),
         headers: maskSensitiveHeaders(headers),
-        body
+        body: sanitizeBody(body)
       });
     },
     
@@ -149,7 +199,7 @@ export async function createRequestLogger(sourceFormat, targetFormat, model) {
     logOpenAIRequest(body) {
       writeJsonFile(sessionPath, "3_req_openai.json", {
         timestamp: new Date().toISOString(),
-        body
+        body: sanitizeBody(body)
       });
     },
     
@@ -157,9 +207,9 @@ export async function createRequestLogger(sourceFormat, targetFormat, model) {
     logTargetRequest(url, headers, body) {
       writeJsonFile(sessionPath, "4_req_target.json", {
         timestamp: new Date().toISOString(),
-        url,
+        url: sanitizeUrl(url),
         headers: maskSensitiveHeaders(headers),
-        body
+        body: sanitizeBody(body)
       });
     },
     
@@ -222,7 +272,7 @@ export async function createRequestLogger(sourceFormat, targetFormat, model) {
         timestamp: new Date().toISOString(),
         error: error?.message || String(error),
         stack: error?.stack,
-        requestBody
+        requestBody: sanitizeBody(requestBody)
       });
     }
   };
@@ -236,7 +286,7 @@ export function logError(provider, { error, url, model, requestBody }) {
   
   try {
     if (!fs.existsSync(LOGS_DIR)) {
-      fs.mkdirSync(LOGS_DIR, { recursive: true });
+      fs.mkdirSync(LOGS_DIR, { recursive: true, mode: 0o700 });
     }
     
     const date = new Date().toISOString().split("T")[0];
@@ -247,10 +297,10 @@ export function logError(provider, { error, url, model, requestBody }) {
       type: "error",
       provider,
       model,
-      url,
+      url: sanitizeUrl(url),
       error: error?.message || String(error),
       stack: error?.stack,
-      requestBody
+      requestBody: sanitizeBody(requestBody)
     };
     
     fs.appendFileSync(logPath, JSON.stringify(logEntry) + "\n");
