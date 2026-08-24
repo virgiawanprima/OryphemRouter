@@ -41,6 +41,7 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
   const [region, setRegion] = useState(defaultRegion);
   const [validating, setValidating] = useState(false);
   const [validationResult, setValidationResult] = useState(null);
+  const [modelsReport, setModelsReport] = useState(null);
   const [saving, setSaving] = useState(false);
   const bulkPlaceholder = isCloudflareAi
     ? `name1|sk-key1|acc123456\nname2|sk-key2|def789012\nsk-key-only-auto-named`
@@ -83,8 +84,11 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
       });
       const data = await res.json();
       setValidationResult(data.valid ? "success" : "failed");
+      // Model authenticity report from the verifier (anti-fraud).
+      setModelsReport(data.models || null);
     } catch {
       setValidationResult("failed");
+      setModelsReport(null);
     } finally {
       setValidating(false);
     }
@@ -309,6 +313,25 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
           <Badge variant={validationResult === "success" ? "success" : "error"}>
             {validationResult === "success" ? "Valid" : "Invalid"}
           </Badge>
+        )}
+        {modelsReport && modelsReport.live && (
+          <div className="rounded-lg bg-surface-2 border border-border p-3 text-xs space-y-1">
+            <p className="font-medium text-text-main">Model authenticity (dibanding katalog asli provider)</p>
+            <p className="text-success">✅ {modelsReport.verified.length} terverifikasi</p>
+            {modelsReport.corrected.length > 0 && (
+              <p className="text-warning">
+                ⚠️ {modelsReport.corrected.length} dikoreksi:{" "}
+                {modelsReport.corrected.map((c) => `${c.id} → ${c.realId}`).join(", ")}
+              </p>
+            )}
+            {modelsReport.missing.length > 0 && (
+              <p className="text-error">
+                ❌ {modelsReport.missing.length} tidak ada di katalog:{" "}
+                {modelsReport.missing.slice(0, 5).join(", ")}
+                {modelsReport.missing.length > 5 ? "..." : ""}
+              </p>
+            )}
+          </div>
         )}
         {error && (
           <p className="text-xs text-red-500 break-words">{error}</p>
