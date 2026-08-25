@@ -61,8 +61,10 @@ export default {
     refresh: { encoding: "json" },
   },
   // Model catalog (IDE flow, core-normal.trae.ai).
+  // NOTE: "auto" (server picks) is NOT a real model id — it is a routing sentinel
+  // handled by open-sse/executors/trae.js (strategy "auto"), so it is intentionally
+  // excluded here to avoid colliding with the registry reserved-word rule.
   models: [
-    { id: "auto", name: "Auto (Server Picks)" },
     { id: "work", name: "Work (Fast)" },
     { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro" },
     { id: "gemini-3-flash-solo", name: "Gemini 3 Flash" },

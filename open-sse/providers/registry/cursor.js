@@ -26,6 +26,9 @@ export default {
     clientVersion: "3.12.17",
   },
   models: [
+    // Routing sentinel (NOT a real model id): "default" = Cursor's server-managed
+    // model selection ("Managed — Auto"). Keep in sync with
+    // tests/integration/registry-integrity.test.js (RESERVED_MODEL_WORD_ALLOWLIST).
     { id: "default", name: "Managed — Auto (server memilih model)" },
     { id: "claude-4.5-opus-high-thinking", name: "Claude 4.5 Opus High Thinking" },
     { id: "claude-4.5-opus-high", name: "Claude 4.5 Opus High" },
