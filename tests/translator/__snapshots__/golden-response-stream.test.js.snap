@@ -451,14 +451,16 @@ exports[`GOLDEN response stream: OpenAI-Responses (codex) → OpenAI > error eve
   {
     "choices": [
       {
-        "delta": {
-          "content": "[Error] model_not_found",
-        },
+        "delta": {},
         "finish_reason": "stop",
         "index": 0,
       },
     ],
     "created": 0,
+    "error": {
+      "message": "[Error] model_not_found",
+      "type": "upstream_error",
+    },
     "id": "chatcmpl-<TS>",
     "model": "unknown",
     "object": "chat.completion.chunk",

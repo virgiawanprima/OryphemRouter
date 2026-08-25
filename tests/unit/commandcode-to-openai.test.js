@@ -116,12 +116,17 @@ describe("commandcode-to-openai — finish", () => {
 });
 
 describe("commandcode-to-openai — error event", () => {
-  it("stringifies object errors so client sees readable message", () => {
+  it("emits an error frame, not assistant content (stringifies object errors)", () => {
     const { chunks } = feed([
       { type: "error", error: { type: "server_error", message: "Boom" } },
     ]);
-    const text = chunks[0].choices[0].delta.content;
-    expect(text).toContain("Boom");
-    expect(text).not.toContain("[object Object]");
+    const chunk = chunks[0];
+    // Error must NOT become assistant text content (history pollution / false success).
+    expect(chunk.choices[0].delta.content).toBeUndefined();
+    expect(chunk.choices[0].finish_reason).toBe("stop");
+    expect(chunk.error).toBeDefined();
+    expect(chunk.error.message).toContain("Boom");
+    expect(chunk.error.message).not.toContain("[object Object]");
+    expect(chunk.error.type).toBe("upstream_error");
   });
 });
