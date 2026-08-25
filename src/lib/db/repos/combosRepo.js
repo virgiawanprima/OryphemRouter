@@ -36,6 +36,12 @@ export async function getComboByName(name) {
 }
 
 export async function createCombo(data) {
+  // Defensive pre-check: a duplicate name on the UNIQUE(name) column would
+  // otherwise make the bare INSERT below throw (route 500s under a race).
+  const existing = await getComboByName(data.name);
+  if (existing) {
+    return { ...existing, error: "duplicate" };
+  }
   const db = await getAdapter();
   const now = new Date().toISOString();
   const combo = {
