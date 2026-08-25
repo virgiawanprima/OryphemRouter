@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Input, Modal, CardSkeleton, Toggle, ConfirmModal } from "@/shared/components";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
+import { useRealtime } from "@/shared/hooks/useRealtime";
 import {
   TUNNEL_BENEFITS,
   TUNNEL_PING_INTERVAL_MS,
@@ -127,58 +128,37 @@ export default function APIPageClient({ machineId }) {
     };
   }, [tunnelEnabled, tsEnabled, tunnelReachable, tsReachable]);
 
-  // Real-time SSE updates for dashboard: provider status, usage, keys, tunnel
-  useEffect(() => {
-    let closed = false;
-    let evtSource = new EventSource("/api/dashboard/realtime");
-    evtSource.onmessage = (event) => {
-      if (closed) return;
-      try {
-        const data = JSON.parse(event.data);
-        if (data.activeRequests !== undefined) {
-          setKeys(prev => {
-            // Update key statuses from activeRequests
-            const updated = prev.map(key => {
-              const matching = data.activeRequests.find((ar) => ar.keyId === key.id);
-              if (matching) {
-                return { ...key, isActive: matching.isActive, lastUsed: matching.lastUsed };
-              }
-              return key;
-            });
-            return updated;
-          });
-        }
-        if (data.tunnel !== undefined) {
-          setTunnelEnabled(data.tunnel.enabled);
-          setTunnelReachable(data.tunnel.reachable);
-          setTunnelUrl(data.tunnel.url || "");
-          setTunnelPublicUrl(data.tunnel.publicUrl || "");
-        }
-        if (data.ts !== undefined) {
-          setTsEnabled(data.ts.enabled);
-          setTsReachable(data.ts.reachable);
-          setTsUrl(data.ts.url || "");
-        }
-      } catch { /* ignore parse errors */ }
-    };
-    evtSource.onerror = () => {
-      console.log("SSE error, will reconnect...");
-      evtSource.close();
-      // Reconnect after a brief delay by creating a new EventSource
-      setTimeout(() => {
-        if (!closed) {
-          const newSource = new EventSource("/api/dashboard/realtime");
-          newSource.onmessage = evtSource.onmessage;
-          newSource.onerror = evtSource.onerror;
-          evtSource = newSource;
-        }
-      }, 5000);
-    };
-    return () => {
-      closed = true;
-      evtSource.close();
-    };
-  }, []); // Empty deps - manage connection manually via onmessage
+  // Real-time SSE updates for dashboard: key status from the shared
+  // /api/dashboard/realtime connection (one EventSource for the whole
+  // dashboard, with exponential-backoff reconnect). Previously this page
+  // opened its own EventSource with a fixed 5s manual reconnect.
+  useRealtime((data) => {
+    if (!data) return;
+    if (Array.isArray(data.activeRequests)) {
+      setKeys((prev) => {
+        // Update key statuses from activeRequests
+        const updated = prev.map((key) => {
+          const matching = data.activeRequests.find((ar) => ar.keyId === key.id);
+          if (matching) {
+            return { ...key, isActive: matching.isActive, lastUsed: matching.lastUsed };
+          }
+          return key;
+        });
+        return updated;
+      });
+    }
+    if (data.tunnel !== undefined) {
+      setTunnelEnabled(data.tunnel.enabled);
+      setTunnelReachable(data.tunnel.reachable);
+      setTunnelUrl(data.tunnel.url || "");
+      setTunnelPublicUrl(data.tunnel.publicUrl || "");
+    }
+    if (data.ts !== undefined) {
+      setTsEnabled(data.ts.enabled);
+      setTsReachable(data.ts.reachable);
+      setTsUrl(data.ts.url || "");
+    }
+  });
 
   // Browser-side periodic ping: probes tunnel/tailscale URLs directly so UI stays
   // "reachable" even when backend DNS (1.1.1.1) hiccups on *.ts.net or *.trycloudflare.com.

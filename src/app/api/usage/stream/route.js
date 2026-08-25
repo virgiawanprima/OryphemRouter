@@ -77,8 +77,10 @@ export async function GET(request) {
   return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
+      "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
+      // Tell nginx/proxies not to buffer the stream (SSE must flush immediately)
+      "X-Accel-Buffering": "no",
     },
   });
 }
