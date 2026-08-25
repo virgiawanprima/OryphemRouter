@@ -23,6 +23,7 @@ import { detectFormatByEndpoint } from "open-sse/translator/formats.js";
 import * as log from "../utils/logger.js";
 import { updateProviderCredentials, checkAndRefreshToken } from "../services/tokenRefresh.js";
 import { getProjectIdForConnection } from "open-sse/services/projectId.js";
+import { checkRateLimit } from "@/lib/auth/apiRateLimiter";
 
 // H6: In-memory cache for spending-limit queries to avoid two full-history
 // queries (getUsageStats("30d") + getUsageStats("today")) on every chat request.
@@ -35,6 +36,24 @@ const spendingLimitsCache = new Map(); // key → { monthly, daily, ts }
  * Format detection and translation handled by translator
  */
 export async function handleChat(request, clientRawRequest = null) {
+  // Per-IP rate limiting (generous 120 req/min — never trips normal usage).
+  const rate = checkRateLimit(request, { windowMs: 60_000, max: 120 });
+  if (!rate.allowed) {
+    const retryAfterSec = Math.max(1, Math.ceil(rate.retryAfterMs / 1000));
+    log.warn("RATE", `Rate limit exceeded for client (retry in ${retryAfterSec}s)`);
+    return new Response(
+      JSON.stringify({ error: { message: "Rate limit exceeded, please slow down" } }),
+      {
+        status: HTTP_STATUS.RATE_LIMITED,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Retry-After": String(retryAfterSec),
+        },
+      }
+    );
+  }
+
   let body;
   try {
     body = await parseJson(request);
