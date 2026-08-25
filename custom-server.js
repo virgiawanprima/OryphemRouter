@@ -13,6 +13,52 @@ const origCreate = http.createServer.bind(http);
 const PEER_TOKEN = crypto.randomBytes(24).toString("hex");
 process.env.NINEROUTER_PEER_TOKEN = PEER_TOKEN;
 
+// ─── Response header guard ──────────────────────────────────────────────────
+// Internal headers (x-9r-*) are request-side only and must NEVER reach clients.
+// This instance-level guard strips them from every response, so even if a
+// handler ever echoes an internal header (e.g. x-9r-real-ip, x-9r-peer-token),
+// it cannot leak. Node lowercases header names on the wire, so we match
+// case-insensitively.
+const INTERNAL_HEADER_PREFIX = "x-9r-";
+function isInternalHeader(name) {
+  return typeof name === "string" && name.toLowerCase().startsWith(INTERNAL_HEADER_PREFIX);
+}
+function guardResponseHeaders(res) {
+  const origSetHeader = res.setHeader.bind(res);
+  const origWriteHead = res.writeHead.bind(res);
+  const origAppendHeader = typeof res.appendHeader === "function" ? res.appendHeader.bind(res) : null;
+
+  res.setHeader = function (name, value) {
+    if (isInternalHeader(name)) return res;
+    return origSetHeader(name, value);
+  };
+  if (origAppendHeader) {
+    res.appendHeader = function (name, value) {
+      if (isInternalHeader(name)) return res;
+      return origAppendHeader(name, value);
+    };
+  }
+  res.writeHead = function (statusCode, statusMessage, headers) {
+    // Support both writeHead(status, headers) and writeHead(status, message, headers).
+    let msg = statusMessage;
+    let hdrs = headers;
+    if (statusMessage && typeof statusMessage === "object") {
+      hdrs = statusMessage;
+      msg = undefined;
+    }
+    if (hdrs && typeof hdrs === "object") {
+      const clean = {};
+      for (const [k, v] of Object.entries(hdrs)) {
+        if (!isInternalHeader(k)) clean[k] = v;
+      }
+      if (msg !== undefined) return origWriteHead(statusCode, msg, clean);
+      return origWriteHead(statusCode, clean);
+    }
+    return origWriteHead(statusCode, statusMessage, headers);
+  };
+  return res;
+}
+
 let backgroundRefreshStarted = false;
 
 function startBackgroundTokenRefreshFromCustomServer() {
@@ -78,6 +124,7 @@ http.createServer = (...args) => {
     req.headers["x-9r-real-ip"] = ip;
     req.headers["x-9r-peer-token"] = PEER_TOKEN;
     if (viaProxy) req.headers["x-9r-via-proxy"] = "1";
+    guardResponseHeaders(res); // never emit internal x-9r-* headers to clients
     return handler(req, res);
   };
   const server = origCreate(...rest, wrapped);
