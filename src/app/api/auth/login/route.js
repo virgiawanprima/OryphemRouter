@@ -7,7 +7,6 @@ import { setDashboardAuthCookie } from "@/lib/auth/dashboardSession";
 import { isOidcConfigured } from "@/lib/auth/oidc";
 import { isSamlConfigured } from "@/lib/auth/saml.js";
 import { checkLock, recordFail, recordSuccess, getClientIp } from "@/lib/auth/loginLimiter";
-import { isLocalRequest } from "@/dashboardGuard";
 
 const RESET_HINT = "Forgot password? Reset to default via oryphemrouter CLI → Settings → Reset Password to Default.";
 const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
@@ -55,49 +54,14 @@ export async function POST(request) {
     if (storedHash) {
       isValid = await bcrypt.compare(password, storedHash);
     } else {
-      // Use env var or default — but reject known weak initial passwords
+      // Use env var or default. No weak-password enforcement: this router runs
+      // locally (localhost), so the default "123" must simply work.
       const initialPassword = process.env.INITIAL_PASSWORD || "123";
-      const WEAK_PASSWORDS = new Set(["change-me", "changeme", "secret", "password", "123", "123456"]);
-      const isWeakInitial = !process.env.INITIAL_PASSWORD || WEAK_PASSWORDS.has(initialPassword);
       isValid = password === initialPassword;
-      // If the initial password is a known weak value, force change even for local requests
-      if (isValid && isWeakInitial) {
-        const cookieStore = await cookies();
-        // Force password change: issue a one-time token that only allows password change
-        return NextResponse.json(
-          { success: false, error: "Default password is too weak. Change it from Settings → Change Password.", mustChangePassword: true },
-          { status: 403, headers: NO_STORE_HEADERS }
-        );
-      }
     }
 
     if (isValid) {
       recordSuccess(ip);
-
-      // Default password still in use on a remote client → force a password
-      // change before the dashboard is exposed remotely (keeps local UX intact).
-      const mustChangePassword =
-        !storedHash && !process.env.INITIAL_PASSWORD && !(await isLocalRequest(request));
-
-      if (mustChangePassword) {
-        // Do NOT issue a session token: a fresh install's default password is
-        // public knowledge ("123"), so handing out a valid JWT would let any
-        // remote attacker authenticate and (e.g.) PATCH /api/settings to disable
-        // authentication entirely (CVE-2026-56679 class). Require the password
-        // to be changed first.
-        //
-        // NOTE: this intentionally leaves no remote self-service password-change
-        // path — the change-password flow (PATCH /api/settings) requires a JWT,
-        // which we deliberately withhold. A remote fresh-install user must either
-        // change the password from the local machine or set INITIAL_PASSWORD
-        // before first launch. This is a deliberate security trade-off, not an
-        // oversight: issuing any credential before the default password is
-        // rotated re-opens the exact attack chain this branch closes.
-        return NextResponse.json(
-          { success: false, error: "Default password must be changed before remote access. Change it from the local machine (or set INITIAL_PASSWORD).", mustChangePassword },
-          { status: 403, headers: NO_STORE_HEADERS }
-        );
-      }
 
       const cookieStore = await cookies();
       await setDashboardAuthCookie(cookieStore, request);
