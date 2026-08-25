@@ -33,6 +33,20 @@ function throwIfCancelled(token) {
 
 export async function enableTunnel(localPort = 20129) {
   console.log(`[Tunnel] enable start (port=${localPort})`);
+
+  // Open-proxy guard: warn loudly when exposing a public tunnel while API-key
+  // auth is disabled. Anyone with the tunnel URL can then call /v1/* endpoints
+  // and consume provider credits (paid LLM calls) on this machine.
+  const settings = await getSettings();
+  if (!settings.requireApiKey) {
+    console.warn(
+      "[SECURITY] WARNING: Starting a PUBLIC TUNNEL while 'Require API Key' is DISABLED " +
+      "(requireApiKey=false). Anyone who obtains the tunnel URL can call your /v1/* " +
+      "endpoints and consume your provider quota. Enable 'Require API Key' in " +
+      "Dashboard → Endpoint (or set REQUIRE_API_KEY=true) before exposing a tunnel."
+    );
+  }
+
   svc.cancelToken = { cancelled: false };
   svc.activeLocalPort = localPort;
   svc.spawnInProgress = true;

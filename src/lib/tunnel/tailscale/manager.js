@@ -22,6 +22,20 @@ function throwIfCancelled(token) {
 
 export async function enableTailscale(localPort = 20129) {
   console.log(`[Tailscale] enable start (port=${localPort})`);
+
+  // Open-proxy guard: Tailscale Funnel exposes this machine publicly. Warn
+  // loudly if API-key auth is disabled so the operator notices before anyone
+  // else can consume provider credits via /v1/* endpoints.
+  const settings = await getSettings();
+  if (!settings.requireApiKey) {
+    console.warn(
+      "[SECURITY] WARNING: Starting a PUBLIC TAILSCALE FUNNEL while 'Require API Key' is DISABLED " +
+      "(requireApiKey=false). Anyone who obtains the funnel URL can call your /v1/* " +
+      "endpoints and consume your provider quota. Enable 'Require API Key' in " +
+      "Dashboard → Endpoint (or set REQUIRE_API_KEY=true) before exposing a tunnel."
+    );
+  }
+
   svc.cancelToken = { cancelled: false };
   svc.activeLocalPort = localPort;
   svc.spawnInProgress = true;
