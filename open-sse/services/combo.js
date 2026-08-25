@@ -526,10 +526,27 @@ const FUSION_DEFAULTS = {
   panelHardTimeoutMs: 90000, // absolute cap so one hung model can't stall forever
 };
 
-// Resolve a Response (or {__error}) within ms; the loser keeps running but is ignored.
-function withTimeout(promise, ms) {
+// Deep-clone a JSON-safe request body so parallel fusion panel calls never share
+// mutable message objects. Downstream stripUnsupportedModalities / translateRequest
+// mutate messages in place, so sharing one body lets a non-vision model strip images
+// before a vision model reads them (and would corrupt the judge's copy of history).
+function cloneBody(body) {
+  try {
+    return structuredClone(body);
+  } catch {
+    return JSON.parse(JSON.stringify(body));
+  }
+}
+
+// Resolve a Response (or {__error}) within ms. On timeout the winner is
+// {__timeout:true} and onTimeout (e.g. aborting the underlying request) fires so
+// the loser's stale side effects can't land after the response is already sent.
+function withTimeout(promise, ms, onTimeout = null) {
   return new Promise((resolve) => {
-    const t = setTimeout(() => resolve({ __timeout: true }), ms);
+    const t = setTimeout(() => {
+      onTimeout?.();
+      resolve({ __timeout: true });
+    }, ms);
     Promise.resolve(promise)
       .then((v) => { clearTimeout(t); resolve(v); })
       .catch((e) => { clearTimeout(t); resolve({ __error: e }); });
@@ -629,7 +646,22 @@ export async function handleFusionChat({ body, models, handleSingleModel, log, c
   }
 
   const t0 = Date.now();
-  const calls = panel.map((m) => withTimeout(handleSingleModel(panelBody, m, true), cfg.panelHardTimeoutMs));
+  const calls = panel.map((m) => {
+    // Each panel call gets its own deep copy of the body: downstream
+    // stripUnsupportedModalities / translateRequest mutate messages in place, so
+    // sharing one panelBody would let a non-vision model strip images before a
+    // vision model reads them (cross-contamination between parallel panels).
+    const panelBodyClone = cloneBody(panelBody);
+    // Abort the underlying request if this panel call exceeds the hard timeout —
+    // a timed-out call would otherwise keep running and write usage/breaker state
+    // after the fusion response is already on its way to the client.
+    const panelAbort = new AbortController();
+    return withTimeout(
+      handleSingleModel(panelBodyClone, m, true, panelAbort.signal),
+      cfg.panelHardTimeoutMs,
+      () => panelAbort.abort()
+    );
+  });
   const settled = await collectPanel(calls, { ...cfg, minPanel });
   log.info("FUSION", `fan-out collected in ${Date.now() - t0}ms`);
 
@@ -646,7 +678,9 @@ export async function handleFusionChat({ body, models, handleSingleModel, log, c
       const json = await res.clone().json();
       const text = extractPanelText(json);
       if (text) {
-        answers.push({ model, text });
+        // Keep the client-format Response so a judge failure can fall back to the
+        // best panel answer instead of discarding the whole fusion result.
+        answers.push({ model, text, response: res });
         log.info("FUSION", `Panel ${model} ok (${text.length} chars)`);
       } else {
         log.warn("FUSION", `Panel ${model} returned empty content`);
@@ -666,11 +700,37 @@ export async function handleFusionChat({ body, models, handleSingleModel, log, c
   }
   if (answers.length === 1) {
     log.info("FUSION", `Only ${answers[0].model} succeeded — answering directly (no fusion)`);
-    return handleSingleModel(body, answers[0].model);
+    // Clean copy of the original client body — panel calls mutated shared message
+    // objects in place, so the re-run must not inherit their stripped media.
+    return handleSingleModel(cloneBody(body), answers[0].model);
   }
 
   // 4. Judge analyzes + writes one final answer (streams to client if requested).
-  const judgeBody = appendUserTurn(body, buildJudgePrompt(answers));
+  // Build the judge turn from a pristine deep copy of the client body — panel
+  // calls mutate shared message objects in place, so reusing `body` here would
+  // hand the judge stripped/corrupted history.
+  const judgeBody = appendUserTurn(cloneBody(body), buildJudgePrompt(answers));
   log.info("FUSION", `Judging ${answers.length} answers with ${judge}`);
-  return handleSingleModel(judgeBody, judge);
+  try {
+    const judgeRes = await handleSingleModel(judgeBody, judge);
+    if (judgeRes && judgeRes.ok) return judgeRes;
+    log.warn("FUSION", `Judge ${judge} failed`, { status: judgeRes?.status });
+  } catch (e) {
+    log.warn("FUSION", `Judge ${judge} threw`, { error: e?.message || String(e) });
+  }
+
+  // Judge unavailable/rate-limited: don't discard the panel's work. Return the
+  // strongest successful panel answer — its Response is already in the client's
+  // format (chatCore translated it back). If that's somehow unavailable, surface
+  // an error that still carries the successful answers.
+  const best = answers.reduce((a, b) => (b.text.length > a.text.length ? b : a));
+  log.warn("FUSION", `Falling back to best panel answer (${best.model}, ${best.text.length} chars)`);
+  if (best.response) return best.response;
+  return new Response(
+    JSON.stringify({
+      error: { message: "Fusion judge failed and no panel response was retained" },
+      panelAnswers: answers.map((a) => a.text),
+    }),
+    { status: 502, headers: { "Content-Type": "application/json" } }
+  );
 }

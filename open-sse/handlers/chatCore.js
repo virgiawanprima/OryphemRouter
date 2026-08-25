@@ -57,7 +57,7 @@ export function stripContinuityFields(body) {
   return body;
 }
 
-export async function handleChatCore({ body, modelInfo, credentials, log, onCredentialsRefreshed, onRequestSuccess, onDisconnect, clientRawRequest, connectionId, userAgent, apiKey, ccFilterNaming, rtkEnabled, headroomEnabled, headroomUrl, headroomCompressUserMessages, cavemanEnabled, cavemanLevel, ponytailEnabled, ponytailLevel, pxpipeEnabled, pxpipeMinChars, pxpipeTimeoutMs, pxpipeTransform, onPxpipeEvent, sourceFormatOverride, providerThinking }) {
+export async function handleChatCore({ body, modelInfo, credentials, log, onCredentialsRefreshed, onRequestSuccess, onDisconnect, clientRawRequest, connectionId, userAgent, apiKey, signal = null, ccFilterNaming, rtkEnabled, headroomEnabled, headroomUrl, headroomCompressUserMessages, cavemanEnabled, cavemanLevel, ponytailEnabled, ponytailLevel, pxpipeEnabled, pxpipeMinChars, pxpipeTimeoutMs, pxpipeTransform, onPxpipeEvent, sourceFormatOverride, providerThinking }) {
   const { provider, model } = modelInfo;
   const requestStartTime = Date.now();
   // Stable per-session color so all lines of one CLI conversation share a tag
@@ -305,6 +305,10 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
     log, provider, model, reqTag
   });
 
+  // Merge an optional external abort signal (e.g. a fusion panel hard-timeout)
+  // with the stream controller's own signal so either abort cancels the fetch.
+  const execSignal = signal ? AbortSignal.any([signal, streamController.signal]) : streamController.signal;
+
   const proxyOptions = {
     connectionProxyEnabled: credentials?.providerSpecificData?.connectionProxyEnabled === true,
     connectionProxyUrl: credentials?.providerSpecificData?.connectionProxyUrl || "",
@@ -344,7 +348,7 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
   // exception: it is decoded by the executor into OpenAI-compatible output.
   let providerResponseFormat = targetFormat;
   try {
-    const result = await executor.execute({ model, body: translatedBody, stream, credentials, signal: streamController.signal, log, proxyOptions });
+    const result = await executor.execute({ model, body: translatedBody, stream, credentials, signal: execSignal, log, proxyOptions });
     providerResponse = result.response;
     providerUrl = result.url;
     providerHeaders = result.headers;
@@ -398,7 +402,7 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
           try { await onCredentialsRefreshed(newCredentials); } catch (e) { log?.warn?.("TOKEN", `onCredentialsRefreshed failed: ${e.message}`); }
         }
         try {
-          const retryResult = await executor.execute({ model, body: translatedBody, stream, credentials, signal: streamController.signal, log, proxyOptions });
+          const retryResult = await executor.execute({ model, body: translatedBody, stream, credentials, signal: execSignal, log, proxyOptions });
           if (retryResult.response.ok) {
             providerResponse = retryResult.response;
             providerUrl = retryResult.url;
