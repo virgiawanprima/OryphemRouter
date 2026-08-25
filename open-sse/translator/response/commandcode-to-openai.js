@@ -168,8 +168,12 @@ export function commandCodeToOpenAIResponse(chunk, state) {
       state.finishReason = OPENAI_FINISH.STOP;
       const errVal = event.error ?? event.message ?? "unknown";
       const errStr = typeof errVal === "string" ? errVal : JSON.stringify(errVal);
-      out.push(makeChunk(state, { content: `\n\n[CommandCode error: ${errStr}]` }));
-      out.push(makeChunk(state, {}, OPENAI_FINISH.STOP));
+      // Surface the error as an error frame, NOT assistant text content — chat
+      // history pollution / false success accounting and it bypasses fallback
+      // handling downstream. Mirrors the OpenAI-Responses error chunk shape.
+      const errChunk = makeChunk(state, {}, OPENAI_FINISH.STOP);
+      errChunk.error = { message: `[CommandCode error: ${errStr}]`, type: "upstream_error" };
+      out.push(errChunk);
       break;
     }
     // Silently ignore: start, start-step, reasoning-start, reasoning-end, text-start, text-end,
