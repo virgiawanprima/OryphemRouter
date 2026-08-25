@@ -38,17 +38,25 @@ const PUBLIC_API_PATHS = [
 // `/api/v1` handlers as `/v1`, so they must share the same API-key gate.
 const PUBLIC_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/api/v1beta", "/codex", "/responses"];
 
-// Always require JWT token regardless of requireLogin setting
-const ALWAYS_PROTECTED = [
+// Routes that can damage the system / exfiltrate credentials — ALWAYS require a
+// valid JWT or CLI token, even when requireLogin is disabled. Opening these when
+// auth is off would let anyone on the network shut the server down, replace the
+// database, or hijack OAuth credential flows.
+const CRITICAL_PROTECTED = [
   "/api/shutdown",
-  "/api/settings",
-  "/api/settings/database",
-  "/api/keys",
-  "/api/oauth",
   "/api/version/shutdown",
   "/api/version/update",
-  "/api/oauth/cursor/auto-import",
-  "/api/oauth/kiro/auto-import",
+  "/api/settings/database", // import/export can replace live data
+  "/api/oauth", // credential flows (login/import/refresh)
+];
+
+// Routes that expose or mutate app data. They follow requireLogin: when login is
+// disabled (local-first mode), these are open; when login is required, a valid
+// JWT/CLI token is mandatory. This keeps the dashboard fully usable in the
+// no-login mode while still gating the truly destructive routes above.
+const DATA_PROTECTED = [
+  "/api/settings",
+  "/api/keys",
   "/api/providers",
   "/api/proxy-pools",
   "/api/cloud",
@@ -244,9 +252,17 @@ export async function proxy(request) {
     }
   }
 
-  // Always protected - require valid JWT or local CLI token (machineId-based)
-  if (ALWAYS_PROTECTED.some((p) => pathname.startsWith(p))) {
+  // Always protected (destructive/credential routes) - require valid JWT or local
+  // CLI token (machineId-based), regardless of requireLogin setting.
+  if (CRITICAL_PROTECTED.some((p) => pathname.startsWith(p))) {
     if (await hasValidCliToken(request) || await hasValidToken(request))
+      return NextResponse.next();
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Data routes follow requireLogin: open in no-login mode, otherwise require auth.
+  if (DATA_PROTECTED.some((p) => pathname.startsWith(p))) {
+    if (await hasValidCliToken(request) || await isAuthenticated(request))
       return NextResponse.next();
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
