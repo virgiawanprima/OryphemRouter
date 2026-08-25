@@ -153,17 +153,18 @@ export function createDisconnectAwareStream(transformStream, streamController, o
 
         // If the client disconnected, close gracefully (nothing to receive).
         // For Responses passthrough, emit structured terminal payload first.
-        // For network-level errors on non-Responses streams, handle disconnect gracefully.
+        // For network-level errors on non-Responses streams, close gracefully
+        // WITHOUT a fake terminal (a real error must never look like success,
+        // but a socket reset is not a model failure either).
         // For OTHER errors (parsing failures, malformed data), surface to client.
-        // This preserves backward compatibility while ensuring Errors Handler can
-        // extract error messages from parsed chunks.
         try {
           if (!wasConnected || onAbortTerminal) {
             emitTerminal(controller);
             controller.close();
           } else if (isNetworkClose) {
-            // Network error - graceful disconnect (not a client-facing error)
-            controller.handleDisconnect();
+            // Network reset / abort — graceful close (no fake terminal).
+            streamController.handleDisconnect();
+            controller.close();
           } else {
             // Parsing/formatting error - surface to client
             controller.error(error);
