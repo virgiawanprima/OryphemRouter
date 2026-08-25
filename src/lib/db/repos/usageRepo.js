@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import { getAdapter } from "../driver.js";
 import { parseJson, stringifyJson } from "../helpers/jsonCol.js";
 import { getMeta, setMeta } from "../helpers/metaStore.js";
+import { invalidateSpendingCache } from "@/sse/services/spendingCache.js";
 
 function maskApiKey(key) {
   if (!key || typeof key !== "string") return null;
@@ -295,6 +296,8 @@ export async function saveRequestUsage(entry) {
     if (inserted) {
       pushToRing(entry);
       scheduleStatsEvent("update", 250);
+      // Usage totals changed → the spending-limit cache (chat.js) is stale.
+      invalidateSpendingCache();
     }
     break; // success — exit retry loop
   } catch (e) {
