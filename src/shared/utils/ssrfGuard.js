@@ -164,6 +164,29 @@ export async function assertPublicUrl(rawUrl) {
   }
 }
 
+/**
+ * True if `host` (hostname or IP literal, no port) is a loopback, private,
+ * link-local, reserved, or internal host — i.e. NOT a public internet host.
+ * Reuses the same classification as assertPublicUrl's pre-resolution checks so
+ * URL-based host allowlists can permit "private/local self-hosted" targets
+ * (e.g. a self-hosted GitLab) while still rejecting arbitrary public
+ * attacker-controlled domains.
+ * @param {string} host
+ * @returns {boolean}
+ */
+export function isPrivateHost(host) {
+  if (!host) return false;
+  const h = host.toLowerCase().replace(/^\[|\]$/g, "");
+  if (BLOCKED_HOSTNAMES.has(h)) return true;
+  if (BLOCKED_SUFFIXES.some((s) => h.endsWith(s))) return true;
+  // Pure-decimal literals (e.g. 2130706433) alias private IPs ambiguously.
+  if (/^\d+$/.test(h)) return true;
+  const version = isIP(h);
+  if (version === 4) return isBlockedIpv4(h);
+  if (version === 6) return isBlockedIpv6(h);
+  return false;
+}
+
 const MAX_REDIRECTS = 4;
 
 // Header name suffixes whose presence signals an auth-bearing header
