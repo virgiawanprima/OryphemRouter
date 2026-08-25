@@ -208,7 +208,9 @@ function decompressPayload(payload, flags) {
         debugLog(`[DECOMPRESS] Detected JSON error, skipping decompression`);
         return payload;
       }
-    } catch {}
+    } catch (error) {
+      debugLog(`[DECOMPRESS] JSON error probe failed: ${error.message}`);
+    }
   }
 
   if (
@@ -428,8 +430,8 @@ export class CursorExecutor extends BaseExecutor {
     };
 
     const close = () => {
-      try { req?.destroy(); } catch {}
-      try { client.close(); } catch {}
+      try { req?.destroy(); } catch (error) { debugLog(`[CURSOR AGENT] req.destroy() failed: ${error.message}`); }
+      try { client.close(); } catch (error) { debugLog(`[CURSOR AGENT] client.close() failed: ${error.message}`); }
     };
 
     client.on("error", fail);
@@ -471,6 +473,10 @@ export class CursorExecutor extends BaseExecutor {
         resolve(hdrs);
       });
     });
+    // Mark as handled: if the caller throws before awaiting (e.g. session.write
+    // fails in executeAgent), a later connection error must not surface as an
+    // unhandled promise rejection. The real await in executeAgent is unaffected.
+    responseHeaders.catch(() => {});
 
     return {
       responseHeaders,
@@ -478,7 +484,7 @@ export class CursorExecutor extends BaseExecutor {
         if (req && !req.destroyed) req.write(Buffer.from(frame));
       },
       end() {
-        try { if (req && !req.destroyed) req.end(); } catch {}
+        try { if (req && !req.destroyed) req.end(); } catch (error) { debugLog(`[CURSOR AGENT] req.end() failed: ${error.message}`); }
       },
       close,
       async read() {
@@ -510,6 +516,7 @@ export class CursorExecutor extends BaseExecutor {
       session = this.openAgentHttp2Stream(url, headers, requestController.signal);
       session.write(buildAgentRunFrame(body.messages || [], model));
     } catch (error) {
+      try { session?.close(); } catch {}
       throw new Error(`Cursor AgentService request failed: ${error.message}`);
     }
 
@@ -530,7 +537,9 @@ export class CursorExecutor extends BaseExecutor {
           if (done) break;
           errorText += Buffer.from(value).toString("utf8");
         }
-      } catch {}
+      } catch (error) {
+        debugLog(`[CURSOR AGENT] failed reading error body for status ${status}: ${error.message}`);
+      }
       session.close();
       return {
         response: new Response(JSON.stringify({
@@ -599,10 +608,14 @@ export class CursorExecutor extends BaseExecutor {
           });
         }
       } finally {
-        try { session.end(); } catch {}
-        try { session.close(); } catch {}
-        if (!finished) onEvent({ type: "done" });
+        try { session.end(); } catch (error) { debugLog(`[CURSOR AGENT] session.end() failed: ${error.message}`); }
+        try { session.close(); } catch (error) { debugLog(`[CURSOR AGENT] session.close() failed: ${error.message}`); }
       }
+      // Emit the terminal "done" only on clean completion. If session.read()
+      // threw, the error must propagate to consume()'s caller (controller.error)
+      // instead of being masked as a successful end-of-stream — otherwise the
+      // client sees a truncated response as complete and the error is lost.
+      if (!finished) onEvent({ type: "done" });
     };
 
     if (stream === false) {
@@ -662,7 +675,13 @@ export class CursorExecutor extends BaseExecutor {
             controller.enqueue(encoder.encode(SSE_DONE));
             controller.close();
           }
-        }).catch((error) => controller.error(error));
+        }).catch((error) => {
+          try {
+            controller.error(error);
+          } catch {
+            // Controller already closed (client cancelled) — nothing to propagate.
+          }
+        });
       },
       cancel() {
         requestController.abort();
@@ -725,6 +744,7 @@ export class CursorExecutor extends BaseExecutor {
 
       return { response: transformedResponse, url, headers, transformedBody: body };
     } catch (error) {
+      debugLog(`[CURSOR] execute failed: ${error.message}`);
       const errorResponse = new Response(JSON.stringify({
         error: {
           message: error.message,
@@ -775,7 +795,9 @@ export class CursorExecutor extends BaseExecutor {
             }
             return createErrorResponse(JSON.parse(text));
           }
-        } catch {}
+        } catch (error) {
+          debugLog(`[CURSOR BUFFER] Error-frame JSON parse failed (skipping): ${error.message}`);
+        }
       }
 
       const result = extractTextFromResponse(new Uint8Array(payload));
@@ -931,7 +953,9 @@ export class CursorExecutor extends BaseExecutor {
             }
             return createErrorResponse(JSON.parse(text));
           }
-        } catch {}
+        } catch (error) {
+          debugLog(`[CURSOR BUFFER SSE] Error-frame JSON parse failed (skipping): ${error.message}`);
+        }
       }
 
       const result = extractTextFromResponse(new Uint8Array(payload));

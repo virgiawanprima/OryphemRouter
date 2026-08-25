@@ -538,7 +538,10 @@ export class GrokCliExecutor extends BaseExecutor {
           "a" + mid.slice(17, 20),
           mid.slice(0, 12).padEnd(12, "0"),
         ].join("-");
-      } catch {
+      } catch (error) {
+        // Machine-id fingerprint unavailable — fall back to a random id so the
+        // request still goes through, but surface the failure for debugging.
+        args.log?.warn?.("GROK-CLI", `machine id unavailable, using random agent id: ${error?.message || String(error)}`);
         this._agentId = crypto.randomUUID();
       }
     } else if (args.credentials?.providerSpecificData?.deviceId) {

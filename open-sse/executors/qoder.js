@@ -353,6 +353,7 @@ async function wrapQoderSSE(response, model) {
     // Use start()+loop (not pull): a pull that buffers a partial line without
     // enqueueing would never be re-invoked, hanging consumers like .text().
     async start(controller) {
+      let readError = null;
       try {
         // Drain whatever the peek already pulled off the socket first.
         let nlSeed;
@@ -400,14 +401,23 @@ async function wrapQoderSSE(response, model) {
             }
           }
         }
-      } catch {
-        // fall through to terminal [DONE] + close
+      } catch (err) {
+        readError = err;
+        // Upstream read/transform failure mid-stream: do NOT convert it into a
+        // clean [DONE] — that would report a broken connection as a successful
+        // end-of-response. Propagate to the caller so the failure is surfaced
+        // (network errors become a graceful disconnect, other errors reach the
+        // client as a stream error).
       } finally {
         if (!doneEmitted) {
-          try {
-            controller.enqueue(encoder.encode(SSE_DONE));
-            doneEmitted = true;
-          } catch { /* already closed */ }
+          if (readError) {
+            try { controller.error(readError); } catch { /* already closed */ }
+          } else {
+            try {
+              controller.enqueue(encoder.encode(SSE_DONE));
+              doneEmitted = true;
+            } catch { /* already closed */ }
+          }
         }
         try { controller.close(); } catch { /* already closed */ }
         await reader.cancel().catch(() => {});
