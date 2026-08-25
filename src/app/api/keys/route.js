@@ -2,6 +2,7 @@ import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
 import { getApiKeys, collapseDefaultKeyDuplicates, getOrCreateDefaultKey, createApiKey } from "@/lib/localDb";
 import { getConsistentMachineId } from "@/shared/utils/machineId";
+import { parseApiKey } from "@/shared/utils/apiKey";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,16 @@ export async function POST(request) {
     const apiKey = name === "Default Key"
       ? await getOrCreateDefaultKey(machineId)
       : await createApiKey(name, machineId);
+
+    // Router keys are OryphemRouter's OWN keys — validate the generated key's
+    // format (sk- prefix + expected structure/length) before returning it so we
+    // never hand out a malformed credential.
+    if (!parseApiKey(apiKey.key) || apiKey.key.length < 32) {
+      return NextResponse.json(
+        { error: "Failed to generate a valid API key" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       key: apiKey.key,

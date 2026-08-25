@@ -10,6 +10,7 @@ import {
 import { APIKEY_PROVIDERS } from "@/shared/constants/config";
 import { AI_PROVIDERS, FREE_TIER_PROVIDERS, WEB_COOKIE_PROVIDERS, isOpenAICompatibleProvider, isAnthropicCompatibleProvider, isCustomEmbeddingProvider } from "@/shared/constants/providers";
 import { normalizeProviderId, normalizeProviderSpecificData } from "@/lib/providerNormalization";
+import { validateApiKey, supportsValidation } from "@/lib/auth/apiKeyValidator";
 
 export const dynamic = "force-dynamic";
 
@@ -171,6 +172,30 @@ export async function POST(request) {
 
     if (proxyPoolId !== null) {
       mergedProviderSpecificData.proxyPoolId = proxyPoolId;
+    }
+
+    // Validate the API key against the real provider endpoint before saving.
+    // Local / no-auth providers (e.g. ollama) and web-cookie providers skip
+    // validation. Block only when the key is DEFINITIVELY invalid (rejected by
+    // the provider endpoint or clearly malformed). Transient results (timeout,
+    // network down, rate-limited, unknown) FAIL-OPEN so a temporarily
+    // unreachable provider never blocks the save; thrown exceptions are
+    // swallowed for the same reason.
+    if (apiKey && !isWebCookieProvider && supportsValidation(provider)) {
+      try {
+        const result = await validateApiKey(provider, apiKey, mergedProviderSpecificData || {});
+        if (
+          result.valid === false &&
+          (result.errorType === "invalid_key" || result.errorType === "invalid_format")
+        ) {
+          return NextResponse.json(
+            { error: result.error || "Invalid API key for this provider" },
+            { status: 400 }
+          );
+        }
+      } catch {
+        // Fail open — provider may be unreachable; do not block the save.
+      }
     }
 
     const newConnection = await createProviderConnection({

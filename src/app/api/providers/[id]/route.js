@@ -6,6 +6,7 @@ import {
   updateProviderConnection,
   deleteProviderConnection,
 } from "@/models";
+import { validateApiKey, supportsValidation } from "@/lib/auth/apiKeyValidator";
 
 function normalizeProxyConfig(body = {}) {
   const hasAnyProxyField =
@@ -153,6 +154,39 @@ export async function PUT(request, { params }) {
         } else {
           updateData.providerSpecificData.proxyPoolId = proxyPoolResult.proxyPoolId;
         }
+      }
+    }
+
+    // Validate a NEW/changed API key against the real provider endpoint before
+    // saving. Skip when the key is unchanged (user editing other fields) and
+    // skip local/no-auth providers. Block only when the key is DEFINITIVELY
+    // invalid (rejected by the provider endpoint or clearly malformed).
+    // Transient results (timeout, network down, rate-limited, unknown) and
+    // thrown exceptions FAIL-OPEN so a temporarily unreachable provider never
+    // blocks the update.
+    const apiKeyChanged =
+      !!apiKey &&
+      existing.authType === "apikey" &&
+      apiKey !== existing.apiKey;
+
+    if (apiKeyChanged && supportsValidation(existing.provider)) {
+      try {
+        const result = await validateApiKey(
+          existing.provider,
+          apiKey,
+          updateData.providerSpecificData || existing.providerSpecificData || {}
+        );
+        if (
+          result.valid === false &&
+          (result.errorType === "invalid_key" || result.errorType === "invalid_format")
+        ) {
+          return NextResponse.json(
+            { error: result.error || "Invalid API key for this provider" },
+            { status: 400 }
+          );
+        }
+      } catch {
+        // Fail open — provider may be unreachable; do not block the update.
       }
     }
 
