@@ -2,7 +2,6 @@ import { EventEmitter } from "events";
 import { getAdapter } from "../driver.js";
 import { parseJson, stringifyJson } from "../helpers/jsonCol.js";
 import { getMeta, setMeta } from "../helpers/metaStore.js";
-import { invalidateSpendingCache } from "@/sse/services/spendingCache.js";
 
 function maskApiKey(key) {
   if (!key || typeof key !== "string") return null;
@@ -296,12 +295,13 @@ export async function saveRequestUsage(entry) {
     if (inserted) {
       pushToRing(entry);
       scheduleStatsEvent("update", 250);
-      // Usage totals changed → the spending-limit cache (chat.js) is stale.
-      invalidateSpendingCache();
     }
     break; // success — exit retry loop
   } catch (e) {
-    if (attempt < 2 && String(e?.message || "").includes("SQLITE_BUSY")) {
+    // better-sqlite3 throws code "SQLITE_BUSY" (message "database is locked");
+    // node:sqlite throws code "ERR_SQLITE_ERROR". Check the code first, fall
+    // back to the message so the transient-lock retry actually triggers.
+    if (attempt < 2 && (e?.code === "SQLITE_BUSY" || e?.code === "SQLITE_LOCKED" || String(e?.message || "").includes("locked"))) {
       await new Promise((r) => setTimeout(r, 50 * (attempt + 1)));
       continue;
     }
