@@ -22,16 +22,26 @@ export async function OPTIONS() {
 }
 
 export async function POST(request) {
-  await ensureInitialized();
-  
-  const clonedReq = request.clone();
-  let modelName = "llama3.2";
   try {
-    const body = await clonedReq.json();
-    modelName = body.model || "llama3.2";
-  } catch {}
+    await ensureInitialized();
 
-  const response = await handleChat(request);
-  return transformToOllama(response, modelName);
+    const clonedReq = request.clone();
+    let modelName = "llama3.2";
+    try {
+      const body = await clonedReq.json();
+      modelName = body.model || "llama3.2";
+    } catch {}
+
+    const response = await handleChat(request);
+    return transformToOllama(response, modelName);
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error?.message || "Internal error" }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  }
 }
 
