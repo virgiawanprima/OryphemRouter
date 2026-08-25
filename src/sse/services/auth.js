@@ -109,7 +109,7 @@ export async function getProviderCredentials(provider, excludeConnectionIds = nu
       // Find earliest lock expiry across all connections for retry timing
       const lockedConns = connections.filter(c => isModelLockActive(c, model));
       const expiries = lockedConns.map(c => getEarliestModelLockUntil(c)).filter(Boolean);
-      const earliest = expiries.sort((a, b) => Number(a) - Number(b))[0] || null;
+      const earliest = expiries.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] || null;
       if (earliest) {
         const earliestConn = lockedConns.find(c => getEarliestModelLockUntil(c) === earliest) || lockedConns[0];
         log.warn("AUTH", `${provider} | all ${connections.length} accounts locked for ${model || "all"} (${formatRetryAfter(earliest)}) | lastError=${earliestConn?.lastError?.slice(0, 50)}`);
