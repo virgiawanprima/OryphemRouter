@@ -20,7 +20,8 @@ import {
   formatProviderCredentials as _formatProviderCredentials,
   getAllAccessTokens as _getAllAccessTokens,
   refreshKiroToken as _refreshKiroToken,
-  getRefreshLeadMs as _getRefreshLeadMs
+  getRefreshLeadMs as _getRefreshLeadMs,
+  isUnrecoverableRefreshError as _isUnrecoverableRefreshError
 } from "open-sse/services/tokenRefresh.js";
 import {
   refreshProviderCredentials as _refreshProviderCredentials,
@@ -238,6 +239,35 @@ export async function checkAndRefreshToken(provider, credentials, options = {}) 
     });
 
     const newCreds = await _refreshProviderCredentials(provider, creds, log);
+
+    // Unrecoverable refresh errors (invalid_grant, refresh_token_reused, …)
+    // mean the refresh token is permanently dead. Persist the connection as
+    // needing re-auth instead of silently returning stale credentials, which
+    // would otherwise loop forever: 401 → backoff → retry with a dead token.
+    if (_isUnrecoverableRefreshError(newCreds)) {
+      log.error("TOKEN_REFRESH", "Unrecoverable refresh error — connection requires re-auth", {
+        provider,
+        connectionId: creds.connectionId,
+        error: newCreds.error,
+        code: newCreds.code || null,
+      });
+      try {
+        await updateProviderConnection(creds.connectionId, {
+          testStatus: "re-auth-required",
+          lastError: `Re-authentication required (${newCreds.error}${newCreds.code ? `: ${newCreds.code}` : ""})`,
+          lastErrorAt: new Date().toISOString(),
+        });
+      } catch (err) {
+        log.error("TOKEN_REFRESH", "Failed to mark connection as re-auth-required", {
+          connectionId: creds.connectionId,
+          error: err?.message ?? err,
+        });
+      }
+      // Return the error clearly instead of stale credentials so callers
+      // surface a 401 / re-auth signal rather than retrying with a dead token.
+      return newCreds;
+    }
+
     if (newCreds?.accessToken || newCreds?.apiKey || newCreds?.copilotToken) {
       const mergedCreds = {
         ...newCreds,
