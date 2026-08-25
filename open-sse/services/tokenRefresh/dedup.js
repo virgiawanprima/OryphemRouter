@@ -1,3 +1,10 @@
+// In-flight dedup entries must outlive the underlying refresh HTTP timeout
+// (AbortSignal.timeout(30000) in providers.js) — otherwise a slow refresh is
+// re-fanned-out and TWO concurrent refreshes rotate the SAME refresh token
+// (second one → refresh_token_reused → account lockout).
+const IN_FLIGHT_TTL_MS = 35_000;
+// Successful results may be reused briefly to avoid stampedes; keep this
+// shorter than the in-flight window since the token is already materialized.
 const REFRESH_RESULT_TTL_MS = 10_000;
 const refreshDedupCache = new Map();
 
@@ -37,6 +44,6 @@ export async function dedupRefresh(provider, oldToken, fn, log) {
       throw err;
     }
   })();
-  refreshDedupCache.set(key, { promise, expiresAt: Date.now() + REFRESH_RESULT_TTL_MS });
+  refreshDedupCache.set(key, { promise, expiresAt: Date.now() + IN_FLIGHT_TTL_MS });
   return promise;
 }
