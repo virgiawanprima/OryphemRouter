@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSettings, updateSettings } from "@/lib/localDb";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
 import { resetComboRotation } from "open-sse/services/combo.js";
+import { invalidateSpendingCache } from "@/sse/services/spendingCache.js";
 import bcrypt from "bcryptjs";
 import { parseJson } from "@/lib/utils/parseJson";
 
@@ -81,6 +82,12 @@ export async function PATCH(request) {
     }
 
     const settings = await updateSettings(body);
+
+    // Spending-limit cache is keyed by the current limit config; clear it so
+    // updated limits take effect immediately (not after the TTL).
+    if (Object.prototype.hasOwnProperty.call(body, "spendingLimits")) {
+      invalidateSpendingCache();
+    }
 
     // Apply outbound proxy settings immediately (no restart required)
     if (

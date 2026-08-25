@@ -24,11 +24,12 @@ import * as log from "../utils/logger.js";
 import { updateProviderCredentials, checkAndRefreshToken } from "../services/tokenRefresh.js";
 import { getProjectIdForConnection } from "open-sse/services/projectId.js";
 import { checkRateLimit } from "@/lib/auth/apiRateLimiter";
+import { getSpendingLimitsCache, getSpendingLimitsCacheTtlMs } from "../services/spendingCache.js";
 
 // H6: In-memory cache for spending-limit queries to avoid two full-history
 // queries (getUsageStats("30d") + getUsageStats("today")) on every chat request.
-const SPENDING_LIMITS_CACHE_TTL_MS = 15_000;
-const spendingLimitsCache = new Map(); // key → { monthly, daily, ts }
+// The cache lives in ../services/spendingCache.js so usage recording and the
+// settings route can invalidate it without importing this handler.
 
 /**
  * Handle chat completion request
@@ -107,12 +108,15 @@ export async function handleChat(request, clientRawRequest = null) {
   // TODO(H6): getUsageStats("30d") and getUsageStats("today") each scan the
   // entire usageDaily table or full usageHistory window. Cache results with
   // TTL ~15s to avoid two full-history queries per chat request. See the
-  // spendingLimitsCache Map added below in this file.
+  // spendingLimitsCache Map in ../services/spendingCache.js.
   const spendingLimits = settings.spendingLimits || {};
   if (spendingLimits.maxCostPerMonth || spendingLimits.maxCostPerDay) {
-    const cacheKey = `${settings.id || "default"}`;
+    // Key on the actual limit config (settings.id is never populated), so
+    // different limit configurations never collide in the shared Map.
+    const cacheKey = JSON.stringify(spendingLimits);
+    const spendingLimitsCache = getSpendingLimitsCache();
     let cached = spendingLimitsCache.get(cacheKey);
-    if (!cached || Date.now() - cached.ts > SPENDING_LIMITS_CACHE_TTL_MS) {
+    if (!cached || Date.now() - cached.ts > getSpendingLimitsCacheTtlMs()) {
       const { getUsageStats } = await import("@/lib/usageDb");
       const [monthlyStats, dailyStats] = await Promise.all([
         getUsageStats("30d"),
@@ -182,13 +186,13 @@ export async function handleChat(request, clientRawRequest = null) {
       return handleFusionChat({
         body,
         models: comboModels,
-        handleSingleModel: (b, m, isPanel) => {
+        handleSingleModel: (b, m, isPanel, signal) => {
           let cleanRawReq = clientRawRequest;
           if (isPanel && clientRawRequest) {
             const { tools, tool_choice, ...cleanBody } = clientRawRequest.body || {};
             cleanRawReq = { ...clientRawRequest, body: cleanBody };
           }
-          return handleSingleModelChat(b, m, cleanRawReq, request, apiKey);
+          return handleSingleModelChat(b, m, cleanRawReq, request, apiKey, signal);
         },
         log,
         comboName: modelStr,
@@ -238,7 +242,7 @@ export async function handleChat(request, clientRawRequest = null) {
 /**
  * Handle single model chat request
  */
-async function handleSingleModelChat(body, modelStr, clientRawRequest = null, request = null, apiKey = null) {
+async function handleSingleModelChat(body, modelStr, clientRawRequest = null, request = null, apiKey = null, signal = null) {
   let modelInfo;
   try {
     modelInfo = await getModelInfo(modelStr);
@@ -265,13 +269,13 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
         return handleFusionChat({
           body,
           models: comboModels,
-          handleSingleModel: (b, m, isPanel) => {
+          handleSingleModel: (b, m, isPanel, signal) => {
             let cleanRawReq = clientRawRequest;
             if (isPanel && clientRawRequest) {
               const { tools, tool_choice, ...cleanBody } = clientRawRequest.body || {};
               cleanRawReq = { ...clientRawRequest, body: cleanBody };
             }
-            return handleSingleModelChat(b, m, cleanRawReq, request, apiKey);
+            return handleSingleModelChat(b, m, cleanRawReq, request, apiKey, signal);
           },
           log,
           comboName: modelStr,
@@ -364,6 +368,7 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
       connectionId: credentials.connectionId,
       userAgent,
       apiKey,
+      signal,
       ccFilterNaming: !!chatSettings.ccFilterNaming,
       rtkEnabled: !!chatSettings.rtkEnabled,
       headroomEnabled: !!chatSettings.headroomEnabled,
@@ -394,6 +399,9 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
         }
       },
       onRequestSuccess: async () => {
+        // Stale: this panel call timed out and the fusion response is already on
+        // its way to the client — don't clear breaker state from a result nobody used.
+        if (signal?.aborted) return;
         try {
           await clearAccountError(credentials.connectionId, credentials, model);
         } catch (err) {
@@ -403,6 +411,13 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
     });
 
     if (result.success) return result.response;
+
+    // Stale: this panel call timed out — the fusion response already went to the
+    // client, so skip the breaker-state write (markAccountUnavailable).
+    if (signal?.aborted) {
+      log.debug("CHAT", `[${provider}/${model}] skipping breaker update (panel call timed out)`);
+      return result.response;
+    }
 
     // Mark account unavailable (auto-calculates cooldown with exponential backoff, or precise resetsAtMs)
     const { shouldFallback } = await markAccountUnavailable(credentials.connectionId, result.status, result.error, provider, model, result.resetsAtMs);
