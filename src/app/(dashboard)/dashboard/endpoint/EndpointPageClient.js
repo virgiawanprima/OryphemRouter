@@ -9,7 +9,6 @@ import {
   TUNNEL_BENEFITS,
   TUNNEL_PING_INTERVAL_MS,
   TUNNEL_PING_MAX_MS,
-  STATUS_POLL_FAST_MS,
   REACHABLE_MISS_THRESHOLD,
   CLIENT_PING_FAST_MS,
 } from "./endpointConstants";
@@ -110,23 +109,16 @@ export default function APIPageClient({ machineId }) {
     loadSettings();
   }, []);
 
-  // Status poll: only while degraded (not yet reachable). Stop once healthy to avoid spam.
-  // Visibility re-check: refresh once when tab becomes visible.
+  // Tunnel status is pushed live by the shared /api/dashboard/realtime SSE
+  // stream (see useRealtime below). We keep a one-shot refresh when the tab
+  // becomes visible (so a backgrounded tab catches up) — no interval polling.
   useEffect(() => {
     const anyEnabled = tunnelEnabled || tsEnabled;
     if (!anyEnabled) return;
-    const tunnelHealthy = !tunnelEnabled || tunnelReachable;
-    const tsHealthy = !tsEnabled || tsReachable;
-    const allHealthy = tunnelHealthy && tsHealthy;
     const onVisible = () => { if (!document.hidden) syncTunnelStatus(); };
     document.addEventListener("visibilitychange", onVisible);
-    if (allHealthy) return () => document.removeEventListener("visibilitychange", onVisible);
-    const timer = setInterval(() => { if (!document.hidden) syncTunnelStatus(); }, STATUS_POLL_FAST_MS);
-    return () => {
-      clearInterval(timer);
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [tunnelEnabled, tsEnabled, tunnelReachable, tsReachable]);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [tunnelEnabled, tsEnabled]);
 
   // Real-time SSE updates for dashboard: key status from the shared
   // /api/dashboard/realtime connection (one EventSource for the whole

@@ -39,7 +39,6 @@ export default function TokenSaverClient() {
   const [codeAware, setCodeAware] = useState(false);
   const [kompress, setKompress] = useState(true);
   const [restartingProxy, setRestartingProxy] = useState(false);
-  const logPollRef = useRef(null);
   const [cavemanEnabled, setCavemanEnabled] = useState(false);
   const [cavemanLevel, setCavemanLevel] = useState("full");
   const [ponytailEnabled, setPonytailEnabled] = useState(false);
@@ -212,37 +211,43 @@ export default function TokenSaverClient() {
     );
   };
 
-  // Poll the install log tail while a pip install/uninstall is running.
-  const startLogPolling = useCallback(() => {
+  // Stream the install log tail via SSE while a pip install/uninstall is running.
+  // Replaces the old client-side 1.5s polling of /api/headroom/extras?log=1.
+  // The server watches the local log file and pushes changes; the client only
+  // opens one EventSource and closes it when the action completes.
+  const logStreamRef = useRef(null);
+
+  const startLogStream = useCallback(() => {
     setInstallLog("");
-    if (logPollRef.current) clearInterval(logPollRef.current);
-    const tick = async () => {
+    if (logStreamRef.current) logStreamRef.current.close();
+    const es = new EventSource("/api/headroom/extras/log-stream");
+    logStreamRef.current = es;
+    es.onmessage = (event) => {
       try {
-        const r = await fetch("/api/headroom/extras?log=1", {
-          headers: { "Cache-Control": "no-store" },
-        });
-        const d = await r.json().catch(() => ({}));
-        if (typeof d.log === "string") setInstallLog(d.log);
-      } catch { /* ignore transient poll errors */ }
+        const data = JSON.parse(event.data);
+        if (typeof data.log === "string") setInstallLog(data.log);
+        if (data.done) { es.close(); logStreamRef.current = null; }
+      } catch { /* ignore malformed frame */ }
     };
-    tick();
-    logPollRef.current = setInterval(tick, 1500);
+    es.onerror = () => {
+      // EventSource auto-reconnects; only stop if we've been closed intentionally.
+    };
   }, []);
 
-  const stopLogPolling = useCallback(() => {
-    if (logPollRef.current) {
-      clearInterval(logPollRef.current);
-      logPollRef.current = null;
+  const stopLogStream = useCallback(() => {
+    if (logStreamRef.current) {
+      logStreamRef.current.close();
+      logStreamRef.current = null;
     }
   }, []);
 
-  useEffect(() => () => stopLogPolling(), [stopLogPolling]);
+  useEffect(() => () => stopLogStream(), [stopLogStream]);
 
   const installExtrasConfirmed = useCallback(async () => {
     if (pendingExtras.length === 0) return;
     setExtrasActionLoading(true);
     setExtrasActionError("");
-    startLogPolling();
+    startLogStream();
     try {
       const res = await fetch("/api/headroom/extras", {
         method: "POST",
@@ -260,15 +265,15 @@ export default function TokenSaverClient() {
     } catch (e) {
       setExtrasActionError(e.message);
     } finally {
-      stopLogPolling();
+      stopLogStream();
       setExtrasActionLoading(false);
     }
-  }, [pendingExtras, startLogPolling, stopLogPolling]);
+  }, [pendingExtras, startLogStream, stopLogStream]);
 
   const removeExtraConfirmed = useCallback(async (extra) => {
     setRemovingExtra(extra);
     setExtrasActionError("");
-    startLogPolling();
+    startLogStream();
     try {
       const res = await fetch("/api/headroom/extras", {
         method: "DELETE",
@@ -285,10 +290,10 @@ export default function TokenSaverClient() {
     } catch (e) {
       setExtrasActionError(e.message);
     } finally {
-      stopLogPolling();
+      stopLogStream();
       setRemovingExtra(null);
     }
-  }, [startLogPolling, stopLogPolling]);
+  }, [startLogStream, stopLogStream]);
 
   const handleInstallExtras = useCallback(() => {
     if (pendingExtras.length === 0) return;
