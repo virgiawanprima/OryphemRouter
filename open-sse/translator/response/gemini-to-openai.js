@@ -47,7 +47,9 @@ export function geminiToOpenAIResponse(chunk, state) {
   // Initialize state
   if (!state.messageId) {
     state.messageId = response.responseId || `msg_${Date.now()}`;
-    state.model = response.modelVersion || "gemini";
+    // Prefer the router-seeded model over a fabricated "gemini" when upstream
+    // omits modelVersion (zero-fake-models: never invent an id).
+    state.model = response.modelVersion || state.model || "gemini";
     state.functionIndex = 0;
     state.geminiToolCallCount = 0;
     results.push(buildChunk(chunkMeta(state), { role: ROLE.ASSISTANT }, null));

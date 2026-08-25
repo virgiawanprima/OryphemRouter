@@ -25,7 +25,8 @@ export function claudeToOpenAIResponse(chunk, state) {
   switch (event) {
     case "message_start": {
       state.messageId = chunk.message?.id || `msg_${Date.now()}`;
-      state.model = chunk.message?.model;
+      // Keep the router-seeded model when upstream omits it (no fabricated ids).
+      state.model = chunk.message?.model || state.model;
       state.toolCallIndex = 0;
       // Claude sends input_tokens + cache_read + cache_creation here; message_delta
       // later carries only the final output_tokens. Capture cache now so the
