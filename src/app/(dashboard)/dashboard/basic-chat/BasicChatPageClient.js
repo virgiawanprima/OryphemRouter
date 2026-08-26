@@ -180,19 +180,14 @@ export default function BasicChatPageClient() {
       })) : [];
     } catch { return []; }
   });
-  const [activeSessionId, setActiveSessionId] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return globalThis.localStorage.getItem(STORAGE_KEYS.activeSessionId) || "";
-  });
-  const [activeProviderId, setActiveProviderId] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return globalThis.localStorage.getItem(STORAGE_KEYS.activeProviderId) || "";
-  });
+  // NOTE: localStorage must NOT be read in useState initializers — that would
+  // cause React hydration mismatches (server renders "" while client renders the
+  // stored value → "disabled" attribute mismatch, etc.). Initialize empty, then
+  // restore from localStorage in a useEffect once isHydrated is true.
+  const [activeSessionId, setActiveSessionId] = useState("");
+  const [activeProviderId, setActiveProviderId] = useState("");
   const [activeModelId, setActiveModelId] = useState("");
-  const [draft, setDraft] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return globalThis.localStorage.getItem(STORAGE_KEYS.draft) || "";
-  });
+  const [draft, setDraft] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [isSending, setIsSending] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState("");
@@ -208,6 +203,23 @@ export default function BasicChatPageClient() {
 
   useEffect(() => {
     setIsHydrated(true);
+  }, []);
+
+  // Restore persisted state from localStorage AFTER hydration so the server and
+  // client render identical HTML (fixes React hydration mismatch). Runs once.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const storedSession = globalThis.localStorage.getItem(STORAGE_KEYS.activeSessionId);
+      if (storedSession) setActiveSessionId(storedSession);
+      const storedProvider = globalThis.localStorage.getItem(STORAGE_KEYS.activeProviderId);
+      if (storedProvider) setActiveProviderId(storedProvider);
+      const storedDraft = globalThis.localStorage.getItem(STORAGE_KEYS.draft);
+      if (storedDraft) setDraft(storedDraft);
+    } catch {
+      // Ignore storage errors.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
