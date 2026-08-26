@@ -35,8 +35,14 @@ import { getSpendingLimitsCache, getSpendingLimitsCacheTtlMs } from "../services
  * Handle chat completion request
  * Supports: OpenAI, Claude, Gemini, OpenAI Responses API formats
  * Format detection and translation handled by translator
+ *
+ * @param {Request} request
+ * @param {object|null} clientRawRequest
+ * @param {object} [opts] - { skipApiKeyCheck?: boolean } — the internal dashboard
+ *   Basic Chat already passed the dashboard auth gate, so it does not need a
+ *   router API key (it uses the configured provider credentials).
  */
-export async function handleChat(request, clientRawRequest = null) {
+export async function handleChat(request, clientRawRequest = null, opts = {}) {
   // Per-IP rate limiting (generous 120 req/min — never trips normal usage).
   const rate = checkRateLimit(request, { windowMs: 60_000, max: 120 });
   if (!rate.allowed) {
@@ -90,9 +96,11 @@ export async function handleChat(request, clientRawRequest = null) {
     log.debug("AUTH", "No API key provided (local mode)");
   }
 
-  // Enforce API key if enabled in settings
+  // Enforce API key if enabled in settings. The internal dashboard Basic Chat
+  // bypasses this — it already passed the dashboard auth gate and uses the
+  // configured provider credentials instead of a router API key.
   const settings = await getSettings();
-  if (settings.requireApiKey) {
+  if (settings.requireApiKey && !opts?.skipApiKeyCheck) {
     if (!apiKey) {
       log.warn("AUTH", "Missing API key (requireApiKey=true)");
       return errorResponse(HTTP_STATUS.UNAUTHORIZED, "Missing API key");
