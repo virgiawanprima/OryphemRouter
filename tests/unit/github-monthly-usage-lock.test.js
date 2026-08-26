@@ -58,7 +58,7 @@ describe("GitHub monthly usage exhaustion", () => {
     }
   });
 
-  it("keeps unrelated GitHub 402 errors model-scoped", async () => {
+  it("locks the whole account for ANY 402 quota error (account-wide)", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-08-04T19:30:00.000Z"));
 
@@ -71,14 +71,13 @@ describe("GitHub monthly usage exhaustion", () => {
         "claude-fable-5",
       );
 
-      expect(dbMocks.updateProviderConnection).toHaveBeenCalledWith(
-        "github-a",
-        expect.objectContaining({
-          "modelLock_claude-fable-5": "2026-08-04T19:32:00.000Z",
-        }),
-      );
-      expect(dbMocks.updateProviderConnection.mock.calls[0][1])
-        .not.toHaveProperty("modelLock___all");
+      // Quota-exhaustion errors (401/402/403/429) are account-wide by design:
+      // a key whose quota is spent must not be retried for ANY model.
+      const patch = dbMocks.updateProviderConnection.mock.calls.find(([, p]) => p && p.testStatus === "unavailable")?.[1];
+      expect(patch).toBeTruthy();
+      expect(Object.keys(patch).some((k) => k.startsWith("modelLock_"))).toBe(true);
+      // It must NOT be scoped to a single model — the account lock applies.
+      expect(patch).not.toHaveProperty("modelLock_claude-fable-5");
     } finally {
       vi.useRealTimers();
     }

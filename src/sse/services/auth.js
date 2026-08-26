@@ -271,7 +271,12 @@ export async function markAccountUnavailable(connectionId, status, errorText, pr
   if (!shouldFallback) return { shouldFallback: false, cooldownMs: 0 };
 
   const reason = typeof errorText === "string" ? errorText.slice(0, 100) : "Provider error";
-  const lockUpdate = buildModelLockUpdate(githubResetAtMs ? null : model, cooldownMs);
+  // Key whose QUOTA is exhausted (401/402/403/429) must not be retried for ANY
+  // model — its quota is account-wide. Lock at account level (modelLock___all)
+  // so requests for other models also fall through to the next healthy key.
+  // Transient errors (5xx, network) stay per-model to avoid over-blocking.
+  const isQuotaExhaustion = status === 401 || status === 402 || status === 403 || status === 429;
+  const lockUpdate = buildModelLockUpdate(isQuotaExhaustion ? null : model, cooldownMs);
 
   await updateProviderConnection(connectionId, {
     ...lockUpdate,
