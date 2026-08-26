@@ -218,24 +218,30 @@ export default function BasicChatPageClient() {
       setLoadError("");
 
       try {
-        const providersRes = await fetch("/api/providers", { cache: "no-store" });
+        // Use /api/providers/client — this endpoint includes free/no-auth providers
+        // (opencode, local-device, searxng, …) that have no saved connection, so they
+        // appear in the model selector even when the user hasn't configured any keys.
+        const providersRes = await fetch("/api/providers/client?page=1&pageSize=500", { cache: "no-store" });
         const providersData = await providersRes.json().catch(() => ({}));
-        const connections = Array.isArray(providersData.connections)
-          ? providersData.connections.filter((connection) => connection?.isActive !== false)
-          : [];
-
-        if (connections.length === 0) {
-          if (!cancelled) {
-            setProviderGroups([]);
-            setLoadError("No providers connected yet.");
-          }
-          return;
-        }
+        // The response has { providers: [{ provider, connections }], freeProviderIds, ... }
+        const providerList = Array.isArray(providersData.providers) ? providersData.providers : [];
 
         const providerMap = new Map();
+        const freeIds = new Set(providersData.freeProviderIds || []);
 
-        for (const connection of connections) {
-          const providerId = connection.provider || connection.id;
+        for (const group of providerList) {
+          const providerId = group.provider;
+          // Skip providers with no connections AND not in the free list — they had active
+          // connections; empty free groups ARE kept so their builtin models show up.
+          if (!group.connections || group.connections.length === 0) {
+            if (!freeIds.has(providerId)) continue;
+          }
+
+          // Use the first (or a virtual) connection for display purposes.
+          const connection = group.connections && group.connections.length > 0
+            ? group.connections[0]
+            : { provider: providerId, name: providerId, isActive: true, authType: "none" };
+
           const providerName = getProviderLabel(connection);
           const providerType = isOpenAICompatibleProvider(providerId)
             ? "openai-compatible"
@@ -243,48 +249,85 @@ export default function BasicChatPageClient() {
               ? "anthropic-compatible"
               : providerId;
 
-          if (!providerMap.has(providerId)) {
-            providerMap.set(providerId, {
-              providerId,
-              providerName,
-              providerType,
-              connections: [],
-              models: [],
-            });
-          }
-
-          const group = providerMap.get(providerId);
-          group.providerName = group.providerName || providerName;
-          group.providerType = group.providerType || providerType;
-          group.connections.push(connection);
+          providerMap.set(providerId, {
+            providerId,
+            providerName,
+            providerType,
+            connections: group.connections && group.connections.length > 0 ? group.connections : [connection],
+            models: [],
+          });
 
           const staticModels = getModelsByProviderId(providerId)
             .map((model) => normalizeStaticModel(model, connection))
             .filter(Boolean);
-          group.models.push(...staticModels);
+          providerMap.get(providerId).models.push(...staticModels);
         }
 
+        if (providerMap.size === 0) {
+          if (!cancelled) {
+            setProviderGroups([]);
+            setLoadError("No providers connected yet.");
+          }
+          return;
+        }
+
+        // Fetch live (per-connection) models for providers that have real saved
+        // connections (free/no-auth providers skip this — they have no API key).
         const liveResults = await Promise.all(
-          connections.map(async (connection) => {
-            try {
-              const response = await fetch(`/api/providers/${connection.id}/models`, { cache: "no-store" });
-              const data = await response.json().catch(() => ({}));
-              if (!response.ok) return { connection, models: [] };
-              const models = parseProviderModelsPayload(data)
-                .map((model) => normalizeLiveModel(model, connection))
-                .filter(Boolean);
-              return { connection, models };
-            } catch {
-              return { connection, models: [] };
-            }
-          })
+          Array.from(providerMap.values())
+            .filter((g) => g.connections.some((c) => c.id && c.id !== c.provider))
+            .flatMap((g) =>
+              g.connections
+                .filter((c) => c.id && c.id !== c.provider)
+                .map(async (connection) => {
+                  try {
+                    const response = await fetch(`/api/providers/${connection.id}/models`, { cache: "no-store" });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) return { providerId: g.providerId, models: [] };
+                    const models = parseProviderModelsPayload(data)
+                      .map((model) => normalizeLiveModel(model, connection))
+                      .filter(Boolean);
+                    return { providerId: g.providerId, models };
+                  } catch {
+                    return { providerId: g.providerId, models: [] };
+                  }
+                })
+            )
         );
 
         for (const result of liveResults) {
-          const providerId = result.connection.provider || result.connection.id;
-          const group = providerMap.get(providerId);
+          const group = providerMap.get(result.providerId);
           if (!group) continue;
           group.models.push(...result.models);
+        }
+
+        // Live-catalog fallback: providers whose registry model list is empty but
+        // expose a live public catalog (opencode free tier, etc.). We proxy the
+        // catalog through /api/models/free-catalog (server-side fetch — avoids CORS
+        // and the API-key requirement of /api/v1/models).
+        const emptyGroups = Array.from(providerMap.values()).filter((g) => g.models.length === 0);
+        if (emptyGroups.length > 0) {
+          let byOwner = {};
+          try {
+            const modelsRes = await fetch("/api/models/free-catalog", {
+              cache: "no-store",
+              signal: AbortSignal.timeout(10000),
+            });
+            if (modelsRes.ok) byOwner = await modelsRes.json();
+          } catch {
+            byOwner = {};
+          }
+          for (const g of emptyGroups) {
+            const live = byOwner[g.providerId];
+            if (!Array.isArray(live) || live.length === 0) continue;
+            for (const lm of live) {
+              g.models.push({
+                id: `${g.providerId}/${lm.id}`,
+                requestModel: `${g.providerId}/${lm.id}`,
+                name: lm.name || lm.id,
+              });
+            }
+          }
         }
 
         const normalized = Array.from(providerMap.values())
