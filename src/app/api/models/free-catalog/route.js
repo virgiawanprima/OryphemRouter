@@ -37,14 +37,11 @@ async function fetchCatalog(url) {
 /**
  * Tiny handshake: ask the model for a 1-token reply.
  *
- * - 2xx → usable without an API key (include).
- * - 401/403 → requires a key → EXCLUDE (never works keyless).
- * - other 4xx/5xx → transient upstream failure. For models that are explicitly
- *   FREE (id contains "-free"), keep them anyway — they are legitimately free,
- *   just temporarily unavailable (e.g. opencode deepseek-v4-flash-free returning
- *   "Model is unavailable"). Paid models with a transient error are excluded.
+ * ONLY models that actually respond 2xx without an API key are returned —
+ * anything else (401/403 requires key, 4xx/5xx upstream unavailable) is
+ * excluded, because selecting it would fail in Basic Chat.
  */
-async function isModelUsable(modelId, isFreeModel) {
+async function isModelUsable(modelId) {
   const attempt = async () => {
     const res = await fetch(HANDSHAKE_URL, {
       method: "POST",
@@ -61,20 +58,16 @@ async function isModelUsable(modelId, isFreeModel) {
       }),
       signal: AbortSignal.timeout(10000),
     });
-    if (res.status === 401 || res.status === 403) return { usable: false, requiresKey: true };
-    if (res.ok) return { usable: true };
-    // transient failure — a free model stays visible, a paid one is dropped
-    return { usable: isFreeModel, requiresKey: false };
+    return res.ok; // only 2xx = actually usable
   };
 
   try {
-    const r = await attempt();
-    if (r.usable || r.requiresKey) return r.usable;
+    if (await attempt()) return true;
   } catch {
-    /* retry once below */
+    /* transient — retry once */
   }
   try {
-    return (await attempt()).usable;
+    return await attempt();
   } catch {
     return false;
   }
@@ -91,14 +84,12 @@ export async function GET() {
         return;
       }
       const all = await fetchCatalog(url);
-      // Handshake in parallel; keep only models that work without a key. Models
-      // explicitly marked free (id contains "-free") stay visible even if the
-      // handshake currently fails transiently.
+      // Handshake in parallel; keep ONLY models that answer 2xx without a key.
       const usable = [];
       const CHUNK = 8;
       for (let i = 0; i < all.length; i += CHUNK) {
         const chunk = all.slice(i, i + CHUNK);
-        const results = await Promise.all(chunk.map((m) => isModelUsable(m.id, /-free$/i.test(m.id))));
+        const results = await Promise.all(chunk.map((m) => isModelUsable(m.id)));
         chunk.forEach((m, idx) => {
           if (results[idx]) usable.push(m);
         });
