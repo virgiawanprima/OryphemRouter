@@ -56,9 +56,15 @@ export class OpenCodeExecutor extends BaseExecutor {
     const downstreamUa = lower["user-agent"] || "";
     const isOpencodeDownstream = downstreamUa.toLowerCase().includes("opencode");
 
+    // opencode upstream now requires a real API key for chat (the catalog is
+    // public but chat returns 401 without a key). Use the configured connection
+    // API key when present; keep "public" as a fallback for the legacy no-auth
+    // path so existing installs don't break.
+    const apiKey = credentials?.apiKey || "public";
+
     return {
       "Content-Type": "application/json",
-      "Authorization": "Bearer public",
+      "Authorization": `Bearer ${apiKey}`,
       "User-Agent": isOpencodeDownstream ? downstreamUa : OPENCODE_UA,
       "x-opencode-client": lower["x-opencode-client"] || "desktop",
       "x-opencode-session": lower["x-opencode-session"] || this._currentSessionId || generateSessionId(),

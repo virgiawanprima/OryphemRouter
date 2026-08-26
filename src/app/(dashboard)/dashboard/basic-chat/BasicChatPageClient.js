@@ -41,6 +41,31 @@ function textValue(value) {
   return String(value);
 }
 
+// Extract a clean, human-readable message from an upstream/provider error that
+// may be nested (object) or JSON-stringified (e.g. "[401]: {\"type\":\"error\",...}").
+function extractErrorText(value) {
+  let text = textValue(value);
+  // Handle "[401]: {...}" — strip the status prefix and unwrap the JSON payload.
+  const jsonStart = text.indexOf("{");
+  if (jsonStart > 0) {
+    const statusPart = text.slice(0, jsonStart).trim(); // e.g. "[401]:"
+    const jsonPart = text.slice(jsonStart);
+    try {
+      const parsed = JSON.parse(jsonPart);
+      const inner = parsed?.error || parsed;
+      if (typeof inner === "object") {
+        const msg = inner.message || inner.error?.message || (typeof inner.error === "string" ? inner.error : "");
+        if (msg) return msg;
+      }
+    } catch {
+      // not JSON — keep as-is
+    }
+    // Prefer a short status hint over the raw JSON body.
+    if (statusPart) return `Provider error ${statusPart.replace(/[\[\]:]/g, "").trim()}`;
+  }
+  return text;
+}
+
 function humanize(value = "") {
   return String(value)
     .replace(/[-_]/g, " ")
@@ -707,7 +732,10 @@ export default function BasicChatPageClient() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(textValue(errorData.error || errorData.message || `Request failed (${response.status})`));
+        // errorData.error can be a string, an object, or a JSON string containing a
+        // nested upstream error (e.g. "[401]: {\"type\":\"error\",...}"). Extract the
+        // human-readable message instead of showing raw JSON.
+        throw new Error(extractErrorText(errorData.error || errorData.message) || `Request failed (${response.status})`);
       }
 
       const reader = response.body?.getReader();
