@@ -558,23 +558,9 @@ export default function BasicChatPageClient() {
     if (!group || group.models.length === 0) return;
     const nextModel = group.models[0];
 
-    const current = sessions.find((session) => session.id === activeSessionId);
-    if (current && current.messages.length > 0) {
-      const session = ensureSessionForModel(nextModel);
-      if (!session) return;
-      setSessions((prev) => [session, ...prev]);
-      setActiveSessionId(session.id);
-    } else if (current) {
-      setSessions((prev) => prev.map((item) => (item.id === current.id ? {
-        ...item,
-        providerId: group.providerId,
-        providerName: group.providerName,
-        modelId: nextModel.id,
-        modelName: nextModel.name,
-      } : item)));
-      setActiveSessionId(current.id);
-    }
-
+    // Switch the active model WITHOUT creating a new session or touching the
+    // current chat — the conversation stays exactly where it is; only the model
+    // used for the next message changes.
     setActiveProviderId(group.providerId);
     setActiveModelId(nextModel.id);
     setModelMenuOpen(false);
@@ -584,28 +570,8 @@ export default function BasicChatPageClient() {
     const model = modelIndex.get(modelId);
     if (!model) return;
 
-    const current = sessions.find((session) => session.id === activeSessionId);
-    if (current && current.messages.length > 0) {
-      const session = ensureSessionForModel(model);
-      if (!session) return;
-      setSessions((prev) => [session, ...prev]);
-      setActiveSessionId(session.id);
-    } else if (current) {
-      setSessions((prev) => prev.map((item) => (item.id === current.id ? {
-        ...item,
-        providerId: model.providerId,
-        providerName: model.providerName,
-        modelId: model.id,
-        modelName: model.name,
-      } : item)));
-      setActiveSessionId(current.id);
-    } else {
-      const session = ensureSessionForModel(model);
-      if (!session) return;
-      setSessions((prev) => [session, ...prev]);
-      setActiveSessionId(session.id);
-    }
-
+    // Same as above: changing the model must never replace or reset the chat.
+    // Keep the current session and its messages; only the active model changes.
     setActiveProviderId(model.providerId);
     setActiveModelId(model.id);
     setModelMenuOpen(false);
