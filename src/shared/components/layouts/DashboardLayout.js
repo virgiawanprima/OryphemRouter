@@ -20,10 +20,6 @@ export default function DashboardLayout({ children }) {
   const notifications = useNotificationStore((state) => state.notifications);
   const removeNotification = useNotificationStore((state) => state.removeNotification);
 
-  // Basic Chat is a full-viewport app: it manages its own internal scrolling, so
-  // the dashboard wrapper must not add padding or a page-level scrollbar.
-  const isFullViewport = pathname?.startsWith("/dashboard/basic-chat");
-
   return (
     <div className="flex h-screen w-full overflow-hidden bg-bg">
       {/* Toasts */}
@@ -67,11 +63,11 @@ export default function DashboardLayout({ children }) {
       {/* Main content */}
       <main className="flex flex-col flex-1 h-full min-w-0">
         <Header key={pathname} onMenuClick={() => setSidebarOpen(true)} />
-        <div className={`flex-1 relative ${isFullViewport ? "overflow-hidden" : "overflow-y-auto custom-scrollbar"}`}>
+        <div className="flex-1 overflow-y-auto custom-scrollbar relative">
           {/* Ambient premium glow */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-c-blue-50/5 via-transparent to-transparent" />
-          <div className={`relative ${isFullViewport ? "p-0 h-full" : "p-6 lg:p-10"}`}>
-            <div className={`${isFullViewport ? "h-full max-w-none" : "max-w-7xl mx-auto"}`}>{children}</div>
+          <div className="relative p-6 lg:p-10">
+            <div className="max-w-7xl mx-auto">{children}</div>
           </div>
         </div>
         <StatusBar />

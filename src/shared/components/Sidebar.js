@@ -14,7 +14,6 @@ import RemotePromoModal from "./RemotePromoModal";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: "space_dashboard" },
-  { href: "/dashboard/basic-chat", label: "Basic Chat", icon: "chat" },
   { href: "/dashboard/endpoint", label: "Endpoint & Key", icon: "api" },
   { href: "/dashboard/providers", label: "Providers", icon: "dns" },
   { href: "/dashboard/combos", label: "Combo & Vision Adapter", icon: "layers" },

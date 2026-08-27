@@ -176,13 +176,6 @@ const getPageInfo = (pathname) => {
       icon: "monitor",
       breadcrumbs: [],
     };
-  if (pathname.includes("/basic-chat"))
-    return {
-      title: "Basic Chat",
-      description: "Quick chat with any configured provider",
-      icon: "smart_toy",
-      breadcrumbs: [],
-    };
   if (pathname.includes("/pxpipe"))
     return {
       title: "PX Pipe",
