@@ -174,7 +174,7 @@ export async function PATCH(request) {
     }
     if (!checkPrivilege(pwd)) {
       return NextResponse.json(
-        { error: isWin ? "Administrator required — restart oryphemrouter as Administrator" : "Root or sudo password required to modify DNS" },
+        { error: isWin ? "Administrator required - restart oryphemrouter as Administrator" : "Root or sudo password required to modify DNS" },
         { status: 403 }
       );
     }
