@@ -70,7 +70,7 @@ export default function ModelSelectModal({
       return kinds.includes(kindFilter);
     });
   }, [activeProviders, kindFilter]);
-  const { getCaps } = useModelCaps();
+  const { getCaps, getPricing } = useModelCaps();
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
   const [combos, setCombos] = useState([]);
