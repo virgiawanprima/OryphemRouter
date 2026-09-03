@@ -98,13 +98,13 @@ export default function CopilotToolCard({ tool, isExpanded, onToggle, baseUrl, a
   const checkStatus = async () => {
     setChecking(true);
     try {
-      const res = await fetch("/api/cli-tools/copilot-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=copilot");
       const data = await res.json();
       if (!res.ok) {
         // API error (e.g. 403/401/500) — do NOT misreport as "not installed".
         setStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
       } else {
-        setStatus(data);
+        setStatus(data?.copilot || { checkFailed: true, error: "No status for copilot" });
       }
     } catch (error) {
       setStatus({ checkFailed: true, error: error.message });
