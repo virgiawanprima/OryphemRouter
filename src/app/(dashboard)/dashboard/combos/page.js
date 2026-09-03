@@ -681,7 +681,7 @@ function ModelItem({
   );
 }
 
-// Group models by provider prefix, preserving order within each group
+// Extract models at a flat index from group order
 function groupModelsByProvider(models) {
   const groups = {};
   const groupOrder = [];
