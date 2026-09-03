@@ -1,6 +1,7 @@
-import { saveRequestUsage, appendRequestLog, saveRequestDetail } from "@/lib/usageDb.js";
+import { saveRequestUsage, appendRequestLog, saveRequestDetail } from "../../utils/omni/usageDb.js";
 import { COLORS } from "../../utils/stream.js";
 import { canonicalizeUsage } from "../../utils/usageTracking.js";
+import { log as engineLog, sanitize } from "../../utils/log.js";
 
 const OPTIONAL_PARAMS = [
   "temperature", "top_p", "top_k",
