@@ -815,26 +815,29 @@ function startServer(updatePromise) {
 
           // cleanup() kills server so bgProcess can claim the port fresh
           cleanup();
-          process.exit(0);
+          gracefulExit();
         } else if (choice === "exit") {
           isShuttingDown = true;
           console.log("\nExiting...");
           cleanup();
-          setTimeout(() => process.exit(0), 100);
+          gracefulExit();
         }
       }
     } catch (err) {
       console.error("Error:", err.message);
       cleanup();
-      process.exit(1);
+      gracefulExit(1);
     }
-  });
+    })
+    .catch((err) => {
+      console.error("server ready check failed", err);
+    });
 
   function attachServerEvents() {
     server.on("error", (err) => {
       console.error("Failed to start server:", err.message);
       if (!isShuttingDown) tryRestart();
-      else { cleanup(); process.exit(1); }
+      else { cleanup(); gracefulExit(1); }
     });
 
     server.on("close", (code) => {
