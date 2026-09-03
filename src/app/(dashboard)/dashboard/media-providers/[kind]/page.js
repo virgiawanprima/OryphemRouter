@@ -296,6 +296,33 @@ export default function MediaProviderKindPage() {
         </div>
       )}
 
+      {isRegistryKind && registryProviders.length > 0 && (
+        <Card padding="md">
+          <h2 className="text-[16px] font-medium text-text-main mb-1">Providers</h2>
+          <p className="text-[13px] text-text-muted mb-1">
+            Available via <code className="font-mono text-xs">{kindConfig?.endpoint?.path || "/v1/"+kind}</code>
+          </p>
+          <pre className="mt-1 mb-3 rounded-lg bg-black/5 dark:bg-white/5 px-3 py-2 font-mono text-[11px] text-text-muted overflow-x-auto">{`curl -X POST localhost:20129${kindConfig?.endpoint?.path || "/v1/"+kind} \\\n  -H "Authorization: Bearer YOUR_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '${REGISTRY_SAMPLE_BODY[kind] || "{}"}'`}</pre>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {registryProviders.map((p) => (
+              <div key={p.id} className="rounded-lg border border-border px-3 py-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-medium text-text-main truncate">{p.name}</span>
+                  <Badge>{p.modelCount ?? p.models?.length ?? 0}</Badge>
+                </div>
+                {Array.isArray(p.models) && p.models.length > 0 && (
+                  <ul className="mt-1 flex flex-wrap gap-1">
+                    {p.models.slice(0, 6).map((m) => (
+                      <li key={m.id} className="text-[11px] text-text-muted font-mono bg-black/5 dark:bg-white/5 rounded px-1 py-0.5">{m.name || m.id}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
       {isEmbedding && (
         <AddCustomEmbeddingModal
           isOpen={showAddCustomEmbedding}
