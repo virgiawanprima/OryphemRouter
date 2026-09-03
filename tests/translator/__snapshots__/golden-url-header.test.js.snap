@@ -250,7 +250,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > alibaba → headers 
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > chutes → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > alibaba-cn → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
