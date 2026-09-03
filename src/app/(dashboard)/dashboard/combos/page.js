@@ -324,7 +324,7 @@ function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, o
                 combo.models.slice(0, 3).map((model, index) => (
                   <code key={index} className="inline-flex items-center gap-1 rounded bg-black/5 px-1.5 py-0.5 font-mono text-xs text-text-muted dark:bg-white/5">
                     <span>{model}</span>
-                    <CapacityBadges caps={getCaps?.(model)} />
+                    <CapacityBadges caps={getCaps?.(model)} pricing={getPricing?.(model)} />
                   </code>
                 ))
               )}
