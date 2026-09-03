@@ -99,9 +99,13 @@ export default function OpenClawToolCard({
     try {
       const res = await fetch("/api/cli-tools/all-statuses?tool=openclaw");
       const data = await res.json();
-      setOpenclawStatus(data);
+      if (!res.ok) {
+        setOpenclawStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setOpenclawStatus(data?.openclaw || { checkFailed: true, error: "No status for openclaw" });
+      }
     } catch (error) {
-      setOpenclawStatus({ installed: false, error: error.message });
+      setOpenclawStatus({ checkFailed: true, error: error.message });
     } finally {
       setCheckingOpenclaw(false);
     }
