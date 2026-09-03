@@ -109,24 +109,29 @@ const writeProviderEnv = async (env) => {
 };
 
 export async function GET() {
-  const isInstalled = await checkJcodeInstalled();
+  try {
+    const isInstalled = await checkJcodeInstalled();
 
-  if (!isInstalled) {
+    if (!isInstalled) {
+      return NextResponse.json({
+        installed: false,
+        message: "jcode not installed. Install via: curl -fsSL https://raw.githubusercontent.com/1jehuang/jcode/master/scripts/install.sh | bash",
+      });
+    }
+
+    const config = await readConfig();
+    const hasoryphemrouter = hasoryphemrouterConfig(config);
+
     return NextResponse.json({
-      installed: false,
-      message: "jcode not installed. Install via: curl -fsSL https://raw.githubusercontent.com/1jehuang/jcode/master/scripts/install.sh | bash",
+      installed: true,
+      config,
+      hasoryphemrouter,
+      configPath: getConfigPath(),
     });
+  } catch (error) {
+    console.log("Error checking jcode settings:", error);
+    return NextResponse.json({ error: "Failed to check jcode settings" }, { status: 500 });
   }
-
-  const config = await readConfig();
-  const hasoryphemrouter = hasoryphemrouterConfig(config);
-
-  return NextResponse.json({
-    installed: true,
-    config,
-    hasoryphemrouter,
-    configPath: getConfigPath(),
-  });
 }
 
 export async function POST(request) {
