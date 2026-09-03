@@ -19,6 +19,7 @@ export default {
   authModes: ["apikey"],
   transport: {
     baseUrl: "https://openrouter.ai/api/v1/chat/completions",
+    validateUrl: "https://openrouter.ai/api/v1/models",
     thinkingFormat: "openai",
     headers: {
       "HTTP-Referer": "https://endpoint-proxy.local",
