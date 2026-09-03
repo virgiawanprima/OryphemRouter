@@ -204,13 +204,13 @@ function getAppDataDir() {
 function killByPidFile(pidFile) {
   try {
     if (!fs.existsSync(pidFile)) return;
-    const pid = parseInt(fs.readFileSync(pidFile, "utf8").trim(), 10);
+    const pid = safePid(fs.readFileSync(pidFile, "utf8").trim());
     if (!pid) return;
     try {
       if (process.platform === "win32") {
-        execSync(`taskkill /F /T /PID ${pid}`, { stdio: "ignore", windowsHide: true, timeout: 3000 });
+        execFileSync("taskkill", ["/F", "/T", "/PID", pid], { stdio: "ignore", windowsHide: true, timeout: 3000 });
       } else {
-        process.kill(pid, "SIGKILL");
+        process.kill(Number(pid), "SIGKILL");
       }
     } catch { }
     try { fs.unlinkSync(pidFile); } catch { }
