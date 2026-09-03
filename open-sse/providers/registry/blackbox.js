@@ -24,6 +24,7 @@ export default {
   },
   transport: {
     baseUrl: "https://api.blackbox.ai/v1/chat/completions",
+    validateUrl: "https://api.blackbox.ai/v1/models",
     thinkingFormat: "openai",
   },
   models: [
