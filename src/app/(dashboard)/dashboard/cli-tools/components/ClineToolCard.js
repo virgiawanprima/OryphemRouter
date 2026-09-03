@@ -194,12 +194,12 @@ export default function ClineToolCard({ tool, isExpanded, onToggle, baseUrl, api
           )}
 
                     {!checking && status?.checkFailed && (
-            <div className="flex flex-col gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <div className="flex flex-col gap-2 p-4 bg-black/5 dark:bg-white/5 border border-border rounded-lg">
               <div className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-red-500">error</span>
+                <span className="material-symbols-outlined text-text-muted">info</span>
                 <div className="flex-1">
-                  <p className="font-medium text-red-600 dark:text-red-400">Could not check CLI status</p>
-                  <p className="text-sm text-text-muted">{status.error || "An error occurred while checking the local installation."}</p>
+                  <p className="font-medium text-text-main">Status unavailable</p>
+                  <p className="text-sm text-text-muted">Reading local installation status requires a local (CLI-authenticated) session. This browser session can't read it; use the CLI or log in to manage this tool.</p>
                 </div>
               </div>
             </div>
