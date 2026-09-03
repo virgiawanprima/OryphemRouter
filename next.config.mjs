@@ -29,6 +29,11 @@ const nextConfig = {
     "*": ["./gitbook/**/*"]
   },
   images: {
+    // Security posture: unoptimized keeps the Image Optimization API OFF, so
+    // Next.js never processes/re-encodes uploads (incl. AVIF) server-side.
+    // This neutralizes GHSA-2xp9-vwfh-vxw4 (Image Optimization RCE) entirely and
+    // removes the AVIF decoder attack surface. If optimization is ever needed,
+    // upgrade to next >= 16.3.3 (patched) AND restrict formats to ["image/webp"].
     unoptimized: true
   },
   env: {},
