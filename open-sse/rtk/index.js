@@ -82,7 +82,7 @@ export function compressMessages(body, enabled) {
       }
     }
   } catch (e) {
-    console.warn("[RTK] compressMessages error:", e.message);
+    engineLog.warn("RTK", "compressMessages error:", sanitize(e.message));
     return null;
   }
   return stats;
