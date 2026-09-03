@@ -92,7 +92,7 @@ export default function JcodeToolCard({
   const checkJcodeStatus = async () => {
     setCheckingJcode(true);
     try {
-      const res = await fetch("/api/cli-tools/jcode-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=jcode");
       const data = await res.json();
       setJcodeStatus(data);
     } catch (error) {
