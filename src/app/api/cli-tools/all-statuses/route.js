@@ -33,12 +33,20 @@ const STATUS_GETTERS = {
   devin: devinGet,
 };
 
-// Batch endpoint: gather all CLI tool statuses in one round-trip
-export async function GET() {
+// Batch endpoint: gather all CLI tool statuses in one round-trip.
+// Optional ?tool=<id> — fetch only that tool's status (cheap, for per-tool detail
+// pages that just need one tool instead of the full 14-getter aggregate).
+export async function GET(request) {
+  const toolFilter = request?.url ? new URL(request.url).searchParams.get("tool") : null;
+  const keys = toolFilter
+    ? Object.keys(STATUS_GETTERS).filter((k) => k === toolFilter)
+    : Object.keys(STATUS_GETTERS);
   const entries = await Promise.all(
-    Object.entries(STATUS_GETTERS).map(async ([toolId, getter]) => {
+    keys.map(async (toolId) => {
+      const getter = STATUS_GETTERS[toolId];
       try {
         const res = await getter();
+        if (!res.ok) return [toolId, null];
         const data = await res.json();
         return [toolId, data];
       } catch {
