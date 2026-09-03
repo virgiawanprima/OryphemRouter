@@ -375,26 +375,26 @@ function killProxyByPidFile() {
   try {
     const pidFile = path.join(getAppDataDir(), "mitm", ".mitm.pid");
     if (!fs.existsSync(pidFile)) return;
-    const pid = parseInt(fs.readFileSync(pidFile, "utf8").trim(), 10);
+    const pid = safePid(fs.readFileSync(pidFile, "utf8").trim());
     if (!pid) return;
 
     if (process.platform === "win32") {
       // Graceful first (lets server cleanup hosts), then force
-      try { execSync(`taskkill /T /PID ${pid}`, { stdio: "ignore", windowsHide: true, timeout: 2000 }); } catch { }
-      if (!waitForExit(pid, 1500)) {
-        try { execSync(`taskkill /F /T /PID ${pid}`, { stdio: "ignore", windowsHide: true, timeout: 3000 }); } catch { }
+      try { execFileSync("taskkill", ["/T", "/PID", pid], { stdio: "ignore", windowsHide: true, timeout: 2000 }); } catch { }
+      if (!waitForExit(Number(pid), 1500)) {
+        try { execFileSync("taskkill", ["/F", "/T", "/PID", pid], { stdio: "ignore", windowsHide: true, timeout: 3000 }); } catch { }
       }
-      // Last-resort: PowerShell Stop-Process (sometimes succeeds where taskkill fails on admin processes)
-      if (!waitForExit(pid, 500)) {
-        try { execSync(`powershell -NonInteractive -WindowStyle Hidden -Command "Stop-Process -Id ${pid} -Force"`, { stdio: "ignore", windowsHide: true, timeout: 3000 }); } catch { }
+      // Last-resort: process.kill SIGKILL (sometimes succeeds where taskkill fails on admin processes)
+      if (!waitForExit(Number(pid), 500)) {
+        try { process.kill(Number(pid), "SIGKILL"); } catch { }
       }
     } else {
-      // SIGTERM via cached sudo token first
-      try { execSync(`sudo -n kill -TERM ${pid} 2>/dev/null`, { stdio: "ignore", timeout: 2000 }); }
-      catch { try { process.kill(pid, "SIGTERM"); } catch { } }
-      if (!waitForExit(pid, 1500)) {
-        try { execSync(`sudo -n kill -9 ${pid} 2>/dev/null`, { stdio: "ignore", timeout: 2000 }); }
-        catch { try { process.kill(pid, "SIGKILL"); } catch { } }
+      // SIGTERM via kill first (no shell), fall back to process.kill
+      try { execFileSync("kill", ["-TERM", pid], { stdio: "ignore", timeout: 2000 }); }
+      catch { try { process.kill(Number(pid), "SIGTERM"); } catch { } }
+      if (!waitForExit(Number(pid), 1500)) {
+        try { execFileSync("kill", ["-9", pid], { stdio: "ignore", timeout: 2000 }); }
+        catch { try { process.kill(Number(pid), "SIGKILL"); } catch { } }
       }
     }
     try { fs.unlinkSync(pidFile); } catch { }
