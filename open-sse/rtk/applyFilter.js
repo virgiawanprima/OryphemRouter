@@ -10,7 +10,7 @@ export function safeApply(fn, text) {
   } catch (err) {
     // Rust: eprintln!("[rtk] warning: filter panicked — passing through raw output")
     const name = fn.filterName || fn.name || "anonymous";
-    console.warn(`[rtk] warning: filter '${name}' panicked — passing through raw output: ${err?.message || err}`);
+    engineLog.warn("RTK", `warning: filter '${name}' panicked — passing through raw output: ${sanitize(err?.message || err)}`);
     return text;
   }
 }
