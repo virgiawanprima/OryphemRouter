@@ -18,7 +18,6 @@ import { getModelMetadata } from "open-sse/providers/models/getMetadata.js";
 import { getProviderModels, isValidModel } from "open-sse/config/providerModels.js";
 import { fetchPublicUrl } from "@/shared/utils/ssrfGuard.js";
 import { assertPublicUrl } from "@/shared/utils/ssrfGuard.js";
-import { validateApiKey } from "./apiKeyValidator.js";
 
 // ---------------------------------------------------------------------------
 // Provider endpoint / auth scheme configuration
