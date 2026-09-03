@@ -210,8 +210,7 @@ export async function handleChat(request, clientRawRequest = null, opts = {}) {
         handleSingleModel: (b, m, isPanel, signal) => {
           let cleanRawReq = clientRawRequest;
           if (isPanel && clientRawRequest) {
-            const { tools, tool_choice, ...cleanBody } = clientRawRequest.body || {};
-            cleanRawReq = { ...clientRawRequest, body: cleanBody };
+            const { tools, tool_choice, ...cleanBody } = clientRawRequest.body || {};            cleanRawReq = { ...clientRawRequest, body: cleanBody };
           }
           return handleSingleModelChat(b, m, cleanRawReq, request, apiKey, signal);
         },
