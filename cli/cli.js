@@ -430,14 +430,15 @@ function killProcessOnPort(port) {
         } else {
           // macOS/Linux
           try {
-            const pidOutput = execSync(`lsof -ti:${port}`, {
+            const pidOutput = execFileSync("lsof", [`-ti:${port}`], {
               encoding: 'utf8',
               stdio: ['pipe', 'pipe', 'ignore']
             }).trim();
             if (pidOutput) {
               pid = pidOutput.split('\n')[0];
-              if (pid && !isNaN(pid)) {
-                process.kill(parseInt(pid, 10), "SIGKILL");
+              const spid = safePid(pid);
+              if (spid) {
+                process.kill(Number(spid), "SIGKILL");
               }
             }
         } catch (e) {
