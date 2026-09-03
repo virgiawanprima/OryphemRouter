@@ -18,6 +18,7 @@ export default {
   hasOAuth: true,
   transport: {
     baseUrl: "https://llm.kimchi.dev/openai/v1/chat/completions",
+    validateUrl: "https://llm.kimchi.dev/openai/v1/models",
     format: "openai",
     headers: {
       "User-Agent": "kimchi/0.1.50",
