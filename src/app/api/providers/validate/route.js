@@ -538,7 +538,7 @@ export async function POST(request) {
           // Cookie valid = any non-401/403 response (200, 400, 429 all mean cookie accepted)
           if (res.status === 401 || res.status === 403) {
             isValid = false;
-            error = "Invalid SSO cookie — re-paste from grok.com DevTools → Cookies → sso";
+            error = "Invalid SSO cookie - re-paste from grok.com DevTools → Cookies → sso";
           } else {
             isValid = true;
           }
