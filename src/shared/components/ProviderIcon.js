@@ -45,10 +45,18 @@ export default function ProviderIcon({
           width: size,
           height: size,
           color: fallbackColor,
-          fontSize: Math.max(10, Math.floor(size * 0.38)),
+          fontSize: useSymbol ? Math.max(14, Math.floor(size * 0.6)) : Math.max(9, Math.floor(size * 0.34)),
         }}
       >
-        {fallbackText}
+        {useSymbol ? (
+          <span className="material-symbols-outlined" style={{ fontSize: Math.max(14, Math.floor(size * 0.6)) }}>
+            {symbolIcon}
+          </span>
+        ) : useText ? (
+          textIcon
+        ) : (
+          fallbackText
+        )}
       </span>
     );
   }
