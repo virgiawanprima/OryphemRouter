@@ -332,14 +332,15 @@ OryphemRouter mendukung **4 strategi routing** per combo:
 
 ## 🆓 Free-Tier Budget Tracker
 
-Halaman `/dashboard/free-tiers` menampilkan **penggunaan kuota gratis** secara real-time:
+Halaman `/dashboard/free-tiers` menampilkan **penggunaan kuota gratis** secara real-time. Provider free-tier ditemukan otomatis dan difilter ke yang benar-benar merespons `2xx`, sehingga daftar mencerminkan yang benar-benar berfungsi tanpa API key. Contohnya:
 
-| Provider | Tipe | Kuota | Reset |
-|----------|------|-------|-------|
-| **Kiro AI** | Credits | 50 credits/bulan | Bulanan (1st) |
-| **OpenCode Free** | Unlimited | ∞ | Tidak ada |
-| **Vertex AI** | Credits | $300 | Sekali (90 hari) |
-| **Felo** | Unlimited | ∞ | Tidak ada |
+| Provider | Tipe | Catatan |
+|----------|------|---------|
+| Kiro | Agent/IDE (MITM) | Free tier berbasis subscription |
+| OpenCode | Katalog | Model gratis `opencode.ai/zen` |
+| Pollinations | Gratis | Tanpa API key |
+| Felo | Gratis | Berbasis search |
+| Ollama / Local | Lokal | `ollama` & `ollama-local` |
 
 - 🟢 Progress bar *used / remaining* per provider
 - 🔄 Auto-refresh setiap 60 detik
