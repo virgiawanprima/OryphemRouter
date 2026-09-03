@@ -99,7 +99,7 @@ export default function DroidToolCard({
   const checkDroidStatus = async () => {
     setCheckingDroid(true);
     try {
-      const res = await fetch("/api/cli-tools/droid-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=droid");
       const data = await res.json();
       setDroidStatus(data);
     } catch (error) {
