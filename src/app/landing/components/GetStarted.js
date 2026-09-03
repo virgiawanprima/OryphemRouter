@@ -29,7 +29,7 @@ export default function GetStarted() {
               </div>
               
               <div className="flex gap-4">
-                <div className="flex-none w-8 h-8 rounded-full bg-[#bd93f9]/20 text-[#bd93f9] flex items-center justify-center font-bold">2</div>
+                <div className="flex-none w-8 h-8 rounded-full bg-[#38d9c8]/20 text-[#38d9c8] flex items-center justify-center font-bold">2</div>
                 <div>
                   <h4 className="font-bold text-lg">Open Dashboard</h4>
                   <p className="text-sm text-gray-500 mt-1">Configure providers and API keys via web interface</p>
