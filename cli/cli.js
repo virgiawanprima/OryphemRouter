@@ -740,7 +740,8 @@ function startServer(updatePromise) {
   }
 
   // Wait for server to be ready, then show interface menu loop + tray
-  waitServerReady(port).then(async () => {
+  waitServerReady(port)
+    .then(async () => {
     // Resolve parallel update check (already running); don't block server start on it.
     const latestVersion = await latestVersionPromise;
     // Start tray icon alongside TUI
