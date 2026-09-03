@@ -27,6 +27,12 @@ import { updateProviderCredentials, checkAndRefreshToken } from "../services/tok
 import { getProjectIdForConnection } from "open-sse/services/projectId.js";
 import { checkRateLimit } from "@/lib/auth/apiRateLimiter";
 import { getSpendingLimitsCache, getSpendingLimitsCacheTtlMs } from "../services/spendingCache.js";
+import {
+  generateSignature,
+  getCachedResponse,
+  setCachedResponse,
+  isCacheableForRead,
+} from "../services/semanticCache.js";
 
 // H6: In-memory cache for spending-limit queries to avoid two full-history
 // queries (getUsageStats("30d") + getUsageStats("today")) on every chat request.
