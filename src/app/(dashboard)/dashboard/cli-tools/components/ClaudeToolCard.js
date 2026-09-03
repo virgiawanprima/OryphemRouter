@@ -139,7 +139,7 @@ export default function ClaudeToolCard({
   const checkClaudeStatus = async () => {
     setCheckingClaude(true);
     try {
-      const res = await fetch("/api/cli-tools/claude-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=claude");
       const data = await res.json();
       if (!res.ok) {
         setClaudeStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
