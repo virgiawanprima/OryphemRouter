@@ -59,7 +59,7 @@ export default function Navigation() {
             <a className="text-gray-300 hover:text-white text-sm font-medium transition-colors" href="https://github.com/virgiawanprima/OryphemRouter" target="_blank" rel="noopener noreferrer">GitHub</a>
             <button 
               onClick={() => router.push("/dashboard")}
-              className="h-9 rounded-lg bg-[#bd93f9] hover:bg-[#ab7cf7] text-[#1a1b26] text-sm font-bold"
+              className="h-9 rounded-lg bg-[#38d9c8] hover:bg-[#66e3d4] text-[#0b1018] text-sm font-bold"
             >
               Get Started
             </button>
