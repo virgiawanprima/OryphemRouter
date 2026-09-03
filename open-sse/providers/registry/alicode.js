@@ -15,6 +15,7 @@ export default {
   category: "apikey",
   transport: {
     baseUrl: "https://coding.dashscope.aliyuncs.com/v1/chat/completions",
+    validateUrl: "https://coding.dashscope.aliyuncs.com/v1/models",
     headers: {},
     quirks: { preserveCacheControl: true },
   },
