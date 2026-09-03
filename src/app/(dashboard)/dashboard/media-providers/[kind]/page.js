@@ -12,6 +12,18 @@ import { MEDIA_PROVIDER_KINDS, AI_PROVIDERS, getProvidersByKind } from "@/shared
 const COMBO_KINDS = new Set([]);
 const COMBO_BASE_NAMES = { image: "image-combo", tts: "tts-combo" };
 
+// Media kinds whose providers live in the ported media registries
+// (open-sse/config/*Registry.js) rather than the standard AI_PROVIDERS catalog.
+// These are surfaced from /api/media-providers/registry as an info list.
+const REGISTRY_KINDS = new Set(["upscale", "ocr", "rerank", "moderation", "music"]);
+const REGISTRY_SAMPLE_BODY = {
+  upscale: '{"image":"<base64-or-url>","scale":2}',
+  ocr: '{"model":"<provider/model>","image":"<base64-or-url>"}',
+  rerank: '{"model":"<provider/model>","query":"search text","documents":["doc1","doc2"]}',
+  moderation: '{"input":"text to check"}',
+  music: '{"model":"<provider/model>","prompt":"a calm piano melody"}',
+};
+
 function getEffectiveStatus(conn) {
   const isCooldown = Object.entries(conn).some(
     ([k, v]) => k.startsWith("modelLock_") && v && new Date(v).getTime() > Date.now()
