@@ -16,6 +16,7 @@ import { SSE_DONE, SSE_HEADERS } from "../utils/sseConstants.js";
 import { chatChunkSse, sseChunk } from "../utils/sse.js";
 import { FORMATS } from "../translator/formats.js";
 import { proxyAwareFetch } from "../utils/proxyFetch.js";
+import { log, sanitize } from "../utils/log.js";
 import zlib from "zlib";
 import crypto from "crypto";
 
