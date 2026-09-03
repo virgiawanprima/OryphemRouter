@@ -101,9 +101,13 @@ export default function DroidToolCard({
     try {
       const res = await fetch("/api/cli-tools/all-statuses?tool=droid");
       const data = await res.json();
-      setDroidStatus(data);
+      if (!res.ok) {
+        setDroidStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setDroidStatus(data?.droid || { checkFailed: true, error: "No status for droid" });
+      }
     } catch (error) {
-      setDroidStatus({ installed: false, error: error.message });
+      setDroidStatus({ checkFailed: true, error: error.message });
     } finally {
       setCheckingDroid(false);
     }
