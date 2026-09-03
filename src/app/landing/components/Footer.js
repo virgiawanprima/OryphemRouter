@@ -2,13 +2,13 @@
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#3a3d4f] bg-[#120f0d] pt-16 pb-8 px-6">
+    <footer className="border-t border-[#2a3947] bg-[#0b1018] pt-16 pb-8 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-16">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="size-6 rounded bg-[#bd93f9] flex items-center justify-center text-white">
+              <div className="size-6 rounded bg-[#38d9c8] flex items-center justify-center text-white">
                 <span className="material-symbols-outlined text-[16px]">hub</span>
               </div>
               <h3 className="text-white text-lg font-bold">OryphemRouter</h3>
