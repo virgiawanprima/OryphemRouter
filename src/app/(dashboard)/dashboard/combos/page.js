@@ -460,64 +460,115 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
     patch({ models: next.length === 0 ? [] : next });
   };
 
-  const handleMove = (index, delta) => {
-    const target = index + delta;
-    if (target < 0 || target >= models.length) return;
-    const next = [...models];
-    [next[index], next[target]] = [next[target], next[index]];
-    patch({ models: next });
-  };
+  // Helper: provider alias → 16-20px logo chip inside model id
+  const chipProvider = (modelId) => (modelId?.includes("/") ? modelId.split("/")[0] : "");
+  // Tiny formatter for pill badge ($8/M → "8", $0.5 → "0.5").
+  const formatPr = (v) => (v == null ? "?" : v === 0 ? "0" : v >= 100 ? Math.round(v) : v >= 1 ? +v.toFixed(2) : v >= 0.01 ? +v.toFixed(3) : +v.toFixed(4));
 
   return (
-    <Card padding="sm" className={`group ${!enabled ? "opacity-50" : ""}`}>
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* Master toggle + icon + label + chips */}
-        <div className="flex min-w-0 flex-1 items-start gap-2.5 sm:items-center">
-          <Toggle
-            checked={enabled}
-            onChange={(v) => patch({ enabled: v })}
-            aria-label={`Enable ${cap.label} adapter`}
-          />
-          <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-primary text-[18px]">{cap.icon}</span>
-          </div>
-          <div className="min-w-0 flex-1">
+    <Card padding="sm" className={`group ${!enabled ? "opacity-50" : ""} bg-[color:var(--md-sys-color-surfaceContainerLowest)]`}>
+      {/* === Header block: enable toggle + label + description + hint list === */}
+      <div className="flex items-start gap-3 mb-3">
+        <Toggle
+          checked={enabled}
+          onChange={(v) => patch({ enabled: v })}
+          aria-label={`Enable ${cap.label} adapter`}
+        />
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="size-8 shrink-0 rounded-[var(--md-sys-shape-corner-small)] flex items-center justify-center"
+            style={{ backgroundColor: "var(--md-sys-color-surfaceVariant, var(--color-brand-50))", color: "var(--md-sys-color-onSurfaceVariant, var(--color-brand-600))" }}
+          >
+            <span className="material-symbols-outlined text-[18px]">{cap.icon}</span>
+          </span>
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <code className="font-mono text-sm font-medium">{cap.label}</code>
-              <span className="text-[10px] text-text-muted">: {cap.desc}</span>
+              <p className="font-medium text-[var(--md-sys-color-onSurface)] text-sm leading-tight">{cap.label}</p>
+              <span className="text-[11px] text-[var(--md-sys-color-onSurfaceVariant)] truncate">{cap.desc}</span>
             </div>
-            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1">
-              {models.length === 0 ? (
-                <span className="text-xs text-text-muted italic">No models</span>
-              ) : (
-                models.slice(0, 3).map((model, index) => (
-                  <code
-                    key={`${model}-${index}`}
-                    className="group/chip inline-flex items-center gap-1 rounded bg-black/5 px-1.5 py-0.5 font-mono text-xs text-text-muted dark:bg-white/5"
-                  >
-                    <span>{model}</span>
-                    <CapacityBadges caps={getCaps?.(model)} pricing={getPricing?.(model)} />
-                    <button onClick={() => handleMove(index, -1)} disabled={index === 0} className={`leading-none opacity-0 group-hover/chip:opacity-100 ${index === 0 ? "text-text-muted/20" : "text-text-muted hover:text-primary"}`}>
-                      <span className="material-symbols-outlined text-[12px]">arrow_upward</span>
-                    </button>
-                    <button onClick={() => handleMove(index, 1)} disabled={index === models.length - 1} className={`leading-none opacity-0 group-hover/chip:opacity-100 ${index === models.length - 1 ? "text-text-muted/20" : "text-text-muted hover:text-primary"}`}>
-                      <span className="material-symbols-outlined text-[12px]">arrow_downward</span>
-                    </button>
-                    <button onClick={() => handleRemove(index)} className="leading-none opacity-0 group-hover/chip:opacity-100 text-text-muted hover:text-red-500">
-                      <span className="material-symbols-outlined text-[12px]">close</span>
-                    </button>
-                  </code>
-                ))
-              )}
-              {models.length > 3 && (
-                <span className="text-[10px] text-text-muted">+{models.length - 3} more</span>
-              )}
-            </div>
+            <p className="text-[11px] text-[var(--md-sys-color-onSurfaceVariant)] mt-0.5 leading-snug">
+              Route a {cap.key} request to the first available model in the list.
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Actions: Round-robin toggle + Add Model */}
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3 sm:shrink-0">
+      {/* === Chip list section — horizontal scroll, model ID on left, controls pinned on right === */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end min-w-0">
+        <div
+          role="list"
+          aria-label={cap.label + " model pool"}
+          className="flex min-w-0 flex-wrap items-stretch gap-2 overflow-x-auto pb-1 scroll-smooth
+                     [scrollbar-color:var(--md-sys-color-outlineVariant)_transparent]
+                     [scrollbar-width:thin] max-h-[200px] overflow-y-auto"
+        >
+          {models.length === 0 ? (
+            <div className="inline-flex h-8 items-center rounded-[var(--md-sys-shape-corner-full)] border border-dashed
+                            border-[var(--md-sys-color-outlineVariant)] px-3 text-xs text-[var(--md-sys-color-onSurfaceVariant)] italic"
+              role="note" style={{ gridColumn: "1 / -1" }}
+            >
+              No models — add some to route {cap.key} traffic.
+            </div>
+          ) : models.map((model, index) => {
+            const caps = getCaps?.(model) || null;
+            const pricing = getPricing?.(model) || null;
+            const hasPrice = pricing && (pricing.input != null || pricing.output != null);
+            return (
+              <span
+                key={`${model}-${index}`}
+                role="listitem"
+                className="group inline-flex shrink-0 items-center gap-1.5
+                           rounded-[var(--md-sys-shape-corner-full)]
+                           bg-[var(--md-sys-color-secondaryContainer)]
+                           px-0.5 py-0.5 pl-1.5 pr-1 h-8 max-w-[300px]
+                           border border-[var(--md-sys-color-secondaryContainer)]
+                           hover:border-[var(--md-sys-color-secondary)]
+                           transition-[background-color,border-color,transform] duration-[var(--md-sys-motion-duration-short,120ms)]"
+                style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
+              >
+                <span className="inline-block text-[9px] font-semibold opacity-70 tabular-nums">{index + 1}</span>
+                <ProviderIcon
+                  providerId={chipProvider(model)}
+                  size={18}
+                  className="rounded-[var(--md-sys-shape-corner-extra-small)]"
+                  fallbackText={chipProvider(model).slice(0, 2).toUpperCase()}
+                  fallbackColor="var(--md-sys-color-onSecondary)"
+                />
+                <code className="truncate font-mono text-[12px] leading-none max-w-[140px]" title={model}>
+                  {model}
+                </code>
+                {caps && (
+                  <span className="inline-flex items-center gap-0.5 pl-0.5">
+                    <CapacityBadges caps={caps} colorOverride="var(--md-sys-color-onSecondaryContainer)" size={13} />
+                  </span>
+                )}
+                {hasPrice && (
+                  <span className="ml-auto inline-flex items-center
+                                   rounded-full h-5 leading-none px-1.5
+                                   bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[10px] font-mono whitespace-nowrap"
+                    style={{ color: "var(--md-sys-color-onSurfaceVariant)" }}
+                    title={`in $${pricing.input} / out $${pricing.output}/M`}
+                  >
+                    {formatPr(pricing.input)}/{formatPr(pricing.output)}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRemove(index)}
+                  title={`Remove ${model}`}
+                  aria-label={`Remove ${model}`}
+                  className="w-6 h-6 -mr-0.5 shrink-0 inline-grid place-items-center rounded-full hover:bg-[var(--md-sys-color-secondary)] 
+                             opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                  style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
+                >
+                  <span className="material-symbols-outlined text-[14px]">close</span>
+                </button>
+              </span>
+            );
+          })}
+        </div>
+
+        {/* === Fixed-right buttons: round switch + add model === */}
+        <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
           <label className="flex items-center gap-1.5 text-xs text-text-muted cursor-pointer select-none">
             <Toggle
               checked={roundRobin}
