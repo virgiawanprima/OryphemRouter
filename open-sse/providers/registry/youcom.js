@@ -1,6 +1,9 @@
 export default {
   id: "youcom",
   alias: "youcom",
+  aliases: [
+    "youcom-search",
+  ],
   display: {
     name: "You.com Search",
     icon: "search",
