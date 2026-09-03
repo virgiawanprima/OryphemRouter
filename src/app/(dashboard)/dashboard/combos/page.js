@@ -607,12 +607,33 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
   );
 }
 
-function ModelItem({ index, model, isFirst, isLast, onMoveUp, onMoveDown, onRemove }) {
+function ModelItem({
+  index, model, isFirst, isLast, onMoveUp, onMoveDown, onRemove,
+  onDragStart, onDragOver, onDrop, onDragEnd, isDragging, isDragOver,
+}) {
   // Extract provider prefix from model name e.g. "kr/claude-sonnet-4.5" -> "kr"
   const providerPrefix = model.includes("/") ? model.split("/")[0] : "";
 
   return (
-    <div className="group flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 bg-black/[0.02] hover:bg-black/[0.04] dark:bg-white/[0.02] dark:hover:bg-white/[0.04] transition-colors">
+    <div
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+      className={`group flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 border transition-colors ${
+        isDragging ? "opacity-40" : ""
+      } ${isDragOver ? "border-primary bg-black/[0.05] dark:bg-white/[0.06]" : "border-transparent"} bg-black/[0.02] hover:bg-black/[0.04] dark:bg-white/[0.02] dark:hover:bg-white/[0.04]`}
+    >
+      {/* Drag handle */}
+      <span className="cursor-grab active:cursor-grabbing text-text-muted/40 shrink-0" title="Drag to reorder">
+        <svg width="12" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="8" cy="5" r="1.6"/><circle cx="16" cy="5" r="1.6"/>
+          <circle cx="8" cy="12" r="1.6"/><circle cx="16" cy="12" r="1.6"/>
+          <circle cx="8" cy="19" r="1.6"/><circle cx="16" cy="19" r="1.6"/>
+        </svg>
+      </span>
+
       {/* Index badge */}
       <span className="text-[10px] font-medium text-text-muted w-4 text-center shrink-0">{index + 1}</span>
 
