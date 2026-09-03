@@ -19,6 +19,7 @@ export default {
   category: "apikey",
   transport: {
     baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3/chat/completions",
+    validateUrl: "https://ark.cn-beijing.volces.com/api/coding/v3/models",
     headers: {},
   },
   models: [
