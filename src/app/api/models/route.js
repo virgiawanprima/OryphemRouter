@@ -5,6 +5,7 @@ import { getDisabledModels } from "@/lib/disabledModelsDb";
 import { AI_MODELS } from "@/shared/constants/config";
 import { getProviderAlias } from "@/shared/constants/providers";
 import { getCapabilitiesForModel } from "open-sse/providers/capabilities.js";
+import { getModelMetadata, getModelPricing } from "open-sse/providers/models/getMetadata.js";
 
 // GET /api/models - Get models with aliases
 export async function GET() {
