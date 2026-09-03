@@ -332,14 +332,15 @@ OryphemRouter supports **5 routing strategies** per combo:
 
 ## 🆓 Free-Tier Budget Tracker
 
-The `/dashboard/free-tiers` page displays **free quota usage** in real-time:
+The `/dashboard/free-tiers` page displays **free quota usage** in real-time. Free-tier providers are auto-discovered and filtered to those that actually respond with a `2xx`, so the list reflects what genuinely works without a key. Examples include:
 
-| Provider | Type | Quota | Reset |
-|----------|------|-------|-------|
-| **Kiro AI** | Credits | 50 credits/mo | Monthly (1st) |
-| **OpenCode Free** | Unlimited | ∞ | None |
-| **Vertex AI** | Credits | $300 | One-time (90 days) |
-| **Felo** | Unlimited | ∞ | None |
+| Provider | Type | Notes |
+|----------|------|-------|
+| Kiro | Agent/IDE (MITM) | Subscription-backed free tier |
+| OpenCode | Catalog | `opencode.ai/zen` free models |
+| Pollinations | Free | No key required |
+| Felo | Free | Search-backed |
+| OLlama / Local | Local | `ollama` & `ollama-local` |
 
 - 🟢 *Used / remaining* progress bar per provider
 - 🔄 Auto-refresh every 60 seconds
