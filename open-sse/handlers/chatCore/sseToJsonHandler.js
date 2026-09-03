@@ -354,7 +354,7 @@ export async function handleForcedSSEToJson({ providerResponse, sourceFormat, ta
 
     return { success: true, response: new Response(JSON.stringify(finalBody), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }) };
   } catch (err) {
-    console.error("[ChatCore] Chat Completions SSE→JSON failed:", err);
+    engineLog.error("CHAT-CORE", "Chat Completions SSE→JSON failed:", sanitize(err));
     return createErrorResult(HTTP_STATUS.BAD_GATEWAY, "Failed to convert streaming response to JSON");
   }
 }
