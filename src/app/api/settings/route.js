@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSettings, updateSettings } from "@/lib/localDb";
+import { WRITABLE_SETTING_KEYS } from "@/lib/db/repos/settingsRepo.js";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
 import { resetComboRotation } from "open-sse/services/combo.js";
 import { invalidateSpendingCache } from "@/sse/services/spendingCache.js";
