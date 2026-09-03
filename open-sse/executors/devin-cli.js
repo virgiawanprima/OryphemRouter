@@ -238,7 +238,7 @@ async function resolveWorkspaceCwd(body) {
 
   for (const c of candidates) {
     try {
-      if (path.isAbsolute(c) && fs.existsSync(c) && fs.statSync(c).isDirectory()) {
+      if (path.isAbsolute(c) && (await access(c).then(() => true).catch(() => false)) && (await stat(c)).isDirectory()) {
         return c;
       }
     } catch {
