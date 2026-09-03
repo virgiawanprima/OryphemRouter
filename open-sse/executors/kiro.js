@@ -735,7 +735,7 @@ export class KiroExecutor extends BaseExecutor {
         } catch (error) {
           state.droppedTools = (state.droppedTools || 0) + 1;
           state.toolValidationError ||= error.message;
-          console.error(`[Kiro] dropping unusable tool call ${tool.id} (${tool.name}): ${error.message}`);
+          log.error("KIRO", `dropping unusable tool call ${tool.id} (${tool.name}): ${error.message}`);
           continue;
         }
         const index = state.toolCounter++;
