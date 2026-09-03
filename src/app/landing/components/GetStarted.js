@@ -73,9 +73,9 @@ export default function GetStarted() {
                 </button>
                 
                 <div className="text-gray-400 mb-6">
-                  <span className="text-[#bd93f9]">&gt;</span> Starting oryphemrouter...<br/>
-                  <span className="text-[#bd93f9]">&gt;</span> Server running on <span className="text-blue-400">http://localhost:20129</span><br/>
-                  <span className="text-[#bd93f9]">&gt;</span> Dashboard: <span className="text-blue-400">http://localhost:20129/dashboard</span><br/>
+                  <span className="text-[#38d9c8]">&gt;</span> Starting oryphemrouter...<br/>
+                  <span className="text-[#38d9c8]">&gt;</span> Server running on <span className="text-blue-400">http://localhost:20129</span><br/>
+                  <span className="text-[#38d9c8]">&gt;</span> Dashboard: <span className="text-blue-400">http://localhost:20129/dashboard</span><br/>
                   <span className="text-green-400">&gt;</span> Ready to route! ✓
                 </div>
                 
