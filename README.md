@@ -56,11 +56,11 @@
 
 ## 📖 About
 
-**OryphemRouter** is a local **AI routing gateway** that consolidates all your AI coding needs into **one endpoint**. Built by the **oryphem team** as an enhancement over OryphemRouter, this project brings:
+**OryphemRouter** is a local **AI routing gateway** that consolidates all your AI coding needs into **one endpoint**. It brings:
 
 - 🎯 **Auto-fallback** across providers (Subscription → Cheap → Free) so you **never stop coding**
 - 💸 **Save 20-40% tokens** with integrated RTK Token Saver
-- 🆓 **Free forever** with Kiro, OpenCode Free, and Vertex AI free tiers
+- 🆓 **Free forever** with the built-in free tier catalog (Kiro, OpenCode Free, and more)
 - 🔒 **100% local-first**: your data & API keys never leave your machine
 - 🌍 **Dual language**: English & Indonesian
 
