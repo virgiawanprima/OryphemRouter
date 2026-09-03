@@ -193,7 +193,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > aimlapi → headers 
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > bluesminds → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > ainative → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
