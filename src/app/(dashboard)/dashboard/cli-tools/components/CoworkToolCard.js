@@ -98,12 +98,12 @@ export default function CoworkToolCard({
   const checkStatus = async () => {
     setChecking(true);
     try {
-      const res = await fetch(ENDPOINT);
+      const res = await fetch("/api/cli-tools/all-statuses?tool=cowork");
       const data = await res.json();
       if (!res.ok) {
         setStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
       } else {
-        setStatus(data);
+        setStatus(data?.cowork || { checkFailed: true, error: "No status for cowork" });
       }
     } catch (error) {
       setStatus({ checkFailed: true, error: error.message });
