@@ -124,28 +124,28 @@ export default function FlowAnimation() {
         <path
           d="M 440 180 C 550 180, 550 50, 740 50"
           fill="none"
-          stroke={activeFlow === 0 ? "#bd93f9" : "rgb(75, 85, 99)"}
+          stroke={activeFlow === 0 ? "#38d9c8" : "rgb(75, 85, 99)"}
           strokeWidth={activeFlow === 0 ? "3" : "2"}
           className={activeFlow === 0 ? "animate-pulse" : ""}
         ></path>
         <path
           d="M 440 180 C 550 180, 550 130, 740 130"
           fill="none"
-          stroke={activeFlow === 1 ? "#bd93f9" : "rgb(75, 85, 99)"}
+          stroke={activeFlow === 1 ? "#38d9c8" : "rgb(75, 85, 99)"}
           strokeWidth={activeFlow === 1 ? "3" : "2"}
           className={activeFlow === 1 ? "animate-pulse" : ""}
         ></path>
         <path
           d="M 440 180 C 550 180, 550 230, 740 230"
           fill="none"
-          stroke={activeFlow === 2 ? "#bd93f9" : "rgb(75, 85, 99)"}
+          stroke={activeFlow === 2 ? "#38d9c8" : "rgb(75, 85, 99)"}
           strokeWidth={activeFlow === 2 ? "3" : "2"}
           className={activeFlow === 2 ? "animate-pulse" : ""}
         ></path>
         <path
           d="M 440 180 C 550 180, 550 310, 740 310"
           fill="none"
-          stroke={activeFlow === 3 ? "#bd93f9" : "rgb(75, 85, 99)"}
+          stroke={activeFlow === 3 ? "#38d9c8" : "rgb(75, 85, 99)"}
           strokeWidth={activeFlow === 3 ? "3" : "2"}
           className={activeFlow === 3 ? "animate-pulse" : ""}
         ></path>
