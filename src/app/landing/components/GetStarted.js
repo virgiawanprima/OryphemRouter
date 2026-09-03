@@ -84,7 +84,7 @@ export default function GetStarted() {
                 </div>
                 
                 <div className="text-gray-400 text-xs">
-                  <span className="text-purple-400">Data Location:</span><br/>
+                  <span className="text-teal-400">Data Location:</span><br/>
                   <span className="text-gray-500">  macOS/Linux:</span> ~/.oryphemrouter/db/data.sqlite<br/>
                   <span className="text-gray-500">  Windows:</span> %APPDATA%/oryphemrouter/db/data.sqlite
                 </div>
