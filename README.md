@@ -316,14 +316,15 @@ One-click configuration for your coding agents.
 
 ## 🎯 Routing Strategies
 
-OryphemRouter supports **4 routing strategies** per combo:
+OryphemRouter supports **5 routing strategies** per combo:
 
 | Strategy | How It Works | Cost |
 |----------|--------------|------|
 | **1. Fallback** (default) | Try models in order, move to next on failure | Cheap |
 | **2. Round Robin** | Rotate models across requests to spread load | Cheap |
 | **3. Fusion** | Query all models in parallel, judge synthesizes one answer | Expensive (N+1) |
-| **4. Cost-Optimized** ⭐ | Auto-order from cheapest to most expensive, fallback on failure | Minimal |
+| **4. Pipeline** | Chain models in steps, each stage feeds the next | Variable |
+| **5. Auto** ⭐ | AI-scored ranking — automatically pick the best model per request | Minimal |
 
 **How to use:** Dashboard → Combos → create a combo → pick strategy in Profile Settings.
 
