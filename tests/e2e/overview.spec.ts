@@ -38,7 +38,7 @@ test.describe("Overview", () => {
     await login(page);
     // Real-time: no "refreshes every N seconds" waiting copy, live badge present.
     await expect(page.getByText(/refreshes automatically i/)).toHaveCount(0);
-    await expect(page.getByText("live", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("Live", { exact: true }).first()).toBeVisible();
   });
 
   test("no console errors", async ({ page }) => {
