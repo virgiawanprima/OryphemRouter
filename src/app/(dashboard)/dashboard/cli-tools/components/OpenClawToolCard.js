@@ -268,7 +268,19 @@ export default function OpenClawToolCard({
             </div>
           )}
 
-          {!checkingOpenclaw && openclawStatus && !openclawStatus.installed && (
+          {!checkingOpenclaw && openclawStatus?.checkFailed && (
+            <div className="flex flex-col gap-2 p-4 bg-black/5 dark:bg-white/5 border border-border rounded-lg">
+              <div className="flex items-start gap-3">
+                <span className="material-symbols-outlined text-text-muted">info</span>
+                <div className="flex-1">
+                  <p className="font-medium text-text-main">Status unavailable</p>
+                  <p className="text-sm text-text-muted">Reading local installation status requires a local (CLI-authenticated) session. This browser session can't read it; use the CLI or log in to manage this tool.</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!checkingOpenclaw && openclawStatus && !openclawStatus.checkFailed && !openclawStatus.installed && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                 <div className="flex items-start gap-3">
