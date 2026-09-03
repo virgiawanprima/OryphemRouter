@@ -133,29 +133,26 @@ Result: Never stop coding, minimal cost + 20-40% token savings via RTK
 
 > **Node.js 20+** is required. Get it from [nodejs.org](https://nodejs.org) or use your OS package manager.
 
-### 🪟 Windows
+### 🪟 Windows / 🍎 macOS / 🐧 Linux
 
-```powershell
-npm install -g oryphemrouter
-oryphemrouter
-```
-
-### 🍎 macOS
+Clone and run from source:
 
 ```bash
-brew install node@22
-npm install -g oryphemrouter
-oryphemrouter
+git clone https://github.com/virgiawanprima/OryphemRouter.git
+cd OryphemRouter
+npm install
+
+# Development (hot reload)
+npm run dev
+
+# Production
+npm run build
+npm run start
 ```
 
-### 🐧 Linux
-
-```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt-get install -y nodejs
-npm install -g oryphemrouter
-oryphemrouter
-```
+> **Node.js 20+** is required. Get it from [nodejs.org](https://nodejs.org).
+>
+> Want a standalone launcher? The bundled CLI lives in [`cli/`](./cli/) and exposes an `oryphemrouter` bin (start/stop the server, tray UI on desktop).
 
 ### 🐳 Docker (any OS)
 
