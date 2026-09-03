@@ -4,19 +4,27 @@ import { useState, useEffect, useCallback } from "react";
 import { getCapabilitiesForModel } from "open-sse/providers/capabilities.js";
 
 // Module cache: one /api/models fetch shared by every useModelCaps instance.
-let cache = null; // { byFull, byId } | null
+let cache = null; // { byFull, byId, pricingByFull, pricingById } | null
 let inflight = null;
 
 function buildMaps(models) {
   const byFull = {};
   const byId = {};
+  const pricingByFull = {};
+  const pricingById = {};
   for (const m of models || []) {
-    if (!m.caps) continue;
-    if (m.fullModel) byFull[m.fullModel] = m.caps;
-    if (m.routedModel) byFull[m.routedModel] = m.caps;
-    if (m.model) byId[m.model] = m.caps;
+    if (m.caps) {
+      if (m.fullModel) byFull[m.fullModel] = m.caps;
+      if (m.routedModel) byFull[m.routedModel] = m.caps;
+      if (m.model) byId[m.model] = m.caps;
+    }
+    if (m.pricing) {
+      if (m.fullModel) pricingByFull[m.fullModel] = m.pricing;
+      if (m.routedModel) pricingByFull[m.routedModel] = m.pricing;
+      if (m.model) pricingById[m.model] = m.pricing;
+    }
   }
-  return { byFull, byId };
+  return { byFull, byId, pricingByFull, pricingById };
 }
 
 function loadModelCaps() {
