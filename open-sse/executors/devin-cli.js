@@ -195,7 +195,7 @@ function extractClientToolResults(messages) {
 // Resolve workspace cwd from client request (Codex/CLI env context, body fields).
 // Prefer an absolute existing path so agent file tools hit the user's project
 // instead of os.tmpdir() (which made relative create/delete inconsistent).
-function resolveWorkspaceCwd(body) {
+async function resolveWorkspaceCwd(body) {
   const candidates = [];
   const push = (v) => {
     if (typeof v === "string" && v.trim()) candidates.push(v.trim());
