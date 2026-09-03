@@ -83,7 +83,7 @@ export default function CodexToolCard({ tool, isExpanded, onToggle, baseUrl, api
   const checkCodexStatus = async () => {
     setCheckingCodex(true);
     try {
-      const res = await fetch("/api/cli-tools/codex-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=codex");
       const data = await res.json();
       setCodexStatus(data);
     } catch (error) {
