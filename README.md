@@ -561,6 +561,8 @@ volumes:
 
 ## 📝 API Reference
 
+The gateway exposes an OpenAI/Anthropic-compatible `/v1` surface plus dashboard APIs.
+
 ### Chat Completions
 
 ```bash
