@@ -85,9 +85,13 @@ export default function CodexToolCard({ tool, isExpanded, onToggle, baseUrl, api
     try {
       const res = await fetch("/api/cli-tools/all-statuses?tool=codex");
       const data = await res.json();
-      setCodexStatus(data);
+      if (!res.ok) {
+        setCodexStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setCodexStatus(data?.codex || { checkFailed: true, error: "No status for codex" });
+      }
     } catch (error) {
-      setCodexStatus({ installed: false, error: error.message });
+      setCodexStatus({ checkFailed: true, error: error.message });
     } finally {
       setCheckingCodex(false);
     }
