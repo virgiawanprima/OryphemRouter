@@ -509,7 +509,14 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
       }
     });
 
-    if (result.success) return result.response;
+    if (result.success) {
+      // Semantic cache write (opt-in): only non-streaming, temperature=0,
+      // direct single-model successes whose response body is JSON we can replay.
+      if (body && body.stream === false && typeof body.temperature === "number" && body.temperature === 0) {
+        maybeCacheSemanticResponse(body, modelStr, result.response, apiKey).catch(() => {});
+      }
+      return result.response;
+    }
 
     // Stale: this panel call timed out — the fusion response already went to the
     // client, so skip the breaker-state write (markAccountUnavailable).
