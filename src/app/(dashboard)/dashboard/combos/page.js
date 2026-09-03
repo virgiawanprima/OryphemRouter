@@ -748,6 +748,14 @@ function ProviderGroupHeader({
         >
           <span className="material-symbols-outlined text-[14px]">expand_more</span>
         </button>
+        {/* Bulk-delete this provider group and all its models */}
+        <button
+          onClick={onRemoveGroup}
+          className="p-0.5 rounded text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all"
+          title={`Delete all ${modelCount} model${modelCount > 1 ? 's' : ''} from ${provider}`}
+        >
+          <span className="material-symbols-outlined text-[14px]">delete</span>
+        </button>
       </div>
     </div>
   );
