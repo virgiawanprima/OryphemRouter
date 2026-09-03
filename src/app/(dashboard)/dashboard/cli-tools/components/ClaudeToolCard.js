@@ -145,8 +145,9 @@ export default function ClaudeToolCard({
         setClaudeStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
         setExaMcpEnabled(false);
       } else {
-        setClaudeStatus(data);
-        setExaMcpEnabled(!!data.exaMcpEnabled);
+        const claudeData = data?.claude;
+        setClaudeStatus(claudeData || { checkFailed: true, error: "No status for claude" });
+        setExaMcpEnabled(!!claudeData?.exaMcpEnabled);
       }
     } catch (error) {
       setClaudeStatus({ checkFailed: true, error: error.message });
