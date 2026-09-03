@@ -76,6 +76,18 @@ const DEFAULT_SETTINGS = {
   pxpipeTimeoutMs: 15000,
 };
 
+// Mass-assignment guard (CWE-915): the set of settings keys that may be
+// written from an HTTP request body. Applied at the API route boundary (not
+// here) so internal callers + merge-safety tests keep using updateSettings()
+// freely, while arbitrary request-body keys can never be persisted.
+export const WRITABLE_SETTING_KEYS = [
+  ...Object.keys(DEFAULT_SETTINGS),
+  "password", // set internally by the PATCH password path (not a default key)
+  "cloudUrl", // read by getCloudUrl(); configurable cloud endpoint
+  "claudeAutoPing", // per-tool auto-ping config object (UI-managed)
+  "codexAutoPing",
+];
+
 async function readRaw() {
   const db = await getAdapter();
   const row = db.get(`SELECT data FROM settings WHERE id = 1`);
