@@ -236,7 +236,7 @@ export default function CombosPage() {
             <ComboCard
               key={combo.id}
               combo={combo}
-              getCaps={getCaps}
+              getCaps={getCaps} getPricing={getPricing}
               activeProviders={activeProviders}
               copied={copied}
               onCopy={copy}
