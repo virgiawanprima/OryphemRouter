@@ -335,19 +335,19 @@ select {
   --color-c-red-50: var(--c-red-50); --color-c-red-600: var(--c-red-600); --color-c-red-800: var(--c-red-800);
   --color-c-gray-50: var(--c-gray-50); --color-c-gray-600: var(--c-gray-600); --color-c-gray-800: var(--c-gray-800);
 
-  /* Static fallbacks */
-  --color-bg-light: #faf9fc;
-  --color-bg-dark: #1a1b26;
-  --color-surface-light: #ffffff;
-  --color-surface-dark: #22242f;
-  --color-sidebar-light: #f3f0fa;
-  --color-sidebar-dark: #14151e;
-  --color-border-light: #e5e0f0;
-  --color-border-dark: #3a3d4f;
-  --color-text-main-light: #282a36;
-  --color-text-main-dark: #f8f8f2;
-  --color-text-muted-light: #5d6170;
-  --color-text-muted-dark: #a8adc4;
+  /* Static fallbacks (M3 light/dark consistent) */
+  --color-bg-light: #FEF7FF;
+  --color-bg-dark: #141218;
+  --color-surface-light: #F3EDF7;
+  --color-surface-dark: #211F26;
+  --color-sidebar-light: #F7F2FA;
+  --color-sidebar-dark: #1D1B20;
+  --color-border-light: #CAC4D0;
+  --color-border-dark: #49454F;
+  --color-text-main-light: #1D1B20;
+  --color-text-main-dark: #E6E0E9;
+  --color-text-muted-light: #49454F;
+  --color-text-muted-dark: #CAC4D0;
 
   /* Radius */
   --radius-brand: var(--radius-brand);
