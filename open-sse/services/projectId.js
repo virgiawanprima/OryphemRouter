@@ -57,7 +57,7 @@ export function startCacheCleanup() {
     if (_cleanupTimer) return;
     _cleanupTimer = setInterval(() => {
         try { cleanupNow(); } catch (e) {
-            console.warn("[ProjectId] cleanup sweep error:", e?.message ?? e);
+            log.warn("PROJECT-ID", "[ProjectId] cleanup sweep error:", e?.message ?? e);
         }
     }, CLEANUP_INTERVAL_MS);
     // Unref so the timer doesn't prevent Node from exiting when it is otherwise idle
