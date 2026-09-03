@@ -104,8 +104,8 @@ function handleClick(index, options, onAutostartToggle) {
   } else if (index === MENU_INDEX.QUIT) {
     console.log("\n👋 Shutting down...");
     if (onQuit) onQuit();
-    killTray();
-    setTimeout(() => process.exit(0), 500);
+    killTray().catch(() => {});
+    gracefulExit();
   }
 }
 
