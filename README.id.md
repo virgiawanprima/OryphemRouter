@@ -640,7 +640,7 @@ GET http://localhost:20129/api/dashboard/realtime
 
 - Aktifkan RTK di Dashboard → Endpoint settings (default ON, hemat 20-40% token)
 - Set Spending Limits di Profile → Spending Limits
-- Gunakan free tier (Kiro, OpenCode Free, Vertex) untuk tugas non-kritis
+- Gunakan free tier (Kiro, OpenCode, Pollinations) untuk tugas non-kritis
 
 **Dashboard terbuka di port salah**
 
