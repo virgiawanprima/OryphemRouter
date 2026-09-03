@@ -24,6 +24,7 @@ export default {
   hasProviderSpecificData: true,
   transport: {
     baseUrl: "https://api.cloudflare.com/client/v4/accounts/{accountId}/ai/v1/chat/completions",
+    validateUrl: "https://api.cloudflare.com/client/v4/accounts/{accountId}/ai/v1/models",
     thinkingFormat: "openai",
   },
   models: [
