@@ -156,6 +156,7 @@ export default function MediaProviderKindPage() {
   const [customNodes, setCustomNodes] = useState([]);
   const [combos, setCombos] = useState([]);
   const [showAddCustomEmbedding, setShowAddCustomEmbedding] = useState(false);
+  const [registryProviders, setRegistryProviders] = useState([]);
 
   // webSearch/webFetch listing pages are merged into /web
   useEffect(() => {
