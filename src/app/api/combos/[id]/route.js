@@ -45,6 +45,17 @@ export async function PUT(request, { params }) {
         return NextResponse.json({ error: "Combo name already exists" }, { status: 400 });
       }
     }
+
+    // Validate kind if provided (must be one the dashboard renders).
+    if (body.kind != null && body.kind !== "") {
+      if (!VALID_KINDS.has(String(body.kind))) {
+        return NextResponse.json(
+          { error: `Invalid combo kind '${body.kind}'. Valid kinds: llm, webSearch, webFetch` },
+          { status: 400 },
+        );
+      }
+      body.kind = String(body.kind);
+    }
     
     // Capture previous name to invalidate rotation state on rename
     const prev = await getComboById(id);
