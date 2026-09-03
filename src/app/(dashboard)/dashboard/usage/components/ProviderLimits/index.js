@@ -486,8 +486,6 @@ export default function ProviderLimits() {
           .filter(shouldFetch)
           .map((conn) => fetchQuota(conn.id, conn.provider)),
       );
-
-      setLastUpdated(new Date());
     } catch (error) {
       console.error("Error refreshing all providers:", error);
     } finally {
