@@ -209,7 +209,7 @@ The OryphemRouter dashboard is organized into focused modules. Here is what each
 
 Manage all AI provider connections from one place.
 
-- **Connect providers**: Claude Code, Codex, GitHub Copilot, Cursor, Kiro, OpenCode Free, Vertex, GLM, MiniMax, Kimi, and 40+ more.
+- **Connect providers**: Claude Code, Codex, GitHub Copilot, Cursor, Kiro, OpenCode, GLM, MiniMax, Kimi, and 380+ more.
 - **OAuth login**: One-click OAuth for subscription providers (Claude Code, Codex, GitHub, Cursor, Kiro).
 - **API keys**: Add, edit, pause, or delete API keys per provider. Supports **bulk add** with auto-naming:
   ```
