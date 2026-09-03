@@ -129,6 +129,23 @@ export async function PUT(request, { params }) {
     if (lastError !== undefined) updateData.lastError = lastError;
     if (lastErrorAt !== undefined) updateData.lastErrorAt = lastErrorAt;
 
+    // SSRF-reduction: reject URL-shaped providerSpecificData fields whose value
+    // is not a valid http(s) URL, so a stored baseUrl can never carry a bare
+    // protocol (file:/gopher:/...). Localhost/private hosts stay allowed for
+    // self-hosted providers (e.g. ollama-local).
+    for (const field of ["baseUrl", "azureEndpoint"]) {
+      const val = providerSpecificData?.[field];
+      if (val === undefined || val === null || val === "") continue;
+      let parsed;
+      try { parsed = new URL(String(val)); } catch { parsed = null; }
+      if (!parsed || (parsed.protocol !== "http:" && parsed.protocol !== "https:")) {
+        return NextResponse.json(
+          { error: `Invalid ${field}: must be a valid http(s) URL` },
+          { status: 400 }
+        );
+      }
+    }
+
     if (
       shouldMergeProviderSpecificData(
         existing.providerSpecificData,
