@@ -629,7 +629,7 @@ GET http://localhost:20129/api/dashboard/realtime
 **Rate limiting**
 
 - Kuota subscription habis → Fallback ke GLM/MiniMax
-- Tambah combo: `cc/claude-opus-4-7 → glm/glm-5.1 → kr/claude-sonnet-4.5`
+- Tambah combo: `cc/claude-opus-5 → glm/glm-5.3 → kr/claude-sonnet-5`
 
 **Token OAuth kedaluwarsa**
 
