@@ -295,6 +295,17 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
       const augmentedModels = augmentModelsWithCapacityAdapter(comboModels, requiredCapabilities, chatSettings);
       const adapterAdded = augmentedModels.filter((m) => !comboModels.includes(m));
 
+      if (comboStrategy === "pipeline") {
+        log.info("CHAT", `Combo "${modelStr}" with ${comboModels.length} models (strategy: pipeline)`);
+        return handlePipelineChat({
+          body,
+          models: comboModels,
+          handleSingleModel: (b, m) => handleSingleModelChat(b, m, clientRawRequest, request, apiKey),
+          log,
+          comboName: modelStr,
+        });
+      }
+
       if (comboStrategy === "fusion") {
         log.info("CHAT", `Combo "${modelStr}" with ${comboModels.length} models (strategy: fusion)`);
         return handleFusionChat({
