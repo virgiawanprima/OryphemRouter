@@ -1019,7 +1019,7 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
 
                   return (
                     <div key={provider} className="flex flex-col gap-1">
-                      {/* Provider group header */}
+                      {/* Provider group header (draggable) */}
                       <ProviderGroupHeader
                         provider={provider}
                         modelCount={group.models.length}
