@@ -1053,6 +1053,12 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
                               onMoveUp={() => handleModelMove(flatIndex, -1)}
                               onMoveDown={() => handleModelMove(flatIndex, 1)}
                               onRemove={() => handleRemoveModel(flatIndex)}
+                              onDragStart={(e) => handleDragStart(e, { type: "model", flatIndex, gi, mi })}
+                              onDragOver={(e) => { setDragOverItem({ type: "model", flatIndex }); handleDragOver(e); }}
+                              onDrop={(e) => handleDrop(e, { type: "model", flatIndex })}
+                              onDragEnd={handleDragEnd}
+                              isDragging={dragItem?.type === "model" && dragItem?.flatIndex === flatIndex}
+                              isDragOver={dragOverItem?.type === "model" && dragOverItem?.flatIndex === flatIndex}
                             />
                           );
                         })}
