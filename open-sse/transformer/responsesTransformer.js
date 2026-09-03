@@ -41,7 +41,7 @@ export function createResponsesLogger(model, logsDir = null) {
         fs.writeFileSync(path.join(logDir, "1_input_stream.txt"), inputEvents.join("\n"));
         fs.writeFileSync(path.join(logDir, "2_output_stream.txt"), outputEvents.join("\n"));
       } catch (e) {
-        console.log("[RESPONSES] Failed to write logs:", e.message);
+        engineLog.info("RESPONSES", "Failed to write logs:", sanitize(e.message));
       }
     }
   };
