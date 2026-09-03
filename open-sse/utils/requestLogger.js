@@ -1,6 +1,8 @@
 // Sensitive query-parameter names whose values must be redacted from logged URLs.
 const SENSITIVE_QUERY_PARAMS = new Set(["key", "api_key", "api-key", "token", "secret", "password", "signature", "sig", "access_token", "refresh_token"]);
 
+import { log } from "./log.js";
+
 /**
  * Sanitize a URL for logging: redact sensitive query-parameter values.
  * Returns the original string if URL parsing fails.
