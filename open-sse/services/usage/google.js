@@ -216,7 +216,7 @@ export async function getAntigravityUsage(accessToken, providerSpecificData, pro
       subscriptionInfo,
     };
   } catch (error) {
-    console.error("[Antigravity Usage] Error:", error.message, error.cause);
+    engineLog.error("USAGE", "Antigravity Usage Error:", sanitize(error.message), sanitize(error.cause));
     return { message: `Antigravity error: ${error.message}` };
   }
 }
