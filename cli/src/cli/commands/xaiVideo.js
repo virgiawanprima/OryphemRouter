@@ -12,6 +12,7 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
+const { gracefulExit } = require("../utils/gracefulExit");
 
 const DEFAULT_PORT = 20129;
 const DEFAULT_HOST = "127.0.0.1";
