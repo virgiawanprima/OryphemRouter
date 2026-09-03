@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { login } from "./helpers";
 
-// Dracula theme — E2E spec v7 section 0b
-test.describe("Dracula theme", () => {
-  test("CSS tokens match Dracula palette", async ({ page }) => {
+// Material Design 3 theme — E2E spec (M3 seed #6750A4)
+test.describe("Material 3 theme", () => {
+  test("CSS tokens match M3 palette (dark)", async ({ page }) => {
     await login(page);
     await page.waitForSelector('aside');
     const tokens = await page.evaluate(() => {
@@ -15,16 +15,17 @@ test.describe("Dracula theme", () => {
         primary: cs.getPropertyValue('--color-primary').trim(),
       };
     });
-    expect(tokens.bg).toBe("#282a36");
-    expect(tokens.text).toBe("#f8f8f2");
-    expect(tokens.border).toBe("#44475a");
-    expect(tokens.primary.toLowerCase()).toBe("#bd93f9");
+    // M3 dark scheme (seed #6750A4 purple)
+    expect(tokens.bg.toLowerCase()).toBe("#141218");
+    expect(tokens.text.toLowerCase()).toBe("#e6e0e9");
+    expect(tokens.border.toLowerCase()).toBe("#49454f");
+    expect(tokens.primary.toLowerCase()).toBe("#d0bcff");
   });
 
-  test("body uses Dracula background", async ({ page }) => {
+  test("body uses M3 dark background", async ({ page }) => {
     await login(page);
     const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).toBe("rgb(40, 42, 54)");
+    expect(bg).toBe("rgb(20, 18, 24)");
   });
 
   test("toggle switches theme visibly and persists across reload", async ({ page }) => {
@@ -36,25 +37,26 @@ test.describe("Dracula theme", () => {
 
     // Default is dark
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
+    expect(await bodyBg()).toBe("rgb(20, 18, 24)");
 
-    // Switch to light → background and surface vars flip
+    // Switch to light → M3 light background
     await toggle.click();
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    expect(await bodyBg()).toBe("rgb(250, 249, 252)");
+    expect(await bodyBg()).toBe("rgb(254, 247, 255)");
 
     // Persists after full reload
     await page.reload();
     await page.waitForSelector("aside");
     await page.waitForTimeout(800);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    expect(await bodyBg()).toBe("rgb(250, 249, 252)");
+    expect(await bodyBg()).toBe("rgb(254, 247, 255)");
 
     // Toggle back to dark
     await page.getByRole("button", { name: /Switch to/i }).first().click();
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
-    expect(await bodyBg()).toBe("rgb(40, 42, 54)");
+    expect(await bodyBg()).toBe("rgb(20, 18, 24)");
   });
 
   test("color transitions are applied for smooth theme change", async ({ page }) => {
