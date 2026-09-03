@@ -662,7 +662,11 @@ GET http://localhost:20129/api/dashboard/realtime
 | **UI** | React 19 + Tailwind CSS 4 |
 | **Database** | SQLite (better-sqlite3 / node:sqlite / sql.js fallback) |
 | **Streaming** | Server-Sent Events (SSE) |
-| **Auth** | OAuth 2.0 (PKCE) + JWT + API Keys |
+| **Auth** | OAuth 2.0 (PKCE) + JWT + API Keys + SAML/SSO |
+| **State** | Zustand |
+| **Charts** | Recharts |
+| **Editor** | Monaco Editor |
+| **MCP** | Model Context Protocol SDK |
 | **i18n** | Dua bahasa (Indonesia + English) |
 
 ---
