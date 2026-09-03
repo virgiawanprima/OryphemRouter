@@ -712,7 +712,7 @@ function startServer(updatePromise) {
           isShuttingDown = true;
           console.log("\n👋 Shutting down from tray...");
           cleanup();
-          setTimeout(() => process.exit(0), 100);
+          gracefulExit();
         },
         onOpenDashboard: () => openBrowser(url)
       });
