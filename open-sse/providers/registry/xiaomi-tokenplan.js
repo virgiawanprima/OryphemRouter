@@ -29,6 +29,7 @@ export default {
   defaultRegion: "sgp",
   transport: {
     baseUrl: "https://token-plan-sgp.xiaomimimo.com/v1/chat/completions",
+    validateUrl: "https://token-plan-sgp.xiaomimimo.com/v1/models",
     regions: {
       sgp: "https://token-plan-sgp.xiaomimimo.com/v1",
       cn: "https://token-plan-cn.xiaomimimo.com/v1",
