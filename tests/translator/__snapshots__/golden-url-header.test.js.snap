@@ -478,7 +478,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > arcee-ai → headers
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > fireworks → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > assemblyai → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
