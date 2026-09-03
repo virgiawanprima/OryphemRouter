@@ -57,7 +57,7 @@ async function resolveDevinBin() {
       "/usr/bin/devin",
     ];
   for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) return candidate;
+    if (await access(candidate).then(() => true).catch(() => false)) return candidate;
   }
 
   // 3. Fallback — rely on process.env.PATH
