@@ -420,47 +420,51 @@ export OPENAI_API_KEY="your-oryphemrouter-api-key"
 codex "your prompt"
 ```
 
-### OpenClaw
-
-Dashboard → CLI Tools → OpenClaw → Select Model → Apply
-
-### Cline / Continue / RooCode
+### Cline / Continue / RooCode / Kilo
 
 ```
 Provider: OpenAI Compatible
 Base URL: http://localhost:20129/v1
 API Key: [dari dashboard]
-Model: cc/claude-opus-4-7
+Model: cc/claude-opus-5
 ```
+
+> Untuk panduan lengkap per-tool (Amp, Qwen, jcode, DeepSeek TUI, Grok Build, OpenDesign...), buka dashboard → CLI Tools → tool Anda.
 
 ---
 
 ## 📊 Model yang Tersedia
 
-### 🆓 Gratis
+> OryphemRouter membawa **380+ entri registry provider** dan **1600+ definisi model**. Di bawah ini adalah prefix yang paling umum; katalog lengkap dapat dijelajahi di dashboard (Providers → Models).
 
-| Prefix | Provider | Model |
-|--------|----------|-------|
-| `kr/` | Kiro AI (50 credits/bulan) | `claude-sonnet-4.5`, `claude-haiku-4.5`, `glm-5`, `MiniMax-M2.5` |
-| `oc/` | OpenCode Free | Auto-fetch dari `opencode.ai/zen/v1/models` |
-| `vertex/` | Vertex AI ($300 credits) | `gemini-3.1-pro-preview`, `gemini-3-flash-preview` |
+### 🆓 Gratis / Free-Tier (auto-routed)
+
+| Prefix | Provider | Catatan |
+|--------|----------|---------|
+| `kr/` | Kiro | Kiro Agent/IDE (MITM) |
+| `oc/` | OpenCode | katalog gratis `opencode.ai/zen` |
+| `vertex/` | Vertex AI | Google Vertex free tier |
+| `pollinations/` | Pollinations | Gratis, tanpa key |
+| `felo/` | Felo | Gratis berbasis search |
 
 ### 💰 Murah
 
-| Prefix | Provider | Biaya | Model |
-|--------|----------|-------|-------|
-| `glm/` | GLM | $0.6/1M | `glm-5.1`, `glm-5`, `glm-4.7` |
-| `minimax/` | MiniMax | $0.2/1M | `MiniMax-M2.7`, `MiniMax-M2.5` |
-| `kimi/` | Kimi | $9/bulan flat | `kimi-k2.5`, `kimi-k2.5-thinking` |
+| Prefix | Provider | Biaya |
+|--------|----------|-------|
+| `glm/` | GLM | murah/1M |
+| `minimax/` | MiniMax | murah/1M |
+| `kimi/` | Kimi | flat |
 
-### 💳 Subscription
+### 💳 Subscription (OAuth / MITM)
 
 | Prefix | Provider | Model |
 |--------|----------|-------|
-| `cc/` | Claude Code | `claude-opus-4-7`, `claude-opus-4-6`, `claude-sonnet-4-6` |
-| `cx/` | Codex | `gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex` |
-| `gh/` | GitHub Copilot | `gpt-5.4`, `claude-opus-4.7`, `claude-sonnet-4.6` |
-| `cu/` | Cursor | `claude-4.6-opus-max`, `claude-4.5-sonnet-thinking` |
+| `cc/` | Claude Code | `claude-opus-5`, `claude-sonnet-5`, `claude-haiku-4-5` |
+| `cw/` | Claude Web | `claude-opus-4-8`, `claude-sonnet-4-6` |
+| `cx/` | Codex | `gpt-5.6-sol`, `gpt-5.5`, `gpt-5.4` |
+| `cu/` | Cursor | `claude-4.6-opus-max`, `gpt-5.2-codex`, `kimi-k2.5` |
+| `gh/` | GitHub Copilot | `gpt-5-mini`, `claude-haiku-4.5` |
+| `ag/` | Antigravity | `gemini-3.6-flash-high`, `gemini-3.1-pro` |
 
 ---
 
