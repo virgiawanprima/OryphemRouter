@@ -310,7 +310,7 @@ export async function handleNonStreamingResponse({ providerResponse, provider, m
     Promise.resolve()
       .then(onRequestSuccess)
       .catch(err => {
-        console.error("[ChatCore] onRequestSuccess failed:", err?.message || err);
+        engineLog.error("CHAT-CORE", "onRequestSuccess failed:", sanitize(err?.message || err));
       });
   }
 
