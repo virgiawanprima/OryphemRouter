@@ -369,10 +369,10 @@ export class DevinCliExecutor extends BaseExecutor {
     }
     if (Object.keys(mcpServers).length) {
       try {
-        mcpConfigDir = fs.mkdtempSync(path.join(os.tmpdir(), "devin-mcp-"));
+        mcpConfigDir = await mkdtemp(path.join(os.tmpdir(), "devin-mcp-"));
         const cfgDev = path.join(mcpConfigDir, "devin");
-        fs.mkdirSync(cfgDev, { recursive: true });
-        fs.writeFileSync(
+        await mkdir(cfgDev, { recursive: true });
+        await writeFile(
           path.join(cfgDev, "config.json"),
           JSON.stringify({ mcpServers })
         );
