@@ -975,7 +975,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > chenzk → headers (
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > sambanova → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > chipotle → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
