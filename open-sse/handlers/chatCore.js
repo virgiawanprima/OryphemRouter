@@ -1,4 +1,5 @@
 import { detectFormat, getTargetFormat, resolveTransport } from "../services/provider.js";
+import { log as engineLog } from "../utils/log.js";
 import { translateRequest } from "../translator/index.js";
 import { applyThinking, extractThinking, stripThinkingSuffix } from "../translator/concerns/thinkingUnified.js";
 import { FORMATS } from "../translator/formats.js";
