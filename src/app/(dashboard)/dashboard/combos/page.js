@@ -822,19 +822,18 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
   };
 
   const handleAddModel = (model) => {
-    if (!models.includes(model.value)) {
-      setModels([...models, model.value]);
-    }
+    setModels((prev) => (prev.includes(model.value) ? prev : [...prev, model.value]));
   };
 
-  /* === Add ALL models from a provider === */
-  const handleAddAllProviderModels = (providerId) => {
-    // Close the selector and re-open with provider filter
-    setShowModelSelect(false);
-    // We use setTimeout so state changes batch properly
-    setTimeout(() => {
-      setShowModelSelect(true);
-    }, 100);
+  // Batch-add many models atomically (used by the model-selector "+All" button).
+  const handleAddModels = (modelList) => {
+    setModels((prev) => {
+      const next = [...prev];
+      for (const model of modelList || []) {
+        if (model?.value && !next.includes(model.value) && !model.isPlaceholder) next.push(model.value);
+      }
+      return next;
+    });
   };
 
   const handleDeselectModel = (model) => {
