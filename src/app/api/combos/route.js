@@ -7,6 +7,12 @@ export const dynamic = "force-dynamic";
 // Validate combo name: only a-z, A-Z, 0-9, -, _
 const VALID_NAME_REGEX = /^[a-zA-Z0-9_.\-]+$/;
 
+// Combo kinds recognized by the UI: LLM combos live on /dashboard/combos,
+// webSearch/webFetch combos live on /dashboard/media-providers/web. Any other
+// kind is invisible to every dashboard page — reject it instead of creating
+// an orphan combo the frontend will never show.
+const VALID_KINDS = new Set(["llm", "webSearch", "webFetch"]);
+
 // GET /api/combos - Get all combos
 export async function GET() {
   try {
