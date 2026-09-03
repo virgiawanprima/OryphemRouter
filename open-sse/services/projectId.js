@@ -108,10 +108,10 @@ export async function getProjectIdForConnection(connectionId, accessToken, provi
                 projectIdCache.set(connectionId, {projectId, fetchedAt: Date.now()});
                 return projectId;
             }
-            console.warn("[ProjectId] could not fetch projectId for connection", connectionId.slice(0, 8));
+            log.warn("PROJECT-ID", "[ProjectId] could not fetch projectId for connection", connectionId.slice(0, 8));
             return null;
         } catch (error) {
-            console.warn(`[ProjectId] Error fetching project ID: ${error.message}`);
+            log.warn("PROJECT-ID", `[ProjectId] Error fetching project ID: ${sanitize(error.message)}`);
             return null;
         } finally {
             pendingFetches.delete(connectionId);
