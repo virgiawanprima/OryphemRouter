@@ -899,51 +899,45 @@ exports[`GOLDEN buildHeaders (default executor providers) > chatanywhere → hea
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > openrouter → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > chatgpt-web → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
-    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "HTTP-Referer": "https://endpoint-proxy.local",
-    "X-Title": "Endpoint Proxy",
+    "Cookie": "<CRED>",
   },
   "nonStream": {
-    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "HTTP-Referer": "https://endpoint-proxy.local",
-    "X-Title": "Endpoint Proxy",
+    "Cookie": "<CRED>",
   },
   "oauth": {
     "Accept": "text/event-stream",
-    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "HTTP-Referer": "https://endpoint-proxy.local",
-    "X-Title": "Endpoint Proxy",
+    "Cookie": "<CRED>",
   },
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > perplexity → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > chatgpt-web-codex → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
-    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
+    "Cookie": "<CRED>",
   },
   "nonStream": {
-    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
+    "Cookie": "<CRED>",
   },
   "oauth": {
     "Accept": "text/event-stream",
-    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
+    "Cookie": "<CRED>",
   },
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > perplexity-agent → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > cheaperinference → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
