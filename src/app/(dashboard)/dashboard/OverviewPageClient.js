@@ -105,14 +105,30 @@ export default function OverviewPageClient() {
     : `${Math.floor(liveUpSec / 3600)}h ${Math.floor((liveUpSec % 3600) / 60)}m ${liveUpSec % 60}s`;
 
   const online = health?.ok === true;
-  const totalTokens = stats?.totalTokens ?? (stats?.byProvider ? Object.values(stats.byProvider).reduce((a, b) => a + (b.tokens || 0), 0) : 0);
+  const totalTokens = stats?.totalTokens ?? (stats?.totalPromptTokens != null
+    ? stats.totalPromptTokens + (stats.totalCompletionTokens || 0) + (stats.totalCachedTokens || 0)
+    : (stats?.byProvider
+        ? Object.values(stats.byProvider).reduce((a, b) => a + ((b.promptTokens || 0) + (b.completionTokens || 0) + (b.cachedTokens || 0)), 0)
+        : 0));
   const totalRequests = stats?.totalRequests ?? (stats?.byProvider ? Object.values(stats.byProvider).reduce((a, b) => a + (b.requests || 0), 0) : 0);
 
+  // Compute stat values explicitly (avoids inline conditional text that a
+  // hydration edge case can leave stale in the DOM).
+  let serverStatus = "...";
+  if (online === true) serverStatus = "Online";
+  else if (online === false) serverStatus = "Offline";
+  let serverColor = "text-text-subtle";
+  if (online === true) serverColor = "text-c-green";
+  else if (online === false) serverColor = "text-c-red-600";
+  const connValue = loading ? "..." : String(providers.connectionCount);
+  const connNote = loading ? "loading" : `${providers.activeCount} active`;
+  const tokensValue = loading ? "..." : Number.isFinite(totalTokens) ? totalTokens.toLocaleString() : "--";
+
   const statCards = [
-    { label: "Server", value: online ? "Online" : online === false ? "Offline" : "...", color: online ? "text-c-green" : online === false ? "text-c-red-600" : "text-text-subtle", icon: "dns", note: `uptime ${uptimeStr}` },
-    { label: "Connections", value: loading ? "..." : String(providers.connectionCount), color: "text-c-purple", icon: "link", note: loading ? "loading" : `${providers.activeCount} active` },
+    { label: "Server", value: serverStatus, color: serverColor, icon: "dns", note: `uptime ${uptimeStr}` },
+    { label: "Connections", value: connValue, color: "text-c-purple", icon: "link", note: connNote },
     { label: "Active requests", value: liveStats?.activeRequests ?? 0, color: "text-c-cyan", icon: "swap_vert", note: "live via SSE" },
-    { label: "Tokens (24h)", value: loading ? "..." : Number.isFinite(totalTokens) ? totalTokens.toLocaleString() : "--", color: "text-c-purple", icon: "toll", note: "est. token flow" },
+    { label: "Tokens (24h)", value: tokensValue, color: "text-c-purple", icon: "toll", note: "est. token flow" },
   ];
 
   return (
