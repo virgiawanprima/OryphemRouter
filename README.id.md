@@ -105,15 +105,15 @@
 │  • Format translation (OpenAI ↔ Claude)     │
 │  • Quota tracking                           │
 │  • Auto token refresh                       │
-│  • Cost-Optimized routing                   │
+│  • Auto combo ranking (AI-scored)            │
 │  • Circuit breaker + spending limits        │
 └──────┬──────────────────────────────────────┘
        │
        ├─→ [Tier 1: SUBSCRIPTION] Claude Code, Codex, GitHub Copilot
        │   ↓ kuota habis
-       ├─→ [Tier 2: CHEAP] GLM ($0.6/1M), MiniMax ($0.2/1M)
+       ├─→ [Tier 2: CHEAP] GLM, MiniMax, Kimi
        │   ↓ budget limit
-       └─→ [Tier 3: FREE] Kiro, OpenCode Free, Vertex ($300 credits)
+       └─→ [Tier 3: FREE] Kiro, OpenCode Free, Pollinations
 
 Hasil: Tidak pernah berhenti coding, biaya minimal + hemat 20-40% token via RTK
 ```
