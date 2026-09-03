@@ -527,6 +527,36 @@ function extractPanelText(json) {
  * Append a synthesized user turn to whichever message array the request format uses.
  * Preserves the original conversation + system prompt so the judge has full context.
  */
+/** Extract step text from a Response body — handles JSON and SSE streams. */
+async function responseToStepText(response) {
+  if (!response) return "";
+  const ct = (response.headers.get("content-type") || "").toLowerCase();
+  try {
+    if (ct.includes("text/event-stream")) {
+      const bodyText = await response.clone().text();
+      let out = "";
+      for (const rawLine of bodyText.split("\n")) {
+        const line = rawLine.trim();
+        if (!line.startsWith("data:")) continue;
+        const payload = line.slice(5).trim();
+        if (payload === "[DONE]") continue;
+        try {
+          const j = JSON.parse(payload);
+          const t = extractPanelText(j);
+          if (t) out += t;
+        } catch {
+          out += payload;
+        }
+      }
+      return out;
+    }
+    const json = await response.clone().json();
+    return extractPanelText(json);
+  } catch {
+    return "";
+  }
+}
+
 function appendUserTurn(body, text) {
   const next = { ...body };
   if (Array.isArray(body.messages)) {
