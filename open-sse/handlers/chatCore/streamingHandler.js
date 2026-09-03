@@ -133,7 +133,7 @@ export function buildOnStreamComplete({ provider, model, connectionId, apiKey, r
       pxpipe,
       status: "success"
     }, { id: streamDetailId })).catch(err => {
-      console.error("[RequestDetail] Failed to update streaming content:", err.message);
+      engineLog.error("CHAT-CORE", "RequestDetail update failed (streaming content):", sanitize(err.message));
     });
 
     // Persist stream usage to DB (no console line; the "📊 done" line below is authoritative)
