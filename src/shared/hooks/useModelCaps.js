@@ -59,22 +59,40 @@ function resolveCaps(byFull, byId, key) {
     reasoning: c.reasoning,
     contextWindow: c.contextWindow,
     maxOutput: c.maxOutput,
+    toolCalling: c.toolCalling ?? c.tools ?? null,
   };
+}
+
+function resolvePricing(pricingByFull, pricingById, key) {
+  if (!key) return null;
+  if (pricingByFull[key]) return pricingByFull[key];
+  const bare = key.includes("/") ? key.slice(key.indexOf("/") + 1) : key;
+  if (pricingById[bare]) return pricingById[bare];
+  return null;
 }
 
 export function useModelCaps() {
   const [byFull, setByFull] = useState(() => cache?.byFull || {});
   const [byId, setById] = useState(() => cache?.byId || {});
+  const [pricingByFull, setPricingByFull] = useState(() => cache?.pricingByFull || {});
+  const [pricingById, setPricingById] = useState(() => cache?.pricingById || {});
 
   useEffect(() => {
     if (cache) {
       setByFull(cache.byFull);
       setById(cache.byId);
+      setPricingByFull(cache.pricingByFull);
+      setPricingById(cache.pricingById);
       return;
     }
     let alive = true;
     loadModelCaps().then((maps) => {
-      if (alive) { setByFull(maps.byFull); setById(maps.byId); }
+      if (alive) {
+        setByFull(maps.byFull);
+        setById(maps.byId);
+        setPricingByFull(maps.pricingByFull);
+        setPricingById(maps.pricingById);
+      }
     });
     return () => { alive = false; };
   }, []);
