@@ -26,7 +26,7 @@ export function parseSSELine(line, format = null) {
   try {
     return JSON.parse(data);
   } catch (error) {
-    console.warn(`[WARN] Failed to parse SSE line (${data.length} chars): ${data.substring(0, 200)}...`);
+    log.warn("SSE", `Failed to parse SSE line (${data.length} chars): ${sanitize(data.substring(0, 200))}...`);
     return null;
   }
 }
