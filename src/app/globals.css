@@ -248,26 +248,6 @@ select {
   color-scheme: light;
 }
 
-/* Light palette: applied to the html root whenever .dark is absent.
-   `.dark` is toggled on <html> by the theme store; without this rule the
-   `:root` dark palette would win and light mode would never render. */
-html:not(.dark) {
-  --c-teal-50: #e1f5ee; --c-teal-600: #0f6e56; --c-teal-800: #04342c; --c-teal-900: #021e19;
-  --c-blue-50: #e6f1fb; --c-blue-600: #185fa5; --c-blue-800: #042c53; --c-blue-900: #021a38;
-  --c-amber-50: #faeeda; --c-amber-600: #854f0b; --c-amber-800: #412402; --c-amber-900: #2a1600;
-  --c-red-50: #fcebeb; --c-red-600: #a32d2d; --c-red-800: #501313; --c-red-900: #3a0d0d;
-  --c-gray-50: #faf9fc; --c-gray-600: #5d6170; --c-gray-800: #282a36; --c-gray-900: #282a36;
-  --color-bg: #faf9fc; --color-bg-alt: #f3f0fa;
-  --color-surface: #ffffff; --color-surface-2: #f5f2fb; --color-surface-3: #ebe5f7; --color-surface-4: #e2dbf0;
-  --color-border: #e5e0f0; --color-border-500: #d8d0e8; --color-border-subtle: #efeaf7;
-  --color-text: #282a36; --color-text-main: #282a36;
-  --color-text-muted: #5d6170; --color-text-subtle: #8d90a0;
-  --color-danger: #a32d2d; --color-success: #0f6e56;
-  --color-warning: #854f0b; --color-info: #185fa5;
-  --color-primary: #185fa5; --color-accent: #0f6e56; --color-cyan: #0e7490;
-  color-scheme: light;
-}
-
 /* ============================================================
    Smooth theme transitions — WCAG accessible
    Default color transitions app-wide so a theme toggle fades
