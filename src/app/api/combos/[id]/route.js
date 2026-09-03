@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: "Combo not found" }, { status: 404 });
     }
     
-    return NextResponse.json(combo);
+    return NextResponse.json({ ...combo, contextWindow: computeComboContextLength(combo) });
   } catch (error) {
     console.log("Error fetching combo:", error);
     return NextResponse.json({ error: "Failed to fetch combo" }, { status: 500 });
