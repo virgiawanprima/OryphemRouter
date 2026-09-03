@@ -500,7 +500,7 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
                     className="group/chip inline-flex items-center gap-1 rounded bg-black/5 px-1.5 py-0.5 font-mono text-xs text-text-muted dark:bg-white/5"
                   >
                     <span>{model}</span>
-                    <CapacityBadges caps={getCaps?.(model)} />
+                    <CapacityBadges caps={getCaps?.(model)} pricing={getPricing?.(model)} />
                     <button onClick={() => handleMove(index, -1)} disabled={index === 0} className={`leading-none opacity-0 group-hover/chip:opacity-100 ${index === 0 ? "text-text-muted/20" : "text-text-muted hover:text-primary"}`}>
                       <span className="material-symbols-outlined text-[12px]">arrow_upward</span>
                     </button>
