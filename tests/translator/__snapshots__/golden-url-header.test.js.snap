@@ -880,7 +880,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > chat-oripe → heade
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > openai → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > chatanywhere → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
