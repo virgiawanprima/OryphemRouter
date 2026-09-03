@@ -426,11 +426,11 @@ devin --version`,
     name: "OpenDesign",
     image: "/providers/opendesign.png",
     color: "#7C3AED",
-    description: "OpenDesign — claude.ai/design open-sourced! Agent-native design skills pack",
+    description: "OpenDesign - claude.ai/design open-sourced! Agent-native design skills pack",
     docsUrl: "https://github.com/manalkaff/opendesign",
     configType: "guide",
     notes: [
-      { type: "info", text: "OpenDesign ships as a plugin/skills pack installed into Claude Code, Cursor, OpenAI Codex, Gemini CLI, or OpenCode. It inherits the host agent's model config, so once your host points at oryphemrouter, /opendesign design sessions route through oryphemrouter automatically — no extra env vars needed." },
+      { type: "info", text: "OpenDesign ships as a plugin/skills pack installed into Claude Code, Cursor, OpenAI Codex, Gemini CLI, or OpenCode. It inherits the host agent's model config, so once your host points at oryphemrouter, /opendesign design sessions route through oryphemrouter automatically - no extra env vars needed." },
       { type: "info", text: "Invoke with /opendesign <brief>. Covers decks, wireframes, interactive prototypes, design-system extraction, and brand systems, with a verifier subagent that checks output against the brief." },
     ],
     guideSteps: [
