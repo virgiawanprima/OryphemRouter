@@ -106,7 +106,7 @@ async function createLogSession(sourceFormat, targetFormat, model) {
     
     return sessionPath;
   } catch (err) {
-    console.log("[LOG] Failed to create log session:", err.message);
+    log.info("REQUEST_LOGGER", "Failed to create log session:", err.message);
     return null;
   }
 }
