@@ -786,11 +786,6 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
     }
   }
 
-  const handleDragEnd = (event) => {
-    // Currently disabled for provider-grouped layout
-    // Full DnD with groups coming in future update
-  };
-
   const fetchModalData = async () => {
     try {
       const aliasesRes = await fetch("/api/models/alias");
