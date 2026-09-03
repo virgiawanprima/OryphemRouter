@@ -51,8 +51,11 @@
     "recharts": "^3.7.0",
     "socks-proxy-agent": "^8.0.5",
     "sql.js": "^1.14.1",
+    "tls-client-node": "^0.2.0",
     "undici": "^7.19.2",
     "uuid": "^13.0.0",
+    "ws": "^8.18.0",
+    "zod": "^4.4.3",
     "zustand": "^5.0.10"
   },
   "optionalDependencies": {
