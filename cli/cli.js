@@ -647,6 +647,9 @@ function startServer(updatePromise) {
 
   let server = spawnServer();
 
+  // Expose the server handle for gracefulExit() so shutdown can drain/close it.
+  globalThis.__serverHandle = server;
+
   // Cleanup function - force kill server process
   let isCleaningUp = false;
   function cleanup() {
