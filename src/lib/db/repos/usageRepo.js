@@ -728,11 +728,6 @@ export async function getChartData(period = "7d") {
   });
 }
 
-function formatLogDate(date = new Date()) {
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-}
-
 // No-op: request log is now derived from usageHistory table on read.
 export async function appendRequestLog() {}
 
