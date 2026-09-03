@@ -268,7 +268,7 @@ export default function MediaProviderKindPage() {
         <ComboList combos={kindCombos} />
       )}
 
-      {allProviders.length === 0 ? (
+      {allProviders.length === 0 && !isRegistryKind ? (
         <div className="text-center py-12 border border-dashed border-border rounded-xl text-text-muted text-sm">
           No providers support <strong>{kindConfig.label}</strong> yet.
         </div>
