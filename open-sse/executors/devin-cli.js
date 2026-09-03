@@ -143,7 +143,7 @@ async function buildClientToolsMcp(tools, resultMap) {
   }
   return {
     command: process.execPath,
-    args: [ensureClientToolsScript()],
+    args: [await ensureClientToolsScript()],
     env,
   };
 }
