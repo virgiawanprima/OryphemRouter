@@ -687,19 +687,19 @@ function startServer(updatePromise) {
     isShuttingDown = true;
     console.log("\nExiting...");
     cleanup();
-    setTimeout(() => process.exit(0), 100);
+    gracefulExit();
   });
   process.on("SIGTERM", () => {
     if (isShuttingDown) return;
     isShuttingDown = true;
     cleanup();
-    setTimeout(() => process.exit(0), 100);
+    gracefulExit();
   });
   process.on("SIGHUP", () => {
     if (isShuttingDown) return;
     isShuttingDown = true;
     cleanup();
-    setTimeout(() => process.exit(0), 100);
+    gracefulExit();
   });
 
   // Initialize tray icon (runs alongside TUI)
