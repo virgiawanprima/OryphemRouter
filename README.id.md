@@ -188,12 +188,15 @@ curl http://localhost:20129/api/health
 | 🔄 **Format Translation** | OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex | Bekerja dengan tool CLI apa pun |
 | 👥 **Multi-Account Support** | Banyak akun per provider | Load balancing + redundansi |
 | 💰 **Spending Limits** | Batas biaya per hari/bulan + auto-pause | Cegah tagihan tak terduga |
-| ⚡ **Cost-Optimized Routing** | Auto-pilih provider termurah yang bekerja | Minimalkan biaya otomatis |
+| ⚡ **Auto Combo Ranking** | Peringkat model berbasis skor AI untuk strategi `auto` | Pilih model terbaik otomatis |
 | 🛡️ **Circuit Breaker** | 5 error → cooldown 5 menit, auto-recover | Ketahanan terhadap provider mati |
 | 🆓 **Free-Tier Tracker** | Kuota gratis live per provider | Maksimalkan penggunaan gratis |
 | 🎨 **Custom Combos** | Kelompokkan model, pilih strategi per combo | Sesuaikan fallback dengan kebutuhan |
-| 💾 **Cloud Sync** | Sinkronkan config antar perangkat | Setup sama di mana saja |
-| 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Deployment fleksibel |
+| 🖼️ **Media Providers** | TTS/STT, gambar, video, musik, OCR, rerank, moderasi | Satu gateway untuk semua jenis media |
+| 🧩 **Proxy Pools** | Rotasi proxy keluar & strategi per provider | Bypass batasan geo/rate |
+| 🔀 **Translator** | Konversi format request/response secara live | Ganti provider tanpa hambatan |
+| 💡 **Skills & MCP** | Agent skills-pack + MCP plugin server | Perluas agent sekali klik |
+| 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare/Firebase | Deployment fleksibel |
 
 ---
 
