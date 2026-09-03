@@ -92,7 +92,7 @@ async function tryGotScrapingFetch(url, options) {
     }
     return res;
   } catch (e) {
-    console.warn(`[ProxyFetch] got-scraping request failed, fallback to native fetch: ${e.message}`);
+    log.warn("PROXY-FETCH", `got-scraping request failed, fallback to native fetch: ${e.message}`);
     return null;
   }
 }
