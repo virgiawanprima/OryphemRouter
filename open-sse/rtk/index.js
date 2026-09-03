@@ -112,7 +112,7 @@ function compressKiroFormat(body, enabled) {
       }
     }
   } catch (e) {
-    console.warn("[RTK] compressKiroFormat error:", e.message);
+    engineLog.warn("RTK", "compressKiroFormat error:", sanitize(e.message));
     return null;
   }
   return stats;
