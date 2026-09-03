@@ -94,9 +94,13 @@ export default function JcodeToolCard({
     try {
       const res = await fetch("/api/cli-tools/all-statuses?tool=jcode");
       const data = await res.json();
-      setJcodeStatus(data);
+      if (!res.ok) {
+        setJcodeStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
+      } else {
+        setJcodeStatus(data?.jcode || { checkFailed: true, error: "No status for jcode" });
+      }
     } catch (error) {
-      setJcodeStatus({ installed: false, error: error.message });
+      setJcodeStatus({ checkFailed: true, error: error.message });
     } finally {
       setCheckingJcode(false);
     }
