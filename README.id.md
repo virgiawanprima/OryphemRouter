@@ -592,6 +592,25 @@ GET http://localhost:20129/v1/models
 Authorization: Bearer your-api-key
 ```
 
+### Media & Tools
+
+| Method | Path | Fungsi |
+|--------|------|--------|
+| POST | `/v1/embeddings` | Embeddings |
+| POST | `/v1/images/generations` | Text-to-Image |
+| POST | `/v1/images/upscale` | Image Upscale |
+| POST | `/v1/audio/speech` | Text-to-Speech |
+| POST | `/v1/audio/transcriptions` | Speech-to-Text |
+| POST | `/v1/audio/translate` | Audio Translation |
+| POST | `/v1/audio/voices` | Daftar suara |
+| POST | `/v1/videos/generations` | Video |
+| POST | `/v1/music/generations` | Musik |
+| POST | `/v1/ocr` | OCR |
+| POST | `/v1/rerank` | Rerank |
+| POST | `/v1/moderations` | Moderasi |
+| POST | `/v1/search` | Web Search |
+| POST | `/v1/web/fetch` | Web Fetch |
+
 ### Real-time Status (SSE)
 
 ```bash
