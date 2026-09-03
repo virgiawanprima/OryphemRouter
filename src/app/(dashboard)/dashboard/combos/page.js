@@ -865,7 +865,6 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
 
     // Calculate flat positions for the provider groups
     const fromFlatStart = flatPositions.findIndex(p => p.providerIndex === providerIndex);
-    const fromFlatEnd = fromFlatStart + fromModels.length;
     const toFlatStart = flatPositions.findIndex(p => p.providerIndex === targetGroup);
 
     const newModels = [...models];
