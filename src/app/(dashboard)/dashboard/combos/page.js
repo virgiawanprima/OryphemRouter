@@ -254,7 +254,7 @@ export default function CombosPage() {
         capacityAdapter={capacityAdapter}
         onChange={handleSetCapacityAdapter}
         activeProviders={activeProviders}
-        getCaps={getCaps}
+        getCaps={getCaps} getPricing={getPricing}
       />
 
       {/* Create Modal - Use key to force remount and reset state */}
