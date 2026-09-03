@@ -99,7 +99,7 @@ export async function handleStreamingResponse({ providerResponse, provider, mode
     pxpipe,
     status: "success"
   }, { id: streamDetailId })).catch(err => {
-    console.error("[RequestDetail] Failed to save streaming request:", err.message);
+    engineLog.error("CHAT-CORE", "RequestDetail save failed (streaming request):", sanitize(err.message));
   });
 
   return {
