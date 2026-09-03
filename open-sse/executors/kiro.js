@@ -1001,7 +1001,7 @@ export class KiroExecutor extends BaseExecutor {
       const declaredTruncatedAfterOutput = declaredDisposition === "terminal_incomplete" &&
         KIRO_TRUNCATION_STOP_REASONS.has(state.stopReason) && state.chunkIndex > 0;
       if (declaredTruncatedAfterOutput) {
-        console.error(`[Kiro] truncated after ${state.chunkIndex} chunk(s) (stop_reason=${state.stopReason}); keeping output`);
+        log.error("KIRO", `truncated after ${state.chunkIndex} chunk(s) (stop_reason=${state.stopReason}); keeping output`);
       }
       if (!declaredTruncatedAfterOutput && ["retryable_protocol_failure", "terminal_incomplete", "terminal_refusal", "unknown_failure"].includes(declaredDisposition)) {
         const code = declaredDisposition === "retryable_protocol_failure"
