@@ -209,7 +209,7 @@ Dashboard OryphemRouter terorganisir dalam modul fokus. Berikut penjelasan tiap 
 
 Kelola semua koneksi provider AI dari satu tempat.
 
-- **Hubungkan provider**: Claude Code, Codex, GitHub Copilot, Cursor, Kiro, OpenCode Free, Vertex, GLM, MiniMax, Kimi, dan 40+ lainnya.
+- **Hubungkan provider**: Claude Code, Codex, GitHub Copilot, Cursor, Kiro, OpenCode, GLM, MiniMax, Kimi, dan 380+ lainnya.
 - **Login OAuth**: Login sekali-klik untuk provider subscription (Claude Code, Codex, GitHub, Cursor, Kiro).
 - **API key**: Tambah, edit, jeda, atau hapus API key per provider. Mendukung **bulk add** dengan penamaan otomatis:
   ```
