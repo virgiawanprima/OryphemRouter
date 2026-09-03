@@ -1,5 +1,6 @@
 // Port of apply_filter (rtk/src/cmds/system/pipe_cmd.rs) — catch_unwind equivalent
 // On panic/error: passthrough raw output + warn to stderr
+import { log as engineLog, sanitize } from "../utils/log.js";
 export function safeApply(fn, text) {
   if (typeof fn !== "function") return text;
   try {
