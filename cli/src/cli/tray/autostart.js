@@ -89,7 +89,7 @@ function isAutoStartEnabled() {
       const plistPath = path.join(os.homedir(), "Library", "LaunchAgents", `${APP_LABEL}.plist`);
       if (!fs.existsSync(plistPath)) return false;
       try {
-        execSync(`launchctl list ${APP_LABEL}`, {
+        execFileSync("launchctl", ["list", APP_LABEL], {
           stdio: ["ignore", "ignore", "ignore"],
           timeout: 3000
         });
