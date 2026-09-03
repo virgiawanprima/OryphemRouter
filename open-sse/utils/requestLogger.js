@@ -119,7 +119,7 @@ function writeJsonFile(sessionPath, filename, data) {
     const filePath = path.join(sessionPath, filename);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   } catch (err) {
-    console.log(`[LOG] Failed to write ${filename}:`, err.message);
+    log.info("REQUEST_LOGGER", `Failed to write ${filename}:`, err.message);
   }
 }
 
