@@ -815,3 +815,49 @@ export async function handleFusionChat({ body, models, handleSingleModel, log, c
     { status: 502, headers: { "Content-Type": "application/json" } }
   );
 }
+
+/**
+ * Pipeline chat — chains combo steps sequentially, feeding each step's output
+ * into the next step as added context (OmniRoute "pipeline" strategy).
+ *
+ * Safety: if a step fails (non-2xx), the chain aborts and returns that error.
+ * If an intermediate response isn't JSON-parseable (e.g. a stream), the chain
+ * continues with the unchanged body rather than breaking. The last step's
+ * result is returned as the pipeline output.
+ *
+ * @param {object} options
+ * @param {object} options.body - request body
+ * @param {string[]} options.models - ordered combo/mode step strings
+ * @param {Function} options.handleSingleModel - (body, modelStr) => Promise<Response>
+ * @param {object} options.log - logger
+ * @param {string} [options.comboName]
+ * @returns {Promise<Response>}
+ */
+export async function handlePipelineChat({ body, models, handleSingleModel, log, comboName }) {
+  if (!Array.isArray(models) || models.length === 0) {
+    return unavailableResponse(500, "Pipeline requires at least one step");
+  }
+  let currentBody = body;
+  let lastResult = null;
+  for (let i = 0; i < models.length; i++) {
+    const modelStr = models[i];
+    log?.info?.("PIPELINE", `step ${i + 1}/${models.length}: ${modelStr}`);
+    const result = await handleSingleModel(currentBody, modelStr);
+    lastResult = result;
+    if (!result.ok) {
+      log?.warn?.("PIPELINE", `step ${modelStr} failed (${result.status}), aborting chain`);
+      return result;
+    }
+    // Feed the step output into the next step (only for intermediate steps).
+    if (i < models.length - 1) {
+      const text = await responseToStepText(result);
+      if (text) {
+        currentBody = appendUserTurn(currentBody, text);
+        log?.info?.("PIPELINE", `step ${modelStr} output (${text.length} chars) fed to next step`);
+      } else {
+        log?.debug?.("PIPELINE", `step ${modelStr} produced no parseable output; passed through`);
+      }
+    }
+  }
+  return lastResult;
+}
