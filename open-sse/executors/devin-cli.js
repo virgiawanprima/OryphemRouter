@@ -105,10 +105,10 @@ rl.on("line", (line) => {
 });
 `.trimStart();
 
-function ensureClientToolsScript() {
+async function ensureClientToolsScript() {
   const scriptPath = path.join(os.tmpdir(), "oryphemrouter-devin-client-tools.mjs");
   // Always rewrite so script upgrades land without a process restart.
-  fs.writeFileSync(scriptPath, CLIENT_TOOLS_MCP_SCRIPT);
+  await writeFile(scriptPath, CLIENT_TOOLS_MCP_SCRIPT);
   return scriptPath;
 }
 
