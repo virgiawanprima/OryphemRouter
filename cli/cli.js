@@ -761,7 +761,7 @@ function startServer(updatePromise) {
           cleanup();
           await killAllAppProcesses(port);
           await killProcessOnPort(port);
-          setTimeout(() => process.exit(0), 200);
+          gracefulExit();
           return;
         } else if (choice === "web") {
           openBrowser(url);
