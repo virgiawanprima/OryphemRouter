@@ -45,7 +45,16 @@ export async function POST(request) {
       return NextResponse.json({ error: "Combo name already exists" }, { status: 400 });
     }
 
-    const combo = await createCombo({ name, models: models || [], kind: kind || null });
+    // Validate kind against the kinds the dashboard actually renders.
+    const normalizedKind = kind == null || kind === "" ? null : String(kind);
+    if (normalizedKind !== null && !VALID_KINDS.has(normalizedKind)) {
+      return NextResponse.json(
+        { error: `Invalid combo kind '${normalizedKind}'. Valid kinds: llm, webSearch, webFetch` },
+        { status: 400 },
+      );
+    }
+
+    const combo = await createCombo({ name, models: models || [], kind: normalizedKind });
 
     return NextResponse.json(combo, { status: 201 });
   } catch (error) {
