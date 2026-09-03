@@ -1,4 +1,5 @@
 const readline = require("readline");
+const { gracefulExit } = require("./gracefulExit");
 
 const COLORS = {
   reset: "\x1b[0m",
