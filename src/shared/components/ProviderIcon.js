@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { getProviderIconSrc, markProviderIconMissing } from "@/shared/utils/providerIcon";
+import {
+  getProviderIconSrc,
+  getProviderSymbolIcon,
+  getProviderTextIcon,
+  markProviderIconMissing,
+} from "@/shared/utils/providerIcon";
 
 function resolveSrc(src, providerId) {
   if (providerId) return getProviderIconSrc(providerId);
