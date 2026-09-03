@@ -133,29 +133,26 @@ Hasil: Tidak pernah berhenti coding, biaya minimal + hemat 20-40% token via RTK
 
 > **Node.js 20+** diperlukan. Unduh dari [nodejs.org](https://nodejs.org) atau pakai package manager OS Anda.
 
-### 🪟 Windows
+### 🪟 Windows / 🍎 macOS / 🐧 Linux
 
-```powershell
-npm install -g oryphemrouter
-oryphemrouter
-```
-
-### 🍎 macOS
+Clone dan jalankan dari source:
 
 ```bash
-brew install node@22
-npm install -g oryphemrouter
-oryphemrouter
+git clone https://github.com/virgiawanprima/OryphemRouter.git
+cd OryphemRouter
+npm install
+
+# Development (hot reload)
+npm run dev
+
+# Production
+npm run build
+npm run start
 ```
 
-### 🐧 Linux
-
-```bash
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt-get install -y nodejs
-npm install -g oryphemrouter
-oryphemrouter
-```
+> **Node.js 20+** diperlukan. Unduh dari [nodejs.org](https://nodejs.org).
+>
+> Ingin launcher mandiri? CLI bawaan ada di [`cli/`](./cli/) dan menyediakan bin `oryphemrouter` (start/stop server, tray UI di desktop).
 
 ### 🐳 Docker (semua OS)
 
