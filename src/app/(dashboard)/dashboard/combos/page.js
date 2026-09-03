@@ -1102,6 +1102,7 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
           isOpen={showModelSelect}
           onClose={() => setShowModelSelect(false)}
           onSelect={handleAddModel}
+          onAddMany={handleAddModels}
           onDeselect={handleDeselectModel}
           activeProviders={activeProviders}
           modelAliases={modelAliases}
