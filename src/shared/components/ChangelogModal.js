@@ -24,7 +24,14 @@ export default function ChangelogModal({ isOpen, onClose }) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();
       })
-      .then((md) => setHtml(marked.parse(md)))
+      .then((md) => {
+        // Sanitize with DOMPurify (OWASP-recommended). In the browser
+        // DOMPurify.sanitize is attached; defensively fall back to raw
+        // markdown only where DOMPurify has no DOM (SSR pre-render).
+        const raw = marked.parse(md);
+        const clean = typeof DOMPurify.sanitize === "function" ? DOMPurify.sanitize(raw) : raw;
+        setHtml(clean);
+      })
       .catch((err) => setError(err.message || "Failed to load"))
       .finally(() => setLoading(false));
   }, [isOpen, html]);
