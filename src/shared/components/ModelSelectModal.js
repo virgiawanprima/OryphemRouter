@@ -744,12 +744,12 @@ onClose();
                         <>
                           {model.name}
                           <span className="text-[9px] opacity-60 font-normal">custom</span>
-                          <CapacityBadges caps={getCaps(model.value)} />
+                          <CapacityBadges caps={getCaps(model.value)} pricing={getPricing(model.value)} />
                         </>
                       ) : (
                         <>
                           {model.name}
-                          <CapacityBadges caps={getCaps(model.value)} />
+                          <CapacityBadges caps={getCaps(model.value)} pricing={getPricing(model.value)} />
                         </>
                       )}
                     </span>
