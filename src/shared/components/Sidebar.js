@@ -27,8 +27,9 @@ const navItems = [
 const systemItems = [
   { href: "/dashboard/proxy-pools", label: "Proxy Pools", icon: "lan" },
   { href: "/dashboard/skills", label: "Skills", icon: "extension" },
-  { href: "/dashboard/console-log", label: "Console Log", icon: "terminal" },
+  { href: "/dashboard/console-log", label: "Console Log", icon: "article" },
   { href: "/dashboard/profile", label: "Settings", icon: "settings" },
+  { href: "/dashboard/pricing", label: "Pricing", icon: "sell" },
 ];
 
 const MEDIA_SUBITEMS = [
