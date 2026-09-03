@@ -611,7 +611,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > bai → headers (api
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > hyperbolic → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > baichuan → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
