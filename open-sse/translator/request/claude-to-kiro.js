@@ -19,6 +19,7 @@ import { register } from "../index.js";
 import { FORMATS } from "../formats.js";
 import { applyKiroSessionReplay } from "../../utils/kiroSessionReplay.js";
 import { resolveContinuationId, resolveSessionIdentity } from "../../utils/sessionManager.js";
+import { log as engineLog, sanitize } from "../../utils/log.js";
 import {
   resolveKiroModelIntent,
   applyKiroThinkingOverride,
