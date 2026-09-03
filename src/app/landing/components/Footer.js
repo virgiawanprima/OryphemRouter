@@ -26,28 +26,28 @@ export default function Footer() {
           {/* Product */}
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-white">Product</h4>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="#features">Features</a>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="/dashboard">Dashboard</a>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter" target="_blank" rel="noopener noreferrer">Changelog</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="#features">Features</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="/dashboard">Dashboard</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter" target="_blank" rel="noopener noreferrer">Changelog</a>
           </div>
           
           {/* Resources */}
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-white">Resources</h4>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter#readme" target="_blank" rel="noopener noreferrer">Documentation</a>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="https://www.npmjs.com/package/oryphemrouter" target="_blank" rel="noopener noreferrer">NPM</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter#readme" target="_blank" rel="noopener noreferrer">Documentation</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="https://www.npmjs.com/package/oryphemrouter" target="_blank" rel="noopener noreferrer">NPM</a>
           </div>
           
           {/* Legal */}
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-white">Legal</h4>
-            <a className="text-gray-400 hover:text-[#bd93f9] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>
+            <a className="text-gray-400 hover:text-[#38d9c8] text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>
           </div>
         </div>
         
         {/* Bottom */}
-        <div className="border-t border-[#3a3d4f] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-[#2a3947] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600 text-sm">© 2025 OryphemRouter. All rights reserved.</p>
           <div className="flex gap-6">
             <a className="text-gray-600 hover:text-white text-sm transition-colors" href="https://github.com/virgiawanprima/OryphemRouter" target="_blank" rel="noopener noreferrer">GitHub</a>
