@@ -85,7 +85,7 @@ export default function CombosPage() {
 
   useEffect(() => {
     fetchData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
 
   // Live push-driven refresh — no fixed-interval polling
   useLiveRefresh(fetchData);
