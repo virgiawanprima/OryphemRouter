@@ -38,7 +38,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > 360ai → headers (a
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > alims-intl → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > adapta-web → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
