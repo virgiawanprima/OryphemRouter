@@ -69,7 +69,7 @@ export async function handleStreamingResponse({ providerResponse, provider, mode
       || (bodyText.length < 200 ? bodyText.replace(/<[^>]*>/g, '').trim().slice(0, 160) : `Upstream returned non-SSE response (${upstreamContentType})`);
     const status = providerResponse.status || 502;
     if (log?.errorLine) log.errorLine(reqTag, "✗", `BLOCKED ${status} · ${provider}/${model} · non-SSE (${upstreamContentType})\n    ${shortMsg}`);
-    else console.warn(`[STREAM] ${provider} | ${model} | blocked pipe: ${shortMsg} [${status}]`);
+    else engineLog.warn("CHAT-CORE", `[STREAM] ${provider} | ${model} | blocked pipe: ${sanitize(shortMsg)} [${status}]`);
     streamController?.handleError?.(new Error(`upstream non-SSE: ${status}`));
     return {
       success: false,
