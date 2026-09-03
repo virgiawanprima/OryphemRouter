@@ -311,6 +311,34 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
     return errorResponse(e?.status || HTTP_STATUS.BAD_REQUEST, e?.message || "Invalid model");
   }
 
+  // Semantic cache (opt-in): deterministic temperature=0 non-streaming requests
+  // may be answered from cache. Full result shape (incl. cache => HIT) is only
+  // returned for genuinely cache-ready requests; every other path is untouched.
+  const isPlainModel = modelInfo && modelInfo.provider;
+  const wantCache = isPlainModel && body && body.stream === false && typeof body.temperature === "number" && body.temperature === 0;
+  if (wantCache) {
+    const { semanticCacheEnabled } = await getSettings();
+    if (semanticCacheEnabled) {
+      const cacheHeaders = clientRawRequest?.headers || null;
+      if (isCacheableForRead(body, cacheHeaders)) {
+        const cacheSignature = generateSignature(modelStr, body.messages ?? body.input, body.temperature, body.top_p ?? 1, apiKey || undefined);
+        const cached = getCachedResponse(cacheSignature);
+        if (cached) {
+          log.debug("CACHE", `semantic cache HIT for ${modelStr}`);
+          return new Response(JSON.stringify(cached.response), {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+              "x-oryphemrouter-cache": "HIT",
+              "x-oryphemrouter-cache-tokens-saved": String(cached.tokensSaved || 0),
+              "Access-Control-Allow-Origin": "*",
+            },
+          });
+        }
+      }
+    }
+  }
+
   // If provider is null, this might be a combo name - check and handle
   if (!modelInfo.provider) {
     const comboModels = await getComboModels(modelStr);
