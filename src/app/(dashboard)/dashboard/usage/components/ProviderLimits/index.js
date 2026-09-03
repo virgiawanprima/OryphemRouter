@@ -295,7 +295,6 @@ export default function ProviderLimits() {
   const refreshProvider = useCallback(
     async (connectionId, provider) => {
       await fetchQuota(connectionId, provider, { force: true });
-      setLastUpdated(new Date());
     },
     [fetchQuota],
   );
