@@ -1,0 +1,81 @@
+export default {
+  id: "freebuff",
+  alias: "fb",
+  display: {
+    name: "FreeBuff",
+    icon: "bolt",
+    color: "#10B981",
+    textIcon: "FB",
+  },
+  category: "apikey",
+  authType: "apikey",
+  transport: {
+    format: "openai",
+    executor: "freebuff",
+    baseUrl: "https://www.codebuff.com/api/v1",
+    auth: {
+      combined: true,
+      header: "Authorization",
+      scheme: "bearer",
+    },
+  },
+  models: [
+    {
+      id: "deepseek/deepseek-v4-flash",
+      name: "DeepSeek V4 Flash",
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "deepseek/deepseek-v4-pro",
+      name: "DeepSeek V4 Pro",
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "openai/gpt-5.6-luna",
+      name: "GPT-5.6 Luna",
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "minimax/minimax-m3",
+      name: "MiniMax M3",
+      supportsVision: true,
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "mimo/mimo-v2.5",
+      name: "MiMo v2.5",
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "z-ai/glm-5.2",
+      name: "GLM 5.2",
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "crof/kimi-k3-eco",
+      name: "Kimi K3 Eco",
+      supportsVision: true,
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "anthropic/claude-fable-5",
+      name: "Claude Fable 5",
+      supportsVision: true,
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+    {
+      id: "meta/muse-spark-1.2-contributor",
+      name: "Meta Muse Spark 1.2 Contributor",
+      supportsReasoning: true,
+      contextLength: 131072,
+    },
+  ],
+};
