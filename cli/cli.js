@@ -1,11 +1,19 @@
 #!/usr/bin/env node
 
-const { spawn, exec, execSync } = require("child_process");
+const { spawn, exec, execSync, execFileSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
 const net = require("net");
 const os = require("os");
+
+// Graceful shutdown helper — shared with cli/src (tray, menus, input).
+const { gracefulExit } = require("./src/cli/utils/gracefulExit");
+
+// Validate a value is numeric and normalize it to a PID string before using it
+// in process.kill / execFileSync argument arrays (no shell interpolation).
+// Returns "" for anything non-numeric — callers must skip empty results.
+const safePid = (v) => Number.isInteger(Number(v)) ? String(Number(v)) : "";
 
 // Poll until the server accepts TCP connections on port, or timeout — avoids blind fixed waits.
 function waitServerReady(port, { timeoutMs = 15000, intervalMs = 150 } = {}) {
