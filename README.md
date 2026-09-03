@@ -238,7 +238,7 @@ Group models under one name and pick a routing strategy.
 
 - **Create a combo**: name it, add models in priority order (drag to reorder).
 - **Templates**: one-click **Free Combo** (free models first) or **Premium Combo** presets.
-- **Per-combo strategy**: Fallback, Round Robin, Fusion, or Cost-Optimized (see Routing Strategies).
+- **Per-combo strategy**: Fallback, Round Robin, Fusion, Pipeline, or Auto (see Routing Strategies).
 - **Capacity adapter**: automatic fallback pools for vision/audio when the target model lacks a capability.
 - **Use it anywhere**: reference the combo name as the `model` in any CLI tool.
 
