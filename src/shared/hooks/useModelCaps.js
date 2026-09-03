@@ -39,7 +39,7 @@ function loadModelCaps() {
     })
     .catch(() => {
       // Keep null so a later mount can retry
-      return { byFull: {}, byId: {} };
+      return { byFull: {}, byId: {}, pricingByFull: {}, pricingById: {} };
     })
     .finally(() => { inflight = null; });
   return inflight;
