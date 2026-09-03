@@ -110,7 +110,7 @@ export default function OverviewPageClient() {
     : (stats?.byProvider
         ? Object.values(stats.byProvider).reduce((a, b) => a + ((b.promptTokens || 0) + (b.completionTokens || 0) + (b.cachedTokens || 0)), 0)
         : 0));
-  const totalRequests = stats?.totalRequests ?? (stats?.byProvider ? Object.values(stats.byProvider).reduce((a, b) => a + (b.requests || 0), 0) : 0);
+
 
   // Compute stat values explicitly (avoids inline conditional text that a
   // hydration edge case can leave stale in the DOM).
