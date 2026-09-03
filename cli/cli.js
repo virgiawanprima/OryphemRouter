@@ -410,17 +410,18 @@ function killProcessOnPort(port) {
 
       if (platform === "win32") {
         try {
-          const output = execSync(`netstat -ano | findstr :${port}`, {
+          const output = execFileSync("netstat", ["-ano"], {
             encoding: 'utf8',
-            shell: true,
             windowsHide: true,
             timeout: 5000
           }).trim();
-          const lines = output.split('\n').filter(l => l.includes('LISTENING'));
+          // Filter in JS for the listening entry on this port (no shell pipe).
+          const lines = output.split('\n').filter(l => l.includes('LISTENING') && l.includes(`:${port}`));
             if (lines.length > 0) {
               pid = lines[0].trim().split(/\s+/).pop();
-              if (pid && !isNaN(pid)) {
-                execSync(`taskkill /F /PID ${pid} 2>nul`, { stdio: 'ignore', shell: true, windowsHide: true, timeout: 3000 });
+              const spid = safePid(pid);
+              if (spid) {
+                execFileSync("taskkill", ["/F", "/PID", spid], { stdio: 'ignore', windowsHide: true, timeout: 3000 });
               }
             }
           } catch (e) {
