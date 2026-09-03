@@ -404,6 +404,11 @@ export async function handleComboChat({ body, models, handleSingleModel, log, co
       // Success (2xx) - return response
       if (result.ok) {
         log.info("COMBO", `Model ${modelStr} succeeded`);
+        // Opt-in auto-promote: hand the winning model to a caller-supplied hook
+        // (wired in chat.js) so it can persist the model at position #1.
+        if (onModelSuccess) {
+          try { await onModelSuccess(modelStr); } catch { /* never block the response */ }
+        }
         return result;
       }
 
