@@ -12,7 +12,7 @@
 [![Last Commit](https://img.shields.io/github/last-commit/virgiawanprima/OryphemRouter)](https://github.com/virgiawanprima/OryphemRouter)
 [![License](https://img.shields.io/github/license/virgiawanprima/OryphemRouter)](https://github.com/virgiawanprima/OryphemRouter/blob/main/LICENSE)
 
-**Hubungkan Semua Tools AI Coding** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **ke 40+ Provider AI & 100+ Model.**
+**Hubungkan Semua Tools AI Coding** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **ke 380+ Provider AI & 1600+ Model.**
 
 ![Dashboard](public/images/overview.png)
 
