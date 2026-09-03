@@ -8737,3 +8737,38 @@ exports[`GOLDEN buildUrl (default executor providers) > zed → url (stream + no
   "stream": "https://cloud.zed.dev/completions",
 }
 `;
+
+exports[`GOLDEN buildUrl (default executor providers) > zed-hosted → url (stream + non-stream) 1`] = `
+{
+  "nonStream": "https://cloud.zed.dev/completions",
+  "stream": "https://cloud.zed.dev/completions",
+}
+`;
+
+exports[`GOLDEN buildUrl (default executor providers) > zenmux → url (stream + non-stream) 1`] = `
+{
+  "nonStream": "https://zenmux.ai/api/v1/chat/completions",
+  "stream": "https://zenmux.ai/api/v1/chat/completions",
+}
+`;
+
+exports[`GOLDEN buildUrl (default executor providers) > zenmux-free → url (stream + non-stream) 1`] = `
+{
+  "nonStream": "https://zenmux.ai/api/anthropic/v1/messages",
+  "stream": "https://zenmux.ai/api/anthropic/v1/messages",
+}
+`;
+
+exports[`GOLDEN buildUrl (default executor providers) > zerolimitai → url (stream + non-stream) 1`] = `
+{
+  "nonStream": "https://www.zerolimitai.com/api/v1/chat/completions",
+  "stream": "https://www.zerolimitai.com/api/v1/chat/completions",
+}
+`;
+
+exports[`GOLDEN buildUrl (default executor providers) > zylo-api → url (stream + non-stream) 1`] = `
+{
+  "nonStream": "https://api.zyloai.net/v1/chat/completions",
+  "stream": "https://api.zyloai.net/v1/chat/completions",
+}
+`;
