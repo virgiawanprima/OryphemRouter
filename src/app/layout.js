@@ -46,12 +46,14 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={`${inter.variable} ${spaceMono.variable} font-sans antialiased`}>
-        <ThemeProvider>
-          <RuntimeI18nProvider>
-            {children}
-          </RuntimeI18nProvider>
-        </ThemeProvider>
+      <body className={`${roboto.variable} font-sans antialiased`}>
+        <ThemeRegistry>
+          <ThemeProvider>
+            <RuntimeI18nProvider>
+              {children}
+            </RuntimeI18nProvider>
+          </ThemeProvider>
+        </ThemeRegistry>
         <GoogleAnalytics gaId={"G-LC959F603F"} />
       </body>
     </html>
