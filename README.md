@@ -472,20 +472,28 @@ Model: cc/claude-opus-5
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `JWT_SECRET` | Auto-generated | JWT signing secret for auth cookie |
+| `JWT_SECRET` | Auto-generated | JWT signing secret for auth cookie (generate with `openssl rand -hex 32`) |
 | `INITIAL_PASSWORD` | `123` | First login password |
 | `DATA_DIR` | `~/.oryphemrouter` | Main app data location (SQLite) |
 | `PORT` | `20129` | Service port |
-| `HOSTNAME` | framework default | Bind host (Docker: `0.0.0.0`) |
 | `NODE_ENV` | runtime default | `production` for deploy |
-| `BASE_URL` | `http://localhost:20129` | Internal base URL for cloud sync |
+| `HOSTNAME` | framework default | Bind host (Docker: `0.0.0.0`) |
+| `BASE_URL` | `http://localhost:20129` | Internal base URL so sync jobs can reach this instance |
 | `CLOUD_URL` | `https://oryphem.com` | Cloud sync endpoint |
-| `API_KEY_SECRET` | `endpoint-proxy-api-key-secret` | HMAC secret for API keys |
-| `MACHINE_ID_SALT` | `endpoint-proxy-salt` | Salt for machine ID |
+| `NEXT_PUBLIC_BASE_URL` | `http://localhost:20129` | Public base URL |
+| `NEXT_PUBLIC_CLOUD_URL` | `https://oryphem.com` | Public cloud URL |
+| `API_KEY_SECRET` | endpoint-proxy default | HMAC secret for API keys (generate with `openssl rand -hex 32`) |
+| `MACHINE_ID_SALT` | endpoint-proxy default | Salt for machine ID (generate with `openssl rand -hex 32`) |
 | `ENABLE_REQUEST_LOGS` | `false` | Enable request logs |
 | `REQUIRE_API_KEY` | `false` | Enforce Bearer API key on `/v1/*` |
+| `OBSERVABILITY_ENABLED` | `true` | Enable observability |
+| `AUTH_COOKIE_SECURE` | `false` | Mark auth cookie `Secure` (set `true` behind HTTPS) |
+| `HTTP_PROXY` / `HTTPS_PROXY` | unset | Outbound proxy for upstream provider calls (also lowercase variants) |
+| `SEARXNG_URL` | unset | SearXNG endpoint for the built-in web-search provider |
+| `GOOGLE_OAUTH_CLIENT_ID` / `_SECRET` | unset | Google OAuth client (Gemini / Antigravity login) |
+| `ANTIGRAVITY_OAUTH_CLIENT_ID` / `_SECRET` | unset | Antigravity OAuth client credentials |
 
-> 📄 See [`.env.example`](./.env.example) for the full reference with OAuth client variables.
+> 📄 See [`.env.example`](./.env.example) for the full reference.
 
 ---
 
