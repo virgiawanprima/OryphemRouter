@@ -511,7 +511,6 @@ export default function ProviderLimits() {
       await Promise.all(
         visibleConnections.map((conn) => fetchQuota(conn.id, conn.provider)),
       );
-      setLastUpdated(new Date());
     };
 
     initializeData();
