@@ -178,7 +178,7 @@ export default function OverviewPageClient() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[13px] text-text-muted">{s.label}</p>
-                <p className={`mt-1 text-[22px] font-medium tabular-nums ${s.color}`}>{s.value}</p>
+                <p key={s.value} className={`mt-1 text-[22px] font-medium tabular-nums ${s.color}`}>{s.value}</p>
                 <p className="mt-1 text-[13px] text-text-muted">{s.note}</p>
               </div>
               <span className="material-symbols-outlined text-[20px] text-c-blue-600">{s.icon}</span>
