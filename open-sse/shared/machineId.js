@@ -1,5 +1,8 @@
-import { machineIdSync } from "node-machine-id";
+import pkg from "node-machine-id";
 import crypto from "node:crypto";
+
+// node-machine-id is CommonJS; Node 22+ doesn't expose named exports reliably.
+const machineIdSync = pkg?.machineIdSync || pkg?.default?.machineIdSync || (() => crypto.randomUUID());
 
 let cachedRawId = null;
 
