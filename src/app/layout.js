@@ -12,15 +12,10 @@ import { RuntimeI18nProvider } from "@/i18n/RuntimeI18nProvider";
 // Hook console immediately at module load time (server-side only, runs once)
 initConsoleLogCapture();
 
-const inter = Inter({
+const roboto = Roboto({
   subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-roboto",
 });
 
 export const metadata = {
