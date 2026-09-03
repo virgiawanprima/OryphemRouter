@@ -379,8 +379,12 @@ async function patchedFetch(url, options = {}) {
   return proxyAwareFetch(url, options, null);
 }
 
-// Idempotency guard — only patch once to avoid wrapping multiple times
-if (globalThis.fetch !== patchedFetch) {
+// Idempotency guard — only patch once to avoid wrapping multiple times.
+// Skip in Vitest: tests stub globalThis.fetch to make network calls
+// deterministic, and a module-load global patch would clobber those stubs
+// (it also destabilizes sequentially-run executors). Production always patches.
+const IN_TEST = typeof process !== "undefined" && !!process.env.VITEST;
+if (!IN_TEST && globalThis.fetch !== patchedFetch) {
   globalThis.fetch = patchedFetch;
 }
 
