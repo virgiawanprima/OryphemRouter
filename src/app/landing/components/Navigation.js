@@ -16,7 +16,7 @@ export default function Navigation() {
           onClick={() => router.push("/")}
           aria-label="Navigate to home"
         >
-          <div className="size-8 rounded bg-linear-to-br from-[#bd93f9] to-orange-700 flex items-center justify-center text-white">
+          <div className="size-8 rounded bg-[#38d9c8] text-[#0b1018] flex items-center justify-center">
             <span className="material-symbols-outlined text-[20px]">hub</span>
           </div>
           <h2 className="text-white text-xl font-bold tracking-tight">OryphemRouter</h2>
