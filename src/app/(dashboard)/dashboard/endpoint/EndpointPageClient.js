@@ -1346,8 +1346,3 @@ export default function APIPageClient() {
     </div>
   );
 }
-
-
-APIPageClient.propTypes = {
-  machineId: PropTypes.string.isRequired,
-};
