@@ -87,28 +87,28 @@ export default function FlowAnimation() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          className="animate-[dash_2s_linear_infinite]"
+          className="motion-reduce:animate-none animate-[dash_2s_linear_infinite]"
           d="M 60 50 C 250 70, 250 180, 360 180"
           fill="none"
           strokeDasharray="5,5"
           strokeWidth="2"
         ></path>
         <path
-          className="animate-[dash_2s_linear_infinite]"
+          className="motion-reduce:animate-none animate-[dash_2s_linear_infinite]"
           d="M 60 140 C 250 140, 250 180, 360 180"
           fill="none"
           strokeDasharray="5,5"
           strokeWidth="2"
         ></path>
         <path
-          className="animate-[dash_2s_linear_infinite]"
+          className="motion-reduce:animate-none animate-[dash_2s_linear_infinite]"
           d="M 60 210 C 250 210, 250 180, 360 180"
           fill="none"
           strokeDasharray="5,5"
           strokeWidth="2"
         ></path>
         <path
-          className="animate-[dash_2s_linear_infinite]"
+          className="motion-reduce:animate-none animate-[dash_2s_linear_infinite]"
           d="M 60 300 C 250 280, 250 180, 360 180"
           fill="none"
           strokeDasharray="5,5"
