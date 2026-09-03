@@ -157,7 +157,7 @@ export default function FlowAnimation() {
           <div
             key={provider.id}
             className={`px-4 py-2 rounded-lg ${provider.color} ${provider.textColor} flex items-center justify-center font-bold text-xs shadow-lg hover:scale-110 transition-all cursor-help min-w-[140px] ${
-              activeFlow === idx ? "ring-4 ring-[#bd93f9]/50 scale-110" : ""
+              activeFlow === idx ? "ring-4 ring-[#38d9c8]/50 scale-110" : ""
             }`}
             title={provider.name}
           >
