@@ -188,12 +188,15 @@ curl http://localhost:20129/api/health
 | 🔄 **Format Translation** | OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex | Works with any CLI tool |
 | 👥 **Multi-Account Support** | Multiple accounts per provider | Load balancing + redundancy |
 | 💰 **Spending Limits** | Max cost per day/month + auto-pause | Prevent surprise bills |
-| ⚡ **Cost-Optimized Routing** | Auto-pick cheapest working provider | Minimize cost automatically |
+| ⚡ **Auto Combo Ranking** | AI-scored model ranking for `auto` strategy | Pick the best model automatically |
 | 🛡️ **Circuit Breaker** | 5 errors → 5-min cooldown, auto-recover | Resilience against dead providers |
 | 🆓 **Free-Tier Tracker** | Live free quota usage per provider | Maximize free usage |
-| 🎨 **Custom Combos** | Group models, pick strategy per combo | Tailor fallback to your needs |
-| 💾 **Cloud Sync** | Sync config across devices | Same setup everywhere |
-| 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare Workers | Flexible deployment |
+| 🎨 **Custom Combos** | Group models, pick a strategy per combo | Tailor fallback to your needs |
+| 🖼️ **Media Providers** | TTS/STT, images, video, music, OCR, rerank, moderation | One gateway for every media kind |
+| 🧩 **Proxy Pools** | Rotate outbound proxies & per-provider strategies | Bypass geo/rate restrictions |
+| 🔀 **Translator** | Convert request/response formats live | Frictionless provider swap |
+| 💡 **Skills & MCP** | Agent skills-pack + MCP plugin server | Extend agents with one click |
+| 🌐 **Deploy Anywhere** | Localhost, VPS, Docker, Cloudflare/Firebase | Flexible deployment |
 
 ---
 
