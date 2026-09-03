@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/shared/components";
-import { getProviderAlias } from "@/shared/constants/providers";
 import { getModelKind } from "@/shared/constants/models";
 import { getModelsByProviderId } from "@/shared/constants/models";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
