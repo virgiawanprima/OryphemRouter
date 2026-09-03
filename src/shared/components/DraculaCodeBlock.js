@@ -36,7 +36,7 @@ export default function DraculaCodeBlock({ code, language = "json", className })
     <pre
       className={`p-4 bg-[#282a36] rounded-lg border border-[#44475a] overflow-x-auto font-mono text-[13px] leading-relaxed ${className || ""}`}
     >
-      <code dangerouslySetInnerHTML={{ __html: html || code }} />
+      <code dangerouslySetInnerHTML={{ __html: html || escapeHtml(code || "") }} />
     </pre>
   );
 }
