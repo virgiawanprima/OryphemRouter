@@ -193,7 +193,7 @@ export function createSSEStream(options = {}) {
               sseParseErrors = (sseParseErrors || 0) + 1;
               if (sseParseErrors === 1 || sseParseErrors % 10 === 0) {
                 const preview = trimmed.length > 120 ? trimmed.slice(0, 120) + "…" : trimmed;
-                console.warn(`[SSE] Non-JSON data line (#${sseParseErrors}): ${preview}`);
+                log.warn("SSE", `Non-JSON data line (#${sseParseErrors}): ${sanitize(preview)}`);
               }
               continue;
             }
