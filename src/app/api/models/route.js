@@ -36,9 +36,17 @@ export async function GET() {
             vision: c.vision,
             search: c.search,
             reasoning: c.reasoning,
-            contextWindow: c.contextWindow,
+            contextWindow: c.contextWindow ?? meta?.contextWindow ?? null,
             maxOutput: c.maxOutput,
+            toolCalling: c.toolCalling ?? c.tools ?? meta?.toolCalling ?? null,
           },
+          pricing: pricing
+            ? {
+                input: pricing.input,
+                output: pricing.output,
+                cached: pricing.cached ?? null,
+              }
+            : null,
         };
       });
 
