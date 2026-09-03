@@ -2,7 +2,7 @@
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 border-y border-[#3a3d4f] bg-[#22242f]/30" id="how-it-works">
+    <section className="py-24 border-y border-[#2a3947] bg-[#121a26]/30" id="how-it-works">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">How OryphemRouter Works</h2>
