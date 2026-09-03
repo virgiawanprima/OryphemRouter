@@ -27,15 +27,9 @@
 // ============================================================
 import REGISTRY from "open-sse/providers/registry/index.js";
 import {
-  APIKEY_PROVIDERS,
-  FREE_TIER_PROVIDERS,
-  OAUTH_PROVIDERS,
   isOpenAICompatibleProvider,
   isAnthropicCompatibleProvider,
   isCustomEmbeddingProvider,
-  OPENAI_COMPATIBLE_PREFIX,
-  ANTHROPIC_COMPATIBLE_PREFIX,
-  CUSTOM_EMBEDDING_PREFIX,
 } from "@/shared/constants/providers";
 
 // ============================================================
