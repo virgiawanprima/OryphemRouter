@@ -6,10 +6,12 @@ import Tooltip from "./Tooltip";
 // Render small icon badges for a model's capabilities (only those set true).
 // colorOverride: force a single color class for all badges (default: per-cap color).
 // size: icon font-size in px (default 16).
-export default function CapacityBadges({ caps, className = "", colorOverride, size = 16 }) {
-  if (!caps) return null;
-  const active = Object.keys(CAPACITY_META).filter((k) => caps[k]);
-  if (active.length === 0) return null;
+// pricing: optional { input, output, cached } — renders a compact "$in/$out" chip.
+export default function CapacityBadges({ caps, pricing, className = "", colorOverride, size = 16 }) {
+  const active = caps ? Object.keys(CAPACITY_META).filter((k) => caps[k]) : [];
+  const showPricing = pricing && (pricing.input != null || pricing.output != null);
+
+  if (active.length === 0 && !showPricing) return null;
 
   return (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
