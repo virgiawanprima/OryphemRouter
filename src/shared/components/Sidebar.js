@@ -37,6 +37,10 @@ const MEDIA_SUBITEMS = [
   { href: "/dashboard/media-providers/stt", label: "Speech To Text", icon: "mic" },
   { href: "/dashboard/media-providers/video", label: "Video", icon: "movie" },
   { href: "/dashboard/media-providers/web", label: "Web Fetch & Search", icon: "travel_explore" },
+  { href: "/dashboard/media-providers/upscale", label: "Image Upscale", icon: "photo_size_select_large" },
+  { href: "/dashboard/media-providers/ocr", label: "OCR", icon: "document_scanner" },
+  { href: "/dashboard/media-providers/rerank", label: "Rerank", icon: "swap_vert" },
+  { href: "/dashboard/media-providers/moderation", label: "Moderation", icon: "shield_check" },
 ];
 
 export default function Sidebar({ onClose }) {
