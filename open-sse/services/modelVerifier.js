@@ -190,9 +190,17 @@ export async function verifyProviderModels({ provider, credentials = {}, additio
       url = `${cleaned}/models`;
     }
   }
+  // Registry-declared validation endpoint wins over derivation when present
+  // (most accurate — sourced from the provider's own transport config).
+  const transport = PROVIDERS[providerId];
+  if (!url && transport?.validateUrl) {
+    url = transport.validateUrl;
+  } else if (!url && transport?.modelsFetcher?.url) {
+    url = transport.modelsFetcher.url;
+  }
   // Last resort: derive from transport baseUrl if the provider has one.
-  if (!url && PROVIDERS[providerId]?.baseUrl) {
-    const base = String(PROVIDERS[providerId].baseUrl).replace(/\/+$/, "");
+  if (!url && transport?.baseUrl) {
+    const base = String(transport.baseUrl).replace(/\/+$/, "");
     // If baseUrl already ends in a well-known path, derive the models path.
     const stripped = base
       .replace(/\/chat\/completions$/, "")
