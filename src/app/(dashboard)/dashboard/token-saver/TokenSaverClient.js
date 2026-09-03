@@ -12,6 +12,7 @@ import {
 
 export default function TokenSaverClient() {
   const [rtkEnabled, setRtkEnabledState] = useState(true);
+  const [semanticCacheEnabled, setSemanticCacheEnabled] = useState(false);
   const [headroomEnabled, setHeadroomEnabled] = useState(false);
   const [headroomUrl, setHeadroomUrl] = useState("http://localhost:8787");
   const [headroomStatus, setHeadroomStatus] = useState({
@@ -106,6 +107,11 @@ export default function TokenSaverClient() {
   const handleCavemanEnabled = (value) => {
     setCavemanEnabled(value);
     patchSetting({ cavemanEnabled: value });
+  };
+
+  const handleSemanticCacheEnabled = (value) => {
+    setSemanticCacheEnabled(value);
+    patchSetting({ semanticCacheEnabled: value });
   };
 
   const handleHeadroomEnabled = (value) => {
@@ -418,6 +424,7 @@ export default function TokenSaverClient() {
         if (res.ok) {
           const data = await res.json();
           setRtkEnabledState(data.rtkEnabled !== false);
+          setSemanticCacheEnabled(!!data.semanticCacheEnabled);
           setHeadroomEnabled(!!data.headroomEnabled);
           setHeadroomUrl(data.headroomUrl || "http://localhost:8787");
           setCodeAware(data.headroomCodeAware === true);
@@ -500,6 +507,18 @@ export default function TokenSaverClient() {
           <Toggle
             checked={rtkEnabled}
             onChange={() => handleRtkEnabled(!rtkEnabled)}
+          />
+        </div>
+        <div className="flex items-center justify-between py-4 border-b border-border gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="font-medium">Semantic Cache</p>
+            <p className="text-sm text-text-muted">
+              Reuse deterministic (temperature 0) non-streaming responses; repeated requests skip the provider
+            </p>
+          </div>
+          <Toggle
+            checked={semanticCacheEnabled}
+            onChange={() => handleSemanticCacheEnabled(!semanticCacheEnabled)}
           />
         </div>
         <div className="flex items-center justify-between py-4 gap-4 flex-wrap">
