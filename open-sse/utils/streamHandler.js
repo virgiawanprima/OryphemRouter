@@ -28,7 +28,7 @@ export function createStreamController({ onDisconnect, onError, log, provider, m
     const duration = Date.now() - startTime;
     const emit = isError ? log?.errorLine : log?.line;
     if (emit) emit(reqTag, symbol, `${status} · ${provider}/${model} · ${duration}ms`);
-    else console.log(`[${getTimeString()}] ${symbol} ${provider}/${model} · ${status} · ${duration}ms`);
+    else engineLog.info("STREAM", `${symbol} ${provider}/${model} · ${status} · ${duration}ms`);
   };
 
   return {
