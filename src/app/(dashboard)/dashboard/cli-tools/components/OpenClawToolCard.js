@@ -97,7 +97,7 @@ export default function OpenClawToolCard({
   const checkOpenclawStatus = async () => {
     setCheckingOpenclaw(true);
     try {
-      const res = await fetch("/api/cli-tools/openclaw-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=openclaw");
       const data = await res.json();
       setOpenclawStatus(data);
     } catch (error) {
