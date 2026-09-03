@@ -5,7 +5,6 @@ import { existsSync } from "fs";
 import { cleanupProviderConnections, getSettings, updateSettings, getApiKeys } from "@/lib/localDb";
 import {
   enableTunnel, enableTailscale,
-  isTunnelManuallyDisabled, isTunnelReconnecting, isTailscaleReconnecting,
   getTunnelService, getTailscaleService, setTunnelUnexpectedExitCallback,
   killCloudflared, isCloudflaredRunning, ensureCloudflared,
   isTailscaleRunning, isTailscaleRunningStrict, isDaemonAlive, startFunnel,
