@@ -274,7 +274,7 @@ const PROVIDER_ENDPOINTS = {
     authScheme: "Bearer",
     method: "GET",
     headers: {
-      "X-User-ID": "", // Requires user ID — validation is partial without it
+      "X-User-ID": "", // Requires user ID - validation is partial without it
     },
   },
 
@@ -631,8 +631,8 @@ const PROVIDER_ENDPOINTS = {
   // ── Vertex AI (GCP) ──────────────────────────────────────
   // Vertex uses OAuth (ADC / service account). API key validation
   // is not applicable the same way; we flag this.
-  vertex: { skipValidation: true, note: "Uses GCP OAuth — validate via provider console" },
-  "vertex-partner": { skipValidation: true, note: "Uses GCP OAuth — validate via provider console" },
+  vertex: { skipValidation: true, note: "Uses GCP OAuth - validate via provider console" },
+  "vertex-partner": { skipValidation: true, note: "Uses GCP OAuth - validate via provider console" },
 
   // ── Local / device providers ─────────────────────────────
   "local-device": { skipValidation: true },
@@ -768,17 +768,17 @@ const ErrorTypes = {
  */
 const ERROR_MESSAGES = {
   [ErrorTypes.INVALID_KEY]:
-    "Invalid API key — please check your key and try again.",
+    "Invalid API key - please check your key and try again.",
   [ErrorTypes.INVALID_FORMAT]:
-    "Invalid key format — expected a key starting with \"{prefix}\".",
+    "Invalid key format - expected a key starting with \"{prefix}\".",
   [ErrorTypes.NETWORK_ERROR]:
-    "Network unreachable — the provider's API may be down or your network may have issues.",
+    "Network unreachable - the provider's API may be down or your network may have issues.",
   [ErrorTypes.TIMEOUT]:
-    "Request timed out — the provider took too long to respond. Please try again.",
+    "Request timed out - the provider took too long to respond. Please try again.",
   [ErrorTypes.RATE_LIMITED]:
-    "Rate limited — the provider is receiving too many requests. Please wait a moment and try again.",
+    "Rate limited - the provider is receiving too many requests. Please wait a moment and try again.",
   [ErrorTypes.UNKNOWN]:
-    "Unable to verify API key — an unexpected error occurred. Please try again.",
+    "Unable to verify API key - an unexpected error occurred. Please try again.",
 };
 
 /**
@@ -818,7 +818,7 @@ function classifyHttpError(status, providerId) {
 function buildError(type, detail, prefix) {
   let message = ERROR_MESSAGES[type] || ERROR_MESSAGES[ErrorTypes.UNKNOWN];
   if (type === ErrorTypes.INVALID_FORMAT && prefix) {
-    message = `Invalid key format — expected a key starting with "${prefix}".`;
+    message = `Invalid key format - expected a key starting with "${prefix}".`;
   }
   if (detail) {
     message += ` (${detail})`;
@@ -1230,7 +1230,7 @@ async function validateAzure(providerId, apiKey, providerData) {
     return buildError(ErrorTypes.INVALID_KEY, `HTTP ${result.status}`);
   }
   if (result.status === 404) {
-    return buildError(ErrorTypes.INVALID_KEY, "Endpoint not found — check your resource name");
+    return buildError(ErrorTypes.INVALID_KEY, "Endpoint not found - check your resource name");
   }
   if (result.status === 429) return buildError(ErrorTypes.RATE_LIMITED);
   if (result.timedOut) return buildError(ErrorTypes.TIMEOUT);
@@ -1502,7 +1502,7 @@ async function validateOpenAICompatibleCustom(providerId, apiKey, providerData) 
   // Connection refused / DNS failure often means wrong URL
   if (result.status === 0) {
     return buildError(ErrorTypes.NETWORK_ERROR,
-      "Could not connect — check that your base URL is correct and the provider is accessible");
+      "Could not connect - check that your base URL is correct and the provider is accessible");
   }
 
   return buildError(classifyHttpError(result.status), `HTTP ${result.status}`);
@@ -1567,7 +1567,7 @@ async function validateAnthropicCompatibleCustom(providerId, apiKey, providerDat
 
   if (result.status === 0) {
     return buildError(ErrorTypes.NETWORK_ERROR,
-      "Could not connect — check that your base URL is correct");
+      "Could not connect - check that your base URL is correct");
   }
 
   return buildError(classifyHttpError(result.status), `HTTP ${result.status}`);
