@@ -12,7 +12,7 @@
 [![Last Commit](https://img.shields.io/github/last-commit/virgiawanprima/OryphemRouter)](https://github.com/virgiawanprima/OryphemRouter)
 [![License](https://img.shields.io/github/license/virgiawanprima/OryphemRouter)](https://github.com/virgiawanprima/OryphemRouter/blob/main/LICENSE)
 
-**Connect All AI Code Tools** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **to 40+ AI Providers & 100+ Models.**
+**Connect All AI Code Tools** (Claude Code, Cursor, Antigravity, Copilot, Codex, OpenCode, Cline, OpenClaw...) **to 380+ AI Providers & 1600+ Models.**
 
 ![Dashboard](public/images/overview.png)
 
