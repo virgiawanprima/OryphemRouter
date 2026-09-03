@@ -962,7 +962,7 @@ export class KiroExecutor extends BaseExecutor {
             // Keep whatever is already buffered: the rejected fragment belongs to
             // one tool, and clearing the map dropped the complete calls too.
             state.toolValidationError ||= error.message;
-            console.error(`[Kiro] tool fragment rejected, keeping ${state.tools.size} buffered tool(s): ${error.message}`);
+            log.error("KIRO", `tool fragment rejected, keeping ${state.tools.size} buffered tool(s): ${error.message}`);
             continue;
           }
           fail(
