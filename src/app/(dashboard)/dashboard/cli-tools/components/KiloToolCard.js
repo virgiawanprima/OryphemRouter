@@ -63,13 +63,13 @@ export default function KiloToolCard({ tool, isExpanded, onToggle, baseUrl, apiK
   const checkStatus = async () => {
     setChecking(true);
     try {
-      const res = await fetch("/api/cli-tools/kilo-settings");
+      const res = await fetch("/api/cli-tools/all-statuses?tool=kilo");
       const data = await res.json();
       if (!res.ok) {
         // API error (e.g. 403/401/500) — do NOT misreport as "not installed".
         setStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
       } else {
-        setStatus(data);
+        setStatus(data?.kilo || { checkFailed: true, error: "No status for kilo" });
       }
     } catch (error) {
       setStatus({ checkFailed: true, error: error.message });
