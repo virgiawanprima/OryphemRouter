@@ -166,10 +166,10 @@ Commands:
                       Generate a Grok Imagine video via the running gateway
                       (see: ${APP_NAME} xai video --help)
 `);
-    process.exit(0);
+    gracefulExit(0);
   } else if (args[i] === "--version" || args[i] === "-v") {
     console.log(pkg.version);
-    process.exit(0);
+    gracefulExit(0);
   }
 }
 
