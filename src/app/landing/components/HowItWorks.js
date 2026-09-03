@@ -13,11 +13,11 @@ export default function HowItWorks() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
           {/* Connection line */}
-          <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-[2px] bg-linear-to-r from-gray-700 via-[#bd93f9] to-gray-700 -z-10"></div>
+          <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-[2px] bg-linear-to-r from-gray-700 via-[#38d9c8] to-gray-700 -z-10"></div>
           
           {/* Step 1: CLI & SDKs */}
           <div className="flex flex-col gap-6 relative group">
-            <div className="w-24 h-24 rounded-2xl bg-[#1a1b26] border border-[#3a3d4f] flex items-center justify-center shadow-xl group-hover:border-gray-500 transition-colors z-10 mx-auto md:mx-0">
+            <div className="w-24 h-24 rounded-2xl bg-[#0b1018] border border-[#2a3947] flex items-center justify-center shadow-xl group-hover:border-gray-500 transition-colors z-10 mx-auto md:mx-0">
               <span className="material-symbols-outlined text-4xl text-gray-300">terminal</span>
             </div>
             <div>
