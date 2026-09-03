@@ -233,7 +233,18 @@ export async function handleChat(request, clientRawRequest = null, opts = {}) {
       log,
       comboName: modelStr,
       comboStrategy,
-      comboStickyLimit
+      comboStickyLimit,
+      onModelSuccess: async (winningModel) => {
+        // Opt-in auto-promote: move the winning combo model to position #1.
+        try {
+          const combo = await getComboByName(modelStr);
+          await promoteSuccessfulComboModel(combo, winningModel, settings, {
+            updateCombo,
+            info: (tag, msg) => log.info(tag, msg),
+            warn: (tag, msg) => log.warn(tag, msg),
+          });
+        } catch { /* best-effort; never affects the response */ }
+      },
     });
   }
 
