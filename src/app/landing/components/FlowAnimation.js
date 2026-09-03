@@ -68,7 +68,7 @@ export default function FlowAnimation() {
             key={tool.id}
             className="flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity group"
           >
-            <div className="w-16 h-16 rounded-2xl bg-[#22242f] border border-[#3a3d4f] flex items-center justify-center overflow-hidden p-2 hover:border-[#bd93f9]/50 transition-all hover:scale-105">
+            <div className="w-16 h-16 rounded-2xl bg-[#121a26] border border-[#2a3947] flex items-center justify-center overflow-hidden p-2 hover:border-[#38d9c8]/50 transition-all hover:scale-105">
               <ProviderIcon
                 src={tool.image}
                 alt={tool.name}
