@@ -232,7 +232,7 @@ async function run(argv) {
     controller.abort();
     try { fs.unlinkSync(partPath); } catch { /* absent */ }
     console.error("\n✋ Cancelled");
-    process.exit(130);
+    gracefulExit(130);
   };
   process.on("SIGINT", onSigint);
 
