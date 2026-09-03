@@ -279,6 +279,29 @@ export async function handleChat(request, clientRawRequest = null, opts = {}) {
 /**
  * Handle single model chat request
  */
+// Store a non-streaming JSON response in the semantic cache (opt-in).
+async function maybeCacheSemanticResponse(body, modelStr, response, apiKey) {
+  if (!response) return;
+  const { semanticCacheEnabled } = await getSettings();
+  if (!semanticCacheEnabled) return;
+  const headers = response.headers;
+  const contentType = headers?.get?.("content-type") || "";
+  if (!contentType.includes("application/json")) return;
+  const signature = generateSignature(modelStr, body.messages ?? body.input, body.temperature, body.top_p ?? 1, apiKey || undefined);
+  const text = await response.clone().text();
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return;
+  }
+  // Rough token-saved proxy (byte length). Accurate token accounting lives in
+  // the usage layer; this value is only surfaced in cache stats / headers.
+  const tokensSaved = text.length;
+  setCachedResponse(signature, modelStr, parsed, tokensSaved);
+  log.debug("CACHE", `semantic cache stored for ${modelStr}`);
+}
+
 async function handleSingleModelChat(body, modelStr, clientRawRequest = null, request = null, apiKey = null, signal = null) {
   let modelInfo;
   try {
