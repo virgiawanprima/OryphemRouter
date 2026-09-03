@@ -1,6 +1,7 @@
 // Stream handler with disconnect detection - shared for all providers
 import { STREAM_STALL_TIMEOUT_MS } from "../config/runtimeConfig.js";
 import { dbg, isDebugEnabled } from "./debugLog.js";
+import { log as engineLog } from "./log.js";
 
 // Get HH:MM:SS timestamp
 function getTimeString() {
