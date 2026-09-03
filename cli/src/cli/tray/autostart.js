@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 const APP_NAME = "oryphemrouter";
 const APP_LABEL = "com.oryphemrouter.autostart";
