@@ -187,6 +187,13 @@ const getPageInfo = (pathname) => {
       icon: "monitor",
       breadcrumbs: [],
     };
+  if (pathname.includes("/pricing"))
+    return {
+      title: "Pricing",
+      description: "Configure pricing rates for cost tracking and calculations",
+      icon: "sell",
+      breadcrumbs: [],
+    };
   if (pathname.includes("/pxpipe"))
     return {
       title: "PX Pipe",
