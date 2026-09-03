@@ -1,6 +1,9 @@
 export default {
   id: "linkup",
   alias: "linkup",
+  aliases: [
+    "linkup-search",
+  ],
   display: {
     name: "Linkup",
     icon: "link",
