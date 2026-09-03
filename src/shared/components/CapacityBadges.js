@@ -25,6 +25,24 @@ export default function CapacityBadges({ caps, pricing, className = "", colorOve
           </span>
         </Tooltip>
       ))}
+      {showPricing && (
+        <Tooltip text={`Price per 1M tokens - in: $${pricing.input ?? "?"}, out: $${pricing.output ?? "?"}${pricing.cached != null ? `, cached: $${pricing.cached}` : ""}`}>
+          <span
+            className={`cursor-help font-mono text-[10px] leading-none whitespace-nowrap ${colorOverride || "text-text-muted"}`}
+          >
+            ${formatPrice(pricing.input)}/${formatPrice(pricing.output)}
+          </span>
+        </Tooltip>
+      )}
     </span>
   );
+}
+
+function formatPrice(v) {
+  if (v == null) return "?";
+  if (v === 0) return "0";
+  if (v >= 100) return String(Math.round(v));
+  if (v >= 1) return String(Number(v.toFixed(2)));
+  if (v >= 0.01) return String(Number(v.toFixed(3)));
+  return String(Number(v.toFixed(4)));
 }
