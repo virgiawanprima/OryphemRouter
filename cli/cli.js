@@ -80,10 +80,10 @@ const args = process.argv.slice(2);
 if (args[0] === "xai" && args[1] === "video") {
   const { run } = require("./src/cli/commands/xaiVideo");
   run(args.slice(2))
-    .then((code) => process.exit(code))
+    .then((code) => gracefulExit(code))
     .catch((err) => {
       console.error(`❌ ${err?.message || err}`);
-      process.exit(1);
+      gracefulExit(1);
     });
   return;
 }
