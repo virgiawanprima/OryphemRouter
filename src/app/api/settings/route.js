@@ -82,6 +82,13 @@ export async function PATCH(request) {
       }
     }
 
+    // Mass-assignment guard (CWE-915): only allow known writable settings keys
+    // to reach the DB. Foreign body keys (schema-drift / accidental auth
+    // toggles) are dropped here, at the request boundary.
+    for (const key of Object.keys(body)) {
+      if (!WRITABLE_SETTING_KEYS.includes(key)) delete body[key];
+    }
+
     const settings = await updateSettings(body);
 
     // Spending-limit cache is keyed by the current limit config; clear it so
