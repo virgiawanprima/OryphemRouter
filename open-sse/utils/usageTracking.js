@@ -435,5 +435,5 @@ export function logUsage(provider, usage, model = null, connectionId = null, api
   const reasoning = usage.reasoning_tokens;
   if (reasoning) msg += ` | reasoning=${reasoning}`;
 
-  console.log(msg);
+  log.info("USAGE", msg);
 }
