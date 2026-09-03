@@ -22,7 +22,7 @@ async function getGotScraping() {
     _gotScraping = typeof mod.gotScraping === "function" ? mod.gotScraping : null;
     if (_gotScraping) dbg("TLS", "got-scraping loaded (browser-like JA3 enabled)");
   } catch (e) {
-    console.warn(`[ProxyFetch] got-scraping unavailable, falling back to native fetch: ${e.message}`);
+    log.warn("PROXY-FETCH", `got-scraping unavailable, falling back to native fetch: ${e.message}`);
     _gotScraping = null;
   }
   return _gotScraping;
