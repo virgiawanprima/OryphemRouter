@@ -38,7 +38,7 @@ export function parseResetTime(resetValue) {
 
     return null;
   } catch (error) {
-    console.warn(`Failed to parse reset time: ${resetValue}`, error);
+    engineLog.warn("USAGE", `Failed to parse reset time: ${sanitize(resetValue)}`, sanitize(error));
     return null;
   }
 }
