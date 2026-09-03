@@ -630,7 +630,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > baichuan → headers
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > kilo-gateway → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > baidu → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
