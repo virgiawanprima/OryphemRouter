@@ -23,11 +23,12 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
+import { access, mkdtemp, mkdir, stat, writeFile } from "node:fs/promises";
 import { BaseExecutor } from "./base.js";
 
 // ─── Binary discovery ────────────────────────────────────────────────────────
 
-function resolveDevinBin() {
+async function resolveDevinBin() {
   // 1. Explicit override
   const envBin = process.env.CLI_DEVIN_BIN?.trim();
   if (envBin) return envBin;
