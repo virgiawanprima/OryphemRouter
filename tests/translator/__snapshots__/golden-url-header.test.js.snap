@@ -956,7 +956,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > cheaperinference →
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > poolside → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > chenzk → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
