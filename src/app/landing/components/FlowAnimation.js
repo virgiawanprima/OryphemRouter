@@ -40,6 +40,8 @@ export default function FlowAnimation() {
   const [activeFlow, setActiveFlow] = useState(0);
 
   useEffect(() => {
+    // Respect prefers-reduced-motion: keep the flow animated only on request.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const interval = setInterval(() => {
       setActiveFlow((prev) => (prev + 1) % PROVIDERS.length);
     }, 2000);
