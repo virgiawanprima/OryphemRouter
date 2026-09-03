@@ -356,7 +356,7 @@ export class DevinCliExecutor extends BaseExecutor {
     }
     const clientTools = Array.isArray(b.tools) ? b.tools.filter(Boolean) : [];
     const clientToolResults = extractClientToolResults(messages);
-    const clientToolsMcp = buildClientToolsMcp(clientTools, clientToolResults);
+    const clientToolsMcp = await buildClientToolsMcp(clientTools, clientToolResults);
     const hasClientTools = !!clientToolsMcp;
     if (clientToolsMcp) {
       mcpServers["clientTools"] = clientToolsMcp;
