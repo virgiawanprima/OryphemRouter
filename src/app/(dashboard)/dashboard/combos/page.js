@@ -876,6 +876,91 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
     setModels(newModels);
   };
 
+  /* === Remove an entire provider group (bulk delete all its models) === */
+  const handleRemoveProviderGroup = (providerIndex) => {
+    const providerName = groupOrder[providerIndex];
+    const groupModels = providerGroups[providerName]?.models || [];
+    const removeSet = new Set(groupModels);
+    setModels((prev) => prev.filter((m) => !removeSet.has(m)));
+  };
+
+  /* === HTML5 drag-and-drop reorder === */
+
+  // Rebuild the flat `models` array from a new group order (models keep their
+  // position inside their group, groups themselves are reordered).
+  const reorderGroups = (fromGi, toGi) => {
+    if (fromGi === toGi || fromGi < 0 || toGi < 0) return;
+    const order = [...groupOrder];
+    const [moved] = order.splice(fromGi, 1);
+    order.splice(toGi, 0, moved);
+    const next = [];
+    for (const provider of order) next.push(...providerGroups[provider].models);
+    setModels(next);
+  };
+
+  // Move a single model from one flat position to another (can cross groups —
+  // groups are derived from the model prefix, so the group follows the model).
+  const reorderModels = (fromFlat, toFlat) => {
+    if (fromFlat === toFlat || fromFlat < 0 || toFlat < 0) return;
+    setModels((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromFlat, 1);
+      next.splice(toFlat, 0, moved);
+      return next;
+    });
+  };
+
+  const handleDragStart = (e, item) => {
+    setDragItem(item);
+    e.dataTransfer.effectAllowed = "move";
+    try { e.dataTransfer.setData("text/plain", JSON.stringify(item)); } catch { /* IE */ }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e, target) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const source = dragItem || (() => { try { return JSON.parse(e.dataTransfer.getData("text/plain")); } catch { return null; } })();
+    if (!source) { setDragItem(null); setDragOverItem(null); return; }
+    if (source.type === "group" && target.type === "group") {
+      reorderGroups(source.gi, target.gi);
+    } else if (source.type === "model" && target.type === "model") {
+      reorderModels(source.flatIndex, target.flatIndex);
+    } else if (source.type === "group" && target.type === "model") {
+      // Dropping a group onto a model: move the group so it starts at that model's flat index
+      const targetFlat = target.flatIndex;
+      let flatStart = 0;
+      for (let i = 0; i < source.gi; i++) flatStart += providerGroups[groupOrder[i]].models.length;
+      const firstModelFlat = flatStart;
+      if (targetFlat < firstModelFlat) {
+        // shift group upward: compute destination group index by counting models above target
+        let acc = 0, destGi = 0;
+        for (let i = 0; i < groupOrder.length; i++) { if (acc >= targetFlat) { destGi = i; break; } acc += providerGroups[groupOrder[i]].models.length; destGi = i; }
+        reorderGroups(source.gi, destGi);
+      } else {
+        let acc = 0, destGi = 0;
+        for (let i = 0; i < groupOrder.length; i++) { acc += providerGroups[groupOrder[i]].models.length; if (acc >= targetFlat) { destGi = i; break; } }
+        reorderGroups(source.gi, destGi);
+      }
+    } else if (source.type === "model" && target.type === "group") {
+      // Dropping a model onto a group header: move it to the start of that group
+      let flatStart = 0;
+      for (let i = 0; i < target.gi; i++) flatStart += providerGroups[groupOrder[i]].models.length;
+      reorderModels(source.flatIndex, flatStart);
+    }
+    setDragItem(null);
+    setDragOverItem(null);
+  };
+
+  const handleDragEnd = () => {
+    setDragItem(null);
+    setDragOverItem(null);
+  };
+
   const handleSave = async () => {
     if (!validateName(name)) return;
     setSaving(true);
