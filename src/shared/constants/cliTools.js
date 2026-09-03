@@ -400,17 +400,17 @@ amp --model "{{model}}"
     name: "Devin CLI",
     image: "/providers/devin-cli.png",
     color: "#6366F1",
-    description: "Cognition Devin CLI — local binary called by the Devin CLI provider via ACP/stdio",
+    description: "Cognition Devin CLI - local binary called by the Devin CLI provider via ACP/stdio",
     configType: "guide",
     installUrl: "https://cli.devin.ai",
     notes: [
       { type: "info", text: "This is a local dependency, not a routed CLI. The Devin CLI provider spawns `devin acp --agent-type summarizer` and relays its output." },
-      { type: "warning", text: "Install the Devin CLI and run `devin auth login` — without it, the provider returns a spawn error on first request." },
+      { type: "warning", text: "Install the Devin CLI and run `devin auth login` - without it, the provider returns a spawn error on first request." },
     ],
     guideSteps: [
       { step: 1, title: "Install Devin CLI", desc: "Install via the official installer at cli.devin.ai.", docsUrl: "https://cli.devin.ai" },
       { step: 2, title: "Authenticate", desc: "Log in once so the binary stores its own credentials." },
-      { step: 3, title: "Use the provider", desc: "Pick any Devin CLI model under the Providers tab — no API key field needed." },
+      { step: 3, title: "Use the provider", desc: "Pick any Devin CLI model under the Providers tab - no API key field needed." },
     ],
     codeBlock: {
       language: "bash",
