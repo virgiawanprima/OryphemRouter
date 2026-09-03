@@ -52,6 +52,7 @@ export default function ModelSelectModal({
   onClose,
   onSelect,
   onDeselect,
+  onAddMany,
   selectedModel,
   activeProviders = [],
   title = "Select Model",
