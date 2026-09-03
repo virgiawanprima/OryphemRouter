@@ -14,61 +14,223 @@
    orange=warning · red=error · cyan=info/live · #44475a=structural
    ============================================================ */
 :root {
-  /* Semantics → Dracula colors (class names kept for compat) */
-  --c-teal-50: rgba(80, 250, 123, 0.12);  --c-teal-600: #50FA7B; --c-teal-800: #50FA7B; --c-teal-900: #3ddc68;
-  --c-blue-50: rgba(189, 147, 249, 0.12); --c-blue-600: #BD93F9; --c-blue-800: #bd93f9; --c-blue-900: #9a6ff0;
-  --c-amber-50: rgba(255, 184, 108, 0.12); --c-amber-600: #FFB86C; --c-amber-800: #ffb86c; --c-amber-900: #ff9e40;
-  --c-red-50: rgba(255, 85, 85, 0.12); --c-red-600: #FF5555; --c-red-800: #ff5555; --c-red-900: #ff3838;
-  --c-gray-50: #f8f8f2; --c-gray-600: #6272a4; --c-gray-800: #44475a; --c-gray-900: #282a36;
+  /* ============================================================
+     Material Design 3 (Material You) — seed #6750A4 (Purple)
+     Official M3 scheme. Light scheme is the default; `.dark`
+     overrides with the M3 dark scheme below.
+     ============================================================ */
+  --md-ref-palette-primary40: #6750A4;
+  --md-ref-palette-primary80: #D0BCFF;
+  --md-ref-palette-secondary40: #625B71;
+  --md-ref-palette-secondary80: #CCC2DC;
+  --md-ref-palette-tertiary40: #7D5260;
+  --md-ref-palette-tertiary80: #EFB8C8;
+  --md-ref-palette-error40: #B3261E;
+  --md-ref-palette-error80: #F2B8B5;
+  --md-ref-palette-neutral10: #1D1B20;
+  --md-ref-palette-neutral90: #E6E0E9;
+  --md-ref-palette-neutral-variant30: #49454F;
+  --md-ref-palette-neutral-variant80: #CAC4D0;
+
+  color-scheme: light;
+
+  /* ---- M3 light scheme roles ---- */
+  --md-sys-color-primary: #6750A4;
+  --md-sys-color-onPrimary: #FFFFFF;
+  --md-sys-color-primaryContainer: #EADDFF;
+  --md-sys-color-onPrimaryContainer: #21005D;
+  --md-sys-color-secondary: #625B71;
+  --md-sys-color-onSecondary: #FFFFFF;
+  --md-sys-color-secondaryContainer: #E8DEF8;
+  --md-sys-color-onSecondaryContainer: #1D192B;
+  --md-sys-color-tertiary: #7D5260;
+  --md-sys-color-onTertiary: #FFFFFF;
+  --md-sys-color-tertiaryContainer: #FFD8E4;
+  --md-sys-color-onTertiaryContainer: #31111D;
+  --md-sys-color-error: #B3261E;
+  --md-sys-color-onError: #FFFFFF;
+  --md-sys-color-errorContainer: #F9DEDC;
+  --md-sys-color-onErrorContainer: #410E0B;
+  --md-sys-color-background: #FEF7FF;
+  --md-sys-color-onBackground: #1D1B20;
+  --md-sys-color-surface: #FEF7FF;
+  --md-sys-color-onSurface: #1D1B20;
+  --md-sys-color-surfaceVariant: #E7E0EC;
+  --md-sys-color-onSurfaceVariant: #49454F;
+  --md-sys-color-outline: #79747E;
+  --md-sys-color-outlineVariant: #CAC4D0;
+  --md-sys-color-surfaceContainerLowest: #FFFFFF;
+  --md-sys-color-surfaceContainerLow: #F7F2FA;
+  --md-sys-color-surfaceContainer: #F3EDF7;
+  --md-sys-color-surfaceContainerHigh: #ECE6F0;
+  --md-sys-color-surfaceContainerHighest: #E6E0E9;
+
+  /* ---- M3 shape ---- */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* ---- M3 elevation (level → shadow) ---- */
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0 1px 2px rgba(0,0,0,0.15), 0 1px 3px 1px rgba(0,0,0,0.08);
+  --md-sys-elevation-level2: 0 1px 2px rgba(0,0,0,0.2), 0 2px 6px 2px rgba(0,0,0,0.12);
+  --md-sys-elevation-level3: 0 1px 3px rgba(0,0,0,0.2), 0 4px 8px 3px rgba(0,0,0,0.14);
+  --md-sys-elevation-level4: 0 2px 3px rgba(0,0,0,0.2), 0 6px 10px 4px rgba(0,0,0,0.14);
+  --md-sys-elevation-level5: 0 4px 4px rgba(0,0,0,0.2), 0 8px 12px 6px rgba(0,0,0,0.14);
+
+  /* Deprecated: elevation 0 (base layer) */
+  --md-sys-elevation-level0-deprecated: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+
+  /* ---- M3 light mode: lissom state + duration (aesthetic, not brand-damaging) ---- */
+  --md-sys-motion-duration-short: 150ms;
+  --md-sys-motion-duration-medium: 250ms;
+  --md-sys-motion-duration-long: 400ms;
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ============================================================
+     Tailwind semantic compatibility mappings.
+     These keep the existing class names (bg-surface, text-text-muted,
+     border-border, bg-c-blue-600, ...) working while pointing at M3
+     values. Refactors can migrate to --md-sys-* directly over time.
+     ============================================================ */
+  --c-teal-50: #E0F2E8;  --c-teal-600: #2E7D57;  --c-teal-800: #164E35;  --c-teal-900: #0B3624;
+  --c-blue-50: #E9E4F5;  --c-blue-600: #7C6BB8;  --c-blue-800: #6750A4;  --c-blue-900: #4F378B;
+  --c-amber-50: #FFF0E0; --c-amber-600: #B3540C;  --c-amber-800: #7C3D00;  --c-amber-900: #572A00;
+  --c-red-50: #FCE8E6;  --c-red-600: #C6443D;  --c-red-800: #A52620;  --c-red-900: #7C1D18;
+  --c-gray-50: #FEF7FF; --c-gray-600: #49454F; --c-gray-800: #1D1B20; --c-gray-900: #141218;
 
   --color-brand-50: var(--c-blue-50); --color-brand-500: var(--c-blue-600); --color-brand-600: var(--c-blue-600);
   --color-brand-700: var(--c-blue-800); --color-brand-800: var(--c-blue-800); --color-brand-900: var(--c-blue-900);
-  --color-primary: var(--c-blue-600); --color-primary-hover: var(--c-blue-900);
-  --color-accent: var(--c-cyan); --color-accent-soft: var(--c-blue-50);
-  --color-cyan: #8BE9FD; --color-green: #50FA7B; --color-purple: #BD93F9;
-  --color-orange: #FFB86C; --color-pink: #FF79C6; --color-yellow: #F1FA8C;
+  --color-primary: var(--md-sys-color-primary); --color-primary-hover: var(--md-sys-color-onPrimaryContainer);
+  --color-accent: var(--md-sys-color-tertiary); --color-accent-soft: var(--md-sys-color-tertiaryContainer);
+  --color-cyan: var(--md-sys-color-tertiary); --color-green: var(--c-teal-600); --color-purple: var(--md-sys-color-primary);
+  --color-orange: var(--c-amber-600); --color-pink: var(--md-sys-color-tertiary); --color-yellow: #E6C84C;
 
-  --color-bg: #282a36; --color-bg-alt: #21222c;
-  --color-surface: #21222c; --color-surface-2: #2c2e3a; --color-surface-3: #343746;
-  --color-surface-4: #3d4050;
-  --color-sidebar: rgba(33, 34, 44, 0.94);
-  --color-border: #44475a; --color-border-500: #44475a; --color-border-subtle: #383a49;
-  --color-text: #f8f8f2; --color-text-main: #f8f8f2;
-  --color-text-muted: #a8adc4; --color-text-subtle: #8b91ab;
-  --color-danger: var(--c-red-600); --color-success: var(--c-teal-600);
-  --color-warning: var(--c-amber-600); --color-info: var(--c-cyan);
+  --color-bg: var(--md-sys-color-background); --color-bg-alt: var(--md-sys-color-surfaceContainerLow);
+  --color-surface: var(--md-sys-color-surfaceContainer);
+  --color-surface-2: var(--md-sys-color-surfaceContainerHigh);
+  --color-surface-3: var(--md-sys-color-surfaceContainerHigh);
+  --color-surface-4: var(--md-sys-color-surfaceContainerHighest);
+  --color-sidebar: var(--md-sys-color-surfaceContainerLow);
+  --color-border: var(--md-sys-color-outlineVariant);
+  --color-border-500: var(--md-sys-color-outlineVariant);
+  --color-border-subtle: var(--md-sys-color-surfaceContainerHighest);
+  --color-text: var(--md-sys-color-onSurface); --color-text-main: var(--md-sys-color-onSurface);
+  --color-text-muted: var(--md-sys-color-onSurfaceVariant); --color-text-subtle: var(--md-sys-color-onSurfaceVariant);
+  --color-danger: var(--md-sys-color-error); --color-success: var(--c-teal-600);
+  --color-warning: var(--c-amber-600); --color-info: var(--md-sys-color-primary);
 
-  --color-bg-subtle: #2c2e3a; --color-bg-secondary: #2c2e3a;
-  --color-bg-tertiary: #343746; --color-bg-hover: #343746;
-  --color-input: #2c2e3a;
+  --color-bg-subtle: var(--md-sys-color-surfaceContainerLow);
+  --color-bg-secondary: var(--md-sys-color-surfaceContainerLow);
+  --color-bg-tertiary: var(--md-sys-color-surfaceContainer);
+  --color-bg-hover: var(--md-sys-color-surfaceContainerHigh);
+  --color-input: var(--md-sys-color-surfaceContainerLow);
 
-  --radius-brand: 12px; --radius-brand-lg: 12px;
-  --radius-sm: 4px; --radius-md: 8px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-soft: 0 2px 8px rgba(0,0,0,0.25);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
-  --shadow-warm: 0 4px 20px rgba(255,184,108,0.08);
-  --shadow-lg: 0 8px 30px rgba(0,0,0,0.45);
-  --shadow-elevated: 0 12px 40px rgba(0,0,0,0.5);
-  --shadow-elev: 0 4px 16px rgba(0,0,0,0.35);
-  --shadow-glow: 0 0 12px rgba(189,147,249,0.3);
-  --shadow-focus: 0 0 0 2px rgba(189, 147, 249, 0.3);
-  --transition: 0.2s ease; --transition-fast: 0.12s ease;
-  color-scheme: dark;
+  /* M3 shape remapped to legacy radius vars */
+  --radius-brand: var(--md-sys-shape-corner-medium);
+  --radius-brand-lg: var(--md-sys-shape-corner-large);
+  --radius-sm: var(--md-sys-shape-corner-extra-small);
+  --radius-md: var(--md-sys-shape-corner-small);
+
+  /* M3 elevation remapped to legacy shadow vars */
+  --shadow-sm: var(--md-sys-elevation-level1);
+  --shadow-soft: var(--md-sys-elevation-level1);
+  --shadow-md: var(--md-sys-elevation-level2);
+  --shadow-warm: var(--md-sys-elevation-level2);
+  --shadow-lg: var(--md-sys-elevation-level3);
+  --shadow-elevated: var(--md-sys-elevation-level4);
+  --shadow-elev: var(--md-sys-elevation-level2);
+  --shadow-glow: var(--md-sys-elevation-level1);
+  --shadow-focus: 0 0 0 2px var(--md-sys-color-primary);
+
+  --transition: 0.2s ease; --transition-fast: 0.15s ease;
 }
 
 .dark {
-  --color-primary: var(--c-blue-600); --color-primary-hover: var(--c-blue-900);
-  --color-accent: var(--c-cyan); --color-accent-soft: var(--c-blue-50);
-  --color-bg: #282a36; --color-bg-alt: #21222c;
-  --color-surface: #21222c; --color-surface-2: #2c2e3a; --color-surface-3: #343746; --color-surface-4: #3d4050;
-  --color-sidebar: rgba(33, 34, 44, 0.94);
-  --color-border: #44475a; --color-border-500: #44475a; --color-border-subtle: #383a49;
-  --color-text: #f8f8f2; --color-text-main: #f8f8f2;
-  --color-text-muted: #6272a4; --color-text-subtle: #555a75;
-  --color-danger: #FF5555; --color-success: #50FA7B;
-  --color-warning: #FFB86C; --color-info: #8BE9FD;
   color-scheme: dark;
+
+  /* ---- M3 dark scheme roles ---- */
+  --md-sys-color-primary: #D0BCFF;
+  --md-sys-color-onPrimary: #381E72;
+  --md-sys-color-primaryContainer: #4F378B;
+  --md-sys-color-onPrimaryContainer: #EADDFF;
+  --md-sys-color-secondary: #CCC2DC;
+  --md-sys-color-onSecondary: #332D41;
+  --md-sys-color-secondaryContainer: #4A4458;
+  --md-sys-color-onSecondaryContainer: #E8DEF8;
+  --md-sys-color-tertiary: #EFB8C8;
+  --md-sys-color-onTertiary: #492532;
+  --md-sys-color-tertiaryContainer: #633B48;
+  --md-sys-color-onTertiaryContainer: #FFD8E4;
+  --md-sys-color-error: #F2B8B5;
+  --md-sys-color-onError: #601410;
+  --md-sys-color-errorContainer: #8C1D18;
+  --md-sys-color-onErrorContainer: #F9DEDC;
+  --md-sys-color-background: #141218;
+  --md-sys-color-onBackground: #E6E0E9;
+  --md-sys-color-surface: #141218;
+  --md-sys-color-onSurface: #E6E0E9;
+  --md-sys-color-surfaceVariant: #49454F;
+  --md-sys-color-onSurfaceVariant: #CAC4D0;
+  --md-sys-color-outline: #938F99;
+  --md-sys-color-outlineVariant: #49454F;
+  --md-sys-color-surfaceContainerLowest: #0F0D13;
+  --md-sys-color-surfaceContainerLow: #1D1B20;
+  --md-sys-color-surfaceContainer: #211F26;
+  --md-sys-color-surfaceContainerHigh: #2B2930;
+  --md-sys-color-surfaceContainerHighest: #36343B;
+
+  --c-teal-50: #132E22; --c-teal-600: #6FC895; --c-teal-800: #3DA36B; --c-teal-900: #2E7D57;
+  --c-blue-50: #2A2440; --c-blue-600: #C3B1E7; --c-blue-800: #D0BCFF; --c-blue-900: #EADDFF;
+  --c-amber-50: #3A2613; --c-amber-600: #E8A26B; --c-amber-800: #FFB97A; --c-amber-900: #FFD4A8;
+  --c-red-50: #3B1210; --c-red-600: #E8968E; --c-red-800: #F2B8B5; --c-red-900: #F9DEDC;
+  --c-gray-50: #141218; --c-gray-600: #CAC4D0; --c-gray-800: #E6E0E9; --c-gray-900: #F5EFFF;
+
+  --color-primary: var(--md-sys-color-primary); --color-primary-hover: var(--md-sys-color-onPrimaryContainer);
+  --color-accent: var(--md-sys-color-tertiary); --color-accent-soft: var(--md-sys-color-tertiaryContainer);
+  --color-cyan: var(--md-sys-color-tertiary); --color-green: var(--c-teal-600); --color-purple: var(--md-sys-color-primary);
+  --color-orange: var(--c-amber-600); --color-pink: var(--md-sys-color-tertiary); --color-yellow: #EDD46F;
+
+  --color-bg: var(--md-sys-color-background); --color-bg-alt: var(--md-sys-color-surfaceContainerLow);
+  --color-surface: var(--md-sys-color-surfaceContainer);
+  --color-surface-2: var(--md-sys-color-surfaceContainerHigh);
+  --color-surface-3: var(--md-sys-color-surfaceContainerHigh);
+  --color-surface-4: var(--md-sys-color-surfaceContainerHighest);
+  --color-sidebar: var(--md-sys-color-surfaceContainerLow);
+  --color-border: var(--md-sys-color-outlineVariant);
+  --color-border-500: var(--md-sys-color-outlineVariant);
+  --color-border-subtle: var(--md-sys-color-surfaceContainerHighest);
+  --color-text: var(--md-sys-color-onSurface); --color-text-main: var(--md-sys-color-onSurface);
+  --color-text-muted: var(--md-sys-color-onSurfaceVariant); --color-text-subtle: var(--md-sys-color-onSurfaceVariant);
+  --color-danger: var(--md-sys-color-error); --color-success: var(--c-teal-600);
+  --color-warning: var(--c-amber-600); --color-info: var(--md-sys-color-primary);
+
+  --color-bg-subtle: var(--md-sys-color-surfaceContainerLow);
+  --color-bg-secondary: var(--md-sys-color-surfaceContainerLow);
+  --color-bg-tertiary: var(--md-sys-color-surfaceContainer);
+  --color-bg-hover: var(--md-sys-color-surfaceContainerHigh);
+  --color-input: var(--md-sys-color-surfaceContainerLow);
+
+  --radius-brand: var(--md-sys-shape-corner-medium);
+  --radius-brand-lg: var(--md-sys-shape-corner-large);
+  --radius-sm: var(--md-sys-shape-corner-extra-small);
+  --radius-md: var(--md-sys-shape-corner-small);
+
+  --shadow-sm: var(--md-sys-elevation-level1);
+  --shadow-soft: var(--md-sys-elevation-level1);
+  --shadow-md: var(--md-sys-elevation-level2);
+  --shadow-warm: var(--md-sys-elevation-level2);
+  --shadow-lg: var(--md-sys-elevation-level3);
+  --shadow-elevated: var(--md-sys-elevation-level4);
+  --shadow-elev: var(--md-sys-elevation-level2);
+  --shadow-glow: var(--md-sys-elevation-level1);
+  --shadow-focus: 0 0 0 2px var(--md-sys-color-primary);
+
+  --transition: 0.2s ease; --transition-fast: 0.15s ease;
 }
 
 /* ============================================================
