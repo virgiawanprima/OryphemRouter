@@ -498,8 +498,7 @@ export default [
   p111,
   p112,
   p113,
-  // p114, // devin-cli — hidden, spawns local agent with shell/fs access
-  // p104, // windsurf — hidden, no tool calling
+  p114,
   p115,
   p116,
   p117,
