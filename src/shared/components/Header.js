@@ -121,6 +121,23 @@ const getPageInfo = (pathname) => {
       icon: "savings",
       breadcrumbs: [],
     };
+  // CLI tool detail: /dashboard/cli-tools/[toolId]
+  const cliToolMatch = pathname.match(/\/cli-tools\/([^/]+)$/);
+  if (cliToolMatch) {
+    const toolId = cliToolMatch[1];
+    const tool = CLI_TOOLS[toolId];
+    if (tool) {
+      return {
+        title: tool.name,
+        description: tool.description || "",
+        breadcrumbs: [
+          { label: "CLI Tools", href: "/dashboard/cli-tools" },
+          { label: tool.name, image: getProviderIconSrc(tool.id) },
+        ],
+      };
+    }
+  }
+
   if (pathname.includes("/cli-tools"))
     return {
       title: "CLI Tools",
