@@ -962,13 +962,60 @@ async function makeRequestWithRetry(url, options = {}, attempts = MAX_RETRIES) {
  *
  * Used by: OpenAI, and as fallback for most OpenAI-compatible providers.
  */
+/**
+ * Resolve a validation endpoint for a provider, preferring the hardcoded
+ * PROVIDER_ENDPOINTS table and falling back to the provider registry (which
+ * carries transport.validateUrl for 100+ ported OmniRoute providers).
+ * @returns {{url: string, authScheme: string, authHeader: string}|null}
+ */
+function resolveEndpoint(providerId) {
+  const hardcoded = PROVIDER_ENDPOINTS[providerId];
+  if (hardcoded?.validateUrl) {
+    return {
+      url: hardcoded.validateUrl,
+      authScheme: hardcoded.authScheme || "Bearer",
+      authHeader: hardcoded.authHeader || "Authorization",
+    };
+  }
+  // Registry fallback — covers the ported OmniRoute providers.
+  const entry = REGISTRY.find((p) => p.id === providerId);
+  const transport = entry?.transport;
+  if (transport) {
+    let url = transport.validateUrl || transport.modelsFetcher?.url || null;
+    if (!url && transport.baseUrl) {
+      const base = String(transport.baseUrl)
+        .replace(/\/+$/, "")
+        .replace(/\/chat\/completions$/, "")
+        .replace(/\/v1\/messages$/, "")
+        .replace(/\/responses$/, "")
+        .replace(/\/$/, "");
+      url = `${base}/models`;
+    }
+    if (!url) return null;
+    const auth = transport.auth || {};
+    const scheme = String(auth.scheme || "bearer").toLowerCase();
+    // Anthropic-style (x-api-key) vs bearer.
+    const isApiKey = scheme === "x-api-key" || transport.format === "claude" || auth.header === "x-api-key";
+    return {
+      url,
+      authScheme: isApiKey ? "x-api-key" : "Bearer",
+      authHeader: isApiKey ? "x-api-key" : "Authorization",
+    };
+  }
+  return null;
+}
+
 async function validateOpenAICompat(providerId, apiKey, extraHeaders) {
-  const endpoint = PROVIDER_ENDPOINTS[providerId];
-  const validateUrl = endpoint.validateUrl;
+  const resolved = resolveEndpoint(providerId);
+  if (!resolved) {
+    return buildError(ErrorTypes.UNKNOWN, `No validation endpoint for provider '${providerId}'`);
+  }
+  const { url: validateUrl, authScheme, authHeader } = resolved;
 
   const headers = {
-    Authorization: `Bearer ${apiKey}`,
+    [authHeader]: authScheme === "x-api-key" ? apiKey : `Bearer ${apiKey}`,
     "Content-Type": "application/json",
+    ...(authScheme === "x-api-key" ? { "anthropic-version": "2023-06-01" } : {}),
     ...(extraHeaders || {}),
   };
 
