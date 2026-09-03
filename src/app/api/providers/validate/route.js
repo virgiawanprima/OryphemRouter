@@ -576,7 +576,7 @@ export async function POST(request) {
           });
           if (res.status === 401 || res.status === 403) {
             isValid = false;
-            error = "Invalid session cookie — re-paste __Secure-next-auth.session-token from perplexity.ai";
+            error = "Invalid session cookie - re-paste __Secure-next-auth.session-token from perplexity.ai";
           } else {
             isValid = true;
           }
