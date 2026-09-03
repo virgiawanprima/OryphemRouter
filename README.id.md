@@ -323,7 +323,8 @@ OryphemRouter mendukung **4 strategi routing** per combo:
 | **1. Fallback** (default) | Coba model berurutan, pindah ke berikutnya jika gagal | Murah |
 | **2. Round Robin** | Putar model antar request untuk menyebarkan beban | Murah |
 | **3. Fusion** | Query semua model paralel, judge menyintesis jawaban | Mahal (N+1) |
-| **4. Cost-Optimized** ⭐ | Auto-urut dari termurah ke termahal, fallback jika gagal | Minimal |
+| **4. Pipeline** | Rantai model bertahap, tiap tahap memberi ke tahap berikut | Variabel |
+| **5. Auto** ⭐ | Peringkat berbasis skor AI — otomatis pilih model terbaik per request | Minimal |
 
 **Cara pakai:** Dashboard → Combos → buat combo → pilih strategi di Profile Settings.
 
