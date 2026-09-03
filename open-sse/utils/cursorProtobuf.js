@@ -5,9 +5,10 @@
 
 import { v4 as uuidv4 } from "uuid";
 import zlib from "zlib";
+import { log as engineLog } from "./log.js";
 
 const DEBUG = process.env.CURSOR_PROTOBUF_DEBUG === "1";
-const log = (tag, ...args) => DEBUG && console.log(`[PROTOBUF:${tag}]`, ...args);
+const log = (tag, ...args) => DEBUG && engineLog.info(`PROTOBUF:${tag}`, ...args);
 const textDecoder = new TextDecoder();
 
 const PROTOBUF_SCHEMA_VERSION = "1.1.3";
