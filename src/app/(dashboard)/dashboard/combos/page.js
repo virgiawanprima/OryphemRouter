@@ -296,9 +296,11 @@ const STRATEGY_OPTIONS = [
   { value: "fallback", label: "Fallback: try in order" },
   { value: "round-robin", label: "Round Robin: rotate" },
   { value: "fusion", label: "Fusion: panel + judge" },
+  { value: "pipeline", label: "Pipeline: chain steps" },
+  { value: "auto", label: "Auto: AI-ranked (opt-in)" },
 ];
 
-function ComboCard({ combo, getCaps, activeProviders = [], copied, onCopy, onEdit, onDelete, strategy = {}, onSetStrategy }) {
+function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, onCopy, onEdit, onDelete, strategy = {}, onSetStrategy }) {
   const [showJudgeSelect, setShowJudgeSelect] = useState(false);
   const current = strategy.fallbackStrategy || "fallback";
   const judge = strategy.judgeModel || "";
