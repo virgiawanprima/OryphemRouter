@@ -239,7 +239,7 @@ async function getAntigravitySubscriptionInfo(accessToken, proxyOptions = null) 
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {
-    console.error("[Antigravity Subscription] Error:", error.message);
+    engineLog.error("USAGE", "Antigravity Subscription Error:", sanitize(error.message));
     return null;
   }
 }
