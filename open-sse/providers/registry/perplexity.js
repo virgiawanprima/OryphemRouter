@@ -4,7 +4,7 @@ export default {
   alias: "perplexity",
   aliases: [
     "pplx",
-  ],
+  , "perplexity-search"],
   uiAlias: "pplx",
   display: {
     name: "Perplexity",
