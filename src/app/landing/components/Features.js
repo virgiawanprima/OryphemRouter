@@ -16,22 +16,25 @@ export default function Features() {
     <section className="py-24 px-6" id="features">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
+          <p className="font-mono uppercase tracking-[0.22em] text-[11px] text-[#38d9c8] mb-4">Capabilities</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">One gateway, every provider</h2>
           <p className="text-gray-400 max-w-xl text-lg">
-            Everything you need to manage your AI infrastructure in one place, built for scale.
+            The routing layer keeps orchestration out of your code, so you stay on one API.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURES.map((feature) => (
-            <div 
+          {FEATURES.concat([]).map((feature, i) => (
+            <div
               key={feature.title}
-              className={`p-6 rounded-xl bg-[#22242f] border border-[#3a3d4f] ${feature.colors.border} ${feature.colors.bg} transition-all duration-300 group`}
+              className={`p-6 rounded-xl border border-[#2a3947] bg-[#121a26] ${i === 7 ? "bg-teal-400/5 border-teal-400/25" : ""} group transition-all duration-300`}
             >
-              <div className={`w-10 h-10 rounded-lg ${feature.colors.iconBg} flex items-center justify-center mb-4 ${feature.colors.iconText} group-hover:scale-110 transition-transform duration-300`}>
-                <span className="material-symbols-outlined">{feature.icon}</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-lg bg-teal-400/10 flex items-center justify-center mb-0 text-teal-400 group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-symbols-outlined">{feature.icon}</span>
+                </div>
               </div>
-              <h3 className={`text-lg font-bold mb-2 ${feature.colors.titleHover} transition-colors`}>
+              <h3 className="text-lg font-bold mb-2 text-white group-hover:text-teal-300 transition-colors">
                 {feature.title}
               </h3>
               <p className="text-sm text-gray-400 leading-relaxed">{feature.desc}</p>
