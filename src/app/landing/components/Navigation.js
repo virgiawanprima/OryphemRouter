@@ -36,7 +36,7 @@ export default function Navigation() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => router.push("/dashboard")}
-            className="hidden sm:flex h-9 items-center justify-center rounded-lg px-4 bg-[#bd93f9] hover:bg-[#ab7cf7] transition-all text-[#1a1b26] text-sm font-bold shadow-[0_0_15px_rgba(249,120,21,0.4)] hover:shadow-[0_0_20px_rgba(249,120,21,0.6)]"
+            className="hidden sm:flex h-9 items-center justify-center rounded-lg px-4 bg-[#38d9c8] hover:bg-[#66e3d4] transition-all text-[#0b1018] text-sm font-bold shadow-[0_0_15px_rgba(56,217,200,0.4)] hover:shadow-[0_0_20px_rgba(56,217,200,0.55)]"
           >
             Get Started
           </button>
