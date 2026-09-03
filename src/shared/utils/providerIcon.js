@@ -1,5 +1,7 @@
 // Provider icon paths under /public/providers.
-// Alias related brands; session-cache 404s so one miss never spams again.
+// Providers with a real icon file render it; providers without one render either
+// their registry-declared Material Symbol (display.icon) or text icon (display.textIcon),
+// so the dashboard never issues a doomed /providers/*.png request (404). GENERATED — do not hand-edit.
 
 const ICON_ALIASES = {
   "perplexity-agent": "perplexity",
