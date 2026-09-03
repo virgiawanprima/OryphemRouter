@@ -7,7 +7,7 @@ export default function Navigation() {
   const router = useRouter();
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-[#1a1b26]/80 backdrop-blur-md border-b border-[#3a3d4f]">
+    <nav className="fixed top-0 z-50 w-full bg-[#0b1018]/80 backdrop-blur-md border-b border-[#2a3947]">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <button
