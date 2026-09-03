@@ -345,81 +345,33 @@ exports[`GOLDEN buildHeaders (default executor providers) > alitp-intl → heade
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > codebuddy-cn → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > amazon-q → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
     "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "User-Agent": "CLI/2.108.1 CodeBuddy/2.108.1",
-    "X-IDE-Name": "CLI",
-    "X-IDE-Type": "CLI",
-    "X-Product": "SaaS",
-    "x-codebuddy-request": "1",
-    "x-requested-with": "XMLHttpRequest",
+    "User-Agent": "AWS-SDK-JS/3.0.0 kiro-ide/1.0.0",
+    "X-Amz-User-Agent": "aws-sdk-js/3.0.0 kiro-ide/1.0.0",
   },
   "nonStream": {
+    "Accept": "application/vnd.amazon.eventstream",
     "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "User-Agent": "CLI/2.108.1 CodeBuddy/2.108.1",
-    "X-IDE-Name": "CLI",
-    "X-IDE-Type": "CLI",
-    "X-Product": "SaaS",
-    "x-codebuddy-request": "1",
-    "x-requested-with": "XMLHttpRequest",
+    "User-Agent": "AWS-SDK-JS/3.0.0 kiro-ide/1.0.0",
+    "X-Amz-User-Agent": "aws-sdk-js/3.0.0 kiro-ide/1.0.0",
   },
   "oauth": {
     "Accept": "text/event-stream",
     "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "User-Agent": "CLI/2.108.1 CodeBuddy/2.108.1",
-    "X-IDE-Name": "CLI",
-    "X-IDE-Type": "CLI",
-    "X-Product": "SaaS",
-    "x-codebuddy-request": "1",
-    "x-requested-with": "XMLHttpRequest",
+    "User-Agent": "AWS-SDK-JS/3.0.0 kiro-ide/1.0.0",
+    "X-Amz-User-Agent": "aws-sdk-js/3.0.0 kiro-ide/1.0.0",
   },
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > codebuddy-intl → headers (apiKey / oauth) 1`] = `
-{
-  "apiKey": {
-    "Accept": "text/event-stream",
-    "Authorization": "Bearer <TOK>",
-    "Content-Type": "application/json",
-    "User-Agent": "IDE/2.108.1 CodeBuddy/2.108.1",
-    "X-IDE-Name": "IDE",
-    "X-IDE-Type": "IDE",
-    "X-Product": "SaaS",
-    "x-codebuddy-request": "1",
-    "x-requested-with": "XMLHttpRequest",
-  },
-  "nonStream": {
-    "Authorization": "Bearer <TOK>",
-    "Content-Type": "application/json",
-    "User-Agent": "IDE/2.108.1 CodeBuddy/2.108.1",
-    "X-IDE-Name": "IDE",
-    "X-IDE-Type": "IDE",
-    "X-Product": "SaaS",
-    "x-codebuddy-request": "1",
-    "x-requested-with": "XMLHttpRequest",
-  },
-  "oauth": {
-    "Accept": "text/event-stream",
-    "Authorization": "Bearer <TOK>",
-    "Content-Type": "application/json",
-    "User-Agent": "IDE/2.108.1 CodeBuddy/2.108.1",
-    "X-IDE-Name": "IDE",
-    "X-IDE-Type": "IDE",
-    "X-Product": "SaaS",
-    "x-codebuddy-request": "1",
-    "x-requested-with": "XMLHttpRequest",
-  },
-}
-`;
-
-exports[`GOLDEN buildHeaders (default executor providers) > cohere → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > ant-ling → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
@@ -438,7 +390,32 @@ exports[`GOLDEN buildHeaders (default executor providers) > cohere → headers (
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > deepgram → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > anthropic → headers (apiKey / oauth) 1`] = `
+{
+  "apiKey": {
+    "Accept": "text/event-stream",
+    "Anthropic-Beta": "claude-code-20250219,interleaved-thinking-2025-05-14",
+    "Content-Type": "application/json",
+    "anthropic-version": "2023-06-01",
+    "x-api-key": "<CRED>",
+  },
+  "nonStream": {
+    "Anthropic-Beta": "claude-code-20250219,interleaved-thinking-2025-05-14",
+    "Content-Type": "application/json",
+    "anthropic-version": "2023-06-01",
+    "x-api-key": "<CRED>",
+  },
+  "oauth": {
+    "Accept": "text/event-stream",
+    "Anthropic-Beta": "claude-code-20250219,interleaved-thinking-2025-05-14",
+    "Content-Type": "application/json",
+    "anthropic-version": "2023-06-01",
+    "x-api-key": "<CRED>",
+  },
+}
+`;
+
+exports[`GOLDEN buildHeaders (default executor providers) > anyapi → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
