@@ -1,4 +1,5 @@
 import { FORMATS } from "../translator/formats.js";
+import { log, sanitize } from "./log.js";
 
 // Parse SSE data line
 export function parseSSELine(line, format = null) {
