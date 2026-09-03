@@ -20,6 +20,7 @@ export default {
   category: "apikey",
   transport: {
     baseUrl: "https://opencode.ai/zen/go/v1/chat/completions",
+    validateUrl: "https://opencode.ai/zen/go/v1/models",
     headers: {},
   },
   // Multi-endpoint: pick the transport matching the client sourceFormat to skip
