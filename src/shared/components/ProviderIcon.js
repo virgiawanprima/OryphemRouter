@@ -29,6 +29,14 @@ export default function ProviderIcon({
   const effectiveSrc = resolveSrc(src, providerId);
   const [errored, setErrored] = useState(false);
 
+  // Providers without a PNG render their registry-declared Material Symbol
+  // (display.icon) or text icon (display.textIcon) so the grid stays visual
+  // and no 404 request is made.
+  const symbolIcon = providerId ? getProviderSymbolIcon(providerId) : "";
+  const textIcon = providerId ? getProviderTextIcon(providerId) : "";
+  const useSymbol = !!symbolIcon;
+  const useText = !useSymbol && !!textIcon;
+
   if (!effectiveSrc || errored) {
     return (
       <span
