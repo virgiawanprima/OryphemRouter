@@ -124,7 +124,7 @@ function fromMcpToolName(name) {
   return name.startsWith(MCP_TOOL_PREFIX) ? name.slice(MCP_TOOL_PREFIX.length) : name;
 }
 
-function buildClientToolsMcp(tools, resultMap) {
+async function buildClientToolsMcp(tools, resultMap) {
   const mcpTools = [];
   for (const t of tools) {
     if (!t) continue;
