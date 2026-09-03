@@ -15,6 +15,7 @@ export default {
   category: "apikey",
   transport: {
     baseUrl: "https://open.bigmodel.cn/api/coding/paas/v4/chat/completions",
+    validateUrl: "https://open.bigmodel.cn/api/coding/paas/v4/models",
     headers: {},
     usage: {
       url: "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
