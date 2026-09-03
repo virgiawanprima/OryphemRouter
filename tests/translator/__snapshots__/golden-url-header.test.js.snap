@@ -804,7 +804,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > byteplus → headers
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > nanobanana → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > bytez → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
