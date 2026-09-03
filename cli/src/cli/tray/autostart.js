@@ -224,7 +224,7 @@ function disableMacOS() {
   // plist file is enough to prevent the agent from starting on next login.
   if (!isAgentSelfMacOS()) {
     try {
-      execSync(`launchctl unload "${plistPath}"`, { stdio: "ignore" });
+      execFileSync("launchctl", ["unload", plistPath], { stdio: "ignore" });
     } catch (e) {}
   }
 
