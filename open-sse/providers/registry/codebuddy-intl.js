@@ -22,6 +22,7 @@ export default {
   transport: {
     // Chat gateway is OpenAI-compatible SSE (same /v2/chat/completions path as CN).
     baseUrl: "https://www.codebuddy.ai/v2/chat/completions",
+    validateUrl: "https://www.codebuddy.ai/v2/models",
     forceStream: true,
     // CodeBuddy intl speaks the same unified OpenAI reasoning_effort shape as CN.
     thinkingFormat: "openai",
