@@ -307,6 +307,6 @@ export function logError(provider, { error, url, model, requestBody }) {
     
     fs.appendFileSync(logPath, JSON.stringify(logEntry) + "\n");
   } catch (err) {
-    console.log("[LOG] Failed to write error log:", err.message);
+    log.info("REQUEST_LOGGER", "Failed to write error log:", err.message);
   }
 }
