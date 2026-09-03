@@ -184,7 +184,7 @@ function createRequestContextResponse() {
 
 const CURSOR_STREAM_DEBUG = process.env.CURSOR_STREAM_DEBUG === "1";
 const debugLog = (...args) => {
-  if (CURSOR_STREAM_DEBUG) console.log(...args);
+  if (CURSOR_STREAM_DEBUG) log.info("CURSOR", ...args);
 };
 
 function isComposerModel(model) {
