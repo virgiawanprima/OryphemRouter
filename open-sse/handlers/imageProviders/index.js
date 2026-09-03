@@ -46,6 +46,20 @@ const ADAPTERS = {
   "black-forest-labs": blackForestLabs,
   runwayml,
   "cloudflare-ai": cloudflareAi,
+  "adobe-firefly": adobeFirefly,
+  aihorde,
+  alibaba: alibabaImage,
+  "chatgpt-web": chatgptWeb,
+  cursor: cursorAgentImage,
+  "microsoft-designer-web": designerWeb,
+  haiper,
+  hyperbolic,
+  ideogram,
+  imagen3,
+  leonardo,
+  magnific,
+  nvidia: nvidiaNim,
+  segmind,
 };
 
 export function getImageAdapter(provider) {
