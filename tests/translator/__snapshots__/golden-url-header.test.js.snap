@@ -573,35 +573,26 @@ exports[`GOLDEN buildHeaders (default executor providers) > azure-ai → headers
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > grok-cli → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > azure-openai → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
     "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "User-Agent": "grok-shell/0.2.99 (linux; x86_64)",
-    "x-grok-client-identifier": "grok-shell",
-    "x-grok-client-version": "0.2.99",
   },
   "nonStream": {
     "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "User-Agent": "grok-shell/0.2.99 (linux; x86_64)",
-    "x-grok-client-identifier": "grok-shell",
-    "x-grok-client-version": "0.2.99",
   },
   "oauth": {
     "Accept": "text/event-stream",
     "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "User-Agent": "grok-shell/0.2.99 (linux; x86_64)",
-    "x-grok-client-identifier": "grok-shell",
-    "x-grok-client-version": "0.2.99",
   },
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > groq → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > bai → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
