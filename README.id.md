@@ -577,6 +577,14 @@ Content-Type: application/json
 }
 ```
 
+### Anthropic Messages
+
+`POST /v1/messages`, plus `/v1/messages/count_tokens` untuk menghitung token.
+
+### Responses
+
+`POST /v1/responses` (Responses API), plus `/v1/responses/compact`.
+
 ### List Models
 
 ```bash
