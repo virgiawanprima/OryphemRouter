@@ -25,6 +25,8 @@ export async function GET() {
         // the router, so the "routed" form must match what actually routes.
         const routedModel = `${m.provider}/${m.model}`;
         const c = getCapabilitiesForModel(m.provider, m.model);
+        const meta = getModelMetadata(m.provider, m.model);
+        const pricing = getModelPricing(m.provider, m.model);
         return {
           ...m,
           fullModel,
