@@ -114,13 +114,15 @@ export default function OpenCodeToolCard({ tool, isExpanded, onToggle, baseUrl, 
   const checkStatus = async () => {
     setChecking(true);
     try {
-      const res = await fetch("/api/cli-tools/opencode-settings");
+      // Read status from the aggregate all-statuses route (works in-process without
+      // the local CLI token the per-tool settings route requires). We pick our own
+      // tool's entry from the returned map.
+      const res = await fetch("/api/cli-tools/all-statuses?tool=opencode");
       const data = await res.json();
       if (!res.ok) {
-        // API error (e.g. 403/401/500) — do NOT misreport as "not installed".
         setStatus({ checkFailed: true, error: data?.error || `Request failed (${res.status})` });
       } else {
-        setStatus(data);
+        setStatus(data?.opencode || { checkFailed: true, error: "No status for opencode" });
       }
     } catch (error) {
       setStatus({ checkFailed: true, error: error.message });
