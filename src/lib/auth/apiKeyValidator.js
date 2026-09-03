@@ -56,9 +56,6 @@ const MAX_RETRIES = 2;
 /** Base delay for exponential backoff (milliseconds) */
 const BASE_BACKOFF_MS = 500;
 
-/** Supported provider categories for key-based auth */
-const AUTH_CATEGORIES = new Set(["apikey", "freeTier"]);
-
 /**
  * Default base URLs and validation endpoints for known providers.
  * These serve as fallbacks when the registry doesn't specify a validateUrl.
