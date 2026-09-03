@@ -299,6 +299,17 @@ export default function Sidebar({ onClose }) {
               />
             ))}
 
+            {enableTranslator && (
+              <NavLink
+                href="/dashboard/translator"
+                icon="translate"
+                label="Translator"
+                active={isActive("/dashboard/translator")}
+                collapsed={collapsed}
+                onNavigate={onClose}
+              />
+            )}
+
             {/* Remote promo */}
             <button
               onClick={() => setShowRemoteModal(true)}
