@@ -15,6 +15,7 @@ export default {
   category: "oauth",
   transport: {
     baseUrl: "https://gitlab.com/api/v4/chat/completions",
+    validateUrl: "https://gitlab.com/api/v4/models",
     auth: {
       combined: true,
       header: "Authorization",
