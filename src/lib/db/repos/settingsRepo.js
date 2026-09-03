@@ -63,6 +63,9 @@ const DEFAULT_SETTINGS = {
   mitmRouterBaseUrl: DEFAULT_MITM_ROUTER_BASE,
   dnsToolEnabled: {},
   rtkEnabled: true,
+  // Semantic cache: cache deterministic (temperature=0) non-streaming responses.
+  // Default OFF — opt-in optimization (OmniRoute-style capability).
+  semanticCacheEnabled: false,
   headroomEnabled: false,
   headroomUrl: DEFAULT_HEADROOM_URL,
   headroomCompressUserMessages: false,
