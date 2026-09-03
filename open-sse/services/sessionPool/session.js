@@ -1,0 +1,92 @@
+class Session {
+  constructor(fingerprint, cooldownBase, cooldownMax, cooldownJitter) {
+    this.cooldownBase = cooldownBase;
+    this.cooldownMax = cooldownMax;
+    this.cooldownJitter = cooldownJitter;
+    this.id = `sess-${fingerprint.id}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    this.fingerprint = fingerprint;
+    this.createdAt = Date.now();
+  }
+  id;
+  fingerprint;
+  createdAt;
+  status = "active";
+  inflight = 0;
+  totalRequests = 0;
+  successfulRequests = 0;
+  failedRequests = 0;
+  consecutiveFails = 0;
+  cooldownUntil = 0;
+  lastUsedAt = 0;
+  /** Whether this session can accept requests right now */
+  get isAvailable() {
+    if (this.status === "dead") return false;
+    if (this.status === "cooldown") {
+      if (Date.now() >= this.cooldownUntil) {
+        this.status = "active";
+        this.consecutiveFails = 0;
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+  /** Mark a successful request */
+  markSuccess() {
+    this.successfulRequests++;
+    this.consecutiveFails = 0;
+  }
+  /** Enter cooldown with exponential backoff */
+  markCooldown() {
+    this.consecutiveFails++;
+    const base = Math.min(
+      this.cooldownBase * Math.pow(2, this.consecutiveFails - 1),
+      this.cooldownMax
+    );
+    const jitter = Math.random() * this.cooldownJitter;
+    this.cooldownUntil = Date.now() + base + jitter;
+    this.status = "cooldown";
+  }
+  /** Mark session as dead (non-recoverable error) */
+  markDead() {
+    this.status = "dead";
+  }
+  /** Increment inflight counter and mark as used */
+  acquire() {
+    this.inflight++;
+    this.totalRequests++;
+    this.lastUsedAt = Date.now();
+  }
+  /** Decrement inflight counter */
+  release() {
+    this.inflight = Math.max(0, this.inflight - 1);
+  }
+  /** Milliseconds remaining in cooldown */
+  get cooldownRemaining() {
+    if (this.status !== "cooldown") return 0;
+    return Math.max(0, this.cooldownUntil - Date.now());
+  }
+  /** Age in milliseconds */
+  get age() {
+    return Date.now() - this.createdAt;
+  }
+  /** Build headers for this session's fingerprint */
+  buildHeaders(extra) {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/plain, */*",
+      "Accept-Language": this.fingerprint.acceptLanguage ?? "en-US,en;q=0.9",
+      "User-Agent": this.fingerprint.userAgent,
+      ...extra
+    };
+    if (this.fingerprint.secChUa) {
+      headers["Sec-CH-UA"] = this.fingerprint.secChUa;
+      headers["Sec-CH-UA-Mobile"] = this.fingerprint.secChUaMobile ?? "?0";
+      headers["Sec-CH-UA-Platform"] = this.fingerprint.secChUaPlatform ?? '"Windows"';
+    }
+    return headers;
+  }
+}
+export {
+  Session
+};
