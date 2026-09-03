@@ -1,6 +1,7 @@
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const { gracefulExit } = require("../utils/gracefulExit");
 
 let trayInstance = null;
 let isWinTray = false;
