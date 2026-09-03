@@ -631,7 +631,7 @@ GET http://localhost:20129/api/dashboard/realtime
 **Rate limiting**
 
 - Subscription quota out → Fallback to GLM/MiniMax
-- Add combo: `cc/claude-opus-4-7 → glm/glm-5.1 → kr/claude-sonnet-4.5`
+- Add combo: `cc/claude-opus-5 → glm/glm-5.3 → kr/claude-sonnet-5`
 
 **OAuth token expired**
 
