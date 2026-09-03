@@ -20,6 +20,7 @@ export default {
   hasOAuth: true,
   transport: {
     baseUrl: "https://copilot.tencent.com/v2/chat/completions",
+    validateUrl: "https://copilot.tencent.com/v2/models",
     forceStream: true,
     // CodeBuddy is a unified OpenAI-compatible gateway: every model (GLM, Kimi,
     // MiniMax, DeepSeek, Hunyuan) takes reasoning via OpenAI-style reasoning_effort,
