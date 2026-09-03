@@ -126,7 +126,7 @@ function isAutoStartEnabled() {
  */
 function isAgentSelfMacOS() {
   try {
-    const output = execSync(`launchctl list ${APP_LABEL}`, {
+    const output = execFileSync("launchctl", ["list", APP_LABEL], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
       timeout: 3000
