@@ -16,6 +16,7 @@ export default {
   category: "oauth",
   transport: {
     baseUrl: "https://api.cline.bot/api/v1/chat/completions",
+    validateUrl: "https://api.cline.bot/api/v1/models",
     headers: {
       "HTTP-Referer": "https://cline.bot",
       "X-Title": "Cline",
