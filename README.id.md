@@ -238,7 +238,7 @@ Kelompokkan model di bawah satu nama dan pilih strategi routing.
 
 - **Buat combo**: beri nama, tambah model sesuai prioritas (drag untuk urutkan ulang).
 - **Template**: sekali-klik **Free Combo** (model gratis di depan) atau preset **Premium Combo**.
-- **Strategi per-combo**: Fallback, Round Robin, Fusion, atau Cost-Optimized (lihat Strategi Routing).
+- **Strategi per-combo**: Fallback, Round Robin, Fusion, Pipeline, atau Auto (lihat Strategi Routing).
 - **Capacity adapter**: pool fallback otomatis untuk vision/audio saat model target kurang kapabilitas.
 - **Pakai di mana saja**: gunakan nama combo sebagai `model` di tool CLI mana pun.
 
