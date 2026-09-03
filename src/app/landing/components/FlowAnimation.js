@@ -49,16 +49,16 @@ export default function FlowAnimation() {
   }, []);
 
   return (
-    <div className="mt-16 w-full max-w-4xl relative h-[360px] hidden md:flex items-center justify-center animate-[float_6s_ease-in-out_infinite]">
+    <div className="mt-16 w-full max-w-4xl relative h-[360px] hidden md:flex items-center justify-center motion-reduce:animate-none animate-[float_6s_ease-in-out_infinite]">
       {/* OryphemRouter Hub - Center */}
-      <div className="relative z-20 w-32 h-32 rounded-full bg-[#22242f] border-2 border-[#bd93f9] shadow-[0_0_40px_rgba(249,120,21,0.3)] flex flex-col items-center justify-center gap-1 group cursor-pointer hover:scale-105 transition-transform duration-500">
-        <span className="material-symbols-outlined text-4xl text-[#bd93f9]">
+      <div className="relative z-20 w-32 h-32 rounded-full bg-[#121a26] border-2 border-[#38d9c8] shadow-[0_0_40px_rgba(56,217,200,0.25)] flex flex-col items-center justify-center gap-1 group cursor-pointer hover:scale-105 transition-transform duration-500">
+        <span className="material-symbols-outlined text-4xl text-[#38d9c8]">
           hub
         </span>
         <span className="text-xs font-bold text-white tracking-widest">
           OryphemRouter
         </span>
-        <div className="absolute inset-0 rounded-full border border-[#bd93f9]/30 animate-ping opacity-20"></div>
+        <div className="absolute inset-0 rounded-full border border-[#38d9c8]/30 motion-reduce:animate-none animate-ping opacity-20"></div>
       </div>
 
       {/* CLI Tools - Left side */}
