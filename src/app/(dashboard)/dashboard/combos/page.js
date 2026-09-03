@@ -1027,10 +1027,20 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
                         isLast={gi === currentOrder.length - 1}
                         onMoveUp={() => handleProviderGroupMove(gi, -1)}
                         onMoveDown={() => handleProviderGroupMove(gi, 1)}
+                        onRemoveGroup={() => handleRemoveProviderGroup(gi)}
+                        onDragStart={(e) => handleDragStart(e, { type: "group", gi })}
+                        onDragOver={(e) => { setDragOverItem({ type: "group", gi }); handleDragOver(e); }}
+                        onDrop={(e) => handleDrop(e, { type: "group", gi })}
+                        onDragEnd={handleDragEnd}
+                        isDragging={dragItem?.type === "group" && dragItem?.gi === gi}
+                        isDragOver={dragOverItem?.type === "group" && dragOverItem?.gi === gi}
                       />
 
                       {/* Models in this provider group */}
-                      <div className="flex flex-col gap-0.5 ml-2 pl-2 border-l-2 border-black/5 dark:border-white/5">
+                      <div className="flex flex-col gap-0.5 ml-2 pl-2 border-l-2 border-black/5 dark:border-white/5"
+                        onDragOver={(e) => handleDragOver(e)}
+                        onDrop={(e) => handleDrop(e, { type: "group", gi: Math.min(gi, currentOrder.length - 1) })}
+                      >
                         {group.models.map((model, mi) => {
                           const flatIndex = flatStart + mi;
                           return (
