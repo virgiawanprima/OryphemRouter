@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Card, Badge, Button } from "@/shared/components";
+import { Card, Button } from "@/shared/components";
 import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useRealtime, LiveBadge, useLiveRefresh } from "@/shared/hooks/useRealtime";
 
