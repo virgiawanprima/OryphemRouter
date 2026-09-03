@@ -350,11 +350,12 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
   let providerResponseFormat = targetFormat;
   try {
     const result = await executor.execute({ model, body: translatedBody, stream, credentials, signal: execSignal, log, proxyOptions });
-    providerResponse = result.response;
-    providerUrl = result.url;
-    providerHeaders = result.headers;
-    finalBody = result.transformedBody;
-    providerResponseFormat = result.responseFormat || targetFormat;
+    // Executors may return either { response, url, headers, transformedBody } or a bare Response.
+    providerResponse = result?.response ?? result;
+    providerUrl = result?.url;
+    providerHeaders = result?.headers;
+    finalBody = result?.transformedBody;
+    providerResponseFormat = result?.responseFormat || targetFormat;
     reqLogger.logTargetRequest(providerUrl, providerHeaders, finalBody);
   } catch (error) {
     trackPendingRequest(model, provider, connectionId, false, true);
