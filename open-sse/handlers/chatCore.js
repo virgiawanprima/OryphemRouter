@@ -405,10 +405,11 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
         }
         try {
           const retryResult = await executor.execute({ model, body: translatedBody, stream, credentials, signal: execSignal, log, proxyOptions });
-          if (retryResult.response.ok) {
-            providerResponse = retryResult.response;
-            providerUrl = retryResult.url;
-            providerResponseFormat = retryResult.responseFormat || targetFormat;
+          const retryResponse = retryResult?.response ?? retryResult;
+          if (retryResponse?.ok) {
+            providerResponse = retryResponse;
+            providerUrl = retryResult?.url;
+            providerResponseFormat = retryResult?.responseFormat || targetFormat;
           }
         } catch { log?.warn?.("TOKEN", `${provider.toUpperCase()} | retry after refresh failed`); }
       } else {
