@@ -770,10 +770,10 @@ function ComboFormModal({ isOpen, combo, onClose, onSave, activeProviders, kindF
   const [nameError, setNameError] = useState("");
   const [modelAliases, setModelAliases] = useState({});
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
+  // HTML5 drag-and-drop state — drag reorders provider groups and models.
+  // `dragItem` identifies what is being dragged; `dragOverItem` the drop target.
+  const [dragItem, setDragItem] = useState(null);   // { type: 'group'|'model', gi, modelIndex? }
+  const [dragOverItem, setDragOverItem] = useState(null);
 
   // Derive provider groups from flat models array
   const { groups: providerGroups, groupOrder } = groupModelsByProvider(models);
