@@ -696,11 +696,17 @@ onClose();
               {!closeOnSelect && group.models.length > 0 && (
                 <button
                   onClick={() => {
-                    // Add all models from this provider that are not already added
-                    for (const model of group.models) {
-                      if (!addedModelValues.includes(model.value) && !model.isPlaceholder) {
-                        onSelect(model);
-                      }
+                    // Batch-add all not-yet-added models atomically (prevents stale
+                    // closure "adds only the last one" behavior when +All is used).
+                    const toAdd = group.models.filter(
+                      (model) => !addedModelValues.includes(model.value) && !model.isPlaceholder
+                    );
+                    if (toAdd.length === 0) return;
+                    if (typeof onAddMany === "function") {
+                      onAddMany(toAdd);
+                    } else {
+                      // Fallback: still add via functional set in the consumer if possible.
+                      for (const model of toAdd) onSelect(model);
                     }
                   }}
                   className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
