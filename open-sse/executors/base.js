@@ -27,6 +27,19 @@ export class BaseExecutor {
     return this.getBaseUrls().length || 1;
   }
 
+  // Per-executor upstream timeout (ms) used by web executors that manage their
+  // own fetch/timeout lifecycle. Defaults to the connect timeout.
+  getTimeoutMs() {
+    return this.config?.timeoutMs || FETCH_CONNECT_TIMEOUT_MS;
+  }
+
+  // Resolve the effective upstream base URL: operator override → config default.
+  resolveBaseUrl(credentials, fallback) {
+    const psdBaseUrl = credentials?.providerSpecificData?.baseUrl;
+    if (typeof psdBaseUrl === "string" && psdBaseUrl) return psdBaseUrl;
+    return fallback || this.config.baseUrl || "";
+  }
+
   buildUrl(model, stream, urlIndex = 0, credentials = null) {
     if (this.provider?.startsWith?.("openai-compatible-")) {
       const baseUrl = credentials?.providerSpecificData?.baseUrl || OPENAI_COMPAT_BASE;
