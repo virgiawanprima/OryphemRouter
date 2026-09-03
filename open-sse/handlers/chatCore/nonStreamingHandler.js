@@ -387,7 +387,7 @@ export async function handleNonStreamingResponse({ providerResponse, provider, m
     pxpipe,
     status: "success"
   }, { endpoint: clientRawRequest?.endpoint || null })).catch(err => {
-    console.error("[RequestDetail] Failed to save:", err.message);
+    engineLog.error("CHAT-CORE", "RequestDetail save failed:", sanitize(err.message));
   });
 
   return {
