@@ -349,7 +349,7 @@ export async function proxyAwareFetch(url, options = {}, proxyOptions = null) {
       const realIP = await resolveRealIP(parsedUrl.hostname);
       if (realIP) return await createBypassRequest(parsedUrl, realIP, options);
     } catch (error) {
-      console.warn(`[ProxyFetch] MITM bypass failed: ${error.message}`);
+      log.warn("PROXY_FETCH", `MITM bypass failed: ${error.message}`);
     }
   }
 
