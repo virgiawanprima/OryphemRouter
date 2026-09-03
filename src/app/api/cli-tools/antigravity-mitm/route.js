@@ -106,7 +106,7 @@ export async function POST(request) {
 
     if (!checkPrivilege(pwd)) {
       return NextResponse.json(
-        { error: isWin ? "Administrator required — restart oryphemrouter as Administrator" : "Root or sudo password required to start MITM" },
+        { error: isWin ? "Administrator required - restart oryphemrouter as Administrator" : "Root or sudo password required to start MITM" },
         { status: 403 }
       );
     }
