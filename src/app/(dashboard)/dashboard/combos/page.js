@@ -696,28 +696,31 @@ function groupModelsByProvider(models) {
   return { groups, groupOrder };
 }
 
-// Extract models at a flat index from group order
-function getFlatIndex(modelPositions, groupOrder, groups, providerIndex, modelIndex) {
-  let idx = 0;
-  for (let gi = 0; gi < groupOrder.length; gi++) {
-    const g = groups[groupOrder[gi]];
-    for (let mi = 0; mi < g.models.length; mi++) {
-      if (gi === providerIndex && mi === modelIndex) return idx;
-      idx++;
-    }
-  }
-  return -1;
-}
-
-function ProviderGroupHeader({ provider, modelCount, isFirst, isLast, onMoveUp, onMoveDown }) {
+function ProviderGroupHeader({
+  provider, modelCount, isFirst, isLast, onMoveUp, onMoveDown, onRemoveGroup,
+  onDragStart, onDragOver, onDrop, onDragEnd, isDragging, isDragOver,
+}) {
   return (
-    <div className="flex items-center gap-2 py-1.5 px-2 bg-black/[0.03] dark:bg-white/[0.03] rounded-md">
+    <div
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+      className={`flex items-center gap-2 py-1.5 px-2 rounded-md border transition-colors ${
+        isDragging ? "opacity-40" : ""
+      } ${isDragOver
+        ? "border-primary bg-black/[0.06] dark:bg-white/[0.08]"
+        : "border-transparent bg-black/[0.03] dark:bg-white/[0.03]"}`}
+    >
       {/* Drag handle */}
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-text-muted/40 shrink-0">
-        <circle cx="9" cy="4" r="2"/><circle cx="15" cy="4" r="2"/>
-        <circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/>
-        <circle cx="9" cy="20" r="2"/><circle cx="15" cy="20" r="2"/>
-      </svg>
+      <span className="cursor-grab active:cursor-grabbing text-text-muted/40 shrink-0" title="Drag to reorder provider group" aria-hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="9" cy="4" r="2"/><circle cx="15" cy="4" r="2"/>
+          <circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/>
+          <circle cx="9" cy="20" r="2"/><circle cx="15" cy="20" r="2"/>
+        </svg>
+      </span>
 
       {/* Provider icon/name */}
       <div className="flex items-center gap-1.5 flex-1 min-w-0">
