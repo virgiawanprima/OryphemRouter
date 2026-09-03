@@ -328,8 +328,8 @@ export class DevinCliExecutor extends BaseExecutor {
         ? b.input
         : [];
     const promptText = buildPromptText(messages);
-    const workspaceCwd = resolveWorkspaceCwd(b);
-    const devinBin = resolveDevinBin();
+    const workspaceCwd = await resolveWorkspaceCwd(b);
+    const devinBin = await resolveDevinBin();
 
     log?.info?.(
       "DEVIN",
