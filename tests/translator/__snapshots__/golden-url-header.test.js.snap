@@ -497,16 +497,16 @@ exports[`GOLDEN buildHeaders (default executor providers) > assemblyai → heade
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > gemini → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > auggie → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
+    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "x-goog-api-key": "<CRED>",
   },
   "nonStream": {
+    "Authorization": "Bearer <TOK>",
     "Content-Type": "application/json",
-    "x-goog-api-key": "<CRED>",
   },
   "oauth": {
     "Accept": "text/event-stream",
