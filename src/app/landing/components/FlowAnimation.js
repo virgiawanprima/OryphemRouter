@@ -167,7 +167,7 @@ export default function FlowAnimation() {
       </div>
 
       {/* Mobile fallback */}
-      <div className="md:hidden mt-8 w-full p-4 rounded-lg bg-[#22242f] border border-[#3a3d4f]">
+      <div className="md:hidden mt-8 w-full p-4 rounded-lg bg-[#121a26] border border-[#2a3947]">
         <p className="text-sm text-center text-gray-400">
           Interactive diagram visible on desktop
         </p>
