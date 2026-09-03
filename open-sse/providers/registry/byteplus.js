@@ -20,6 +20,7 @@ export default {
   category: "freeTier",
   transport: {
     baseUrl: "https://ark.ap-southeast.bytepluses.com/api/coding/v3/chat/completions",
+    validateUrl: "https://ark.ap-southeast.bytepluses.com/api/coding/v3/models",
     headers: {},
   },
   models: [
