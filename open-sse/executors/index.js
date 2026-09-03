@@ -15,6 +15,7 @@ import { GrokCliExecutor } from "./grok-cli.js";
 import { PerplexityWebExecutor } from "./perplexity-web.js";
 import { OllamaLocalExecutor } from "./ollama-local.js";
 import { CommandCodeExecutor } from "./commandcode.js";
+import { CommandCodeExecutor as OmniCommandCodeExecutor } from "./command-code.js";
 import { XiaomiTokenplanExecutor } from "./xiaomi-tokenplan.js";
 import { CodeBuddyExecutor } from "./codebuddy-cn.js";
 import { CodeBuddyIntlExecutor } from "./codebuddy-intl.js";
