@@ -261,6 +261,38 @@ Pantau kuota provider agar Anda tidak berhenti di tengah sesi.
 - **Timer reset**: hitung mundur reset 5 jam, harian, mingguan, atau bulanan.
 - **Peringatan**: lihat sekilas saat provider mendekati batas agar fallback berjalan mulus.
 
+### 🖼️ Media Providers (Penyedia Media)
+
+Satu gateway untuk setiap jenis media AI — bukan hanya chat.
+
+- **Jenis**: Text-to-Speech, Speech-to-Text, Text-to-Image, Video, Musik, Embeddings, Web Search, Web Fetch, Image Upscale, OCR, Rerank, Moderasi.
+- **Rute per-jenis**: setiap jenis memetakan ke endpoint-nya sendiri (mis. `/v1/audio/speech`, `/v1/images/generations`, `/v1/videos/generations`).
+- **Combo untuk media**: kelompokkan beberapa provider dalam satu combo media, dengan strategi round-robin/fallback sendiri.
+- **Katalog suara & model**: daftar suara/model live per provider (mis. ElevenLabs, Deepgram, MiniMax voices).
+
+### 🧩 Proxy Pools
+
+Rutekan traffic upstream melalui proxy keluar.
+
+- **Manajemen pool**: tambah, uji, dan nonaktifkan proxy SOCKS5/HTTP.
+- **Strategi per-provider**: atur strategi rotasi (`round-robin`, `none`, ...) ke sebuah pool.
+- **Keamanan**: jaga IP rumah tetap privat saat memanggil provider.
+
+### 🔀 Translator
+
+Konversi format request/response secara live antar provider.
+
+- **Konversi pesan**: OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex.
+- **Simpan/muat preset**: profil terjemahan yang dapat dipakai ulang.
+- **Console logs**: inspeksi output terjemahan secara live via SSE.
+
+### 💡 Skills & MCP
+
+Perluas agent coding Anda dengan skills dan server MCP.
+
+- **Skills pack**: pasang skills agent yang dirutekan melalui OryphemRouter.
+- **MCP server**: paparkan tools melalui Model Context Protocol (`/api/mcp/*`).
+
 ### 💾 Token Saver (Penghemat Token)
 
 Potong penggunaan token otomatis sebelum request sampai ke LLM.
