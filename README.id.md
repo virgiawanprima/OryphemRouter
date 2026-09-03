@@ -56,11 +56,11 @@
 
 ## 📖 Tentang
 
-**OryphemRouter** adalah **gerbang routing AI** lokal yang menggabungkan seluruh kebutuhan AI coding Anda ke dalam **satu endpoint**. Dibangun oleh **tim oryphem** sebagai peningkatan dari OryphemRouter, proyek ini menghadirkan:
+**OryphemRouter** adalah **gerbang routing AI** lokal yang menggabungkan seluruh kebutuhan AI coding Anda ke dalam **satu endpoint**. Proyek ini menghadirkan:
 
 - 🎯 **Auto-fallback** antar provider (Subscription → Cheap → Free) sehingga Anda **tidak pernah berhenti coding**
 - 💸 **Hemat 20-40% token** dengan RTK Token Saver terintegrasi
-- 🆓 **Gratis selamanya** dengan free tier Kiro, OpenCode Free, dan Vertex AI
+- 🆓 **Gratis selamanya** dengan katalog free tier bawaan (Kiro, OpenCode Free, dan lainnya)
 - 🔒 **100% local-first**: data & API key Anda tidak pernah keluar dari mesin Anda
 - 🌍 **Dua bahasa**: Indonesia & English
 
