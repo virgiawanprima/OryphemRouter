@@ -314,7 +314,9 @@ function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, o
             <span className="material-symbols-outlined text-primary text-[18px]">layers</span>
           </div>
           <div className="min-w-0 flex-1">
-            <code className="block truncate font-mono text-sm font-medium">{combo.name}</code>
+            <Link href={`/dashboard/combos/${combo.id}`} className="block">
+              <code className="block truncate font-mono text-sm font-medium hover:text-primary transition-colors">{combo.name}</code>
+            </Link>
             <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1">
               {combo.models.length === 0 ? (
                 <span className="text-xs text-text-muted italic">No models</span>
