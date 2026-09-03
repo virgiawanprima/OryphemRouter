@@ -386,23 +386,29 @@ Success      → 🟢 circuit reset (error count = 0)
 
 ## 🔧 CLI Integration
 
+OryphemRouter auto-detects and configures your installed coding agents from the dashboard (Dashboard → CLI Tools). Supported tools include:
+
+Claude Code, Codex CLI/App, OpenCode, Cursor, Cline, Continue, Roo, Kilo Code, Amp CLI, Qwen Code, jcode, DeepSeek TUI, Devin CLI, Grok Build, Hermes, Factory Droid, Claude Cowork, OpenClaw, OpenDesign, plus MITM-intercepted agents **Antigravity**, **Kiro** and **GitHub Copilot**.
+
 ### Cursor IDE
 
 ```
 Settings → Models → Advanced:
   OpenAI API Base URL: http://localhost:20129/v1
   OpenAI API Key: [from dashboard]
-  Model: cc/claude-opus-4-7
+  Model: cc/claude-opus-5
 ```
 
 ### Claude Code
 
-Edit `~/.claude/config.json`:
+Edit `~/.claude/settings.json`:
 
 ```json
 {
-  "anthropic_api_base": "http://localhost:20129/v1",
-  "anthropic_api_key": "your-oryphemrouter-api-key"
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:20129",
+    "ANTHROPIC_MODEL": "cc/claude-sonnet-5"
+  }
 }
 ```
 
