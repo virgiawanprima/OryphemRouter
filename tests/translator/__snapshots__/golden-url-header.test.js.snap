@@ -1223,7 +1223,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > cliproxyapi → head
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > venice → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > cloudcode-one → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
