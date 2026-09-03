@@ -472,20 +472,28 @@ Model: cc/claude-opus-5
 
 | Variable | Default | Deskripsi |
 |----------|---------|-----------|
-| `JWT_SECRET` | Auto-generated | Secret signing JWT untuk auth cookie |
+| `JWT_SECRET` | Auto-generated | Secret signing JWT untuk auth cookie (buat dengan `openssl rand -hex 32`) |
 | `INITIAL_PASSWORD` | `123` | Password login pertama |
 | `DATA_DIR` | `~/.oryphemrouter` | Lokasi data utama (SQLite) |
 | `PORT` | `20129` | Port service |
-| `HOSTNAME` | framework default | Bind host (Docker: `0.0.0.0`) |
 | `NODE_ENV` | runtime default | `production` untuk deploy |
-| `BASE_URL` | `http://localhost:20129` | Base URL internal untuk cloud sync |
+| `HOSTNAME` | framework default | Bind host (Docker: `0.0.0.0`) |
+| `BASE_URL` | `http://localhost:20129` | Base URL internal agar job sync bisa menjangkau instance ini |
 | `CLOUD_URL` | `https://oryphem.com` | Endpoint cloud sync |
-| `API_KEY_SECRET` | `endpoint-proxy-api-key-secret` | Secret HMAC untuk API keys |
-| `MACHINE_ID_SALT` | `endpoint-proxy-salt` | Salt untuk machine ID |
+| `NEXT_PUBLIC_BASE_URL` | `http://localhost:20129` | Base URL publik |
+| `NEXT_PUBLIC_CLOUD_URL` | `https://oryphem.com` | Cloud URL publik |
+| `API_KEY_SECRET` | default endpoint-proxy | Secret HMAC untuk API keys (buat dengan `openssl rand -hex 32`) |
+| `MACHINE_ID_SALT` | default endpoint-proxy | Salt untuk machine ID (buat dengan `openssl rand -hex 32`) |
 | `ENABLE_REQUEST_LOGS` | `false` | Aktifkan request logs |
 | `REQUIRE_API_KEY` | `false` | Enforce Bearer API key pada `/v1/*` |
+| `OBSERVABILITY_ENABLED` | `true` | Aktifkan observabilitas |
+| `AUTH_COOKIE_SECURE` | `false` | Tandai cookie auth `Secure` (set `true` di balik HTTPS) |
+| `HTTP_PROXY` / `HTTPS_PROXY` | unset | Proxy keluar untuk panggilan provider (varian huruf kecil juga didukung) |
+| `SEARXNG_URL` | unset | Endpoint SearXNG untuk provider web-search bawaan |
+| `GOOGLE_OAUTH_CLIENT_ID` / `_SECRET` | unset | OAuth client Google (login Gemini / Antigravity) |
+| `ANTIGRAVITY_OAUTH_CLIENT_ID` / `_SECRET` | unset | Kredensial OAuth client Antigravity |
 
-> 📄 Lihat [`.env.example`](./.env.example) untuk referensi lengkap dengan variabel OAuth client.
+> 📄 Lihat [`.env.example`](./.env.example) untuk referensi lengkap.
 
 ---
 
