@@ -79,6 +79,9 @@ export async function GET() {
       installed: true,
       source,
       version,
+      // Devin is a self-authenticating binary (no OryphemRouter config written),
+      // so "Connected" (ready to use) is correct once it is installed.
+      hasoryphemrouter: true,
       message: "Devin CLI detected. Make sure `devin auth login` has been run.",
     });
   } catch (error) {
