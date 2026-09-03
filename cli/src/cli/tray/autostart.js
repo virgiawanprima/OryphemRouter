@@ -203,10 +203,10 @@ function enableMacOS(cliPath) {
   // anything actually happened. `unload` first defends against re-enable
   // replacing an existing plist.
   try {
-    execSync(`launchctl unload "${plistPath}"`, { stdio: "ignore" });
+    execFileSync("launchctl", ["unload", plistPath], { stdio: "ignore" });
   } catch (e) {}
   try {
-    execSync(`launchctl load -w "${plistPath}"`, { stdio: "ignore" });
+    execFileSync("launchctl", ["load", "-w", plistPath], { stdio: "ignore" });
   } catch (e) {
     // Even if load fails, the plist is on disk and will be picked up at next
     // login; report success based on the file write.
