@@ -135,7 +135,7 @@ async function resolveRealIP(hostname) {
     DNS_CACHE.set(hostname, { ip: addresses[0], expiry: Date.now() + MEMORY_CONFIG.dnsCacheTtlMs });
     return addresses[0];
   } catch (error) {
-    console.warn(`[ProxyFetch] DNS resolve failed for ${hostname}:`, error.message);
+    log.warn("PROXY_FETCH", `DNS resolve failed for ${hostname}:`, error.message);
     return null;
   }
 }
