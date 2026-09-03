@@ -21,7 +21,7 @@ export default function GetStarted() {
             
             <div className="flex flex-col gap-6">
               <div className="flex gap-4">
-                <div className="flex-none w-8 h-8 rounded-full bg-[#bd93f9]/20 text-[#bd93f9] flex items-center justify-center font-bold">1</div>
+                <div className="flex-none w-8 h-8 rounded-full bg-[#38d9c8]/20 text-[#38d9c8] flex items-center justify-center font-bold">1</div>
                 <div>
                   <h4 className="font-bold text-lg">Install OryphemRouter</h4>
                   <p className="text-sm text-gray-500 mt-1">Run npx command to start the server instantly</p>
