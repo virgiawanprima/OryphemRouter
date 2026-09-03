@@ -168,6 +168,15 @@ export default function MediaProviderKindPage() {
   const kindConfig = MEDIA_PROVIDER_KINDS.find((k) => k.id === kind);
   const isEmbedding = kind === "embedding";
   const supportsCombo = COMBO_KINDS.has(kind);
+  const isRegistryKind = REGISTRY_KINDS.has(kind);
+
+  useEffect(() => {
+    if (!isRegistryKind) return;
+    fetch("/api/media-providers/registry", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => setRegistryProviders(data?.providers?.[kind] || []))
+      .catch(() => setRegistryProviders([]));
+  }, [kind, isRegistryKind]);
 
   useEffect(() => {
     if (!kindConfig) return;
