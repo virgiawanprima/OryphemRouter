@@ -83,7 +83,7 @@
 - ✅ **Auto fallback**: Subscription → Cheap → Free, zero downtime
 - ✅ **Multi-account**: Round-robin between accounts per provider
 - ✅ **Universal**: Works with Claude Code, Codex, Cursor, Cline, any CLI tool
-- ✅ **Cost-Optimized Routing**: Automatically pick the cheapest working provider
+- ✅ **Auto combo ranking**: AI scores and picks the best model
 - ✅ **Circuit Breaker**: Providers erroring automatically get a 5-min cooldown
 - ✅ **Spending Limits**: Limit monthly/daily costs to prevent surprise bills
 - ✅ **Free-Tier Tracker**: Monitor remaining free quota per provider
