@@ -440,7 +440,7 @@ function CapacityAdapterSection({ capacityAdapter, onChange, activeProviders, ge
             entry={capacityAdapter[cap.key] || EMPTY_CAP_ENTRY}
             onChange={(entry) => onChange({ ...capacityAdapter, [cap.key]: entry })}
             activeProviders={activeProviders}
-            getCaps={getCaps}
+            getCaps={getCaps} getPricing={getPricing}
           />
         ))}
       </div>
