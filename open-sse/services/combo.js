@@ -6,6 +6,8 @@ import { checkFallbackError, formatRetryAfter } from "./accountFallback.js";
 import { unavailableResponse } from "../utils/error.js";
 import { getCapabilitiesForModel } from "../providers/capabilities.js";
 import { extractTextContent } from "../translator/formats/gemini.js";
+import { getPricingForModel } from "../providers/pricing.js";
+import { selectAutoCombo } from "./comboAdapter.js";
 
 // Hard capabilities = input modalities; missing one drops request data (e.g. image
 // stripped). Must be prioritized. Soft (e.g. search) only degrades a feature.
@@ -257,6 +259,12 @@ export function getRotatedModels(models, comboName, strategy, stickyLimit = 1) {
     return reorderByCost(models);
   }
 
+  // Auto (ported autoCombo engine): ranking is async and applied by
+  // handleComboChat via rankWithAutoCombo(); here we keep original order.
+  if (strategy === "auto") {
+    return models;
+  }
+
   if (strategy !== "round-robin") {
     return models;
   }
@@ -317,6 +325,39 @@ export function getComboModelsFromData(modelStr, combosData) {
 }
 
 /**
+ * AutoCombo ranking (opt-in): reorders combo models using the ported autoCombo
+ * scoring engine. Only active for strategy "auto" AND when
+ * ORYPHEM_AUTOCOMBO_ENABLED=1 — otherwise selectAutoCombo returns null and the
+ * models stay in their original order (safe degradation, never blocks routing).
+ */
+async function rankWithAutoCombo(models, log, strategy) {
+  const candidates = models.map((m) => {
+    const [provider, model] = m.includes("/") ? m.split("/") : [null, m];
+    const pricing = getPricingForModel(provider, model);
+    // Enrich with cost so cost/weighted-aware pick strategies get real signal.
+    // Strategies that need live load/quota metrics (least-used/headroom/reset)
+    // degrade to deterministic order over the pool (they belong to the engine,
+    // which supplies those metrics from its candidate pool).
+    return {
+      provider: provider || "auto",
+      model,
+      modelStr: m,
+      costPer1MTokens: Number(pricing?.input ?? 0),
+    };
+  });
+  const pick = await selectAutoCombo({
+    provider: "auto",
+    candidates,
+    opts: { taskType: "chat", strategy },
+  });
+  if (!pick) return models;
+  const picked = candidates.find((c) => c.provider === pick.provider && c.model === pick.model);
+  if (!picked) return models;
+  log?.info?.("AUTO-COMBO", `auto ranking picked ${picked.modelStr} first`);
+  return [picked.modelStr, ...models.filter((m) => m !== picked.modelStr)];
+}
+
+/**
  * Handle combo chat with fallback
  * @param {Object} options
  * @param {Object} options.body - Request body
@@ -324,13 +365,18 @@ export function getComboModelsFromData(modelStr, combosData) {
  * @param {Function} options.handleSingleModel - Function to handle single model: (body, modelStr) => Promise<Response>
  * @param {Object} options.log - Logger object
  * @param {string} [options.comboName] - Name of the combo (for round-robin tracking)
- * @param {string} [options.comboStrategy] - Strategy: "fallback" or "round-robin"
+ * @param {string} [options.comboStrategy] - Strategy: "fallback", "round-robin", "cost-optimized", or "auto" (opt-in autoCombo engine)
  * @param {number|string} [options.comboStickyLimit=1] - Requests per combo model before switching
  * @returns {Promise<Response>}
  */
-export async function handleComboChat({ body, models, handleSingleModel, log, comboName, comboStrategy, comboStickyLimit = 1, autoSwitch = true }) {
+export async function handleComboChat({ body, models, handleSingleModel, log, comboName, comboStrategy, comboStickyLimit = 1, autoSwitch = true, onModelSuccess }) {
   // Apply rotation strategy if enabled
   let rotatedModels = getRotatedModels(models, comboName, comboStrategy, comboStickyLimit);
+
+  // Auto strategy: rank with the ported autoCombo engine (opt-in, safe fallback).
+  if (comboStrategy === "auto") {
+    rotatedModels = await rankWithAutoCombo(rotatedModels, log);
+  }
 
   // Auto-switch: float models that satisfy the request's required capabilities to the front.
   if (autoSwitch) {
