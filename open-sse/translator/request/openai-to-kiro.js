@@ -7,6 +7,7 @@ import { FORMATS } from "../formats.js";
 import { v4 as uuidv4 } from "uuid";
 import { applyKiroSessionReplay } from "../../utils/kiroSessionReplay.js";
 import { resolveContinuationId, resolveSessionIdentity } from "../../utils/sessionManager.js";
+import { log as engineLog, sanitize } from "../../utils/log.js";
 import {
   resolveKiroModelIntent,
   applyKiroThinkingOverride,
