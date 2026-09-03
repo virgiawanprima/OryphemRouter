@@ -6,6 +6,7 @@
 
 import fs from "fs";
 import path from "path";
+import { log as engineLog, sanitize } from "../utils/log.js";
 
 // Create log directory for responses (Node.js only)
 export function createResponsesLogger(model, logsDir = null) {
