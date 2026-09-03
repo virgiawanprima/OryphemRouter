@@ -83,7 +83,7 @@
 - ✅ **Auto fallback**: Subscription → Cheap → Free, tanpa downtime
 - ✅ **Multi-account**: Round-robin antar akun per provider
 - ✅ **Universal**: Bekerja dengan Claude Code, Codex, Cursor, Cline, tool CLI apa pun
-- ✅ **Cost-Optimized Routing**: Otomatis pilih provider termurah yang bekerja
+- ✅ **Auto combo ranking**: AI menilai & memilih model terbaik
 - ✅ **Circuit Breaker**: Provider bermasalah otomatis di-cooldown 5 menit
 - ✅ **Spending Limits**: Batasi biaya bulanan/harian untuk cegah tagihan tak terduga
 - ✅ **Free-Tier Tracker**: Pantau sisa kuota gratis per provider
