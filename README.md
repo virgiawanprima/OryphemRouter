@@ -261,6 +261,38 @@ Watch your provider quotas so you never hit a wall mid-session.
 - **Reset timers**: 5-hour, daily, weekly, or monthly reset countdowns.
 - **Alerts**: see at a glance when a provider is near its limit so fallback kicks in smoothly.
 
+### 🖼️ Media Providers
+
+One gateway for every AI media kind — not just chat.
+
+- **Kinds**: Text-to-Speech, Speech-to-Text, Text-to-Image, Video, Music, Embeddings, Web Search, Web Fetch, Image Upscale, OCR, Rerank, Moderation.
+- **Per-kind routes**: each kind maps to its own endpoint (e.g. `/v1/audio/speech`, `/v1/images/generations`, `/v1/videos/generations`).
+- **Combos for media**: group multiple providers under one media combo, with its own round-robin/fallback strategy.
+- **Voice & model catalogs**: live voice/model lists per provider (e.g. ElevenLabs, Deepgram, MiniMax voices).
+
+### 🧩 Proxy Pools
+
+Route upstream traffic through outbound proxies.
+
+- **Pool management**: add, test, and disable SOCKS5/HTTP proxies.
+- **Per-provider strategies**: assign a rotation strategy (`round-robin`, `none`, ...) to a pool.
+- **Security**: keep your home IP private while calling providers.
+
+### 🔀 Translator
+
+Live request/response format conversion between providers.
+
+- **Convert messages**: OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro ↔ Vertex.
+- **Save/load presets**: reusable translation profiles.
+- **Console logs**: inspect live translation output via SSE.
+
+### 💡 Skills & MCP
+
+Extend your coding agents with skills and MCP servers.
+
+- **Skills pack**: install agent skills that route through OryphemRouter.
+- **MCP server**: expose tools over the Model Context Protocol (`/api/mcp/*`).
+
 ### 💾 Token Saver
 
 Cut token usage automatically before requests hit the LLM.
