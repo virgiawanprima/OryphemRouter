@@ -315,7 +315,6 @@ export default function ProviderLimits() {
         }
 
         await fetchQuota(connectionId, provider);
-        setLastUpdated(new Date());
       } catch (error) {
         setErrors((prev) => ({ ...prev, [connectionId]: error.message || "Failed to reset Codex limit" }));
       } finally {
