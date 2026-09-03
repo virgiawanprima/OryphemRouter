@@ -994,7 +994,7 @@ exports[`GOLDEN buildHeaders (default executor providers) > chipotle → headers
 }
 `;
 
-exports[`GOLDEN buildHeaders (default executor providers) > siliconflow → headers (apiKey / oauth) 1`] = `
+exports[`GOLDEN buildHeaders (default executor providers) > chutes → headers (apiKey / oauth) 1`] = `
 {
   "apiKey": {
     "Accept": "text/event-stream",
