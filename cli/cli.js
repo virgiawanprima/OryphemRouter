@@ -329,11 +329,13 @@ function killAllAppProcesses(appPort) {
       // Kill all found processes
       if (pids.length > 0) {
         pids.forEach(pid => {
+          const spid = safePid(pid);
+          if (!spid) return; // Skip unvalidated pid
           try {
             if (platform === "win32") {
-              execSync(`taskkill /F /PID ${pid} 2>nul`, { stdio: 'ignore', shell: true, windowsHide: true, timeout: 3000 });
+              execFileSync("taskkill", ["/F", "/PID", spid], { stdio: 'ignore', windowsHide: true, timeout: 3000 });
             } else {
-              execSync(`kill -9 ${pid} 2>/dev/null`, { stdio: 'ignore', timeout: 3000 });
+              try { process.kill(Number(spid), "SIGKILL"); } catch { /* Process already dead or can't kill - continue */ }
             }
           } catch (err) {
             // Process already dead or can't kill - continue
