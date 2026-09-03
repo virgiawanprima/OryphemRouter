@@ -12,6 +12,20 @@ import blackForestLabs from "./blackForestLabs.js";
 import runwayml from "./runwayml.js";
 import cloudflareAi from "./cloudflareAi.js";
 import antigravity from "./antigravity.js";
+import adobeFirefly from "./adobeFirefly.js";
+import aihorde from "./aihorde.js";
+import alibabaImage from "./alibabaImage.js";
+import chatgptWeb from "./chatgptWeb.js";
+import cursorAgentImage from "./cursorAgentImage.js";
+import designerWeb from "./designerWeb.js";
+import haiper from "./haiper.js";
+import hyperbolic from "./hyperbolic.js";
+import ideogram from "./ideogram.js";
+import imagen3 from "./imagen3.js";
+import leonardo from "./leonardo.js";
+import magnific from "./magnific.js";
+import nvidiaNim from "./nvidiaNim.js";
+import segmind from "./segmind.js";
 
 const ADAPTERS = {
   openai: createOpenAIAdapter("openai"),
