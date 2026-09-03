@@ -102,5 +102,10 @@ export function useModelCaps() {
     [byFull, byId],
   );
 
-  return { getCaps };
+  const getPricing = useCallback(
+    (key) => resolvePricing(pricingByFull, pricingById, key),
+    [pricingByFull, pricingById],
+  );
+
+  return { getCaps, getPricing };
 }
