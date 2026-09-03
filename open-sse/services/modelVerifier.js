@@ -210,7 +210,15 @@ export async function verifyProviderModels({ provider, credentials = {}, additio
   }
 
   const apiKey = credentials?.apiKey || credentials?.accessToken;
-  const auth = endpoint ? authHeaders(endpoint, apiKey) : { Accept: "application/json" };
+  // Pick auth scheme: explicit endpoint config → registry transport → default bearer.
+  let auth = { Accept: "application/json" };
+  if (endpoint) {
+    auth = authHeaders(endpoint, apiKey);
+  } else if (transport?.format === "claude") {
+    auth = authHeaders({ auth: "x-api-key", header: "x-api-key" }, apiKey);
+  } else if (apiKey) {
+    auth = { Accept: "application/json", Authorization: `Bearer ${apiKey}` };
+  }
   let live = null;
   if (url) live = await fetchCatalog(url, auth);
 
