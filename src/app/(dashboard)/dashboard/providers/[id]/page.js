@@ -1131,6 +1131,7 @@ export default function ProviderDetailPage() {
             isCustom
             isFree={false}
             caps={getCaps(`${providerId}/${model.id}`)}
+            pricing={getPricing(`${providerId}/${model.id}`)}
             thinkingSuffix={resolveThinkingSuffix(model.id)}
           />
         ))}
