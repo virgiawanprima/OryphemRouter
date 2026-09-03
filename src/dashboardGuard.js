@@ -240,12 +240,22 @@ export async function proxy(request) {
     // tunnel). Write operations (POST/PUT/PATCH/DELETE) that mutate host config
     // files stay strictly local-only.
     const isSettingsStatusRead =
-      method === "GET" && /^\/api\/cli-tools\/[a-z0-9-]+-settings$/.test(pathname);
+      method === "GET" &&
+      (/^\/api\/cli-tools\/[a-z0-9-]+-settings$/.test(pathname) || pathname === "/api/cli-tools/antigravity-mitm");
     if (isSettingsStatusRead) {
-      if ((await hasValidCliToken(request)) || (await hasValidToken(request))) {
+      // Harmless status reads: allow a valid CLI token, a valid dashboard JWT
+      // (any origin — LAN/tunnel), or a loopback request when the dashboard is
+      // unauthenticated (requireLogin=false). Never allow a tunnel/LAN request
+      // that only relies on requireLogin=false (remote must not read local config),
+      // and never allow a non-loopback Origin (CSRF).
+      const ok =
+        (await hasValidCliToken(request)) ||
+        (await hasValidToken(request)) ||
+        ((await isLocalRequest(request)) && (await isAuthenticated(request)));
+      if (ok) {
         return NextResponse.next();
       }
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Local only: this status read requires a local/browser session" }, { status: 403 });
     }
     if (!(await canAccessLocalOnlyRoute(request))) {
       return NextResponse.json({ error: "Local only: CLI token required" }, { status: 403 });
