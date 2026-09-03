@@ -17,6 +17,7 @@ export default {
   category: "oauth",
   transport: {
     baseUrl: "https://api.githubcopilot.com/chat/completions",
+    validateUrl: "https://api.githubcopilot.com/models",
     responsesUrl: "https://api.githubcopilot.com/responses",
     messagesUrl: "https://api.githubcopilot.com/v1/messages",
     headers: {
