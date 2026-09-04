@@ -776,7 +776,7 @@ export default function APIPageClient() {
           {/* Cloudflare Tunnel */}
           <div className="flex items-center gap-2">
             <span className={`text-xs font-mono px-1.5 py-0.5 rounded shrink-0 min-w-[88px] text-center ${
-              tunnelEnabled ? "bg-primary/10 text-primary" : "bg-surface-2 text-text-muted"
+              tunnelEnabled ? "bg-primary/10 text-primary" : "bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurfaceVariant)]"
             }`}>Tunnel</span>
             {tunnelEnabled && !tunnelLoading && tunnelReachable ? (
               <>
@@ -869,7 +869,7 @@ export default function APIPageClient() {
           {/* Tailscale */}
           <div className="flex items-center gap-2">
             <span className={`text-xs font-mono px-1.5 py-0.5 rounded shrink-0 min-w-[88px] text-center ${
-              tsEnabled ? "bg-primary/10 text-primary" : "bg-surface-2 text-text-muted"
+              tsEnabled ? "bg-primary/10 text-primary" : "bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurfaceVariant)]"
             }`}>Tailscale</span>
             {tsEnabled && !tsLoading && tsReachable ? (
               <>
@@ -1195,7 +1195,7 @@ export default function APIPageClient() {
         onClose={() => setShowEnableTunnelModal(false)}
       >
         <div className="flex flex-col gap-4">
-          <div className="bg-surface-2 border border-border-subtle rounded-lg p-4">
+          <div className="bg-[color:var(--md-sys-color-surfaceContainerHigh)] border border-[color:var(--md-sys-color-outlineVariant)] rounded-lg p-4">
             <div className="flex items-start gap-3">
               <span className="material-symbols-outlined text-primary">cloud_upload</span>
               <div>
