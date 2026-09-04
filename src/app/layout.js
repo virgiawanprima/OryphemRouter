@@ -4,6 +4,7 @@ import "material-symbols/outlined.css";
 import "./globals.css";
 import { ThemeProvider } from "@/shared/components/ThemeProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
+import AntDesignProvider from "@/shared/antd/AntDesignProvider";
 import "@/lib/network/initOutboundProxy"; // Auto-initialize outbound proxy env
 import "@/shared/services/bootstrap"; // Auto-run initializeApp (watchdog, auto-resume tunnel)
 import { initConsoleLogCapture } from "@/lib/consoleLogBuffer";
@@ -48,11 +49,13 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${roboto.variable} font-sans antialiased`}>
         <ThemeRegistry>
-          <ThemeProvider>
-            <RuntimeI18nProvider>
-              {children}
-            </RuntimeI18nProvider>
-          </ThemeProvider>
+          <AntDesignProvider>
+            <ThemeProvider>
+              <RuntimeI18nProvider>
+                {children}
+              </RuntimeI18nProvider>
+            </ThemeProvider>
+          </AntDesignProvider>
         </ThemeRegistry>
         <GoogleAnalytics gaId={"G-LC959F603F"} />
       </body>
