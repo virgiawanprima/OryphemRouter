@@ -668,7 +668,7 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
           })}
         </div>
 
-        {/* === Fixed-right buttons: round switch + add model === */}
+        {/* === Fixed-right buttons: round switch + add model + clear all === */}
         <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
           <label className="flex items-center gap-1.5 text-xs text-text-muted cursor-pointer select-none">
             <Toggle
