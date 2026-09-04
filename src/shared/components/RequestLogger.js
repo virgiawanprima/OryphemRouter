@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Table as AntTable } from "antd";
 import Card from "./Card";
 import { useLiveRefresh } from "@/shared/hooks/useRealtime";
 
@@ -61,53 +62,85 @@ export default function RequestLogger() {
       </div>
 
       <Card className="overflow-hidden bg-black/5 dark:bg-black/20">
-        <div className="p-0 overflow-x-auto max-h-[600px] overflow-y-auto font-mono text-xs">
+        <div className="p-0 overflow-hidden">
           {loading && logs.length === 0 ? (
             <div className="p-8 text-center text-text-muted">Loading logs...</div>
           ) : logs.length === 0 ? (
             <div className="p-8 text-center text-text-muted">No logs recorded yet.</div>
           ) : (
-            <table className="w-full text-left border-collapse whitespace-nowrap">
-              <thead className="sticky top-0 bg-bg-subtle border-b border-[color:var(--md-sys-color-outlineVariant)] z-10">
-                <tr>
-                  <th className="px-3 py-2 border-r border-border">Time</th>
-                  <th className="px-3 py-2 border-r border-border">Model</th>
-                  <th className="px-3 py-2 border-r border-border">Provider</th>
-                  <th className="px-3 py-2 border-r border-border">Account</th>
-                  <th className="px-3 py-2 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right">In</th>
-                  <th className="px-3 py-2 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right">Out</th>
-                  <th className="px-3 py-2">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {logs.map((log, i) => {
-                  const status = log.status || "-";
-                  const isPending = status.includes("PENDING");
-                  const isFailed = status.includes("FAILED");
-
-                  return (
-                    <tr key={i} className={`hover:bg-primary/5 transition-colors ${isPending ? 'bg-primary/5' : ''}`}>
-                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] text-text-muted"><TimeAgo timestamp={log.timestamp} /></td>
-                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] font-medium">{log.model}</td>
-                      <td className="px-3 py-1.5 border-r border-border">
-                        <span className="px-1.5 py-0.5 rounded bg-bg-subtle border border-[color:var(--md-sys-color-outlineVariant)] text-[10px] uppercase font-bold">
-                          {log.provider}
-                        </span>
-                      </td>
-                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] truncate max-w-[100px]" title={log.account}>{log.account}</td>
-                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right text-primary">{log.sent}</td>
-                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right text-success">{log.received}</td>
-                      <td className={`px-3 py-1.5 font-bold ${status === "OK" ? 'text-success' :
-                          isFailed ? 'text-error' :
-                            'text-primary animate-pulse'
-                        }`}>
+            <AntTable
+              rowKey={(_, i) => i}
+              dataSource={logs}
+              size="small"
+              pagination={false}
+              className="font-mono text-xs"
+              scroll={{ x: 760, y: 560 }}
+              rowClassName={(log) => {
+                const status = log?.status || "-";
+                return status.includes("PENDING") ? "bg-primary/5" : "";
+              }}
+              columns={[
+                {
+                  title: "Time",
+                  dataIndex: "timestamp",
+                  width: 90,
+                  render: (ts) => <span className="text-text-muted"><TimeAgo timestamp={ts} /></span>,
+                },
+                {
+                  title: "Model",
+                  dataIndex: "model",
+                  width: 140,
+                  render: (v) => <span className="font-medium">{v}</span>,
+                },
+                {
+                  title: "Provider",
+                  dataIndex: "provider",
+                  width: 120,
+                  render: (v) => (
+                    <span className="px-1.5 py-0.5 rounded bg-bg-subtle border border-border text-[10px] uppercase font-bold">
+                      {v}
+                    </span>
+                  ),
+                },
+                {
+                  title: "Account",
+                  dataIndex: "account",
+                  width: 100,
+                  ellipsis: true,
+                  render: (v) => <span title={v}>{v}</span>,
+                },
+                {
+                  title: "In",
+                  dataIndex: "sent",
+                  align: "right",
+                  width: 70,
+                  render: (v) => <span className="text-primary">{v}</span>,
+                },
+                {
+                  title: "Out",
+                  dataIndex: "received",
+                  align: "right",
+                  width: 70,
+                  render: (v) => <span className="text-success">{v}</span>,
+                },
+                {
+                  title: "Status",
+                  dataIndex: "status",
+                  width: 90,
+                  render: (v) => {
+                    const status = v || "-";
+                    const isFailed = status.includes("FAILED");
+                    return (
+                      <span className={`font-bold ${status === "OK" ? "text-success" :
+                        isFailed ? "text-error" : "text-primary animate-pulse"
+                      }`}>
                         {status.toUpperCase()}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </span>
+                    );
+                  },
+                },
+              ]}
+            />
           )}
         </div>
       </Card>
