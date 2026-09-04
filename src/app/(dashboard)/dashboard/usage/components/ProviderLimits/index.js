@@ -1005,7 +1005,7 @@ export default function ProviderLimits() {
                       <h3 className="text-sm font-semibold text-text-primary capitalize truncate">
                         {group.provider}
                       </h3>
-                      <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-semibold text-text-muted">
+                      <span className="rounded-full bg-[color:var(--md-sys-color-surfaceContainerHigh)] px-2 py-0.5 text-[10px] font-semibold text-text-muted">
                         {keyBadge}
                       </span>
                     </div>
@@ -1075,12 +1075,12 @@ export default function ProviderLimits() {
                                     <span
                                       className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                                         isInactive
-                                          ? "bg-surface-2 text-text-muted"
+                                          ? "bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurfaceVariant)]"
                                           : conn.testStatus === "active" || conn.testStatus === "success"
                                             ? "bg-green-500/10 text-green-600 dark:text-green-400"
                                             : conn.testStatus === "error" || conn.testStatus === "expired" || conn.testStatus === "unavailable"
                                               ? "bg-red-500/10 text-red-600 dark:text-red-400"
-                                              : "bg-surface-2 text-text-muted"
+                                              : "bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurfaceVariant)]"
                                       }`}
                                     >
                                       {isInactive ? "disabled" : conn.testStatus || "unknown"}
