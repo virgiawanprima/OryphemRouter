@@ -1,8 +1,11 @@
 "use client";
 
 import { useId } from "react";
+import { Select as AntSelect } from "antd";
 import { cn } from "@/shared/utils/cn";
 
+// Ant Design Select — adapter keeping the app's existing props (options,
+// label, error, hint, placeholder).
 export default function Select({
   label,
   options = [],
@@ -31,39 +34,21 @@ export default function Select({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className="relative">
-        <select
-          id={inputId}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy}
-          className={cn(
-            "w-full py-2.5 px-3 pr-10 text-sm text-text-main border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surfaceContainerLow)] rounded-[var(--md-sys-shape-corner-extra-small)] appearance-none",
-            "focus:outline-none focus:border-[color:var(--md-sys-color-primary)] focus:ring-2 focus:ring-[color:var(--md-sys-color-primary)]/40 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed",
-            "hover:border-[color:var(--md-sys-color-onSurface)]",
-            "text-[16px] sm:text-sm",
-            error && "ring-1 ring-[color:var(--md-sys-color-error)] focus:ring-2 focus:ring-[color:var(--md-sys-color-error)]/40 border-[color:var(--md-sys-color-error)]",
-            selectClassName
-          )}
-          {...props}
-        >
-          <option value="" disabled>
-            {placeholder}
-          </option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-text-muted">
-          <span className="material-symbols-outlined text-[20px]">expand_more</span>
-        </div>
-      </div>
+      <AntSelect
+        id={inputId}
+        value={value === "" ? undefined : value}
+        onChange={onChange}
+        disabled={disabled}
+        status={error ? "error" : undefined}
+        placeholder={placeholder}
+        options={options}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy}
+        className={cn("w-full", selectClassName)}
+        {...props}
+      />
       {error && (
-        <p id={`${inputId}-error`} className="text-xs text-red-500 flex items-center gap-1">
+        <p id={`${inputId}-error`} role="alert" className="text-xs text-red-500 flex items-center gap-1">
           <span className="material-symbols-outlined text-[14px]">error</span>
           {error}
         </p>

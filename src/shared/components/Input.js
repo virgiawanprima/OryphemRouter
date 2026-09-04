@@ -1,8 +1,12 @@
 "use client";
 
-import { cn } from "@/shared/utils/cn";
 import { useId } from "react";
+import { Input as AntInput } from "antd";
+import { cn } from "@/shared/utils/cn";
 
+// Ant Design Input — adapter keeping the app's existing props (label, error,
+// hint, icon). Ant Design form controls inherit ConfigProvider's M3-aligned
+// theme automatically.
 export default function Input({
   label,
   type = "text",
@@ -29,35 +33,24 @@ export default function Input({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className="relative">
-        {icon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-muted">
-            <span className="material-symbols-outlined text-[20px]">{icon}</span>
-          </div>
+      <AntInput
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        prefix={icon ? <span className="material-symbols-outlined text-[18px] text-text-muted">{icon}</span> : undefined}
+        status={error ? "error" : undefined}
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined}
+        className={cn(
+          // iOS zoom fix
+          "text-[16px] sm:text-sm",
+          inputClassName
         )}
-        <input
-          id={id}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          aria-invalid={!!error}
-          aria-describedby={error ? errorId : undefined}
-          className={cn(
-            "w-full py-2.5 px-3 text-sm text-text-main border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surfaceContainerLow)] rounded-[var(--md-sys-shape-corner-extra-small)] placeholder-text-muted/70",
-            "focus:outline-none focus:border-[color:var(--md-sys-color-primary)] focus:ring-2 focus:ring-[color:var(--md-sys-color-primary)]/40 transition-all duration-150 ease-out",
-            "hover:border-[color:var(--md-sys-color-onSurface)]",
-            "disabled:opacity-50 disabled:cursor-not-allowed",
-            // iOS zoom fix
-            "text-[16px] sm:text-sm",
-            icon && "pl-10",
-            error && "ring-1 ring-[color:var(--md-sys-color-error)] focus:ring-2 focus:ring-[color:var(--md-sys-color-error)]/40 border-[color:var(--md-sys-color-error)]",
-            inputClassName
-          )}
-          {...props}
-        />
-      </div>
+        {...props}
+      />
       {error && (
         <p id={errorId} role="alert" className="text-xs text-red-500 flex items-center gap-1">
           <span className="material-symbols-outlined text-[14px]">error</span>
