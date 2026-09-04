@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, Fragment } from "react";
+import { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
+import { Table as AntTable } from "antd";
 import Card from "@/shared/components/Card";
 
 const fmt = (n) => new Intl.NumberFormat().format(n || 0);
@@ -16,19 +17,8 @@ function fmtTime(iso) {
   return new Date(iso).toLocaleDateString();
 }
 
-function SortIcon({ field, currentSort, currentOrder }) {
-  if (currentSort !== field) return <span className="ml-1 opacity-20">↕</span>;
-  return <span className="ml-1">{currentOrder === "asc" ? "↑" : "↓"}</span>;
-}
-
-SortIcon.propTypes = {
-  field: PropTypes.string.isRequired,
-  currentSort: PropTypes.string.isRequired,
-  currentOrder: PropTypes.string.isRequired,
-};
-
 /**
- * Render 3 token or cost cells based on viewMode
+ * Render 3 token or cost cells based on viewMode (summary/detail HTML rows)
  */
 function ValueCells({ item, viewMode, isSummary = false }) {
   if (viewMode === "tokens") {
@@ -74,7 +64,7 @@ ValueCells.propTypes = {
 };
 
 /**
- * Reusable sortable usage table with expandable group rows.
+ * Reusable sortable usage table with expandable group rows (Ant Design Table).
  *
  * @param {object} props
  * @param {string} props.title - Table title
@@ -86,9 +76,8 @@ ValueCells.propTypes = {
  * @param {function} props.onToggleSort - Sort toggle handler
  * @param {string} props.viewMode - "tokens" or "costs"
  * @param {string} props.storageKey - localStorage key for expanded state
- * @param {function} props.renderGroupLabel - Render group summary first cell content
+ * @param {function} props.renderSummaryCells - Render summary row cells as array (one node per non-label column)
  * @param {function} props.renderDetailCells - Render detail row custom cells (before value cells)
- * @param {function} props.renderSummaryCells - Render summary row cells after group label (placeholder cols)
  * @param {string} props.emptyMessage - Empty state message
  */
 export default function UsageTable({
@@ -105,13 +94,13 @@ export default function UsageTable({
   renderSummaryCells,
   emptyMessage,
 }) {
-  const [expanded, setExpanded] = useState(new Set());
+  const [expandedKeys, setExpandedKeys] = useState([]);
 
   // Load expanded state from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey);
-      if (saved) setExpanded(new Set(JSON.parse(saved)));
+      if (saved) setExpandedKeys(JSON.parse(saved));
     } catch (e) {
       console.error(`Failed to load ${storageKey}:`, e);
     }
@@ -120,19 +109,11 @@ export default function UsageTable({
   // Save expanded state to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify([...expanded]));
+      localStorage.setItem(storageKey, JSON.stringify(expandedKeys));
     } catch (e) {
       console.error(`Failed to save ${storageKey}:`, e);
     }
-  }, [expanded, storageKey]);
-
-  const toggleGroup = useCallback((groupKey) => {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      next.has(groupKey) ? next.delete(groupKey) : next.add(groupKey);
-      return next;
-    });
-  }, []);
+  }, [expandedKeys, storageKey]);
 
   const valueColumns = useMemo(() => {
     if (viewMode === "tokens") {
@@ -151,7 +132,67 @@ export default function UsageTable({
     ];
   }, [viewMode]);
 
+  // antd column definitions. Summary rows come from groupedData; detail rows are
+  // rendered inside expandedRowRender as an HTML table (renderDetailCells contract).
+  const antdColumns = useMemo(() => {
+    const buildCol = (label, align) => ({
+      title: label,
+      align: align || "left",
+      ellipsis: align !== "right",
+    });
+
+    const labelCol = {
+      title: columns[0]?.label || "",
+      dataIndex: "groupKey",
+      render: (_, group) => (
+        <span className={`font-medium transition-colors ${group.summary?.pending > 0 ? "text-primary" : ""}`}>
+          {group.groupKey}
+        </span>
+      ),
+    };
+
+    const summaryCols = columns.slice(1).map((col, i) => ({
+      ...buildCol(col.label, col.align),
+      dataIndex: col.field,
+      render: (_, group) => renderSummaryCells(group)?.[i] ?? null,
+    }));
+
+    const valueCols = valueColumns.map((col) => ({
+      ...buildCol(col.label, "right"),
+      dataIndex: col.field,
+      render: (_, group) => {
+        const item = group.summary;
+        const isSummary = true;
+        if (viewMode === "tokens") {
+          if (col.field === "promptTokens") return isSummary && item.promptTokens === undefined ? "-" : fmt(item.promptTokens);
+          if (col.field === "cachedTokens") return item.cachedTokens ? fmt(item.cachedTokens) : "-";
+          if (col.field === "completionTokens") return isSummary && item.completionTokens === undefined ? "-" : fmt(item.completionTokens);
+          return fmt(item.totalTokens);
+        }
+        if (col.field === "promptTokens") return isSummary && item.inputCost === undefined ? "-" : fmtCost(item.inputCost);
+        if (col.field === "cachedCost") return item.cachedCost ? fmtCost(item.cachedCost) : "-";
+        if (col.field === "completionTokens") return isSummary && item.outputCost === undefined ? "-" : fmtCost(item.outputCost);
+        return fmtCost(item.totalCost || item.cost);
+      },
+    }));
+
+    return [labelCol, ...summaryCols, ...valueCols];
+  }, [columns, valueColumns, viewMode, renderSummaryCells]);
+
   const totalColSpan = columns.length + valueColumns.length;
+
+  const expandedRowRender = (group) => (
+    <table className="w-full text-sm text-left">
+      <tbody>
+        {group.items.map((item) => (
+          <tr key={`detail-${item.key}`} className="hover:bg-bg-subtle/20 transition-colors">
+            {renderDetailCells(item)}
+            <ValueCells item={item} viewMode={viewMode} />
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 
   return (
     <Card className="overflow-hidden">
@@ -159,73 +200,27 @@ export default function UsageTable({
         <h3 className="font-semibold">{title}</h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-bg-subtle/30 text-text-muted uppercase text-xs">
-            <tr>
-              {columns.map((col) => (
-                <th
-                  key={col.field}
-                  className={`px-6 py-3 cursor-pointer hover:bg-bg-subtle/50 ${col.align === "right" ? "text-right" : ""}`}
-                  onClick={() => onToggleSort(tableType, col.field)}
-                >
-                  {col.label}{" "}
-                  <SortIcon field={col.field} currentSort={sortBy} currentOrder={sortOrder} />
-                </th>
-              ))}
-              {valueColumns.map((col) => (
-                <th
-                  key={col.field}
-                  className="px-6 py-3 text-right cursor-pointer hover:bg-bg-subtle/50"
-                  onClick={() => onToggleSort(tableType, col.field)}
-                >
-                  {col.label}{" "}
-                  <SortIcon field={col.field} currentSort={sortBy} currentOrder={sortOrder} />
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {groupedData.map((group) => (
-              <Fragment key={group.groupKey}>
-                {/* Group summary row */}
-                <tr
-                  className="group-summary cursor-pointer hover:bg-bg-subtle/50 transition-colors"
-                  onClick={() => toggleGroup(group.groupKey)}
-                >
-                  <td className="px-6 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className={`material-symbols-outlined text-[18px] text-text-muted transition-transform ${expanded.has(group.groupKey) ? "rotate-90" : ""}`}>
-                        chevron_right
-                      </span>
-                      <span className={`font-medium transition-colors ${group.summary.pending > 0 ? "text-primary" : ""}`}>
-                        {group.groupKey}
-                      </span>
-                    </div>
-                  </td>
-                  {renderSummaryCells(group)}
-                  <ValueCells item={group.summary} viewMode={viewMode} isSummary />
-                </tr>
-                {/* Detail rows */}
-                {expanded.has(group.groupKey) && group.items.map((item) => (
-                  <tr
-                    key={`detail-${item.key}`}
-                    className="group-detail hover:bg-bg-subtle/20 transition-colors"
-                  >
-                    {renderDetailCells(item)}
-                    <ValueCells item={item} viewMode={viewMode} />
-                  </tr>
-                ))}
-              </Fragment>
-            ))}
-            {groupedData.length === 0 && (
-              <tr>
-                <td colSpan={totalColSpan} className="px-6 py-8 text-center text-text-muted">
-                  {emptyMessage}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <AntTable
+          rowKey={(group) => group.groupKey}
+          dataSource={groupedData}
+          size="small"
+          pagination={false}
+          locale={{ emptyText: emptyMessage }}
+          columns={antdColumns}
+          expandable={{
+            expandedRowKeys: expandedKeys,
+            onExpandedRowsChange: (keys) => setExpandedKeys(keys || []),
+            expandRowByClick: true,
+            expandedRowRender,
+          }}
+          onHeaderCell={(column) => ({
+            onClick: () => {
+              const field = column.dataIndex;
+              if (field) onToggleSort(tableType, field);
+            },
+            style: { cursor: "pointer" },
+          })}
+        />
       </div>
     </Card>
   );

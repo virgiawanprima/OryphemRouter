@@ -388,13 +388,11 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
           groupedData: groupDataByKey(sortData(stats.byModel, pendingMap, sortBy, sortOrder), "rawModel"),
           storageKey: "usage-stats:expanded-models",
           emptyMessage: "No usage recorded yet.",
-          renderSummaryCells: (group) => (
-            <>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-right">{fmt(group.summary.requests)}</td>
-              <td className="px-6 py-3 text-right text-text-muted whitespace-nowrap">{fmtTime(group.summary.lastUsed)}</td>
-            </>
-          ),
+          renderSummaryCells: (group) => [
+            <span className="text-text-muted" key="p">N/A</span>,
+            <span className="text-right" key="r">{fmt(group.summary.requests)}</span>,
+            <span className="text-right text-text-muted whitespace-nowrap" key="l">{fmtTime(group.summary.lastUsed)}</span>,
+          ],
           renderDetailCells: (item) => (
             <>
               <td className={`px-6 py-3 font-medium transition-colors ${item.pending > 0 ? "text-primary" : ""}`}>{item.rawModel}</td>
@@ -421,14 +419,12 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
           groupedData: groupDataByKey(sortData(stats.byAccount, pendingMap, sortBy, sortOrder), "accountName"),
           storageKey: "usage-stats:expanded-accounts",
           emptyMessage: "No account-specific usage recorded yet.",
-          renderSummaryCells: (group) => (
-            <>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-right">{fmt(group.summary.requests)}</td>
-              <td className="px-6 py-3 text-right text-text-muted whitespace-nowrap">{fmtTime(group.summary.lastUsed)}</td>
-            </>
-          ),
+          renderSummaryCells: (group) => [
+            <span className="text-text-muted" key="p">N/A</span>,
+            <span className="text-text-muted" key="a">N/A</span>,
+            <span className="text-right" key="r">{fmt(group.summary.requests)}</span>,
+            <span className="text-right text-text-muted whitespace-nowrap" key="l">{fmtTime(group.summary.lastUsed)}</span>,
+          ],
           renderDetailCells: (item) => (
             <>
               <td className={`px-6 py-3 font-medium transition-colors ${item.pending > 0 ? "text-primary" : ""}`}>{item.accountName || `Account ${item.connectionId?.slice(0, 8)}...`}</td>
@@ -446,14 +442,12 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
           groupedData: groupDataByKey(sortData(stats.byApiKey, {}, sortBy, sortOrder), "keyName"),
           storageKey: "usage-stats:expanded-apikeys",
           emptyMessage: "No API key usage recorded yet.",
-          renderSummaryCells: (group) => (
-            <>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-right">{fmt(group.summary.requests)}</td>
-              <td className="px-6 py-3 text-right text-text-muted whitespace-nowrap">{fmtTime(group.summary.lastUsed)}</td>
-            </>
-          ),
+          renderSummaryCells: (group) => [
+            <span className="text-text-muted" key="p">N/A</span>,
+            <span className="text-text-muted" key="a">N/A</span>,
+            <span className="text-right" key="r">{fmt(group.summary.requests)}</span>,
+            <span className="text-right text-text-muted whitespace-nowrap" key="l">{fmtTime(group.summary.lastUsed)}</span>,
+          ],
           renderDetailCells: (item) => (
             <>
               <td className="px-6 py-3 font-medium">{item.keyName}</td>
@@ -472,14 +466,12 @@ export default function UsageStats({ period: periodProp, setPeriod: setPeriodPro
           groupedData: groupDataByKey(sortData(stats.byEndpoint, {}, sortBy, sortOrder), "endpoint"),
           storageKey: "usage-stats:expanded-endpoints",
           emptyMessage: "No endpoint usage recorded yet.",
-          renderSummaryCells: (group) => (
-            <>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-text-muted">N/A</td>
-              <td className="px-6 py-3 text-right">{fmt(group.summary.requests)}</td>
-              <td className="px-6 py-3 text-right text-text-muted whitespace-nowrap">{fmtTime(group.summary.lastUsed)}</td>
-            </>
-          ),
+          renderSummaryCells: (group) => [
+            <span className="text-text-muted" key="p">N/A</span>,
+            <span className="text-text-muted" key="a">N/A</span>,
+            <span className="text-right" key="r">{fmt(group.summary.requests)}</span>,
+            <span className="text-right text-text-muted whitespace-nowrap" key="l">{fmtTime(group.summary.lastUsed)}</span>,
+          ],
           renderDetailCells: (item) => (
             <>
               <td className="px-6 py-3 font-medium font-mono text-sm">{item.endpoint}</td>
