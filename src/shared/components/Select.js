@@ -40,10 +40,11 @@ export default function Select({
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={cn(
-            "w-full py-2.5 px-3 pr-10 text-sm text-text-main border border-border-500 bg-surface rounded-[var(--radius-brand)] appearance-none",
-            "focus:outline-none focus:ring-2 focus:ring-brand-600/40 focus:border-brand-600/40 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed",
+            "w-full py-2.5 px-3 pr-10 text-sm text-text-main border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surfaceContainerLow)] rounded-[var(--md-sys-shape-corner-extra-small)] appearance-none",
+            "focus:outline-none focus:border-[color:var(--md-sys-color-primary)] focus:ring-2 focus:ring-[color:var(--md-sys-color-primary)]/40 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed",
+            "hover:border-[color:var(--md-sys-color-onSurface)]",
             "text-[16px] sm:text-sm",
-            error && "ring-1 ring-red-600 focus:ring-2 focus:ring-red-600/40 border-red-600/40",
+            error && "ring-1 ring-[color:var(--md-sys-color-error)] focus:ring-2 focus:ring-[color:var(--md-sys-color-error)]/40 border-[color:var(--md-sys-color-error)]",
             selectClassName
           )}
           {...props}

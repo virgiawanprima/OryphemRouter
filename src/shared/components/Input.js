@@ -45,15 +45,14 @@ export default function Input({
           aria-invalid={!!error}
           aria-describedby={error ? errorId : undefined}
           className={cn(
-            "w-full py-2.5 px-3 text-sm text-text-main border border-border-500 bg-surface rounded-[var(--radius-brand)] placeholder-text-muted/70",
-            "shadow-[inset_0_1px_2px_rgba(0,0,0,0.15)]",
-            "focus:outline-none focus:ring-2 focus:ring-brand-600/40 focus:border-brand-600/40 focus:shadow-glow transition-all duration-150 ease-out",
-            "hover:border-border-500/80",
+            "w-full py-2.5 px-3 text-sm text-text-main border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surfaceContainerLow)] rounded-[var(--md-sys-shape-corner-extra-small)] placeholder-text-muted/70",
+            "focus:outline-none focus:border-[color:var(--md-sys-color-primary)] focus:ring-2 focus:ring-[color:var(--md-sys-color-primary)]/40 transition-all duration-150 ease-out",
+            "hover:border-[color:var(--md-sys-color-onSurface)]",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             // iOS zoom fix
             "text-[16px] sm:text-sm",
             icon && "pl-10",
-            error && "ring-1 ring-red-600 focus:ring-2 focus:ring-red-600/40 border-red-600/40",
+            error && "ring-1 ring-[color:var(--md-sys-color-error)] focus:ring-2 focus:ring-[color:var(--md-sys-color-error)]/40 border-[color:var(--md-sys-color-error)]",
             inputClassName
           )}
           {...props}
