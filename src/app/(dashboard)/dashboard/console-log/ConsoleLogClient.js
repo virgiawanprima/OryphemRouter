@@ -8,7 +8,7 @@ const LOG_LEVEL_COLORS = {
   LOG: "text-c-green",
   INFO: "text-c-cyan",
   WARN: "text-c-orange",
-  ERROR: "text-c-red-600",
+  ERROR: "text-[color:var(--md-sys-color-error)]",
   DEBUG: "text-c-purple",
 };
 
@@ -73,8 +73,8 @@ export default function ConsoleLogClient() {
     <div className="">
       <Card>
         <div className="flex items-center justify-between px-4 pt-3 pb-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-c-blue-50/10 px-3 py-1 text-[12px] text-c-blue-800 border border-c-blue-600/30">
-            <span className={`size-1.5 rounded-full ${connected ? "bg-c-cyan pulse-dot" : "bg-c-amber-600"}`} />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--md-sys-color-secondaryContainer)] px-3 py-1 text-[12px] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-[color:var(--md-sys-color-outlineVariant)]">
+            <span className={`size-1.5 rounded-full ${connected ? "bg-[color:var(--md-sys-color-primary)] pulse-dot" : "bg-[color:var(--md-sys-color-onSurfaceVariant)]"}`} />
             {connected ? "Live" : "Reconnecting"}
           </span>
           <Button size="sm" variant="outline" icon="delete" onClick={handleClear}>
