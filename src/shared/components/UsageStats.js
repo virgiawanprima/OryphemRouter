@@ -1,6 +1,6 @@
 "use client";
 
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect, Table as AntTable } from "antd";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FREE_PROVIDERS, AI_PROVIDERS } from "@/shared/constants/providers";
@@ -65,39 +65,57 @@ function RecentRequests({ requests = [] }) {
       {!requests.length ? (
         <div className="flex-1 flex items-center justify-center text-text-muted text-sm">No requests yet.</div>
       ) : (
-        <div className="flex-1 overflow-y-auto">
-          <table className="w-full min-w-[350px] border-collapse text-xs">
-            <thead className="sticky top-0 bg-bg z-10">
-              <tr className="border-b border-border">
-                <th className="py-1.5 text-left font-semibold text-text-muted w-2"></th>
-                <th className="py-1.5 text-left font-semibold text-text-muted">Provider</th>
-                <th className="py-1.5 text-left font-semibold text-text-muted">Model</th>
-                <th className="py-1.5 text-right font-semibold text-text-muted whitespace-nowrap">In / Out</th>
-                <th className="py-1.5 text-right font-semibold text-text-muted">When</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {requests.map((r, i) => {
-                const formatted = formatRequest(r);
-                const { ok, provider, modelName } = formatted;
-                return (
-                  <tr key={i} className="hover:bg-bg-subtle transition-colors">
-                    <td className="py-1.5">
-                      <span className={`block w-1.5 h-1.5 rounded-full ${ok ? "bg-success" : "bg-error"}`} />
-                    </td>
-                    <td className="py-1.5 text-left truncate max-w-[120px]" title={provider}>{provider}</td>
-                    <td className="py-1.5 font-mono truncate max-w-[120px]" title={modelName}>{modelName}</td>
-                    <td className="py-1.5 text-right whitespace-nowrap">
-                      <span className="text-primary">{fmt(r.promptTokens)}↑</span>
-                      {" "}
-                      <span className="text-success">{fmt(r.completionTokens)}↓</span>
-                    </td>
-                    <td className="py-1.5 text-right text-text-muted whitespace-nowrap"><TimeAgo timestamp={r.timestamp} /></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="flex-1 overflow-hidden">
+          <AntTable
+            rowKey={(_, i) => i}
+            dataSource={requests}
+            size="small"
+            pagination={false}
+            scroll={{ y: 380, x: 350 }}
+            columns={[
+              {
+                dataIndex: "ok",
+                width: 16,
+                render: (_, r) => {
+                  const formatted = formatRequest(r);
+                  return <span className={`block w-1.5 h-1.5 rounded-full ${formatted.ok ? "bg-success" : "bg-error"}`} />;
+                },
+              },
+              {
+                title: "Provider",
+                dataIndex: "provider",
+                render: (_, r) => {
+                  const formatted = formatRequest(r);
+                  return <span className="truncate max-w-[120px] block" title={formatted.provider}>{formatted.provider}</span>;
+                },
+              },
+              {
+                title: "Model",
+                dataIndex: "model",
+                render: (_, r) => {
+                  const formatted = formatRequest(r);
+                  return <span className="font-mono truncate max-w-[120px] block" title={formatted.modelName}>{formatted.modelName}</span>;
+                },
+              },
+              {
+                title: "In / Out",
+                dataIndex: "tokens",
+                align: "right",
+                render: (_, r) => (
+                  <span className="whitespace-nowrap">
+                    <span className="text-primary">{fmt(r.promptTokens)}↑</span>{" "}
+                    <span className="text-success">{fmt(r.completionTokens)}↓</span>
+                  </span>
+                ),
+              },
+              {
+                title: "When",
+                dataIndex: "timestamp",
+                align: "right",
+                render: (ts) => <span className="text-text-muted whitespace-nowrap"><TimeAgo timestamp={ts} /></span>,
+              },
+            ]}
+          />
         </div>
       )}
     </Card>
