@@ -98,7 +98,7 @@ export default function Modal({
         className={cn(
           "relative w-full bg-[color:var(--md-sys-color-surfaceContainerHigh)]",
           "border border-[color:var(--md-sys-color-outlineVariant)]",
-          "rounded-[var(--md-sys-shape-corner-extra-large)] shadow-[var(--md-sys-elevation-level3)]",
+          "rounded-[var(--md-sys-shape-corner-extra-large)] shadow-md",
           "fade-in",
           sizes[size],
           className
