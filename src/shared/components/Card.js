@@ -1,6 +1,18 @@
 "use client";
 
+import { Card as AntCard } from "antd";
 import { cn } from "@/shared/utils/cn";
+
+// Ant Design Card — adapter keeping the app's existing props (title, subtitle,
+// icon, action, padding, hover). antd Card handles the enterprise look:
+// bordered surface, 16px radius (ConfigProvider), hoverable shadow.
+const paddingMap = {
+  none: 0,
+  xs: 12,
+  sm: 16,
+  md: 24,
+  lg: 32,
+};
 
 export default function Card({
   children,
@@ -14,94 +26,34 @@ export default function Card({
   className,
   ...props
 }) {
-  const paddings = {
-    none: "",
-    xs: "p-3",
-    sm: "p-4",
-    md: "p-6",
-    lg: "p-8",
-  };
+  const headerNode =
+    title || action ? (
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-2">
+          {icon && (
+            <span className="material-symbols-outlined text-[18px] text-[color:var(--md-sys-color-primary)]">{icon}</span>
+          )}
+          <div>
+            {title && <div className="text-text-main font-medium text-[16px] leading-tight">{title}</div>}
+            {subtitle && <div className="text-[13px] text-text-muted">{subtitle}</div>}
+          </div>
+        </div>
+        {action}
+      </div>
+    ) : null;
 
   return (
-    <div
-      className={cn(
-        "bg-[color:var(--md-sys-color-surfaceContainer)] border-[color:var(--md-sys-color-outlineVariant)]",
-        "rounded-[var(--md-sys-shape-corner-extra-large)]",
-        hover && "hover:border-[color:var(--md-sys-color-primary)] hover:shadow-md hover:-translate-y-[1px] cursor-pointer transition-all duration-200",
-        paddings[padding],
-        className
-      )}
+    <AntCard
+      className={cn("w-full antd-card-ryp", className)}
+      styles={{
+        body: { padding: paddingMap[padding] ?? 24 },
+        header: title || action ? { minHeight: 0, padding: `${(paddingMap[padding] ?? 24) / 2}px ${paddingMap[padding] ?? 24}px`, borderBottom: "1px solid rgba(128,128,128,0.18)" } : { display: "none" },
+      }}
+      title={headerNode}
+      hoverable={hover}
       {...props}
     >
-      {(title || action) && (
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            {icon && (
-              <span className="material-symbols-outlined text-[18px] text-[color:var(--md-sys-color-primary)]">{icon}</span>
-            )}
-            <div>
-              {title && <h3 className="text-text-main font-medium text-[16px]">{title}</h3>}
-              {subtitle && <p className="text-[13px] text-text-muted">{subtitle}</p>}
-            </div>
-          </div>
-          {action}
-        </div>
-      )}
       {children}
-    </div>
+    </AntCard>
   );
 }
-
-Card.Section = function CardSection({ children, className, ...props }) {
-  return (
-    <div
-      className={cn(
-        "p-4 border border-[color:var(--md-sys-color-outlineVariant)] rounded-[var(--md-sys-shape-corner-large)] bg-[color:var(--md-sys-color-surfaceContainerHigh)]",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-};
-
-Card.Row = function CardRow({ children, className, ...props }) {
-  return (
-    <div
-      className={cn(
-        "p-3 -mx-3 px-3 transition-colors border-b border-[color:var(--md-sys-color-outlineVariant)] last:border-b-0",
-        "hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] transition-colors",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-};
-
-Card.ListItem = function CardListItem({
-  children,
-  actions,
-  className,
-  ...props
-}) {
-  return (
-    <div
-      className={cn(
-        "group flex items-center justify-between p-3 -mx-3 px-3 border-b border-[color:var(--md-sys-color-outlineVariant)] last:border-b-0",
-        "hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)]/50 transition-colors",
-        className
-      )}
-      {...props}
-    >
-      <div className="flex-1 min-w-0">{children}</div>
-      {actions && (
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          {actions}
-        </div>
-      )}
-    </div>
-  );
-};
