@@ -32,9 +32,9 @@ export default function RemotePromoModal({ isOpen, onClose }) {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] fade-in" onClick={onClose} />
 
-      <div className="relative w-full max-w-sm rounded-[14px] overflow-hidden shadow-[var(--shadow-elev)] fade-in flex flex-col bg-surface border border-border-subtle">
+      <div className="relative w-full max-w-sm rounded-[14px] overflow-hidden shadow-[var(--shadow-[var(--md-sys-elevation-level2)])] fade-in flex flex-col bg-surface border border-[color:var(--md-sys-color-outlineVariant)]">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-[color:var(--md-sys-color-outlineVariant)]">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-[8px] flex items-center justify-center bg-primary">
               <span className="material-symbols-outlined text-white text-base">terminal</span>
@@ -43,7 +43,7 @@ export default function RemotePromoModal({ isOpen, onClose }) {
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-[10px] text-text-muted hover:bg-surface-2 hover:text-text-main transition-colors"
+            className="p-1.5 rounded-[10px] text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main transition-colors"
           >
             <span className="material-symbols-outlined text-base">close</span>
           </button>
@@ -65,7 +65,7 @@ export default function RemotePromoModal({ isOpen, onClose }) {
           {/* Feature cards */}
           <div className="flex gap-2 w-full">
             {FEATURES.map(({ icon, label, desc }) => (
-              <div key={label} className="flex-1 flex flex-col items-center gap-1.5 py-4 px-1 rounded-[10px] border border-border-subtle bg-surface-2">
+              <div key={label} className="flex-1 flex flex-col items-center gap-1.5 py-4 px-1 rounded-[10px] border border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainerHigh)]">
                 <span className="material-symbols-outlined text-primary text-[22px]">{icon}</span>
                 <p className="text-xs font-semibold text-text-main">{label}</p>
                 <p className="text-[10px] text-text-muted text-center leading-4">{desc}</p>

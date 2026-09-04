@@ -10,7 +10,7 @@ export default function ThemeToggle({ className, variant = "default" }) {
     default: cn(
       "flex items-center justify-center size-10 rounded-full",
       "text-text-muted hover:text-text-main",
-      "hover:bg-surface-2 transition-colors"
+      "hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] transition-colors"
     ),
     card: cn(
       "flex items-center justify-center size-11 rounded-full",

@@ -68,14 +68,14 @@ export default function RequestLogger() {
             <div className="p-8 text-center text-text-muted">No logs recorded yet.</div>
           ) : (
             <table className="w-full text-left border-collapse whitespace-nowrap">
-              <thead className="sticky top-0 bg-bg-subtle border-b border-border z-10">
+              <thead className="sticky top-0 bg-bg-subtle border-b border-[color:var(--md-sys-color-outlineVariant)] z-10">
                 <tr>
                   <th className="px-3 py-2 border-r border-border">Time</th>
                   <th className="px-3 py-2 border-r border-border">Model</th>
                   <th className="px-3 py-2 border-r border-border">Provider</th>
                   <th className="px-3 py-2 border-r border-border">Account</th>
-                  <th className="px-3 py-2 border-r border-border text-right">In</th>
-                  <th className="px-3 py-2 border-r border-border text-right">Out</th>
+                  <th className="px-3 py-2 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right">In</th>
+                  <th className="px-3 py-2 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right">Out</th>
                   <th className="px-3 py-2">Status</th>
                 </tr>
               </thead>
@@ -87,16 +87,16 @@ export default function RequestLogger() {
 
                   return (
                     <tr key={i} className={`hover:bg-primary/5 transition-colors ${isPending ? 'bg-primary/5' : ''}`}>
-                      <td className="px-3 py-1.5 border-r border-border text-text-muted"><TimeAgo timestamp={log.timestamp} /></td>
-                      <td className="px-3 py-1.5 border-r border-border font-medium">{log.model}</td>
+                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] text-text-muted"><TimeAgo timestamp={log.timestamp} /></td>
+                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] font-medium">{log.model}</td>
                       <td className="px-3 py-1.5 border-r border-border">
-                        <span className="px-1.5 py-0.5 rounded bg-bg-subtle border border-border text-[10px] uppercase font-bold">
+                        <span className="px-1.5 py-0.5 rounded bg-bg-subtle border border-[color:var(--md-sys-color-outlineVariant)] text-[10px] uppercase font-bold">
                           {log.provider}
                         </span>
                       </td>
-                      <td className="px-3 py-1.5 border-r border-border truncate max-w-[100px]" title={log.account}>{log.account}</td>
-                      <td className="px-3 py-1.5 border-r border-border text-right text-primary">{log.sent}</td>
-                      <td className="px-3 py-1.5 border-r border-border text-right text-success">{log.received}</td>
+                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] truncate max-w-[100px]" title={log.account}>{log.account}</td>
+                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right text-primary">{log.sent}</td>
+                      <td className="px-3 py-1.5 border-r border-[color:var(--md-sys-color-outlineVariant)] text-right text-success">{log.received}</td>
                       <td className={`px-3 py-1.5 font-bold ${status === "OK" ? 'text-success' :
                           isFailed ? 'text-error' :
                             'text-primary animate-pulse'

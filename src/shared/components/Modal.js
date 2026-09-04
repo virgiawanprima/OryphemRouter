@@ -106,7 +106,7 @@ export default function Modal({
       >
         {/* Header */}
         {(title || showTrafficLights) && (
-          <div className="flex items-center justify-between p-2 border-b border-border-subtle">
+          <div className="flex items-center justify-between p-2 border-b border-[color:var(--md-sys-color-outlineVariant)]">
             <div className="flex items-center">
               {/* Traffic lights — desktop only */}
               {showTrafficLights && (
@@ -133,7 +133,7 @@ export default function Modal({
             <button
               onClick={onClose}
               aria-label="Close"
-              className="md:hidden p-1.5 rounded-[10px] text-text-muted hover:bg-surface-2 hover:text-text-main transition-colors"
+              className="md:hidden p-1.5 rounded-[10px] text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main transition-colors"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -145,7 +145,7 @@ export default function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 p-6 border-t border-border-subtle">
+          <div className="flex items-center justify-end gap-3 p-6 border-t border-[color:var(--md-sys-color-outlineVariant)]">
             {footer}
           </div>
         )}

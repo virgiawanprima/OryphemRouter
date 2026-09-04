@@ -88,15 +88,15 @@ export default function Drawer({
         tabIndex={-1}
         className={cn(
           "absolute right-0 top-0 h-full bg-surface flex flex-col",
-          "shadow-[var(--shadow-elev)]",
+          "shadow-[var(--shadow-[var(--md-sys-elevation-level2)])]",
           "slide-in-right",
-          "border-l border-border-subtle",
+          "border-l border-[color:var(--md-sys-color-outlineVariant)]",
           widths[width] || widths.md,
           className
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border-subtle flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-[color:var(--md-sys-color-outlineVariant)] flex-shrink-0">
           <div className="flex items-center gap-3">
             {title && (
               <h2 className="text-lg font-semibold text-text-main">{title}</h2>
@@ -106,7 +106,7 @@ export default function Drawer({
             type="button"
             onClick={onClose}
             aria-label="Close drawer"
-            className="p-1.5 rounded-[10px] text-text-muted hover:bg-surface-2 hover:text-text-main transition-colors"
+            className="p-1.5 rounded-[10px] text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main transition-colors"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>

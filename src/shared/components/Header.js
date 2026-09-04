@@ -317,7 +317,7 @@ export default function Header({ onMenuClick, showMenuButton = true }) {
           <div>
             <div className="flex items-center gap-2.5">
               {icon && (
-                <span className="inline-flex items-center justify-center size-8 rounded-lg bg-c-blue-50/10 text-primary shadow-glow">
+                <span className="inline-flex items-center justify-center size-8 rounded-lg bg-[color:var(--md-sys-color-secondaryContainer)] text-primary shadow-glow">
                   <span className="material-symbols-outlined text-lg lg:text-xl">
                     {icon}
                   </span>

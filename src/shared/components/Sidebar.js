@@ -314,7 +314,7 @@ export default function Sidebar({ onClose }) {
               className={cn(
                 "relative w-full flex items-center gap-3 px-3 py-2 rounded-[8px] transition-colors group",
                 collapsed && "justify-center px-0",
-                "text-text-muted hover:bg-surface-2 hover:text-text-main"
+                "text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main"
               )}
             >
               <span className="material-symbols-outlined text-[18px] shrink-0">computer</span>
@@ -324,7 +324,7 @@ export default function Sidebar({ onClose }) {
             </div>
 
           {/* Bottom: language + theme toggles */}
-          <div className="mt-auto pt-3 border-t border-border-subtle px-3">
+          <div className="mt-auto pt-3 border-t border-[color:var(--md-sys-color-outlineVariant)] px-3">
           </div>
         </nav>
 
