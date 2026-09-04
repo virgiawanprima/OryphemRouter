@@ -8,10 +8,10 @@ import Header from "../Header";
 import StatusBar from "../StatusBar";
 
 function getToastStyle(type) {
-  if (type === "success") return { wrapper: "border-c-teal-600/30 bg-c-teal-50/10 text-c-teal-800", icon: "check_circle" };
-  if (type === "error") return { wrapper: "border-c-red-600/30 bg-c-red-50/10 text-c-red-800", icon: "error" };
-  if (type === "warning") return { wrapper: "border-c-amber-600/30 bg-c-amber-50/10 text-c-amber-800", icon: "warning" };
-  return { wrapper: "border-c-blue-600/30 bg-c-blue-50/10 text-c-blue-800", icon: "info" };
+  if (type === "success") return { wrapper: "border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurface)]", icon: "check_circle", iconColor: "text-[color:var(--md-sys-color-primary)]" };
+  if (type === "error") return { wrapper: "border-[color:var(--md-sys-color-errorContainer)] bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)]", icon: "error", iconColor: "" };
+  if (type === "warning") return { wrapper: "border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurface)]", icon: "warning", iconColor: "text-[color:var(--md-sys-color-onSurfaceVariant)]" };
+  return { wrapper: "border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[color:var(--md-sys-color-onSurface)]", icon: "info", iconColor: "text-[color:var(--md-sys-color-primary)]" };
 }
 
 export default function DashboardLayout({ children }) {
@@ -27,9 +27,9 @@ export default function DashboardLayout({ children }) {
         {notifications.map((n) => {
           const style = getToastStyle(n.type);
           return (
-            <div key={n.id} className={`rounded-lg border px-3 py-2 shadow-sm backdrop-blur-sm ${style.wrapper}`}>
+            <div key={n.id} className={`rounded-[var(--md-sys-shape-corner-large)] border px-3 py-2 shadow-md ${style.wrapper}`}>
               <div className="flex items-start gap-2">
-                <span className="material-symbols-outlined text-[18px] leading-5">{style.icon}</span>
+                <span className={`material-symbols-outlined text-[18px] leading-5 ${style.iconColor}`}>{style.icon}</span>
                 <div className="min-w-0 flex-1">
                   {n.title ? <p className="text-xs font-medium mb-0.5">{n.title}</p> : null}
                   <p className="text-xs whitespace-pre-wrap break-words">{n.message}</p>
