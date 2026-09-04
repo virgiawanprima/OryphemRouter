@@ -627,12 +627,37 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
                     {formatPr(pricing.input)}/{formatPr(pricing.output)}
                   </span>
                 )}
+
+                {/* Up / Down — clickable reorder fallback (always visible, compact) */}
+                <span className="ml-auto flex shrink-0 items-center gap-0">
+                  <button
+                    type="button"
+                    onClick={() => handleNudge(index, -1)}
+                    disabled={index === 0}
+                    title="Move up"
+                    aria-label={`Move ${model} up`}
+                    className={`w-5 h-5 grid place-items-center rounded-full ${index === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--md-sys-color-secondary)]"}`}
+                  >
+                    <span className="material-symbols-outlined text-[13px]">arrow_upward</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleNudge(index, 1)}
+                    disabled={index === models.length - 1}
+                    title="Move down"
+                    aria-label={`Move ${model} down`}
+                    className={`w-5 h-5 grid place-items-center rounded-full ${index === models.length - 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--md-sys-color-secondary)]"}`}
+                  >
+                    <span className="material-symbols-outlined text-[13px]">arrow_downward</span>
+                  </button>
+                </span>
+
                 <button
                   type="button"
                   onClick={() => handleRemove(index)}
                   title={`Remove ${model}`}
                   aria-label={`Remove ${model}`}
-                  className="w-6 h-6 -mr-0.5 shrink-0 inline-grid place-items-center rounded-full hover:bg-[var(--md-sys-color-secondary)] 
+                  className="w-6 h-6 -mr-0 shrink-0 inline-grid place-items-center rounded-full hover:bg-[var(--md-sys-color-secondary)]
                              opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                   style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
                 >
