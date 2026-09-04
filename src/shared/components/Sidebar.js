@@ -151,7 +151,7 @@ export default function Sidebar({ onClose }) {
 
   return (
     <>
-      <aside className={`flex flex-col border-r border-border-subtle bg-vibrancy backdrop-blur-xl shadow-elev transition-all duration-200 min-h-full ${collapsed ? "w-[68px]" : "w-64"}`}>
+      <aside className={`flex flex-col border-r border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainerLow)] transition-all duration-200 min-h-full ${collapsed ? "w-[68px]" : "w-64"}`}>
         {/* Traffic lights + collapse toggle */}
         <div className={`flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-4"} pt-4 pb-2`}>
           {!collapsed && (
@@ -250,16 +250,13 @@ export default function Sidebar({ onClose }) {
               onClick={() => setMediaOpen((v) => !v)}
               title={collapsed ? "Media Providers" : undefined}
               className={cn(
-                "relative w-full flex items-center gap-3 px-3 py-2 rounded-[8px] transition-colors group",
+                "relative w-full flex items-center gap-3 px-3 py-2 rounded-[var(--md-sys-shape-corner-full)] transition-colors group",
                 collapsed && "justify-center px-0",
                 pathname.startsWith("/dashboard/media-providers")
-                  ? "bg-c-blue-50/10 text-c-blue-600"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-main"
+                  ? "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)]"
+                  : "text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main"
               )}
             >
-              {pathname.startsWith("/dashboard/media-providers") && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-c-blue-600" />
-              )}
               <span className="material-symbols-outlined text-[18px] shrink-0">perm_media</span>
               {!collapsed && (
                 <>
@@ -387,18 +384,14 @@ function NavLink({ href, icon, label, active, collapsed, small, onNavigate }) {
       onClick={onNavigate}
       title={collapsed ? label : undefined}
       className={cn(
-        "relative flex items-center gap-3 px-3 py-2 rounded-[8px] transition-all duration-150 group",
+        "relative flex items-center gap-3 px-3 py-2 rounded-[var(--md-sys-shape-corner-full)] transition-colors duration-150 group",
         collapsed && "justify-center px-0",
         small && "px-4",
         active
-          ? "bg-c-blue-50/10 text-c-blue-600"
-          : "text-text-muted hover:bg-surface-2 hover:text-text-main hover:translate-x-0.5"
+          ? "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)]"
+          : "text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main"
       )}
     >
-      {/* Left accent bar for active item */}
-      {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[2px] rounded-full bg-c-blue-600 shadow-glow" />
-      )}
       <span
         className={cn(
           "material-symbols-outlined shrink-0 transition-all duration-150",
