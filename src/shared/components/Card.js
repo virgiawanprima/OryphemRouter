@@ -27,7 +27,7 @@ export default function Card({
       className={cn(
         "bg-[color:var(--md-sys-color-surfaceContainer)] border-[color:var(--md-sys-color-outlineVariant)]",
         "rounded-[var(--md-sys-shape-corner-extra-large)]",
-        hover && "hover:border-[color:var(--md-sys-color-primary)] hover:shadow-[var(--md-sys-elevation-level2)] hover:-translate-y-[1px] cursor-pointer transition-all duration-200",
+        hover && "hover:border-[color:var(--md-sys-color-primary)] hover:shadow-md hover:-translate-y-[1px] cursor-pointer transition-all duration-200",
         paddings[padding],
         className
       )}
