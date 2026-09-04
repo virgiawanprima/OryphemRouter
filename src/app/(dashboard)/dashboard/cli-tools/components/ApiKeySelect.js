@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Select as AntSelect } from "antd";
 
 const CUSTOM_VALUE = "__custom__";
 
@@ -13,8 +14,7 @@ export default function ApiKeySelect({ value, onChange, apiKeys = [], cloudEnabl
   });
   const [customInput, setCustomInput] = useState(isCustom ? value : "");
 
-  const handleSelect = (e) => {
-    const next = e.target.value;
+  const handleSelect = (next) => {
     setMode(next);
     if (next === CUSTOM_VALUE) {
       setCustomInput("");
@@ -42,16 +42,15 @@ export default function ApiKeySelect({ value, onChange, apiKeys = [], cloudEnabl
 
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <select
+      <AntSelect
         value={mode}
         onChange={handleSelect}
-        className="w-full min-w-0 px-2 py-2 bg-surface rounded text-xs border border-border focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
-      >
-        {apiKeys.map((k) => (
-          <option key={k.id} value={k.key}>{k.key}</option>
-        ))}
-        <option value={CUSTOM_VALUE}>Custom...</option>
-      </select>
+        className="w-full"
+        options={[
+          ...apiKeys.map((k) => ({ value: k.key, label: k.key })),
+          { value: CUSTOM_VALUE, label: "Custom..." },
+        ]}
+      />
       {mode === CUSTOM_VALUE && (
         <input
           type="text"
