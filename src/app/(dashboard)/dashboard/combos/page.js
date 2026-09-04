@@ -612,6 +612,8 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
           isOpen={showModelSelect}
           onClose={() => setShowModelSelect(false)}
           onSelect={handleAdd}
+          onAddMany={handleAddMany}
+          onDeselect={handleDeselect}
           activeProviders={activeProviders}
           title={`Add ${cap.label} Model`}
           addedModelValues={models}
