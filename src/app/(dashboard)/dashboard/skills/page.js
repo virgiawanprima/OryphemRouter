@@ -29,10 +29,10 @@ function SkillRow({ skill }) {
   const url = getSkillRawUrl(skill.id);
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-[14px] border shadow-[var(--shadow-soft)] transition-colors ${
+      className={`flex items-start gap-3 p-4 rounded-[var(--md-sys-shape-corner-extra-large)] border transition-colors ${
         skill.isEntry
           ? "border-brand-500/40 bg-brand-500/5"
-          : "border-border-subtle bg-surface hover:bg-surface-2"
+          : "border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainer)] hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)]"
       }`}
     >
       <div
@@ -77,7 +77,7 @@ export default function SkillsPage() {
     <div className="max-w-4xl mx-auto space-y-6">
       <Card padding="md">
         <div className="text-xs text-text-muted mb-2">Paste this to your AI:</div>
-        <div className="px-3 py-2 rounded bg-surface-2 font-mono text-[12px] text-text-main">
+        <div className="px-3 py-2 rounded bg-[color:var(--md-sys-color-surfaceContainerHigh)] font-mono text-[12px] text-text-main">
           Read this skill and use it: {getSkillRawUrl("oryphemrouter")}
         </div>
       </Card>
