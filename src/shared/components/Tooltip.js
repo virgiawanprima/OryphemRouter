@@ -11,8 +11,7 @@ export default function Tooltip({ text, children, position = "top", color }) {
     right: "left-full top-1/2 -translate-y-1/2 ml-1.5",
   }[position];
 
-  const bgStyle = color ? { backgroundColor: color } : {};
-  const bgClass = color ? "" : "bg-gray-900";
+  const bgStyle = color ? { backgroundColor: color } : { backgroundColor: "var(--md-sys-color-inverseSurface)" };
 
   return (
     <div className="relative inline-flex group/tt">
@@ -20,10 +19,10 @@ export default function Tooltip({ text, children, position = "top", color }) {
       <div
         id={tooltipId}
         role="tooltip"
-        className={`pointer-events-none absolute ${posClass} z-50 w-max max-w-56 bg-border-500 rounded-[var(--radius-brand)] px-2 py-1 text-[11px] leading-snug text-white opacity-0 group-hover/tt:opacity-100 group-focus-within/tt:opacity-100 transition-opacity duration-150 whitespace-normal`}
+        className={`pointer-events-none absolute ${posClass} z-50 w-max max-w-56 rounded-[var(--md-sys-shape-corner-small)] px-2 py-1 text-[11px] leading-snug opacity-0 group-hover/tt:opacity-100 group-focus-within/tt:opacity-100 transition-opacity duration-150 whitespace-normal`}
         style={bgStyle}
       >
-        {text}
+        <span style={{ color: "var(--md-sys-color-inverseOnSurface)" }}>{text}</span>
       </div>
     </div>
   );

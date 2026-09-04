@@ -135,7 +135,7 @@ export default function OverviewPageClient() {
     <div className="space-y-6">
       {/* Error banner */}
       {Object.keys(errors).length > 0 && (
-        <div className="border border-c-red-600/30 bg-c-red-50/5 rounded-[12px] p-3">
+        <div className="border border-[color:var(--md-sys-color-errorContainer)] bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] rounded-[var(--md-sys-shape-corner-large)] p-3">
           <p className="text-[13px] text-c-red-600 font-medium">Data fetch error</p>
           <div className="mt-1 text-[13px] text-c-red-800">
             {Object.entries(errors).map(([k, v]) => (

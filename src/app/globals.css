@@ -64,6 +64,8 @@
   --md-sys-color-surfaceContainer: #F3EDF7;
   --md-sys-color-surfaceContainerHigh: #ECE6F0;
   --md-sys-color-surfaceContainerHighest: #E6E0E9;
+  --md-sys-color-inverseSurface: #313033;
+  --md-sys-color-inverseOnSurface: #F4EFF4;
 
   /* ---- M3 shape ---- */
   --md-sys-shape-corner-none: 0px;
@@ -183,6 +185,8 @@
   --md-sys-color-surfaceContainer: #211F26;
   --md-sys-color-surfaceContainerHigh: #2B2930;
   --md-sys-color-surfaceContainerHighest: #36343B;
+  --md-sys-color-inverseSurface: #E6E1E5;
+  --md-sys-color-inverseOnSurface: #313033;
 
   --c-teal-50: #132E22; --c-teal-600: #6FC895; --c-teal-800: #3DA36B; --c-teal-900: #2E7D57;
   --c-blue-50: #2A2440; --c-blue-600: #C3B1E7; --c-blue-800: #D0BCFF; --c-blue-900: #EADDFF;
