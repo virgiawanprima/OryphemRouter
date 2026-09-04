@@ -446,6 +446,9 @@ function CapacityAdapterSection({ capacityAdapter, onChange, activeProviders, ge
 
 function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, getPricing }) {
   const [showModelSelect, setShowModelSelect] = useState(false);
+  // HTML5 drag-and-drop reorder state (same pattern as the Combo create modal).
+  const [dragIdx, setDragIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
   const { enabled, roundRobin, models } = entry;
 
   const patch = (p) => onChange({ ...entry, ...p });
