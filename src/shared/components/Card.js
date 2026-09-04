@@ -25,9 +25,9 @@ export default function Card({
   return (
     <div
       className={cn(
-        "bg-surface border-[0.5px] border-border shadow-soft",
-        "rounded-[12px]",
-        hover && "hover:border-c-blue-600/30 hover:shadow-md hover:-translate-y-[1px] cursor-pointer transition-all duration-200",
+        "bg-[color:var(--md-sys-color-surfaceContainer)] border-[color:var(--md-sys-color-outlineVariant)]",
+        "rounded-[var(--md-sys-shape-corner-extra-large)]",
+        hover && "hover:border-[color:var(--md-sys-color-primary)] hover:shadow-md hover:-translate-y-[1px] cursor-pointer transition-all duration-200",
         paddings[padding],
         className
       )}
@@ -37,7 +37,7 @@ export default function Card({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             {icon && (
-              <span className="material-symbols-outlined text-[18px] text-c-blue-600">{icon}</span>
+              <span className="material-symbols-outlined text-[18px] text-[color:var(--md-sys-color-primary)]">{icon}</span>
             )}
             <div>
               {title && <h3 className="text-text-main font-medium text-[16px]">{title}</h3>}
@@ -56,7 +56,7 @@ Card.Section = function CardSection({ children, className, ...props }) {
   return (
     <div
       className={cn(
-        "p-4 border border-border-500 rounded-[var(--radius-brand)] bg-surface-2",
+        "p-4 border border-[color:var(--md-sys-color-outlineVariant)] rounded-[var(--md-sys-shape-corner-large)] bg-[color:var(--md-sys-color-surfaceContainerHigh)]",
         className
       )}
       {...props}
@@ -70,8 +70,8 @@ Card.Row = function CardRow({ children, className, ...props }) {
   return (
     <div
       className={cn(
-        "p-3 -mx-3 px-3 transition-colors border-b border-border-500 last:border-b-0",
-        "hover:bg-surface-2/50 transition-colors",
+        "p-3 -mx-3 px-3 transition-colors border-b border-[color:var(--md-sys-color-outlineVariant)] last:border-b-0",
+        "hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] transition-colors",
         className
       )}
       {...props}
