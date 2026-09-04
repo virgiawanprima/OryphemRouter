@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Select as AntSelect } from "antd";
 import { Card } from "@/shared/components";
 import { MEDIA_PROVIDER_KINDS, resolveProviderId } from "@/shared/constants/providers";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
@@ -230,15 +231,12 @@ export function GenericExampleCard({ providerId, kind }) {
         {/* Model selector — dropdown if presets exist, else manual input for media kinds */}
         {kindModels.length > 0 ? (
           <Row label="Model">
-            <select
+            <AntSelect
               value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            >
-              {kindModels.map((m) => (
-                <option key={m.id} value={m.id}>{m.name || m.id}</option>
-              ))}
-            </select>
+              onChange={(v) => setSelectedModel(v)}
+              className="w-full"
+              options={kindModels.map((m) => ({ value: m.id, label: m.name || m.id }))}
+            />
           </Row>
         ) : allowManualModel ? (
           <Row label="Model">
@@ -282,22 +280,21 @@ export function GenericExampleCard({ providerId, kind }) {
         {/* Connection picker - only show when 2+ connections (or any with email) */}
         {connections.length > 0 && (
           <Row label="Connection">
-            <select
+            <AntSelect
               value={pinnedConnectionId}
-              onChange={(e) => setPinnedConnectionId(e.target.value)}
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            >
-              <option value="">Auto (by priority)</option>
-              {connections.map((c) => {
-                const plan = c.providerSpecificData?.chatgptPlanType;
-                const label = c.email || c.name || c.id.slice(0, 8);
-                return (
-                  <option key={c.id} value={c.id}>
-                    {label}{plan ? ` [${plan}]` : ""}
-                  </option>
-                );
-              })}
-            </select>
+              onChange={(v) => setPinnedConnectionId(v)}
+              className="w-full"
+              allowClear
+              placeholder="Auto (by priority)"
+              options={[
+                { value: "", label: "Auto (by priority)" },
+                ...connections.map((c) => {
+                  const plan = c.providerSpecificData?.chatgptPlanType;
+                  const label = c.email || c.name || c.id.slice(0, 8);
+                  return { value: c.id, label: label + (plan ? ` [${plan}]` : "") };
+                }),
+              ]}
+            />
           </Row>
         )}
 
@@ -399,15 +396,15 @@ export function GenericExampleCard({ providerId, kind }) {
           .map((f) => (
           <Row key={f.key} label={f.label}>
             {f.type === "select" ? (
-              <select
+              <AntSelect
                 value={extraValues[f.key] ?? ""}
-                onChange={(e) => setExtraValues((s) => ({ ...s, [f.key]: e.target.value }))}
-                className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-              >
-                {(f.options || []).map((opt) => (
-                  <option key={opt} value={opt}>{opt === "" ? "(default)" : opt}</option>
-                ))}
-              </select>
+                onChange={(v) => setExtraValues((s) => ({ ...s, [f.key]: v }))}
+                className="w-full"
+                options={(f.options || []).map((opt) => ({
+                  value: opt,
+                  label: opt === "" ? "(default)" : opt,
+                }))}
+              />
             ) : f.type === "text" ? (
               <input
                 type="text"
@@ -432,14 +429,15 @@ export function GenericExampleCard({ providerId, kind }) {
         {/* Output Format toggle (image only) — last */}
         {kind === "image" && (
           <Row label="Output Format">
-            <select
+            <AntSelect
               value={imageOutputFormat}
-              onChange={(e) => setImageOutputFormat(e.target.value)}
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            >
-              <option value="json">JSON (Base64)</option>
-              <option value="binary">Binary File</option>
-            </select>
+              onChange={(v) => setImageOutputFormat(v)}
+              className="w-full"
+              options={[
+                { value: "json", label: "JSON (Base64)" },
+                { value: "binary", label: "Binary File" },
+              ]}
+            />
           </Row>
         )}
 
