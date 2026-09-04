@@ -32,7 +32,7 @@ export default function DonateModal({ isOpen, onClose }) {
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
       <div
         ref={modalRef}
-        className="relative w-full bg-surface border border-[color:var(--md-sys-color-outlineVariant)] rounded-[var(--radius-brand-lg)] shadow-[var(--shadow-lg)] max-w-md flex flex-col"
+        className="relative w-full bg-surface border border-[color:var(--md-sys-color-outlineVariant)] rounded-[var(--radius-brand-lg)] shadow-lg max-w-md flex flex-col"
       >
         <div className="flex items-center justify-between p-3 border-b border-[color:var(--md-sys-color-outlineVariant)]">
           <h2 className="text-lg font-semibold text-text-main flex items-center gap-2">

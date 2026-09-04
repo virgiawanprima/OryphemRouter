@@ -106,7 +106,7 @@ function RouterNode({ data }) {
       className={`relative z-[1] flex items-center justify-center px-5 py-3 rounded-[var(--radius-brand)] border min-w-[130px] ${
         powering
           ? "topology-router-core border-yellow-300 bg-gradient-to-br from-primary/30 via-yellow-400/20 to-cyan-400/25"
-          : "border-primary bg-primary/5 shadow-[var(--md-sys-elevation-level2)]"
+          : "border-primary bg-primary/5 shadow-md"
       }`}
     >
       <Handle type="source" position={Position.Top} id="top" className="!bg-transparent !border-0 !w-0 !h-0" />
