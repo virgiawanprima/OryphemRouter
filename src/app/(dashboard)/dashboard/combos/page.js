@@ -450,9 +450,25 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
 
   const patch = (p) => onChange({ ...entry, ...p });
 
+  // Functional setter — keeps the "add all" additions atomic and avoids the stale-
+  // closure (only the last added model survives) problem.
+  const replaceModels = (next) => patch({ models: next });
+
   const handleAdd = (model) => {
-    if (models.includes(model.value)) return;
-    patch({ models: [...models, model.value] });
+    replaceModels([...models, model.value]);
+  };
+
+  const handleAddMany = (modelList) => {
+    const next = [...models];
+    for (const model of modelList || []) {
+      if (model?.value && !next.includes(model.value) && !model.isPlaceholder) next.push(model.value);
+    }
+    replaceModels(next);
+  };
+
+  const handleDeselect = (model) => {
+    const value = model?.value || model?.name || "";
+    replaceModels(models.filter((m) => m !== value));
   };
 
   const handleRemove = (index) => {
