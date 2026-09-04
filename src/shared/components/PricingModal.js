@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Table as AntTable } from "antd";
 import { getDefaultPricing } from "open-sse/providers/pricing.js";
 
 export default function PricingModal({ isOpen, onClose, onSave }) {
@@ -130,38 +131,35 @@ export default function PricingModal({ isOpen, onClose, onSave }) {
                     <div className="bg-bg-subtle px-4 py-2 font-semibold text-sm">
                       {provider.toUpperCase()}
                     </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-bg-hover text-text-muted uppercase text-xs">
-                          <tr>
-                            <th className="px-3 py-2 text-left">Model</th>
-                            <th className="px-3 py-2 text-right">Input</th>
-                            <th className="px-3 py-2 text-right">Output</th>
-                            <th className="px-3 py-2 text-right">Cached</th>
-                            <th className="px-3 py-2 text-right">Reasoning</th>
-                            <th className="px-3 py-2 text-right">Cache Creation</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                          {models.map(model => (
-                            <tr key={model} className="hover:bg-bg-subtle/50">
-                              <td className="px-3 py-2 font-medium">{model}</td>
-                              {pricingFields.map(field => (
-                                <td key={field} className="px-3 py-2">
-                                  <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    value={pricingData[provider][model][field] || 0}
-                                    onChange={(e) => handlePricingChange(provider, model, field, e.target.value)}
-                                    className="w-20 px-2 py-1 text-right bg-bg-base border border-border rounded focus:outline-none focus:border-primary"
-                                  />
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="overflow-hidden">
+                      <AntTable
+                        rowKey="model"
+                        dataSource={models.map((model) => ({ model }))}
+                        size="small"
+                        pagination={false}
+                        columns={[
+                          {
+                            title: "Model",
+                            dataIndex: "model",
+                            render: (model) => <span className="font-medium">{model}</span>,
+                          },
+                          ...pricingFields.map((field) => ({
+                            title: field === "cache_creation" ? "Cache Creation" : field.charAt(0).toUpperCase() + field.slice(1),
+                            dataIndex: field,
+                            align: "right",
+                            render: (_, { model }) => (
+                              <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={pricingData[provider][model][field] || 0}
+                                onChange={(e) => handlePricingChange(provider, model, field, e.target.value)}
+                                className="w-20 px-2 py-1 text-right bg-bg-base border border-border rounded focus:outline-none focus:border-primary"
+                              />
+                            ),
+                          })),
+                        ]}
+                      />
                     </div>
                   </div>
                 );

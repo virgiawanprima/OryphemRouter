@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect, Table as AntTable } from "antd";
 import Card from "@/shared/components/Card";
 import Button from "@/shared/components/Button";
 import Drawer from "@/shared/components/Drawer";
@@ -255,86 +255,79 @@ export default function RequestDetailsTab() {
       </Card>
 
       <Card padding="none">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px]">
-            <thead>
-              <tr className="border-b border-black/5 dark:border-white/5">
-                <th className="text-left p-4 text-sm font-semibold text-text-main">Timestamp</th>
-                <th className="text-left p-4 text-sm font-semibold text-text-main">Model</th>
-                <th className="text-left p-4 text-sm font-semibold text-text-main">Provider</th>
-                <th className="text-right p-4 text-sm font-semibold text-text-main">Input Tokens</th>
-                <th className="text-right p-4 text-sm font-semibold text-text-main">Cached</th>
-                <th className="text-right p-4 text-sm font-semibold text-text-main">Cache Creation</th>
-                <th className="text-right p-4 text-sm font-semibold text-text-main">Output Tokens</th>
-                <th className="text-left p-4 text-sm font-semibold text-text-main">Latency</th>
-                <th className="text-center p-4 text-sm font-semibold text-text-main">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="7" className="p-8 text-center text-text-muted">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
-                      Loading...
-                    </div>
-                  </td>
-                </tr>
-              ) : details.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="p-8 text-center text-text-muted">
-                    No request details found
-                  </td>
-                </tr>
-              ) : (
-                details.map((detail, index) => (
-                  <tr
-                    key={`${detail.id}-${index}`}
-                    className="border-b border-black/5 dark:border-white/5 last:border-b-0 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
-                  >
-                    <td className="whitespace-nowrap p-4 text-sm text-text-main">
-                      {new Date(detail.timestamp).toLocaleString()}
-                    </td>
-                    <td className="max-w-[260px] truncate p-4 font-mono text-sm text-text-main">
-                      {detail.model}
-                    </td>
-                    <td className="max-w-[180px] truncate p-4 text-sm text-text-main">
-                       <span className="font-medium">
-                         {getProviderName(detail.provider, providerNameCache)}
-                       </span>
-                     </td>
-                    <td className="p-4 text-sm text-text-main text-right font-mono">
-                      {getInputTokens(detail.tokens).toLocaleString()}
-                    </td>
-                    <td className="p-4 text-sm text-text-main text-right font-mono">
-                      {getCachedTokens(detail.tokens) > 0 ? getCachedTokens(detail.tokens).toLocaleString() : "-"}
-                    </td>
-                    <td className="p-4 text-sm text-text-main text-right font-mono">
-                      {getCacheCreationTokens(detail.tokens) > 0 ? getCacheCreationTokens(detail.tokens).toLocaleString() : "-"}
-                    </td>
-                    <td className="p-4 text-sm text-text-main text-right font-mono">
-                      {detail.tokens?.completion_tokens?.toLocaleString() || 0}
-                    </td>
-                    <td className="p-4 text-sm text-text-muted">
-                      <div className="flex flex-col gap-0.5">
-                        <div>TTFT: <span className="font-mono">{detail.latency?.ttft || 0}ms</span></div>
-                        <div>Total: <span className="font-mono">{detail.latency?.total || 0}ms</span></div>
-                      </div>
-                    </td>
-                    <td className="p-4 text-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewDetail(detail)}
-                      >
-                        Detail
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="overflow-hidden">
+          <AntTable
+            rowKey={(record, index) => `${record.id}-${index}`}
+            dataSource={details}
+            size="small"
+            pagination={false}
+            loading={loading}
+            locale={{ emptyText: "No request details found" }}
+            scroll={{ x: 880 }}
+            columns={[
+              {
+                title: "Timestamp",
+                dataIndex: "timestamp",
+                render: (ts) => <span className="whitespace-nowrap">{new Date(ts).toLocaleString()}</span>,
+              },
+              {
+                title: "Model",
+                dataIndex: "model",
+                ellipsis: true,
+                render: (v) => <span className="font-mono">{v}</span>,
+              },
+              {
+                title: "Provider",
+                dataIndex: "provider",
+                ellipsis: true,
+                render: (v, record) => <span className="font-medium">{getProviderName(v, providerNameCache)}</span>,
+              },
+              {
+                title: "Input Tokens",
+                dataIndex: "tokens",
+                align: "right",
+                render: (t) => <span className="font-mono">{getInputTokens(t).toLocaleString()}</span>,
+              },
+              {
+                title: "Cached",
+                dataIndex: "tokens",
+                align: "right",
+                render: (t) => <span className="font-mono">{getCachedTokens(t) > 0 ? getCachedTokens(t).toLocaleString() : "-"}</span>,
+              },
+              {
+                title: "Cache Creation",
+                dataIndex: "tokens",
+                align: "right",
+                render: (t) => <span className="font-mono">{getCacheCreationTokens(t) > 0 ? getCacheCreationTokens(t).toLocaleString() : "-"}</span>,
+              },
+              {
+                title: "Output Tokens",
+                dataIndex: "tokens",
+                align: "right",
+                render: (t) => <span className="font-mono">{t?.completion_tokens?.toLocaleString() || 0}</span>,
+              },
+              {
+                title: "Latency",
+                dataIndex: "latency",
+                render: (lat) => (
+                  <div className="flex flex-col gap-0.5">
+                    <div>TTFT: <span className="font-mono">{lat?.ttft || 0}ms</span></div>
+                    <div>Total: <span className="font-mono">{lat?.total || 0}ms</span></div>
+                  </div>
+                ),
+              },
+              {
+                title: "Action",
+                dataIndex: "id",
+                align: "center",
+                render: (_, detail) => (
+                  <Button variant="outline" size="sm" onClick={() => handleViewDetail(detail)}>
+                    Detail
+                  </Button>
+                ),
+              },
+            ]}
+          />
         </div>
 
         {!loading && details.length > 0 && (
