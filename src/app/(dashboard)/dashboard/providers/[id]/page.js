@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getProviderIconSrc, markProviderIconMissing } from "@/shared/utils/providerIcon";
+import { Select as AntSelect } from "antd";
 import { Card, Button, Modal, CardSkeleton, OAuthModal, KiroOAuthWrapper, CursorAuthModal, IFlowCookieModal, GitLabAuthModal, Toggle, EditConnectionModal, NoAuthProxyCard, ConfirmModal } from "@/shared/components";
 import { OAUTH_PROVIDERS, APIKEY_PROVIDERS, FREE_PROVIDERS, FREE_TIER_PROVIDERS, WEB_COOKIE_PROVIDERS, getProviderAlias, isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
@@ -1644,16 +1645,16 @@ export default function ProviderDetailPage() {
               {"Available Models"}
             </h2>
             {providerThinkingLevels && (
-              <select
+              <AntSelect
                 value={thinkingMode}
-                onChange={(e) => handleThinkingModeChange(e.target.value)}
+                onChange={handleThinkingModeChange}
                 title="Appends (level) suffix to copied model names"
-                className="rounded-md border border-border bg-background px-2 py-1 text-xs focus:border-primary focus:outline-none"
-              >
-                {providerThinkingLevels.map((opt) => (
-                  <option key={opt} value={opt}>{`Thinking: ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}</option>
-                ))}
-              </select>
+                className="w-44"
+                options={providerThinkingLevels.map((opt) => ({
+                  value: opt,
+                  label: `Thinking: ${opt.charAt(0).toUpperCase() + opt.slice(1)}`,
+                }))}
+              />
             )}
           </div>
           {!isCompatible && (() => {
