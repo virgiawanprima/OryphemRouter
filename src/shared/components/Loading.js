@@ -1,75 +1,50 @@
 "use client";
 
+import { Spin, Skeleton as AntSkeleton, Card as AntCard } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { cn } from "@/shared/utils/cn";
 
-// Spinner loading
-export function Spinner({ size = "md", className }) {
-  const sizes = {
-    sm: "size-4",
-    md: "size-6",
-    lg: "size-8",
-    xl: "size-12",
-  };
+// Ant Design Spin/Skeleton — adapters keeping the app's existing API names.
 
+export function Spinner({ size = "md", className }) {
+  const sizeMap = { sm: 20, md: 28, lg: 40 };
   return (
-    <span
-      className={cn(
-        "material-symbols-outlined animate-spin text-brand-500",
-        sizes[size],
-        className
-      )}
-    >
-      progress_activity
+    <span className={cn("inline-flex items-center justify-center", className)}>
+      <Spin indicator={<LoadingOutlined style={{ fontSize: sizeMap[size] || 28 }} spin />} />
     </span>
   );
 }
 
-// Full page loading
 export function PageLoading({ message = "Loading..." }) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-bg">
-      <Spinner size="xl" />
-      <p className="mt-4 text-text-muted">{message}</p>
+    <div className="flex flex-col items-center justify-center gap-3 py-16">
+      <Spinner size="lg" />
+      <p className="text-sm text-text-muted">{message}</p>
     </div>
   );
 }
 
-// Skeleton loading
 export function Skeleton({ className, ...props }) {
   return (
-    <div
-      className={cn(
-        "animate-pulse rounded-[10px] bg-[color:var(--md-sys-color-surfaceContainerHigh)]",
-        className
-      )}
+    <AntSkeleton
+      active
+      title={{ width: "40%" }}
+      paragraph={{ rows: 3 }}
+      className={className}
       {...props}
     />
   );
 }
 
-// Card skeleton
 export function CardSkeleton() {
   return (
-    <div className="p-6 rounded-[14px] border border-[color:var(--md-sys-color-outlineVariant)] bg-surface shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="size-10 rounded-[10px]" />
-      </div>
-      <Skeleton className="h-8 w-16 mb-2" />
-      <Skeleton className="h-3 w-20" />
-    </div>
+    <AntCard className="w-full">
+      <AntSkeleton active title={{ width: "60%" }} paragraph={{ rows: 4 }} />
+    </AntCard>
   );
 }
 
 export default function Loading({ type = "spinner", ...props }) {
-  switch (type) {
-    case "page":
-      return <PageLoading {...props} />;
-    case "skeleton":
-      return <Skeleton {...props} />;
-    case "card":
-      return <CardSkeleton {...props} />;
-    default:
-      return <Spinner {...props} />;
-  }
+  if (type === "skeleton") return <Skeleton {...props} />;
+  return <Spinner {...props} />;
 }
