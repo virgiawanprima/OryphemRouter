@@ -54,8 +54,8 @@ export default function RequestLogger() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Request Logs</h2>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-c-teal-50 px-2.5 py-0.5 text-[11px] font-medium text-c-teal-600 border border-c-teal-600/30">
-          <span className="size-1.5 rounded-full bg-c-teal-600 pulse-dot" />
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--md-sys-color-secondaryContainer)]/50 px-2.5 py-0.5 text-[11px] font-medium text-[color:var(--md-sys-color-primary)] border border-[color:var(--md-sys-color-outlineVariant)]">
+          <span className="size-1.5 rounded-full bg-[color:var(--md-sys-color-primary)] pulse-dot" />
           Live
         </span>
       </div>
