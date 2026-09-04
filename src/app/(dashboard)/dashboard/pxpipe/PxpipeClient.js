@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Table as AntTable } from "antd";
 import {
   AreaChart,
   Area,
@@ -204,68 +205,73 @@ export default function PxpipeClient() {
 
       <Card className="p-4">
         <h3 className="font-medium mb-3">History</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs text-text-muted border-b border-border">
-                <th className="py-2 pr-3">Time</th>
-                <th className="py-2 pr-3">Model</th>
-                <th className="py-2 pr-3 text-right">Original</th>
-                <th className="py-2 pr-3 text-right">Compressed</th>
-                <th className="py-2 pr-3 text-right">Saved</th>
-                <th className="py-2 pr-3 text-right">%</th>
-                <th className="py-2 pr-3 text-right">Duration</th>
-                <th className="py-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(stats?.recent || []).slice(0, 50).map((ev, i) => (
-                <tr key={`${ev.ts}-${i}`} className="border-b border-border/50">
-                  <td className="py-1.5 pr-3 whitespace-nowrap text-text-muted">
-                    {new Date(ev.ts).toLocaleString()}
-                  </td>
-                  <td className="py-1.5 pr-3 font-mono text-xs">{ev.provider ? `${ev.provider}/${ev.model}` : ev.model || "-"}</td>
-                  <td className="py-1.5 pr-3 text-right font-mono text-xs">
-                    {ev.applied ? fmtTokens(ev.tokensBeforeEst) : "-"}
-                  </td>
-                  <td className="py-1.5 pr-3 text-right font-mono text-xs">
-                    {ev.applied ? fmtTokens(ev.tokensAfterEst) : "-"}
-                  </td>
-                  <td className="py-1.5 pr-3 text-right font-mono text-xs text-success">
-                    {ev.applied ? fmtTokens(ev.tokensSavedEst) : "-"}
-                  </td>
-                  <td className="py-1.5 pr-3 text-right font-mono text-xs">
-                    {ev.applied ? `${ev.savedPct}%` : "-"}
-                  </td>
-                  <td className="py-1.5 pr-3 text-right font-mono text-xs">
-                    {ev.durationMs != null ? `${ev.durationMs}ms` : "-"}
-                  </td>
-                  <td className="py-1.5">
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded ${
-                        ev.applied
-                          ? "bg-success/15 text-success"
-                          : ev.reason === "transform_error" || ev.reason === "timeout"
-                            ? "bg-danger/15 text-danger"
-                            : "bg-warning/15 text-warning"
-                      }`}
-                      title={ev.detail || ""}
-                    >
-                      {ev.applied ? "Compressed" : REASON_LABELS[ev.reason] || ev.reason}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-              {(!stats?.recent || stats.recent.length === 0) && (
-                <tr>
-                  <td colSpan={8} className="py-6 text-center text-text-muted text-sm">
-                    No PXPIPE activity yet
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <AntTable
+          rowKey={(ev, i) => `${ev.ts}-${i}`}
+          dataSource={(stats?.recent || []).slice(0, 50)}
+          size="small"
+          pagination={false}
+          locale={{ emptyText: "No PXPIPE activity yet" }}
+          columns={[
+            {
+              title: "Time",
+              dataIndex: "ts",
+              render: (ts) => <span className="whitespace-nowrap text-text-muted">{new Date(ts).toLocaleString()}</span>,
+            },
+            {
+              title: "Model",
+              dataIndex: "model",
+              render: (_, ev) => <span className="font-mono text-xs">{ev.provider ? `${ev.provider}/${ev.model}` : ev.model || "-"}</span>,
+            },
+            {
+              title: "Original",
+              dataIndex: "tokensBeforeEst",
+              align: "right",
+              render: (v, ev) => <span className="font-mono text-xs">{ev.applied ? fmtTokens(v) : "-"}</span>,
+            },
+            {
+              title: "Compressed",
+              dataIndex: "tokensAfterEst",
+              align: "right",
+              render: (v, ev) => <span className="font-mono text-xs">{ev.applied ? fmtTokens(v) : "-"}</span>,
+            },
+            {
+              title: "Saved",
+              dataIndex: "tokensSavedEst",
+              align: "right",
+              render: (v, ev) => <span className="font-mono text-xs text-success">{ev.applied ? fmtTokens(v) : "-"}</span>,
+            },
+            {
+              title: "%",
+              dataIndex: "savedPct",
+              align: "right",
+              render: (v, ev) => <span className="font-mono text-xs">{ev.applied ? `${v}%` : "-"}</span>,
+            },
+            {
+              title: "Duration",
+              dataIndex: "durationMs",
+              align: "right",
+              render: (v) => <span className="font-mono text-xs">{v != null ? `${v}ms` : "-"}</span>,
+            },
+            {
+              title: "Status",
+              dataIndex: "status",
+              render: (_, ev) => (
+                <span
+                  className={`text-xs px-2 py-0.5 rounded ${
+                    ev.applied
+                      ? "bg-success/15 text-success"
+                      : ev.reason === "transform_error" || ev.reason === "timeout"
+                        ? "bg-danger/15 text-danger"
+                        : "bg-warning/15 text-warning"
+                  }`}
+                  title={ev.detail || ""}
+                >
+                  {ev.applied ? "Compressed" : REASON_LABELS[ev.reason] || ev.reason}
+                </span>
+              ),
+            },
+          ]}
+        />
       </Card>
 
       <Card className="p-4" id="logs">
