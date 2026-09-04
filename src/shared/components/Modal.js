@@ -96,9 +96,9 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         className={cn(
-          "relative w-full bg-surface",
-          "border border-border-subtle",
-          "rounded-[14px] shadow-elevated",
+          "relative w-full bg-[color:var(--md-sys-color-surfaceContainerHigh)]",
+          "border border-[color:var(--md-sys-color-outlineVariant)]",
+          "rounded-[var(--md-sys-shape-corner-extra-large)] shadow-[var(--md-sys-elevation-level3)]",
           "fade-in",
           sizes[size],
           className
