@@ -1,9 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useId } from "react";
+import { useId } from "react";
+import { Modal as AntModal, Button as AntModalButton } from "antd";
 import { cn } from "@/shared/utils/cn";
-import Button from "./Button";
-import Tooltip from "./Tooltip";
+
+// Ant Design Modal — adapter keeping the app's existing props (isOpen, onClose,
+// footer, size). antd handles focus trap, ESC, overlay click and body scroll
+// lock natively; traffic-light header decoration is preserved via title slot.
+const sizeWidths = {
+  sm: 420,
+  md: 480,
+  lg: 560,
+  xl: 640,
+  full: 896,
+};
 
 export default function Modal({
   isOpen,
@@ -15,142 +25,36 @@ export default function Modal({
   closeOnOverlay = true,
   showTrafficLights = true,
   className,
+  ...props
 }) {
-  const panelRef = useRef(null);
   const titleId = useId();
-  const sizes = {
-    sm: "max-w-sm",
-    md: "max-w-md",
-    lg: "max-w-lg",
-    xl: "max-w-xl",
-    full: "max-w-4xl",
-  };
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
-
-  // Focus management: store the previously focused element, move focus into
-  // the modal, and restore focus to the trigger when it closes.
-  useEffect(() => {
-    if (!isOpen) return;
-    const previouslyFocused = document.activeElement;
-    const panel = panelRef.current;
-    if (!panel) return;
-    const getFocusable = () => Array.from(panel.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    )).filter((el) => !el.disabled && el.offsetParent !== null);
-    // Focus the first focusable element inside the modal
-    const first = getFocusable()[0];
-    if (first) first.focus();
-
-    return () => { previouslyFocused?.focus(); };
-  }, [isOpen]);
-
-  // Escape key + basic Tab focus trap
-  useEffect(() => {
-    const handleKeydown = (e) => {
-      if (!isOpen) return;
-      if (e.key === "Escape") onClose();
-      if (e.key === "Tab") {
-        const panel = panelRef.current;
-        if (!panel) return;
-        const focusable = Array.from(panel.querySelectorAll(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        )).filter((el) => !el.disabled && el.offsetParent !== null);
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", handleKeydown);
-    return () => document.removeEventListener("keydown", handleKeydown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
+  const headerNode = showTrafficLights ? (
+    <div className="flex items-center gap-2">
+      <span className="w-3 h-3 rounded-full bg-[#FF5F56] inline-block" />
+      <span className="w-3 h-3 rounded-full bg-[#FFBD2E] inline-block" />
+      <span className="w-3 h-3 rounded-full bg-[#27C93F] inline-block" />
+      <h2 id={titleId} className="ml-2 text-base font-semibold text-text-main">{title}</h2>
+    </div>
+  ) : (
+    <h2 id={titleId} className="text-base font-semibold text-text-main">{title}</h2>
+  );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-[2px] fade-in"
-        onClick={closeOnOverlay ? onClose : undefined}
-      />
-
-      {/* Modal content */}
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={title ? titleId : undefined}
-        className={cn(
-          "relative w-full bg-[color:var(--md-sys-color-surfaceContainerHigh)]",
-          "border border-[color:var(--md-sys-color-outlineVariant)]",
-          "rounded-[var(--md-sys-shape-corner-extra-large)] shadow-md",
-          "fade-in",
-          sizes[size],
-          className
-        )}
-      >
-        {/* Header */}
-        {(title || showTrafficLights) && (
-          <div className="flex items-center justify-between p-2 border-b border-[color:var(--md-sys-color-outlineVariant)]">
-            <div className="flex items-center">
-              {/* Traffic lights — desktop only */}
-              {showTrafficLights && (
-                <div className="hidden md:flex items-center gap-2 mr-4 ml-2">
-                  <Tooltip text="Close" position="top" color="#FF5F56">
-                    <button
-                      onClick={onClose}
-                      aria-label="Close"
-                      title="Close"
-                      className="w-4 h-4 rounded-full bg-[#FF5F56] hover:brightness-90 transition-all cursor-pointer flex items-center justify-center group/dot"
-                    >
-                      <span className="text-[9px] font-bold text-white opacity-0 group-hover/dot:opacity-100 transition-opacity leading-none">✕</span>
-                    </button>
-                  </Tooltip>
-                  <div className="w-4 h-4 rounded-full bg-[#3a3a3a]/20 dark:bg-white/15 cursor-not-allowed" />
-                  <div className="w-4 h-4 rounded-full bg-[#3a3a3a]/20 dark:bg-white/15 cursor-not-allowed" />
-                </div>
-              )}
-              {title && (
-                <h2 id={titleId} className="text-lg font-semibold text-text-main">{title}</h2>
-              )}
-            </div>
-            {/* X button — mobile only */}
-            <button
-              onClick={onClose}
-              aria-label="Close"
-              className="md:hidden p-1.5 rounded-[10px] text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main transition-colors"
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
-            </button>
-          </div>
-        )}
-
-        {/* Body */}
-        <div className="p-6 max-h-[calc(85vh-100px)] overflow-y-auto custom-scrollbar">{children}</div>
-
-        {/* Footer */}
-        {footer && (
-          <div className="flex items-center justify-end gap-3 p-6 border-t border-[color:var(--md-sys-color-outlineVariant)]">
-            {footer}
-          </div>
-        )}
-      </div>
-    </div>
+    <AntModal
+      open={isOpen}
+      onCancel={onClose}
+      maskClosable={closeOnOverlay}
+      width={sizeWidths[size] || 480}
+      title={title ? headerNode : undefined}
+      footer={footer !== undefined ? footer : null}
+      centered
+      className={cn("antd-modal-ryp", className)}
+      aria-labelledby={title ? titleId : undefined}
+      {...props}
+    >
+      {children}
+    </AntModal>
   );
 }
 
@@ -166,23 +70,27 @@ export function ConfirmModal({
   loading = false,
 }) {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
+    <AntModal
+      open={isOpen}
+      onCancel={onClose}
       title={title}
-      size="sm"
+      centered
       footer={
-        <>
-          <Button variant="ghost" onClick={onClose} disabled={loading}>
-            {cancelText}
-          </Button>
-          <Button variant={variant} onClick={onConfirm} loading={loading}>
+        <div className="flex items-center justify-end gap-3">
+          <AntModalButton onClick={onClose} disabled={loading}>{cancelText}</AntModalButton>
+          <AntModalButton
+            type="primary"
+            danger={variant !== "success"}
+            loading={loading}
+            onClick={onConfirm}
+          >
             {confirmText}
-          </Button>
-        </>
+          </AntModalButton>
+        </div>
       }
     >
-      <p className="text-text-muted">{message}</p>
-    </Modal>
+      <p className="text-text-main">{message}</p>
+    </AntModal>
   );
 }
+
