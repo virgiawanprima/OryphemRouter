@@ -482,6 +482,25 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
   /** Clear every model in this adapter pool. */
   const handleClearAll = () => patch({ models: [] });
 
+  /** Remove every model that belongs to a single provider (e.g. all "devin-cli/..."). */
+  const handleClearProvider = (provider) => {
+    const prefix = `${provider}/`;
+    replaceModels(models.filter((m) => !m.startsWith(prefix)));
+  };
+
+  /** Group the flat model array by provider prefix, preserving original flat index. */
+  const providerGroups = [];
+  const providerIndex = new Map();
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    const provider = model?.includes("/") ? model.split("/")[0] : "__nolabel__";
+    if (!providerIndex.has(provider)) {
+      providerIndex.set(provider, providerGroups.length);
+      providerGroups.push({ provider, entries: [] });
+    }
+    providerGroups[providerIndex.get(provider)].entries.push({ model, index: i });
+  }
+
   /** Move the chip at `from` so it sits at `to` (splice move). */
   const handleMoveTo = (from, to) => {
     if (from === to || from < 0 || to < 0 || from >= models.length || to >= models.length) return;
@@ -564,108 +583,142 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
             >
               No models — add some to route {cap.key} traffic.
             </div>
-          ) : models.map((model, index) => {
-            const caps = getCaps?.(model) || null;
-            const pricing = getPricing?.(model) || null;
-            const hasPrice = pricing && (pricing.input != null || pricing.output != null);
-            const isDragging = dragIdx === index;
-            const isDragOver = dragOverIdx === index && dragIdx !== null && dragIdx !== index;
-            return (
-              <span
-                key={`${model}-${index}`}
-                role="listitem"
-                draggable
-                onDragStart={(e) => onDragStart(e, index)}
-                onDragOver={(e) => onDragOverChip(e, index)}
-                onDrop={(e) => onDropChip(e, index)}
-                onDragEnd={onDragEnd}
-                className={`group inline-flex shrink-0 items-center gap-1
-                           rounded-[var(--md-sys-shape-corner-full)]
-                           bg-[var(--md-sys-color-secondaryContainer)]
-                           px-0.5 py-0.5 pl-1 pr-0.5 h-8 max-w-[320px]
-                           border ${isDragOver ? "border-[var(--md-sys-color-primary)] ring-1 ring-[var(--md-sys-color-primary)]" : "border-[var(--md-sys-color-secondaryContainer)]"}
-                           hover:border-[var(--md-sys-color-secondary)]
-                           ${isDragging ? "opacity-40 cursor-grabbing" : "cursor-grab"}
-                           transition-[background-color,border-color,opacity] duration-[var(--md-sys-motion-duration-short,120ms)]`}
-                style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
-                title="Drag to reorder priority"
-              >
-                {/* Drag/grab handle */}
-                <span className="shrink-0 text-[var(--md-sys-color-onSecondaryContainer)]/40" aria-hidden>
-                  <svg width="12" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="8" cy="5" r="1.6"/><circle cx="16" cy="5" r="1.6"/>
-                    <circle cx="8" cy="12" r="1.6"/><circle cx="16" cy="12" r="1.6"/>
-                    <circle cx="8" cy="19" r="1.6"/><circle cx="16" cy="19" r="1.6"/>
-                  </svg>
-                </span>
-
-                {/* Position */}
-                <span className="inline-block text-[9px] font-semibold opacity-70 tabular-nums">{index + 1}</span>
-
+          ) : providerGroups.map(({ provider, entries }) => (
+            <div key={provider} className="flex w-full flex-col gap-1">
+              {/* Per-provider group header: icon, name, count + "hapus semua" */}
+              <div className="flex items-center gap-1.5 pl-0.5">
                 <ProviderIcon
-                  providerId={chipProvider(model)}
-                  size={18}
+                  providerId={provider === "__nolabel__" ? undefined : provider}
+                  size={14}
                   className="rounded-[var(--md-sys-shape-corner-extra-small)]"
-                  fallbackText={chipProvider(model).slice(0, 2).toUpperCase()}
+                  fallbackText={provider === "__nolabel__" ? "?" : provider.slice(0, 2).toUpperCase()}
                   fallbackColor="var(--md-sys-color-onSecondary)"
                 />
-                <code className="truncate font-mono text-[12px] leading-none max-w-[130px]" title={model}>
-                  {model}
-                </code>
-                {caps && (
-                  <span className="inline-flex items-center gap-0.5 pl-0.5">
-                    <CapacityBadges caps={caps} colorOverride="var(--md-sys-color-onSecondaryContainer)" size={13} />
-                  </span>
-                )}
-                {hasPrice && (
-                  <span className="inline-flex items-center
-                                   rounded-full h-5 leading-none px-1.5
-                                   bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[10px] font-mono whitespace-nowrap"
-                    style={{ color: "var(--md-sys-color-onSurfaceVariant)" }}
-                    title={`in $${pricing.input} / out $${pricing.output}/M`}
-                  >
-                    {formatPr(pricing.input)}/{formatPr(pricing.output)}
-                  </span>
-                )}
-
-                {/* Up / Down — clickable reorder fallback (always visible, compact) */}
-                <span className="ml-auto flex shrink-0 items-center gap-0">
-                  <button
-                    type="button"
-                    onClick={() => handleNudge(index, -1)}
-                    disabled={index === 0}
-                    title="Move up"
-                    aria-label={`Move ${model} up`}
-                    className={`w-5 h-5 grid place-items-center rounded-full ${index === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--md-sys-color-secondary)]"}`}
-                  >
-                    <span className="material-symbols-outlined text-[13px]">arrow_upward</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleNudge(index, 1)}
-                    disabled={index === models.length - 1}
-                    title="Move down"
-                    aria-label={`Move ${model} down`}
-                    className={`w-5 h-5 grid place-items-center rounded-full ${index === models.length - 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--md-sys-color-secondary)]"}`}
-                  >
-                    <span className="material-symbols-outlined text-[13px]">arrow_downward</span>
-                  </button>
+                <span className="text-[10px] font-bold uppercase tracking-wide text-[var(--md-sys-color-onSurfaceVariant)]">
+                  {provider === "__nolabel__" ? "unknown" : provider}
                 </span>
-
+                <span className="text-[10px] text-[var(--md-sys-color-onSurfaceVariant)] opacity-70">
+                  {entries.length}
+                </span>
                 <button
                   type="button"
-                  onClick={() => handleRemove(index)}
-                  title={`Remove ${model}`}
-                  aria-label={`Remove ${model}`}
-                  className="w-6 h-6 -mr-0 shrink-0 inline-grid place-items-center rounded-full hover:bg-[var(--md-sys-color-secondary)]
-                             opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                  style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
+                  onClick={() => handleClearProvider(provider)}
+                  disabled={!enabled}
+                  title={`Hapus semua model ${provider === "__nolabel__" ? "tanpa provider" : provider}`}
+                  aria-label={`Hapus semua ${provider} models`}
+                  className="ml-0.5 inline-grid place-items-center w-5 h-5 rounded-full text-[var(--md-sys-color-onSurfaceVariant)] hover:text-[var(--md-sys-color-error)] hover:bg-[color:var(--md-sys-color-errorContainer)] transition-colors"
                 >
-                  <span className="material-symbols-outlined text-[14px]">close</span>
+                  <span className="material-symbols-outlined text-[13px]">delete</span>
                 </button>
-              </span>
-            );
-          })}
+              </div>
+
+              {/* Models of this provider */}
+              <div className="flex flex-wrap items-stretch gap-2">
+                {entries.map(({ model, index }) => {
+                  const caps = getCaps?.(model) || null;
+                  const pricing = getPricing?.(model) || null;
+                  const hasPrice = pricing && (pricing.input != null || pricing.output != null);
+                  const isDragging = dragIdx === index;
+                  const isDragOver = dragOverIdx === index && dragIdx !== null && dragIdx !== index;
+                  return (
+                    <span
+                      key={`${model}-${index}`}
+                      role="listitem"
+                      draggable
+                      onDragStart={(e) => onDragStart(e, index)}
+                      onDragOver={(e) => onDragOverChip(e, index)}
+                      onDrop={(e) => onDropChip(e, index)}
+                      onDragEnd={onDragEnd}
+                      className={`group inline-flex shrink-0 items-center gap-1
+                                 rounded-[var(--md-sys-shape-corner-full)]
+                                 bg-[var(--md-sys-color-secondaryContainer)]
+                                 px-0.5 py-0.5 pl-1 pr-0.5 h-8 max-w-[320px]
+                                 border ${isDragOver ? "border-[var(--md-sys-color-primary)] ring-1 ring-[var(--md-sys-color-primary)]" : "border-[var(--md-sys-color-secondaryContainer)]"}
+                                 hover:border-[var(--md-sys-color-secondary)]
+                                 ${isDragging ? "opacity-40 cursor-grabbing" : "cursor-grab"}
+                                 transition-[background-color,border-color,opacity] duration-[var(--md-sys-motion-duration-short,120ms)]`}
+                      style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
+                      title="Drag to reorder priority"
+                    >
+                      {/* Drag/grab handle */}
+                      <span className="shrink-0 text-[var(--md-sys-color-onSecondaryContainer)]/40" aria-hidden>
+                        <svg width="12" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <circle cx="8" cy="5" r="1.6"/><circle cx="16" cy="5" r="1.6"/>
+                          <circle cx="8" cy="12" r="1.6"/><circle cx="16" cy="12" r="1.6"/>
+                          <circle cx="8" cy="19" r="1.6"/><circle cx="16" cy="19" r="1.6"/>
+                        </svg>
+                      </span>
+
+                      {/* Position (flat index) */}
+                      <span className="inline-block text-[9px] font-semibold opacity-70 tabular-nums">{index + 1}</span>
+
+                      <ProviderIcon
+                        providerId={chipProvider(model)}
+                        size={18}
+                        className="rounded-[var(--md-sys-shape-corner-extra-small)]"
+                        fallbackText={chipProvider(model).slice(0, 2).toUpperCase()}
+                        fallbackColor="var(--md-sys-color-onSecondary)"
+                      />
+                      <code className="truncate font-mono text-[12px] leading-none max-w-[130px]" title={model}>
+                        {model}
+                      </code>
+                      {caps && (
+                        <span className="inline-flex items-center gap-0.5 pl-0.5">
+                          <CapacityBadges caps={caps} colorOverride="var(--md-sys-color-onSecondaryContainer)" size={13} />
+                        </span>
+                      )}
+                      {hasPrice && (
+                        <span className="inline-flex items-center
+                                         rounded-full h-5 leading-none px-1.5
+                                         bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[10px] font-mono whitespace-nowrap"
+                          style={{ color: "var(--md-sys-color-onSurfaceVariant)" }}
+                          title={`in $${pricing.input} / out $${pricing.output}/M`}
+                        >
+                          {formatPr(pricing.input)}/{formatPr(pricing.output)}
+                        </span>
+                      )}
+
+                      {/* Up / Down — clickable reorder fallback (always visible, compact) */}
+                      <span className="ml-auto flex shrink-0 items-center gap-0">
+                        <button
+                          type="button"
+                          onClick={() => handleNudge(index, -1)}
+                          disabled={index === 0}
+                          title="Move up"
+                          aria-label={`Move ${model} up`}
+                          className={`w-5 h-5 grid place-items-center rounded-full ${index === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--md-sys-color-secondary)]"}`}
+                        >
+                          <span className="material-symbols-outlined text-[13px]">arrow_upward</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleNudge(index, 1)}
+                          disabled={index === models.length - 1}
+                          title="Move down"
+                          aria-label={`Move ${model} down`}
+                          className={`w-5 h-5 grid place-items-center rounded-full ${index === models.length - 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--md-sys-color-secondary)]"}`}
+                        >
+                          <span className="material-symbols-outlined text-[13px]">arrow_downward</span>
+                        </button>
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(index)}
+                        title={`Remove ${model}`}
+                        aria-label={`Remove ${model}`}
+                        className="w-6 h-6 -mr-0 shrink-0 inline-grid place-items-center rounded-full hover:bg-[var(--md-sys-color-secondary)]
+                                   opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                        style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">close</span>
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* === Fixed-right buttons: round switch + add model + clear all === */}
