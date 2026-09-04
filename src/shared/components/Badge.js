@@ -3,16 +3,16 @@
 import { cn } from "@/shared/utils/cn";
 
 const variants = {
-  default: "border border-border text-text-muted",
-  teal: "bg-c-teal-50/10 text-c-teal-800 border border-c-teal-600/30",
-  blue: "bg-c-blue-50/10 text-c-blue-800 border border-c-blue-600/30",
-  amber: "bg-c-amber-50/10 text-c-amber-800 border border-c-amber-600/30",
-  red: "bg-c-red-50/10 text-c-red-800 border border-c-red-600/30",
-  primary: "bg-c-blue-50/10 text-c-blue-800 border border-c-blue-600/30",
-  success: "bg-c-teal-50/10 text-c-teal-800 border border-c-teal-600/30",
-  warning: "bg-c-amber-50/10 text-c-amber-800 border border-c-amber-600/30",
-  error: "bg-c-red-50/10 text-c-red-800 border border-c-red-600/30",
-  info: "bg-c-blue-50/10 text-c-blue-800 border border-c-blue-600/30",
+  default: "border border-[color:var(--md-sys-color-outlineVariant)] text-[color:var(--md-sys-color-onSurfaceVariant)]",
+  teal: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
+  blue: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
+  amber: "bg-[color:var(--md-sys-color-tertiaryContainer)] text-[color:var(--md-sys-color-onTertiaryContainer)] border border-transparent",
+  red: "bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] border border-transparent",
+  primary: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
+  success: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
+  warning: "bg-[color:var(--md-sys-color-tertiaryContainer)] text-[color:var(--md-sys-color-onTertiaryContainer)] border border-transparent",
+  error: "bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] border border-transparent",
+  info: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
 };
 
 const sizes = {
