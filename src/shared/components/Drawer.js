@@ -88,7 +88,7 @@ export default function Drawer({
         tabIndex={-1}
         className={cn(
           "absolute right-0 top-0 h-full bg-surface flex flex-col",
-          "shadow-[var(--shadow-[var(--md-sys-elevation-level2)])]",
+          "shadow-md",
           "slide-in-right",
           "border-l border-[color:var(--md-sys-color-outlineVariant)]",
           widths[width] || widths.md,
