@@ -15,17 +15,17 @@ test.describe("Material 3 theme", () => {
         primary: cs.getPropertyValue('--color-primary').trim(),
       };
     });
-    // M3 dark scheme (seed #6750A4 purple)
-    expect(tokens.bg.toLowerCase()).toBe("#141218");
-    expect(tokens.text.toLowerCase()).toBe("#e6e0e9");
-    expect(tokens.border.toLowerCase()).toBe("#49454f");
-    expect(tokens.primary.toLowerCase()).toBe("#d0bcff");
+    // M3 dark scheme harmonized to deep indigo (WCAG AA) — matches committed tokens
+    expect(tokens.bg.toLowerCase()).toBe("#131318");
+    expect(tokens.text.toLowerCase()).toBe("#e4e1e9");
+    expect(tokens.border.toLowerCase()).toBe("#46464f");
+    expect(tokens.primary.toLowerCase()).toBe("#bcc2ff");
   });
 
   test("body uses M3 dark background", async ({ page }) => {
     await login(page);
     const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).toBe("rgb(20, 18, 24)");
+    expect(bg).toBe("rgb(19, 19, 24)");
   });
 
   test("toggle switches theme visibly and persists across reload", async ({ page }) => {
@@ -37,26 +37,26 @@ test.describe("Material 3 theme", () => {
 
     // Default is dark
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
-    expect(await bodyBg()).toBe("rgb(20, 18, 24)");
+    expect(await bodyBg()).toBe("rgb(19, 19, 24)");
 
     // Switch to light → M3 light background
     await toggle.click();
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    expect(await bodyBg()).toBe("rgb(254, 247, 255)");
+    expect(await bodyBg()).toBe("rgb(251, 248, 255)");
 
     // Persists after full reload
     await page.reload();
     await page.waitForSelector("aside");
     await page.waitForTimeout(800);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    expect(await bodyBg()).toBe("rgb(254, 247, 255)");
+    expect(await bodyBg()).toBe("rgb(251, 248, 255)");
 
     // Toggle back to dark
     await page.getByRole("button", { name: /Switch to/i }).first().click();
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
-    expect(await bodyBg()).toBe("rgb(20, 18, 24)");
+    expect(await bodyBg()).toBe("rgb(19, 19, 24)");
   });
 
   test("color transitions are applied for smooth theme change", async ({ page }) => {
