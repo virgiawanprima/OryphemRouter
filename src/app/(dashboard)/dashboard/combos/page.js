@@ -361,7 +361,7 @@ function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, o
             <Select
               options={STRATEGY_OPTIONS}
               value={current}
-              onChange={(e) => onSetStrategy({ fallbackStrategy: e.target.value })}
+              onChange={(v) => onSetStrategy({ fallbackStrategy: v })}
               selectClassName="py-1.5 text-xs"
             />
           </div>

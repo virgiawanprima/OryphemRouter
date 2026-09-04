@@ -140,7 +140,7 @@ export default function ComboDetailPage() {
             options={STRATEGY_OPTIONS}
             value={strategy}
             disabled={saving}
-            onChange={(e) => saveStrategy(e.target.value)}
+            onChange={(v) => saveStrategy(v)}
             selectClassName="py-1.5 text-xs"
           />
         </div>

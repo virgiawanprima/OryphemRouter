@@ -272,7 +272,7 @@ export default function EditConnectionModal({ isOpen, connection, proxyPools, on
           <Select
             label="Region"
             value={region}
-            onChange={(e) => setRegion(e.target.value)}
+            onChange={(v) => setRegion(v)}
             options={providerRegions.map((r) => ({ value: r.id, label: r.label }))}
           />
         )}

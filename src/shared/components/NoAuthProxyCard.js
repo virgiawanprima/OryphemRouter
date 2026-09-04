@@ -93,7 +93,7 @@ export default function NoAuthProxyCard({ providerId }) {
       <Select
         label="Proxy Pool"
         value={proxyPoolId}
-        onChange={(e) => handlePoolChange(e.target.value)}
+        onChange={(v) => handlePoolChange(v)}
         disabled={saving || isRotation}
         options={[
           { value: NONE_PROXY_POOL_VALUE, label: "None (direct)" },

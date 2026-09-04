@@ -292,7 +292,7 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
           <Select
             label="Region"
             value={region}
-            onChange={(e) => setRegion(e.target.value)}
+            onChange={(v) => setRegion(v)}
             options={providerRegions.map((r) => ({ value: r.id, label: r.label }))}
           />
         )}
@@ -397,7 +397,7 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
         <Select
           label="Proxy Pool"
           value={formData.proxyPoolId}
-          onChange={(e) => setFormData({ ...formData, proxyPoolId: e.target.value })}
+          onChange={(v) => setFormData({ ...formData, proxyPoolId: v })}
           options={[
             { value: NONE_PROXY_POOL_VALUE, label: "None" },
             ...(proxyPools || []).map((pool) => ({ value: pool.id, label: pool.name })),

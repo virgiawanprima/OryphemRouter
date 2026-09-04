@@ -97,7 +97,7 @@ export default function EditCompatibleNodeModal({ isOpen, node, onSave, onClose,
             label="API Type"
             options={apiTypeOptions}
             value={formData.apiType}
-            onChange={(e) => setFormData({ ...formData, apiType: e.target.value })}
+            onChange={(v) => setFormData({ ...formData, apiType: v })}
           />
         )}
         <Input
