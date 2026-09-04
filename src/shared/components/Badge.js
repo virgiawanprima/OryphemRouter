@@ -1,24 +1,29 @@
 "use client";
 
+import { Tag } from "antd";
 import { cn } from "@/shared/utils/cn";
 
-const variants = {
-  default: "border border-[color:var(--md-sys-color-outlineVariant)] text-[color:var(--md-sys-color-onSurfaceVariant)]",
-  teal: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
-  blue: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
-  amber: "bg-[color:var(--md-sys-color-tertiaryContainer)] text-[color:var(--md-sys-color-onTertiaryContainer)] border border-transparent",
-  red: "bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] border border-transparent",
-  primary: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
-  success: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
-  warning: "bg-[color:var(--md-sys-color-tertiaryContainer)] text-[color:var(--md-sys-color-onTertiaryContainer)] border border-transparent",
-  error: "bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] border border-transparent",
-  info: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] border border-transparent",
+// Ant Design Tag — adapter keeping the app's variant/size/dot/icon API.
+// antd color values are mapped from the app's semantic variants.
+const colorMap = {
+  teal: "cyan",
+  blue: "geekblue",
+  primary: "geekblue",
+  info: "geekblue",
+  amber: "orange",
+  warning: "orange",
+  red: "error",
+  error: "error",
+  neutral: "default",
+  success: "success",
+  green: "success",
+  default: "default",
 };
 
-const sizes = {
-  sm: "px-3 py-1 text-[12px]",
-  md: "px-3 py-1 text-[13px]",
-  lg: "px-4 py-1.5 text-[14px]",
+const sizeClasses = {
+  sm: "text-[12px] leading-none px-2 py-0.5",
+  md: "text-[13px] leading-none px-2.5 py-1",
+  lg: "text-[14px] leading-none px-3 py-1.5",
 };
 
 export default function Badge({
@@ -30,29 +35,12 @@ export default function Badge({
   className,
 }) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full font-semibold",
-        variants[variant],
-        sizes[size],
-        className
-      )}
+    <Tag
+      color={colorMap[variant] || "default"}
+      icon={dot || icon ? <span className={cn("material-symbols-outlined text-[12px]")}>{icon || "circle"}</span> : undefined}
+      className={cn("inline-flex items-center gap-1 rounded-full font-medium border-0", sizeClasses[size], className)}
     >
-      {dot && (
-        <span
-          className={cn(
-            "size-1.5 rounded-full",
-            variant === "success" && "bg-green-500",
-            variant === "warning" && "bg-yellow-500",
-            variant === "error" && "bg-red-500",
-            variant === "info" && "bg-blue-500",
-            variant === "primary" && "bg-brand-500",
-            variant === "default" && "bg-text-muted"
-          )}
-        />
-      )}
-      {icon && <span className="material-symbols-outlined text-[14px]">{icon}</span>}
       {children}
-    </span>
+    </Tag>
   );
 }
