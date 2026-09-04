@@ -1,20 +1,25 @@
 "use client";
 
+import { Button as AntButton, Spin } from "antd";
 import { cn } from "@/shared/utils/cn";
 
-const variants = {
-  primary: "bg-[color:var(--md-sys-color-primary)] text-[color:var(--md-sys-color-onPrimary)] hover:bg-[color:var(--md-sys-color-primary)] hover:opacity-80 disabled:bg-[color:var(--md-sys-color-onSurface)]/12 disabled:text-[color:var(--md-sys-color-onSurface)]/38",
-  secondary: "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)] hover:opacity-80 disabled:bg-[color:var(--md-sys-color-onSurface)]/12 disabled:text-[color:var(--md-sys-color-onSurface)]/38",
-  ghost: "text-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-primary)]/10 disabled:text-[color:var(--md-sys-color-onSurface)]/38",
-  danger: "bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] hover:opacity-80 disabled:bg-[color:var(--md-sys-color-onSurface)]/12 disabled:text-[color:var(--md-sys-color-onSurface)]/38",
-  success: "bg-[color:var(--md-sys-color-primary)] text-[color:var(--md-sys-color-onPrimary)] hover:opacity-80 disabled:bg-[color:var(--md-sys-color-onSurface)]/12 disabled:text-[color:var(--md-sys-color-onSurface)]/38",
-  outline: "border border-[color:var(--md-sys-color-outline)] text-[color:var(--md-sys-color-primary)] bg-transparent hover:bg-[color:var(--md-sys-color-primary)]/10 disabled:border-[color:var(--md-sys-color-onSurface)]/12 disabled:text-[color:var(--md-sys-color-onSurface)]/38",
+// Ant Design Button — maps the app's icon+loading contract onto antd.
+const typeMap = {
+  primary: "primary",
+  secondary: "default",
+  ghost: "text",
+  danger: "primary",
+  success: "primary",
+  outline: "default",
+  default: "default",
+  text: "text",
+  link: "link",
 };
 
-const sizes = {
-  sm: "h-7 px-3 text-[13px] rounded-[var(--md-sys-shape-corner-full)]",
-  md: "h-9 px-4 text-[14px] rounded-[var(--md-sys-shape-corner-full)]",
-  lg: "h-11 px-6 text-[14px] rounded-[var(--md-sys-shape-corner-full)]",
+const sizeMap = {
+  sm: "small",
+  md: "middle",
+  lg: "large",
 };
 
 export default function Button({
@@ -27,31 +32,34 @@ export default function Button({
   loading = false,
   fullWidth = false,
   className,
+  danger = false,
   ...props
 }) {
+  const antType = typeMap[variant] || "default";
+  const isDanger = variant === "danger" || variant === "error";
+  const antIconNode = loading ? <Spin size="small" /> : icon ? (
+    <span className="material-symbols-outlined text-[18px] leading-none">{icon}</span>
+  ) : null;
+
   return (
-    <button
+    <AntButton
+      type={antType}
+      size={sizeMap[size] || "middle"}
+      danger={danger || isDanger}
+      disabled={disabled}
+      loading={loading}
+      icon={antIconNode}
       className={cn(
-        "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-150 ease-out cursor-pointer",
-        "active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
-        variants[variant],
-        sizes[size],
+        "font-semibold",
         fullWidth && "w-full",
         className
       )}
-      disabled={disabled || loading}
       {...props}
     >
-      {loading ? (
-        <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-      ) : icon ? (
-        <span className="material-symbols-outlined text-[18px]">{icon}</span>
-      ) : null}
       {children}
       {iconRight && !loading && (
-        <span className="material-symbols-outlined text-[18px]">{iconRight}</span>
+        <span className="material-symbols-outlined ml-1 text-[18px] leading-none">{iconRight}</span>
       )}
-    </button>
+    </AntButton>
   );
 }
