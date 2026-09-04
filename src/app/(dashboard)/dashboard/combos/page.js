@@ -479,6 +479,43 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
     patch({ models: next.length === 0 ? [] : next });
   };
 
+  /** Clear every model in this adapter pool. */
+  const handleClearAll = () => patch({ models: [] });
+
+  /** Move the chip at `from` so it sits at `to` (splice move). */
+  const handleMoveTo = (from, to) => {
+    if (from === to || from < 0 || to < 0 || from >= models.length || to >= models.length) return;
+    const next = [...models];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    replaceModels(next);
+  };
+
+  // Keyboard/mouse-accessible nudge fallback.
+  const handleNudge = (index, delta) => handleMoveTo(index, index + delta);
+
+  const onDragStart = (e, index) => {
+    setDragIdx(index);
+    e.dataTransfer.effectAllowed = "move";
+    try { e.dataTransfer.setData("text/plain", String(index)); } catch { /* ignore */ }
+  };
+  const onDragOverChip = (e, index) => {
+    e.preventDefault();
+    setDragOverIdx(index);
+  };
+  const onDropChip = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const from = dragIdx != null ? dragIdx : Number(e.dataTransfer.getData("text/plain"));
+    handleMoveTo(from, index);
+    setDragIdx(null);
+    setDragOverIdx(null);
+  };
+  const onDragEnd = () => {
+    setDragIdx(null);
+    setDragOverIdx(null);
+  };
+
   // Helper: provider alias → 16-20px logo chip inside model id
   const chipProvider = (modelId) => (modelId?.includes("/") ? modelId.split("/")[0] : "");
   // Tiny formatter for pill badge ($8/M → "8", $0.5 → "0.5").
@@ -531,20 +568,40 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
             const caps = getCaps?.(model) || null;
             const pricing = getPricing?.(model) || null;
             const hasPrice = pricing && (pricing.input != null || pricing.output != null);
+            const isDragging = dragIdx === index;
+            const isDragOver = dragOverIdx === index && dragIdx !== null && dragIdx !== index;
             return (
               <span
                 key={`${model}-${index}`}
                 role="listitem"
-                className="group inline-flex shrink-0 items-center gap-1.5
+                draggable
+                onDragStart={(e) => onDragStart(e, index)}
+                onDragOver={(e) => onDragOverChip(e, index)}
+                onDrop={(e) => onDropChip(e, index)}
+                onDragEnd={onDragEnd}
+                className={`group inline-flex shrink-0 items-center gap-1
                            rounded-[var(--md-sys-shape-corner-full)]
                            bg-[var(--md-sys-color-secondaryContainer)]
-                           px-0.5 py-0.5 pl-1.5 pr-1 h-8 max-w-[300px]
-                           border border-[var(--md-sys-color-secondaryContainer)]
+                           px-0.5 py-0.5 pl-1 pr-0.5 h-8 max-w-[320px]
+                           border ${isDragOver ? "border-[var(--md-sys-color-primary)] ring-1 ring-[var(--md-sys-color-primary)]" : "border-[var(--md-sys-color-secondaryContainer)]"}
                            hover:border-[var(--md-sys-color-secondary)]
-                           transition-[background-color,border-color,transform] duration-[var(--md-sys-motion-duration-short,120ms)]"
+                           ${isDragging ? "opacity-40 cursor-grabbing" : "cursor-grab"}
+                           transition-[background-color,border-color,opacity] duration-[var(--md-sys-motion-duration-short,120ms)]`}
                 style={{ color: "var(--md-sys-color-onSecondaryContainer)" }}
+                title="Drag to reorder priority"
               >
+                {/* Drag/grab handle */}
+                <span className="shrink-0 text-[var(--md-sys-color-onSecondaryContainer)]/40" aria-hidden>
+                  <svg width="12" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="8" cy="5" r="1.6"/><circle cx="16" cy="5" r="1.6"/>
+                    <circle cx="8" cy="12" r="1.6"/><circle cx="16" cy="12" r="1.6"/>
+                    <circle cx="8" cy="19" r="1.6"/><circle cx="16" cy="19" r="1.6"/>
+                  </svg>
+                </span>
+
+                {/* Position */}
                 <span className="inline-block text-[9px] font-semibold opacity-70 tabular-nums">{index + 1}</span>
+
                 <ProviderIcon
                   providerId={chipProvider(model)}
                   size={18}
@@ -552,7 +609,7 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
                   fallbackText={chipProvider(model).slice(0, 2).toUpperCase()}
                   fallbackColor="var(--md-sys-color-onSecondary)"
                 />
-                <code className="truncate font-mono text-[12px] leading-none max-w-[140px]" title={model}>
+                <code className="truncate font-mono text-[12px] leading-none max-w-[130px]" title={model}>
                   {model}
                 </code>
                 {caps && (
@@ -561,7 +618,7 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
                   </span>
                 )}
                 {hasPrice && (
-                  <span className="ml-auto inline-flex items-center
+                  <span className="inline-flex items-center
                                    rounded-full h-5 leading-none px-1.5
                                    bg-[color:var(--md-sys-color-surfaceContainerHigh)] text-[10px] font-mono whitespace-nowrap"
                     style={{ color: "var(--md-sys-color-onSurfaceVariant)" }}
