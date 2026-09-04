@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Select as AntSelect } from "antd";
 import { Card, Button, Badge, Modal, Input, ModelSelectModal } from "@/shared/components";
 import Image from "next/image";
 
@@ -332,13 +333,12 @@ export default function AntigravityToolCard({
                 <span className="text-xs font-semibold text-text-main sm:text-right sm:text-sm">API Key</span>
                 <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
                 {apiKeys.length > 0 ? (
-                  <select
+                  <AntSelect
                     value={selectedApiKey}
-                    onChange={(e) => setSelectedApiKey(e.target.value)}
-                    className="w-full min-w-0 px-2 py-2 bg-surface rounded text-xs border border-border focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
-                  >
-                    {apiKeys.map((key) => <option key={key.id} value={key.key}>{key.key}</option>)}
-                  </select>
+                    onChange={setSelectedApiKey}
+                    className="w-full"
+                    options={apiKeys.map((key) => ({ value: key.key, label: key.key }))}
+                  />
                 ) : (
                   <span className="min-w-0 rounded bg-surface/40 px-2 py-2 text-xs text-text-muted sm:py-1.5">
                     {cloudEnabled ? "No API keys - Create one in Keys page" : "sk_oryphemrouter (default)"}
