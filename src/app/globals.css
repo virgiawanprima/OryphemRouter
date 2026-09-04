@@ -19,12 +19,12 @@
      Official M3 scheme. Light scheme is the default; `.dark`
      overrides with the M3 dark scheme below.
      ============================================================ */
-  --md-ref-palette-primary40: #6750A4;
-  --md-ref-palette-primary80: #D0BCFF;
-  --md-ref-palette-secondary40: #625B71;
-  --md-ref-palette-secondary80: #CCC2DC;
-  --md-ref-palette-tertiary40: #7D5260;
-  --md-ref-palette-tertiary80: #EFB8C8;
+  --md-ref-palette-primary40: #4655C9;
+  --md-ref-palette-primary80: #BCC2FF;
+  --md-ref-palette-secondary40: #5B5D72;
+  --md-ref-palette-secondary80: #C4C5DD;
+  --md-ref-palette-tertiary40: #00696B;
+  --md-ref-palette-tertiary80: #4DD9DB;
   --md-ref-palette-error40: #B3261E;
   --md-ref-palette-error80: #F2B8B5;
   --md-ref-palette-neutral10: #1D1B20;
@@ -35,37 +35,37 @@
   color-scheme: light;
 
   /* ---- M3 light scheme roles ---- */
-  --md-sys-color-primary: #6750A4;
+  --md-sys-color-primary: #4655C9;
   --md-sys-color-onPrimary: #FFFFFF;
-  --md-sys-color-primaryContainer: #EADDFF;
-  --md-sys-color-onPrimaryContainer: #21005D;
-  --md-sys-color-secondary: #625B71;
+  --md-sys-color-primaryContainer: #DEE0FF;
+  --md-sys-color-onPrimaryContainer: #001159;
+  --md-sys-color-secondary: #5B5D72;
   --md-sys-color-onSecondary: #FFFFFF;
-  --md-sys-color-secondaryContainer: #E8DEF8;
-  --md-sys-color-onSecondaryContainer: #1D192B;
-  --md-sys-color-tertiary: #7D5260;
+  --md-sys-color-secondaryContainer: #E0E1F9;
+  --md-sys-color-onSecondaryContainer: #181A2C;
+  --md-sys-color-tertiary: #00696B;
   --md-sys-color-onTertiary: #FFFFFF;
-  --md-sys-color-tertiaryContainer: #FFD8E4;
-  --md-sys-color-onTertiaryContainer: #31111D;
+  --md-sys-color-tertiaryContainer: #9CF1F2;
+  --md-sys-color-onTertiaryContainer: #002020;
   --md-sys-color-error: #B3261E;
   --md-sys-color-onError: #FFFFFF;
   --md-sys-color-errorContainer: #F9DEDC;
   --md-sys-color-onErrorContainer: #410E0B;
-  --md-sys-color-background: #FEF7FF;
-  --md-sys-color-onBackground: #1D1B20;
-  --md-sys-color-surface: #FEF7FF;
-  --md-sys-color-onSurface: #1D1B20;
-  --md-sys-color-surfaceVariant: #E7E0EC;
-  --md-sys-color-onSurfaceVariant: #49454F;
-  --md-sys-color-outline: #79747E;
-  --md-sys-color-outlineVariant: #CAC4D0;
+  --md-sys-color-background: #FBF8FF;
+  --md-sys-color-onBackground: #1B1B21;
+  --md-sys-color-surface: #FBF8FF;
+  --md-sys-color-onSurface: #1B1B21;
+  --md-sys-color-surfaceVariant: #E3E1EC;
+  --md-sys-color-onSurfaceVariant: #46464F;
+  --md-sys-color-outline: #777680;
+  --md-sys-color-outlineVariant: #C7C5D0;
   --md-sys-color-surfaceContainerLowest: #FFFFFF;
-  --md-sys-color-surfaceContainerLow: #F7F2FA;
-  --md-sys-color-surfaceContainer: #F3EDF7;
-  --md-sys-color-surfaceContainerHigh: #ECE6F0;
-  --md-sys-color-surfaceContainerHighest: #E6E0E9;
-  --md-sys-color-inverseSurface: #313033;
-  --md-sys-color-inverseOnSurface: #F4EFF4;
+  --md-sys-color-surfaceContainerLow: #F5F2FA;
+  --md-sys-color-surfaceContainer: #EFEDF5;
+  --md-sys-color-surfaceContainerHigh: #E9E7EF;
+  --md-sys-color-surfaceContainerHighest: #E3E1EA;
+  --md-sys-color-inverseSurface: #303036;
+  --md-sys-color-inverseOnSurface: #F3F0F7;
 
   /* ---- M3 shape ---- */
   --md-sys-shape-corner-none: 0px;
@@ -99,8 +99,8 @@
      border-border, bg-c-blue-600, ...) working while pointing at M3
      values. Refactors can migrate to --md-sys-* directly over time.
      ============================================================ */
-  --c-teal-50: #E0F2E8;  --c-teal-600: #2E7D57;  --c-teal-800: #164E35;  --c-teal-900: #0B3624;
-  --c-blue-50: #E9E4F5;  --c-blue-600: #7C6BB8;  --c-blue-800: #6750A4;  --c-blue-900: #4F378B;
+  --c-teal-50: #E0F5F5;  --c-teal-600: #008B8D;  --c-teal-800: #00696B;  --c-teal-900: #004F50;
+  --c-blue-50: #E8EAFB;  --c-blue-600: #5B65D6;  --c-blue-800: #4655C9;  --c-blue-900: #3140B1;
   --c-amber-50: #FFF0E0; --c-amber-600: #B3540C;  --c-amber-800: #7C3D00;  --c-amber-900: #572A00;
   --c-red-50: #FCE8E6;  --c-red-600: #C6443D;  --c-red-800: #A52620;  --c-red-900: #7C1D18;
   --c-gray-50: #FEF7FF; --c-gray-600: #49454F; --c-gray-800: #1D1B20; --c-gray-900: #141218;
@@ -156,40 +156,40 @@
   color-scheme: dark;
 
   /* ---- M3 dark scheme roles ---- */
-  --md-sys-color-primary: #D0BCFF;
-  --md-sys-color-onPrimary: #381E72;
-  --md-sys-color-primaryContainer: #4F378B;
-  --md-sys-color-onPrimaryContainer: #EADDFF;
-  --md-sys-color-secondary: #CCC2DC;
-  --md-sys-color-onSecondary: #332D41;
-  --md-sys-color-secondaryContainer: #4A4458;
-  --md-sys-color-onSecondaryContainer: #E8DEF8;
-  --md-sys-color-tertiary: #EFB8C8;
-  --md-sys-color-onTertiary: #492532;
-  --md-sys-color-tertiaryContainer: #633B48;
-  --md-sys-color-onTertiaryContainer: #FFD8E4;
+  --md-sys-color-primary: #BCC2FF;
+  --md-sys-color-onPrimary: #1B2A8F;
+  --md-sys-color-primaryContainer: #3140B1;
+  --md-sys-color-onPrimaryContainer: #DEE1FF;
+  --md-sys-color-secondary: #C4C5DD;
+  --md-sys-color-onSecondary: #2D2F42;
+  --md-sys-color-secondaryContainer: #434659;
+  --md-sys-color-onSecondaryContainer: #E0E1F9;
+  --md-sys-color-tertiary: #4DD9DB;
+  --md-sys-color-onTertiary: #003737;
+  --md-sys-color-tertiaryContainer: #004F50;
+  --md-sys-color-onTertiaryContainer: #9CF1F2;
   --md-sys-color-error: #F2B8B5;
   --md-sys-color-onError: #601410;
   --md-sys-color-errorContainer: #8C1D18;
   --md-sys-color-onErrorContainer: #F9DEDC;
-  --md-sys-color-background: #141218;
-  --md-sys-color-onBackground: #E6E0E9;
-  --md-sys-color-surface: #141218;
-  --md-sys-color-onSurface: #E6E0E9;
-  --md-sys-color-surfaceVariant: #49454F;
-  --md-sys-color-onSurfaceVariant: #CAC4D0;
-  --md-sys-color-outline: #938F99;
-  --md-sys-color-outlineVariant: #49454F;
-  --md-sys-color-surfaceContainerLowest: #0F0D13;
-  --md-sys-color-surfaceContainerLow: #1D1B20;
-  --md-sys-color-surfaceContainer: #211F26;
-  --md-sys-color-surfaceContainerHigh: #2B2930;
-  --md-sys-color-surfaceContainerHighest: #36343B;
-  --md-sys-color-inverseSurface: #E6E1E5;
-  --md-sys-color-inverseOnSurface: #313033;
+  --md-sys-color-background: #131318;
+  --md-sys-color-onBackground: #E4E1E9;
+  --md-sys-color-surface: #131318;
+  --md-sys-color-onSurface: #E4E1E9;
+  --md-sys-color-surfaceVariant: #46464F;
+  --md-sys-color-onSurfaceVariant: #C7C5D0;
+  --md-sys-color-outline: #91909A;
+  --md-sys-color-outlineVariant: #46464F;
+  --md-sys-color-surfaceContainerLowest: #0E0E13;
+  --md-sys-color-surfaceContainerLow: #1B1B21;
+  --md-sys-color-surfaceContainer: #1F1F25;
+  --md-sys-color-surfaceContainerHigh: #2A292F;
+  --md-sys-color-surfaceContainerHighest: #35343A;
+  --md-sys-color-inverseSurface: #E4E1E9;
+  --md-sys-color-inverseOnSurface: #303036;
 
-  --c-teal-50: #132E22; --c-teal-600: #6FC895; --c-teal-800: #3DA36B; --c-teal-900: #2E7D57;
-  --c-blue-50: #2A2440; --c-blue-600: #C3B1E7; --c-blue-800: #D0BCFF; --c-blue-900: #EADDFF;
+  --c-teal-50: #12312F; --c-teal-600: #4DD9DB; --c-teal-800: #35C3C5; --c-teal-900: #9CF1F2;
+  --c-blue-50: #2A2A45; --c-blue-600: #B4BBF1; --c-blue-800: #BCC2FF; --c-blue-900: #DEE0FF;
   --c-amber-50: #3A2613; --c-amber-600: #E8A26B; --c-amber-800: #FFB97A; --c-amber-900: #FFD4A8;
   --c-red-50: #3B1210; --c-red-600: #E8968E; --c-red-800: #F2B8B5; --c-red-900: #F9DEDC;
   --c-gray-50: #141218; --c-gray-600: #CAC4D0; --c-gray-800: #E6E0E9; --c-gray-900: #F5EFFF;

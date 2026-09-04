@@ -5,24 +5,24 @@
 "use client";
 
 export const M3_LIGHT = {
-  primary: "#6750A4", onPrimary: "#FFFFFF", primaryContainer: "#EADDFF", onPrimaryContainer: "#21005D",
-  secondary: "#625B71", onSecondary: "#FFFFFF", secondaryContainer: "#E8DEF8", onSecondaryContainer: "#1D192B",
-  tertiary: "#7D5260", onTertiary: "#FFFFFF", tertiaryContainer: "#FFD8E4", onTertiaryContainer: "#31111D",
+  primary: "#4655C9", onPrimary: "#FFFFFF", primaryContainer: "#DEE0FF", onPrimaryContainer: "#001159",
+  secondary: "#5B5D72", onSecondary: "#FFFFFF", secondaryContainer: "#E0E1F9", onSecondaryContainer: "#181A2C",
+  tertiary: "#00696B", onTertiary: "#FFFFFF", tertiaryContainer: "#9CF1F2", onTertiaryContainer: "#002020",
   error: "#B3261E", onError: "#FFFFFF", errorContainer: "#F9DEDC", onErrorContainer: "#410E0B",
-  background: "#FEF7FF", onBackground: "#1D1B20", surface: "#FEF7FF", onSurface: "#1D1B20",
-  surfaceVariant: "#E7E0EC", onSurfaceVariant: "#49454F", outline: "#79747E", outlineVariant: "#CAC4D0",
-  surfaceContainerLowest: "#FFFFFF", surfaceContainerLow: "#F7F2FA", surfaceContainer: "#F3EDF7",
-  surfaceContainerHigh: "#ECE6F0", surfaceContainerHighest: "#E6E0E9",
+  background: "#FBF8FF", onBackground: "#1B1B21", surface: "#FBF8FF", onSurface: "#1B1B21",
+  surfaceVariant: "#E3E1EC", onSurfaceVariant: "#46464F", outline: "#777680", outlineVariant: "#C7C5D0",
+  surfaceContainerLowest: "#FFFFFF", surfaceContainerLow: "#F5F2FA", surfaceContainer: "#EFEDF5",
+  surfaceContainerHigh: "#E9E7EF", surfaceContainerHighest: "#E3E1EA",
 };
 export const M3_DARK = {
-  primary: "#D0BCFF", onPrimary: "#381E72", primaryContainer: "#4F378B", onPrimaryContainer: "#EADDFF",
-  secondary: "#CCC2DC", onSecondary: "#332D41", secondaryContainer: "#4A4458", onSecondaryContainer: "#E8DEF8",
-  tertiary: "#EFB8C8", onTertiary: "#492532", tertiaryContainer: "#633B48", onTertiaryContainer: "#FFD8E4",
+  primary: "#BCC2FF", onPrimary: "#1B2A8F", primaryContainer: "#3140B1", onPrimaryContainer: "#DEE1FF",
+  secondary: "#C4C5DD", onSecondary: "#2D2F42", secondaryContainer: "#434659", onSecondaryContainer: "#E0E1F9",
+  tertiary: "#4DD9DB", onTertiary: "#003737", tertiaryContainer: "#004F50", onTertiaryContainer: "#9CF1F2",
   error: "#F2B8B5", onError: "#601410", errorContainer: "#8C1D18", onErrorContainer: "#F9DEDC",
-  background: "#141218", onBackground: "#E6E0E9", surface: "#141218", onSurface: "#E6E0E9",
-  surfaceVariant: "#49454F", onSurfaceVariant: "#CAC4D0", outline: "#938F99", outlineVariant: "#49454F",
-  surfaceContainerLowest: "#0F0D13", surfaceContainerLow: "#1D1B20", surfaceContainer: "#211F26",
-  surfaceContainerHigh: "#2B2930", surfaceContainerHighest: "#36343B",
+  background: "#131318", onBackground: "#E4E1E9", surface: "#131318", onSurface: "#E4E1E9",
+  surfaceVariant: "#46464F", onSurfaceVariant: "#C7C5D0", outline: "#91909A", outlineVariant: "#46464F",
+  surfaceContainerLowest: "#0E0E13", surfaceContainerLow: "#1B1B21", surfaceContainer: "#1F1F25",
+  surfaceContainerHigh: "#2A292F", surfaceContainerHighest: "#35343A",
 };
 
 export const M3_TYPOGRAPHY = {
