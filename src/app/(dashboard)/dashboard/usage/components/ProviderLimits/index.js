@@ -5,7 +5,7 @@ import ProviderIcon from "@/shared/components/ProviderIcon";
 import QuotaTable from "./QuotaTable";
 import Toggle from "@/shared/components/Toggle";
 import Tooltip from "@/shared/components/Tooltip";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect, Table as AntTable } from "antd";
 import {
   parseQuotaData,
   calculatePercentage,
@@ -1462,31 +1462,40 @@ export default function ProviderLimits() {
                     <span>{resetCreditsState.data.credits.length} reset credit{resetCreditsState.data.credits.length === 1 ? "" : "s"}</span>
                     <span>{resetCreditsState.data.availableCount ?? 0} available</span>
                   </div>
-                  <div className="overflow-x-auto rounded-xl border border-black/10 dark:border-white/10">
-                    <table className="w-full min-w-[560px] text-left text-sm">
-                      <thead className="bg-black/[0.03] text-xs uppercase tracking-wide text-text-muted dark:bg-white/[0.04]">
-                        <tr>
-                          <th className="px-3 py-2 font-medium">Status</th>
-                          <th className="px-3 py-2 font-medium">Granted At</th>
-                          <th className="px-3 py-2 font-medium">Expires At</th>
-                          <th className="px-3 py-2 font-medium">Remaining</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {resetCreditsState.data.credits.map((credit, index) => (
-                          <tr key={`${credit.status}-${credit.expiresAt || index}`} className="border-t border-black/5 dark:border-white/5">
-                            <td className="px-3 py-2">
-                              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                                {credit.status || "unknown"}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2 text-text-muted">{formatCreditDate(credit.grantedAt)}</td>
-                            <td className="px-3 py-2 text-text-primary">{formatCreditDate(credit.expiresAt)}</td>
-                            <td className="px-3 py-2 font-medium text-text-primary">{formatTimeRemaining(credit.expiresAt)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
+                    <AntTable
+                      rowKey={(credit, index) => `${credit.status}-${credit.expiresAt || index}`}
+                      dataSource={resetCreditsState.data.credits}
+                      size="small"
+                      pagination={false}
+                      scroll={{ x: 560 }}
+                      columns={[
+                        {
+                          title: "Status",
+                          dataIndex: "status",
+                          render: (v) => (
+                            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                              {v || "unknown"}
+                            </span>
+                          ),
+                        },
+                        {
+                          title: "Granted At",
+                          dataIndex: "grantedAt",
+                          render: (v) => <span className="text-text-muted">{formatCreditDate(v)}</span>,
+                        },
+                        {
+                          title: "Expires At",
+                          dataIndex: "expiresAt",
+                          render: (v) => <span className="text-text-primary">{formatCreditDate(v)}</span>,
+                        },
+                        {
+                          title: "Remaining",
+                          dataIndex: "expiresAt",
+                          render: (v) => <span className="font-medium text-text-primary">{formatTimeRemaining(v)}</span>,
+                        },
+                      ]}
+                    />
                   </div>
                 </div>
               ) : (
