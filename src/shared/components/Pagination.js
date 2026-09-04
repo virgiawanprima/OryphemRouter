@@ -1,8 +1,10 @@
 "use client";
 
+import { Pagination as AntPagination } from "antd";
 import { cn } from "@/shared/utils/cn";
-import Button from "./Button";
 
+// Ant Design Pagination — adapter keeping the app's existing props
+// (currentPage, pageSize, totalItems, onPageChange, onPageSizeChange).
 export default function Pagination({
   currentPage,
   pageSize,
@@ -11,145 +13,24 @@ export default function Pagination({
   onPageSizeChange,
   className,
 }) {
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const startItem = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
-  const endItem = Math.min(currentPage * pageSize, totalItems);
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const showMax = 5;
-
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + showMax - 1);
-
-    if (end - start + 1 < showMax) {
-      start = Math.max(1, end - showMax + 1);
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
-
-  const pageNumbers = getPageNumbers();
+  if (!totalItems || totalItems === 0) return null;
 
   return (
-    <div
-      className={cn(
-        "flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2",
-        className
-      )}
-    >
-      {/* Info text */}
-      {totalItems > 0 && (
-        <div className="text-sm text-text-muted">
-          Showing <span className="font-medium text-text-main">{startItem}</span> to{" "}
-          <span className="font-medium text-text-main">{endItem}</span> of{" "}
-          <span className="font-medium text-text-main">{totalItems}</span> results
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
-        {/* Page size selector */}
-        {onPageSizeChange && (
-          <div className="flex items-center gap-2">
-            <label htmlFor="pagination-rows" className="text-sm text-text-muted">Rows:</label>
-            <select
-              id="pagination-rows"
-              aria-label="Rows per page"
-              value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className={cn(
-                "h-9 rounded-[var(--md-sys-shape-corner-extra-small)] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surfaceContainerLow)]",
-                "text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-[color:var(--md-sys-color-primary)]/40",
-                "cursor-pointer"
-              )}
-              style={{ colorScheme: 'auto' }}
-            >
-              {[10, 20, 50].map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {totalPages > 1 && (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-              className="w-9 px-0"
-            >
-              <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-            </Button>
-
-            {pageNumbers[0] > 1 && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onPageChange(1)}
-                  className="w-9 px-0 hidden sm:inline-flex"
-                >
-                  1
-                </Button>
-                {pageNumbers[0] > 2 && (
-                  <span className="text-text-muted px-1 hidden sm:inline">...</span>
-                )}
-              </>
-            )}
-
-            {pageNumbers.map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "primary" : "ghost"}
-                size="sm"
-                onClick={() => onPageChange(page)}
-                aria-current={currentPage === page ? "page" : undefined}
-                className={cn(
-                  "w-9 px-0",
-                  currentPage === page ? "inline-flex" : "hidden sm:inline-flex"
-                )}
-              >
-                {page}
-              </Button>
-            ))}
-
-            {pageNumbers[pageNumbers.length - 1] < totalPages && (
-              <>
-                {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
-                  <span className="text-text-muted px-1 hidden sm:inline">...</span>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onPageChange(totalPages)}
-                  className="w-9 px-0 hidden sm:inline-flex"
-                >
-                  {totalPages}
-                </Button>
-              </>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              aria-label="Next page"
-              className="w-9 px-0"
-            >
-              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-            </Button>
-          </div>
-        )}
+    <div className={cn("flex items-center justify-between gap-4 flex-wrap", className)}>
+      <div className="text-sm text-text-muted">
+        <span className="font-medium text-text-main">{totalItems}</span> results
       </div>
+      <AntPagination
+        current={currentPage}
+        pageSize={pageSize}
+        total={totalItems}
+        onChange={onPageChange}
+        showSizeChanger={!!onPageSizeChange}
+        onShowSizeChange={onPageSizeChange ? (_, size) => onPageSizeChange(size) : undefined}
+        pageSizeOptions={[10, 20, 50]}
+        showQuickJumper
+        showTotal={(total) => null}
+      />
     </div>
   );
 }
