@@ -30,7 +30,7 @@ function ProgressBar({ used, total, color = "bg-green-500" }) {
   const pct = total && total !== "∞" ? Math.min((used / total) * 100, 100) : 0;
   return (
     <div className="w-full mt-2">
-      <div className="h-2 bg-surface-2 border border-border-500">
+      <div className="h-2 bg-[color:var(--md-sys-color-surfaceContainerHigh)] border border-[color:var(--md-sys-color-outlineVariant)]">
         <div
           className={`h-full ${color} transition-all duration-500`}
           style={{ width: `${pct}%` }}
@@ -124,7 +124,7 @@ export default function FreeTiersPage() {
         {freeTiers.map((tier, idx) => (
           <Card key={idx} className={`border ${TIER_BORDERS[tier.icon] || "border-border-500"}`}>
             <div className="flex items-start gap-3">
-              <div className={`p-2 ${TIER_BG_COLORS[tier.icon] || "text-text-muted"} bg-surface-2 rounded-[var(--radius-brand)] border border-border-500`}>
+              <div className={`p-2 ${TIER_BG_COLORS[tier.icon] || "text-text-muted"} bg-[color:var(--md-sys-color-surfaceContainerHigh)] rounded-[var(--md-sys-shape-corner-large)] border border-[color:var(--md-sys-color-outlineVariant)]`}>
                 <span className="material-symbols-outlined text-[24px]">
                   {TIER_ICONS[tier.icon] || "smart_toy"}
                 </span>

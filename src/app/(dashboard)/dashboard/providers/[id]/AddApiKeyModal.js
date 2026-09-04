@@ -315,7 +315,7 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
           </Badge>
         )}
         {modelsReport && modelsReport.live && (
-          <div className="rounded-lg bg-surface-2 border border-border p-3 text-xs space-y-1">
+          <div className="rounded-lg bg-[color:var(--md-sys-color-surfaceContainerHigh)] border border-[color:var(--md-sys-color-outlineVariant)] p-3 text-xs space-y-1">
             <p className="font-medium text-text-main">Model authenticity (dibanding katalog asli provider)</p>
             <p className="text-success">✅ {modelsReport.verified.length} terverifikasi</p>
             {modelsReport.corrected.length > 0 && (

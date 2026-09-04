@@ -100,7 +100,7 @@ export default function ComboDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Link href="/dashboard/combos" className="text-c-blue-600 hover:underline text-sm">
+        <Link href="/dashboard/combos" className="text-[color:var(--md-sys-color-primary)] hover:underline text-sm">
           <span className="material-symbols-outlined text-[18px] align-middle">arrow_back</span> Back to Combos
         </Link>
       </div>
@@ -130,7 +130,7 @@ export default function ComboDetailPage() {
         </div>
       </Card>
 
-      {error && <div className="border border-c-red-600/30 bg-c-red-50/5 rounded-[12px] p-3 text-[13px] text-c-red-700">{error}</div>}
+      {error && <div className="border border-[color:var(--md-sys-color-errorContainer)] bg-[color:var(--md-sys-color-errorContainer)] rounded-[var(--md-sys-shape-corner-large)] p-3 text-[13px] text-[color:var(--md-sys-color-onErrorContainer)]">{error}</div>}
 
       <Card padding="md">
         <h2 className="text-[16px] font-medium text-text-main mb-3">Routing strategy</h2>
