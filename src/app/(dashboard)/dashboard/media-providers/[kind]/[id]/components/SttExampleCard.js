@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Select as AntSelect } from "antd";
 import { Card } from "@/shared/components";
 import { getModelKind } from "@/shared/constants/models";
 import { getModelsByProviderId } from "@/shared/constants/models";
@@ -111,15 +112,12 @@ export function SttExampleCard({ providerId }) {
         {/* Model */}
         {sttModels.length > 0 ? (
           <Row label="Model">
-            <select
+            <AntSelect
               value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            >
-              {sttModels.map((m) => (
-                <option key={m.id} value={m.id}>{m.name || m.id}</option>
-              ))}
-            </select>
+              onChange={(v) => setSelectedModel(v)}
+              className="w-full"
+              options={sttModels.map((m) => ({ value: m.id, label: m.name || m.id }))}
+            />
           </Row>
         ) : (
           <Row label="Model">
@@ -220,17 +218,12 @@ export function SttExampleCard({ providerId }) {
         {/* Response format (if model supports) */}
         {allowedParams.includes("response_format") && (
           <Row label="Response Format">
-            <select
+            <AntSelect
               value={responseFormat}
-              onChange={(e) => setResponseFormat(e.target.value)}
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            >
-              <option value="json">json</option>
-              <option value="text">text</option>
-              <option value="srt">srt</option>
-              <option value="verbose_json">verbose_json</option>
-              <option value="vtt">vtt</option>
-            </select>
+              onChange={setResponseFormat}
+              className="w-full"
+              options={["json", "text", "srt", "verbose_json", "vtt"].map((f) => ({ value: f, label: f }))}
+            />
           </Row>
         )}
 
