@@ -5,11 +5,11 @@ import { Card, Button } from "@/shared/components";
 import { CONSOLE_LOG_CONFIG } from "@/shared/constants/config";
 
 const LOG_LEVEL_COLORS = {
-  LOG: "text-c-green",
-  INFO: "text-c-cyan",
-  WARN: "text-c-orange",
+  LOG: "text-[color:var(--md-sys-color-primary)]",
+  INFO: "text-[color:var(--md-sys-color-tertiary)]",
+  WARN: "text-[color:var(--md-sys-color-onSurfaceVariant)]",
   ERROR: "text-[color:var(--md-sys-color-error)]",
-  DEBUG: "text-c-purple",
+  DEBUG: "text-[color:var(--md-sys-color-primary)]",
 };
 
 function colorLine(line) {
