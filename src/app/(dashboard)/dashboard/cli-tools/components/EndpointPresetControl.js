@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Select as AntSelect } from "antd";
 
 const STORAGE_KEY = "oryphemrouter.cliToolEndpointPresets";
 
@@ -92,18 +93,19 @@ export default function EndpointPresetControl({
     <div className="flex items-center gap-2">
       <span className="w-32 shrink-0 text-sm font-semibold text-text-main text-right">Preset</span>
       <span className="material-symbols-outlined text-text-muted text-[14px]">arrow_forward</span>
-      <select
+      <AntSelect
         value={selectedName}
-        onChange={(event) => handleSelect(event.target.value)}
-        className="flex-1 px-2 py-1.5 bg-surface rounded text-xs border border-border focus:outline-none focus:ring-1 focus:ring-primary/50"
-      >
-        <option value="">Manual / current endpoint</option>
-        {presets.map((preset) => (
-          <option key={preset.name} value={preset.name}>
-            {preset.name} - {preset.baseUrl} ({maskApiKey(preset.apiKey)})
-          </option>
-        ))}
-      </select>
+        onChange={(value) => handleSelect(value)}
+        className="flex-1"
+        placeholder="Manual / current endpoint"
+        options={[
+          { value: "", label: "Manual / current endpoint" },
+          ...presets.map((preset) => ({
+            value: preset.name,
+            label: `${preset.name} - ${preset.baseUrl} (${maskApiKey(preset.apiKey)})`,
+          })),
+        ]}
+      />
       <button
         type="button"
         onClick={handleSave}
