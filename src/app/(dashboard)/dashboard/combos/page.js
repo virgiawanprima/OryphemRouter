@@ -689,6 +689,19 @@ function CapacityAdapterCap({ cap, entry, onChange, activeProviders, getCaps, ge
           >
             Add Model
           </Button>
+          {models.length > 0 && (
+            <Button
+              icon="delete_sweep"
+              variant="ghost"
+              size="sm"
+              onClick={handleClearAll}
+              disabled={!enabled}
+              title={`Remove all ${models.length} ${cap.label} models`}
+              className="text-[var(--md-sys-color-error)] hover:bg-[color:var(--md-sys-color-errorContainer)]"
+            >
+              Hapus Semua
+            </Button>
+          )}
         </div>
       </div>
 
