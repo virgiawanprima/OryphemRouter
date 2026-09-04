@@ -487,7 +487,7 @@ export default function TokenSaverClient() {
             Token Saver
           </h2>
         </div>
-        <div className="flex items-center justify-between pt-2 pb-4 border-b border-border gap-4">
+        <div className="flex items-center justify-between pt-2 pb-4 border-b border-[color:var(--md-sys-color-outlineVariant)] gap-4">
           <div className="min-w-0 flex-1">
             <p className="font-medium">
               Compress tool output{" "}
@@ -509,7 +509,7 @@ export default function TokenSaverClient() {
             onChange={() => handleRtkEnabled(!rtkEnabled)}
           />
         </div>
-        <div className="flex items-center justify-between py-4 border-b border-border gap-4">
+        <div className="flex items-center justify-between py-4 border-b border-[color:var(--md-sys-color-outlineVariant)] gap-4">
           <div className="min-w-0 flex-1">
             <p className="font-medium">Semantic Cache</p>
             <p className="text-sm text-text-muted">
@@ -655,7 +655,7 @@ export default function TokenSaverClient() {
             </p>
           </div>
         )}
-        <div className="flex items-center justify-between pt-4 border-t border-border gap-4 flex-wrap">
+        <div className="flex items-center justify-between pt-4 border-t border-[color:var(--md-sys-color-outlineVariant)] gap-4 flex-wrap">
           <div className="min-w-0 flex-1">
             <p className="font-medium">
               Compress LLM output{" "}
@@ -705,7 +705,7 @@ export default function TokenSaverClient() {
             />
           </div>
         </div>
-        <div className="flex items-center justify-between pt-4 mt-4 border-t border-border gap-4 flex-wrap">
+        <div className="flex items-center justify-between pt-4 mt-4 border-t border-[color:var(--md-sys-color-outlineVariant)] gap-4 flex-wrap">
           <div className="min-w-0 flex-1">
             <p className="font-medium">
               Lazy senior dev{" "}
@@ -758,7 +758,7 @@ export default function TokenSaverClient() {
         </div>
         {/* PXPIPE hidden from UI — experimental, not exposed to users yet */}
         {false && (
-        <div className="flex items-center justify-between pt-4 mt-4 border-t border-border gap-4 flex-wrap">
+        <div className="flex items-center justify-between pt-4 mt-4 border-t border-[color:var(--md-sys-color-outlineVariant)] gap-4 flex-wrap">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-3 flex-wrap">
               <p className="font-medium">
@@ -823,7 +823,7 @@ export default function TokenSaverClient() {
               href="/api/headroom/proxy/dashboard"
               target="_blank"
               rel="noreferrer"
-              className="w-full rounded-[var(--md-sys-shape-corner-extra-small)] border border-[color:var(--md-sys-color-outline)] px-4 py-2 text-center text-sm hover:bg-surface-2"
+              className="w-full rounded-[var(--md-sys-shape-corner-extra-small)] border border-[color:var(--md-sys-color-outline)] px-4 py-2 text-center text-sm hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)]"
             >
               Open Headroom Dashboard
             </a>
@@ -930,7 +930,7 @@ export default function TokenSaverClient() {
             </span>
           </div>
           {pxpipeHealth?.checks?.length > 0 && (
-            <div className="flex flex-col gap-1 rounded border border-border p-3">
+            <div className="flex flex-col gap-1 rounded-[var(--md-sys-shape-corner-large)] border border-[color:var(--md-sys-color-outlineVariant)] p-3">
               <p className="text-sm font-medium mb-1">Health check</p>
               {pxpipeHealth.checks.map((check) => (
                 <div key={check.id} className="flex items-center justify-between text-xs">
@@ -983,7 +983,7 @@ export default function TokenSaverClient() {
               </Button>
               <a
                 href="/dashboard/pxpipe#logs"
-                className="col-span-2 rounded-[var(--md-sys-shape-corner-extra-small)] border border-[color:var(--md-sys-color-outline)] px-4 py-2 text-center text-sm hover:bg-surface-2"
+                className="col-span-2 rounded-[var(--md-sys-shape-corner-extra-small)] border border-[color:var(--md-sys-color-outline)] px-4 py-2 text-center text-sm hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)]"
               >
                 Open Logs
               </a>
