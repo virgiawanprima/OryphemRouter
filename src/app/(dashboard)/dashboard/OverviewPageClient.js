@@ -118,17 +118,17 @@ export default function OverviewPageClient() {
   if (online === true) serverStatus = "Online";
   else if (online === false) serverStatus = "Offline";
   let serverColor = "text-text-subtle";
-  if (online === true) serverColor = "text-c-green";
-  else if (online === false) serverColor = "text-c-red-600";
+  if (online === true) serverColor = "text-[color:var(--md-sys-color-primary)]";
+  else if (online === false) serverColor = "text-[color:var(--md-sys-color-error)]";
   const connValue = loading ? "..." : String(providers.connectionCount);
   const connNote = loading ? "loading" : `${providers.activeCount} active`;
   const tokensValue = loading ? "..." : Number.isFinite(totalTokens) ? totalTokens.toLocaleString() : "--";
 
   const statCards = [
     { label: "Server", value: serverStatus, color: serverColor, icon: "dns", note: `uptime ${uptimeStr}` },
-    { label: "Connections", value: connValue, color: "text-c-purple", icon: "link", note: connNote },
-    { label: "Active requests", value: liveStats?.activeRequests ?? 0, color: "text-c-cyan", icon: "swap_vert", note: "live via SSE" },
-    { label: "Tokens (24h)", value: tokensValue, color: "text-c-purple", icon: "toll", note: "est. token flow" },
+    { label: "Connections", value: connValue, color: "text-[color:var(--md-sys-color-primary)]", icon: "link", note: connNote },
+    { label: "Active requests", value: liveStats?.activeRequests ?? 0, color: "text-[color:var(--md-sys-color-tertiary)]", icon: "swap_vert", note: "live via SSE" },
+    { label: "Tokens (24h)", value: tokensValue, color: "text-[color:var(--md-sys-color-primary)]", icon: "toll", note: "est. token flow" },
   ];
 
   return (
@@ -136,8 +136,8 @@ export default function OverviewPageClient() {
       {/* Error banner */}
       {Object.keys(errors).length > 0 && (
         <div className="border border-[color:var(--md-sys-color-errorContainer)] bg-[color:var(--md-sys-color-errorContainer)] text-[color:var(--md-sys-color-onErrorContainer)] rounded-[var(--md-sys-shape-corner-large)] p-3">
-          <p className="text-[13px] text-c-red-600 font-medium">Data fetch error</p>
-          <div className="mt-1 text-[13px] text-c-red-800">
+          <p className="text-[13px] text-[color:var(--md-sys-color-error)] font-medium">Data fetch error</p>
+          <div className="mt-1 text-[13px] text-[color:var(--md-sys-color-onErrorContainer)]">
             {Object.entries(errors).map(([k, v]) => (
               <div key={k}>{k}: {v}</div>
             ))}
@@ -150,11 +150,11 @@ export default function OverviewPageClient() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-[22px] font-medium text-text-main">Overview</h1>
-            <p className="mt-0.5 text-[13px] text-c-purple">AI Router Cockpit: real-time provider &amp; usage monitoring</p>
+            <p className="mt-0.5 text-[13px] text-[color:var(--md-sys-color-primary)]">AI Router Cockpit: real-time provider &amp; usage monitoring</p>
             <div className="mt-2">
-              <p className="flex items-center gap-0.5 font-mono text-[13px] text-c-green">
+              <p className="flex items-center gap-0.5 font-mono text-[13px] text-[color:var(--md-sys-color-primary)]">
                 {typed}
-                <span aria-hidden="true" className={`inline-block h-4 w-[7px] rounded-[1px] bg-c-green ${typed.length < TERMINAL_CMD.length ? "animate-cursor-blink" : "animate-cursor-blink opacity-60"}`} />
+                <span aria-hidden="true" className={`inline-block h-4 w-[7px] rounded-[1px] bg-[color:var(--md-sys-color-primary)] ${typed.length < TERMINAL_CMD.length ? "animate-cursor-blink" : "animate-cursor-blink opacity-60"}`} />
               </p>
               <p className="mt-1 text-[13px] text-text-muted">monitor your AI router status, providers, and usage.</p>
             </div>
@@ -181,7 +181,7 @@ export default function OverviewPageClient() {
                 <p key={s.value} className={`mt-1 text-[22px] font-medium tabular-nums ${s.color}`}>{s.value}</p>
                 <p className="mt-1 text-[13px] text-text-muted">{s.note}</p>
               </div>
-              <span className="material-symbols-outlined text-[20px] text-c-blue-600">{s.icon}</span>
+              <span className="material-symbols-outlined text-[20px] text-[color:var(--md-sys-color-primary)]">{s.icon}</span>
             </div>
           </Card>
         ))}
@@ -192,7 +192,7 @@ export default function OverviewPageClient() {
         <Card padding="sm">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[18px] font-medium text-text-main">Provider health</h2>
-            <Link href="/dashboard/providers" className="text-[13px] text-c-blue-600 hover:underline">View all</Link>
+            <Link href="/dashboard/providers" className="text-[13px] text-[color:var(--md-sys-color-primary)] hover:underline">View all</Link>
           </div>
           {providers.groups.length === 0 ? (
             <p className="text-[13px] text-text-muted">Connect your first provider</p>
@@ -202,12 +202,12 @@ export default function OverviewPageClient() {
                 const conns = g.connections || [];
                 const active = conns.filter((c) => c.isActive !== false);
                 const state = conns.length === 0
-                  ? { label: "Free", cls: "text-c-teal-600" }
+                  ? { label: "Free", cls: "text-[color:var(--md-sys-color-primary)]" }
                   : active.length > 0
-                    ? { label: `${active.length} up`, cls: "text-c-teal-600" }
-                    : { label: "Down", cls: "text-c-red-600" };
+                    ? { label: `${active.length} up`, cls: "text-[color:var(--md-sys-color-primary)]" }
+                    : { label: "Down", cls: "text-[color:var(--md-sys-color-error)]" };
                 return (
-                  <div key={g.provider} className="flex items-center gap-2 px-2 py-1 rounded-[8px] hover:bg-surface-2 transition-colors">
+                  <div key={g.provider} className="flex items-center gap-2 px-2 py-1 rounded-[8px] hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] transition-colors">
                     <ProviderIcon
                       src={`/providers/${g.provider}.png`}
                       alt={g.provider}
@@ -236,9 +236,9 @@ export default function OverviewPageClient() {
               <Link
                 key={n.href}
                 href={n.href}
-                className="group flex items-center gap-2.5 px-3 py-2.5 rounded-[8px] border border-transparent hover:border-c-blue-600/30 hover:bg-c-blue-50/5 transition-all"
+                className="group flex items-center gap-2.5 px-3 py-2.5 rounded-[8px] border border-transparent hover:border-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] transition-all"
               >
-                <span className="material-symbols-outlined text-[18px] text-c-blue-600">{n.icon}</span>
+                <span className="material-symbols-outlined text-[18px] text-[color:var(--md-sys-color-primary)]">{n.icon}</span>
                 <div className="min-w-0">
                   <p className="text-[13px] font-medium text-text-main truncate">{n.label}</p>
                   <p className="text-[13px] text-text-muted truncate">{n.desc}</p>
@@ -253,19 +253,19 @@ export default function OverviewPageClient() {
       <Card padding="sm">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-[18px] font-medium text-text-main">Request logs</h2>
-          <Link href="/dashboard/usage" className="text-[13px] text-c-blue-600 hover:underline">View all</Link>
+          <Link href="/dashboard/usage" className="text-[13px] text-[color:var(--md-sys-color-primary)] hover:underline">View all</Link>
         </div>
         {logs.length === 0 ? (
           <p className="text-[13px] text-text-muted">Send your first request to see logs here</p>
         ) : (
           <div className="text-[13px] max-h-60 overflow-y-auto">
             {logs.map((log, i) => (
-              <div key={i} className="flex items-center gap-2 px-2 py-1 border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
+              <div key={i} className="flex items-center gap-2 px-2 py-1 border-b border-[color:var(--md-sys-color-outlineVariant)] last:border-b-0 hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] transition-colors">
                 <span className="text-text-muted shrink-0">{(() => { const ts = log.timestamp || log.createdAt; return ts ? new Date(ts).toLocaleTimeString("en-GB") : "--:--:--"; })()}</span>
-                <span className={log.status === "error" ? "text-c-red-600" : "text-c-teal-600"}>{log.status || "200"}</span>
-                <span className="text-c-blue-600 truncate">{log.provider || "?"}</span>
+                <span className={log.status === "error" ? "text-[color:var(--md-sys-color-error)]" : "text-[color:var(--md-sys-color-primary)]"}>{log.status || "200"}</span>
+                <span className="text-[color:var(--md-sys-color-primary)] truncate">{log.provider || "?"}</span>
                 <span className="text-text-muted truncate flex-1">{log.model || ""}</span>
-                {typeof log.tokens === "number" && <span className="text-c-teal-600 shrink-0">{log.tokens}t</span>}
+                {typeof log.tokens === "number" && <span className="text-[color:var(--md-sys-color-primary)] shrink-0">{log.tokens}t</span>}
               </div>
             ))}
           </div>
