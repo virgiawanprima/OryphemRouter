@@ -29,7 +29,7 @@ export default function Toggle({
   return (
     <div className={cn("flex items-center gap-3", disabled && "opacity-60", className)}>
       <Switch
-        size="default"
+        size="medium"
         checked={checked}
         onChange={(v) => { if (!disabled && onChange) onChange(v); }}
         disabled={disabled}

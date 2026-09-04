@@ -44,7 +44,7 @@ export default function Modal({
     <AntModal
       open={isOpen}
       onCancel={onClose}
-      maskClosable={closeOnOverlay}
+      mask={{ closable: closeOnOverlay }}
       width={sizeWidths[size] || 480}
       title={title ? headerNode : undefined}
       footer={footer !== undefined ? footer : null}
