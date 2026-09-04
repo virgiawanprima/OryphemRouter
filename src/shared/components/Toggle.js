@@ -1,8 +1,11 @@
 "use client";
 
-import { cn } from "@/shared/utils/cn";
 import { useId } from "react";
+import { Switch } from "antd";
+import { cn } from "@/shared/utils/cn";
 
+// Ant Design Switch — adapter keeping the app's existing API contract.
+// App API: onChange(nextValue) passes the NEW value (like a checkbox toggle).
 export default function Toggle({
   checked = false,
   onChange,
@@ -16,52 +19,26 @@ export default function Toggle({
   const id = useId();
   const labelId = `${id}-label`;
 
-  const sizes = {
-    sm: { track: "w-8 h-4", thumb: "size-3", translate: "translate-x-4" },
-    md: { track: "w-11 h-6", thumb: "size-5", translate: "translate-x-5" },
-    lg: { track: "w-14 h-7", thumb: "size-6", translate: "translate-x-7" },
+  const sizeMap = {
+    sm: { w: 28, h: 16, handle: 12, gap: 3 },
+    md: { w: 40, h: 22, handle: 16, gap: 4 },
+    lg: { w: 52, h: 30, handle: 22, gap: 6 },
   };
-
-  const handleClick = () => {
-    if (!disabled && onChange) onChange(!checked);
-  };
+  const sz = sizeMap[size] || sizeMap.md;
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3",
-        disabled && "opacity-50 cursor-not-allowed",
-        className
-      )}
-    >
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
+    <div className={cn("flex items-center gap-3", disabled && "opacity-60", className)}>
+      <Switch
+        size="default"
+        checked={checked}
+        onChange={(v) => { if (!disabled && onChange) onChange(v); }}
+        disabled={disabled}
         aria-labelledby={label ? labelId : undefined}
         aria-label={!label ? props["aria-label"] : undefined}
-        disabled={disabled}
-        onClick={handleClick}
-        className={cn(
-          "relative inline-flex shrink-0 cursor-pointer rounded-full",
-          "transition-colors duration-200 ease-in-out",
-          "focus:outline-none focus:ring-2 focus:ring-[color:var(--md-sys-color-primary)]/40",
-          checked ? "bg-[color:var(--md-sys-color-primary)]" : "bg-[color:var(--md-sys-color-surfaceContainerHighest)]",
-          sizes[size].track,
-          disabled && "cursor-not-allowed"
-        )}
+        style={{ minWidth: sz.w, width: sz.w, height: sz.h }}
+        className="antd-switch-ryp"
         {...props}
-      >
-        <span
-          className={cn(
-            "pointer-events-none inline-block rounded-full bg-white shadow-sm",
-            "transform transition duration-200 ease-in-out",
-            checked ? sizes[size].translate : "translate-x-0.5",
-            sizes[size].thumb,
-            "mt-0.5"
-          )}
-        />
-      </button>
+      />
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
