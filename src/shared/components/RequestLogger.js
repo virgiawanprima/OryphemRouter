@@ -69,7 +69,7 @@ export default function RequestLogger() {
             <div className="p-8 text-center text-text-muted">No logs recorded yet.</div>
           ) : (
             <AntTable
-              rowKey={(_, i) => i}
+              rowKey={(log) => `${log.timestamp}-${log.model}-${log.sent}`}
               dataSource={logs}
               size="small"
               pagination={false}

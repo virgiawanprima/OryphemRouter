@@ -202,7 +202,7 @@ export default function UsageTable({
       </div>
       <div className="overflow-x-auto">
         <AntTable
-          rowKey={(group) => group.groupKey}
+          rowKey="groupKey"
           dataSource={groupedData}
           size="small"
           pagination={false}

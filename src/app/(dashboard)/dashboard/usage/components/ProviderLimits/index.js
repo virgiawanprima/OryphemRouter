@@ -1465,7 +1465,7 @@ export default function ProviderLimits() {
                   </div>
                   <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
                     <AntTable
-                      rowKey={(credit, index) => `${credit.status}-${credit.expiresAt || index}`}
+                      rowKey={(credit) => `${credit.status}-${credit.expiresAt || credit.id || ''}`}
                       dataSource={resetCreditsState.data.credits}
                       size="small"
                       pagination={false}

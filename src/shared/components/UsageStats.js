@@ -67,7 +67,7 @@ function RecentRequests({ requests = [] }) {
       ) : (
         <div className="flex-1 overflow-hidden">
           <AntTable
-            rowKey={(_, i) => i}
+            rowKey={(req) => `${req.timestamp}-${req.model}-${req.provider}`}
             dataSource={requests}
             size="small"
             pagination={false}

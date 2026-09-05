@@ -257,7 +257,7 @@ export default function RequestDetailsTab() {
       <Card padding="none">
         <div className="overflow-hidden">
           <AntTable
-            rowKey={(record, index) => `${record.id}-${index}`}
+            rowKey={(record) => record.id}
             dataSource={details}
             size="small"
             pagination={false}

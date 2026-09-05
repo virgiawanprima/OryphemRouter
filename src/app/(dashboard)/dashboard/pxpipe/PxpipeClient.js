@@ -206,7 +206,7 @@ export default function PxpipeClient() {
       <Card className="p-4">
         <Typography.Title level={3} style={{ fontSize: 16, fontWeight: 500, margin: 0 }} className="mb-3">History</Typography.Title>
         <AntTable
-          rowKey={(ev, i) => `${ev.ts}-${i}`}
+          rowKey={(ev) => ev.ts}
           dataSource={(stats?.recent || []).slice(0, 50)}
           size="small"
           pagination={false}
