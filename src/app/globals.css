@@ -129,7 +129,7 @@
   --color-surface-3: var(--md-sys-color-surfaceContainerHigh);
   --color-surface-4: var(--md-sys-color-surfaceContainerHighest);
   --color-sidebar: var(--md-sys-color-surfaceContainerLow);
-  --color-deepest: var(--md-sys-color-surfaceContainerLowest);
+  --color-deepest: #C4C8DA;
   --color-raised: var(--md-sys-color-surfaceContainerLow);
   --color-border: var(--md-sys-color-outlineVariant);
   --color-border-500: var(--md-sys-color-outlineVariant);
