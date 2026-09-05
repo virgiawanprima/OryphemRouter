@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
+import { Typography } from "antd";
 import {
   Card,
   CardSkeleton,
@@ -392,9 +393,9 @@ export default function ProvidersPage() {
       {/* Custom Providers (OpenAI/Anthropic Compatible) — dynamic */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
+          <Typography.Title level={2} className="flex items-center gap-2 leading-tight" style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
             Custom Providers (OpenAI/Anthropic Compatible){" "}
-          </h2>
+          </Typography.Title>
           <div className="grid grid-cols-1 gap-2 sm:flex sm:w-auto">
             <Button
               size="sm"
@@ -445,9 +446,9 @@ export default function ProvidersPage() {
       {oauthEntries.length > 0 && (
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
+          <Typography.Title level={2} className="flex items-center gap-2 leading-tight" style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
             OAuth Providers
-          </h2>
+          </Typography.Title>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <ModelAvailabilityBadge />
             <button
@@ -492,9 +493,9 @@ export default function ProvidersPage() {
       {(freeEntries.length > 0 || freeTierEntries.length > 0) && (
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
+          <Typography.Title level={2} className="flex items-center gap-2 leading-tight" style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
             Free Tier Providers
-          </h2>
+          </Typography.Title>
           <button
             onClick={() => handleBatchTest("free")}
             disabled={!!testingMode}
@@ -553,9 +554,9 @@ export default function ProvidersPage() {
       {apikeyEntries.length > 0 && (
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
+          <Typography.Title level={2} className="flex items-center gap-2 leading-tight" style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
             API Key Providers{" "}
-          </h2>
+          </Typography.Title>
           <button
             onClick={() => handleBatchTest("apikey")}
             disabled={!!testingMode}
@@ -603,9 +604,9 @@ export default function ProvidersPage() {
       {webCookieEntries.length > 0 && (
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 leading-tight">
+          <Typography.Title level={2} className="flex items-center gap-2 leading-tight" style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
             Web Cookie Providers{" "}
-          </h2>
+          </Typography.Title>
           <button
             onClick={() => handleBatchTest("apikey")}
             disabled={!!testingMode}
@@ -671,7 +672,7 @@ export default function ProvidersPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-3 border-b border-border bg-surface/95 backdrop-blur-sm rounded-t-xl">
-              <h3 className="font-semibold">Test Results</h3>
+              <Typography.Title level={3} style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Test Results</Typography.Title>
               <button
                 onClick={() => setTestResults(null)}
                 className="p-1 rounded-lg hover:bg-bg text-text-muted hover:text-text-main transition-colors"
@@ -733,7 +734,7 @@ function ProviderCard({ providerId, provider, stats, authType, onToggle }) {
               />
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold">{provider.name}</h3>
+              <Typography.Title level={3} className="truncate" style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>{provider.name}</Typography.Title>
               <div className="flex min-w-0 items-center gap-1.5 text-xs flex-wrap">
                 {allDisabled ? (
                   <Badge variant="default" size="sm">
@@ -861,7 +862,7 @@ function ApiKeyProviderCard({
               />
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold">{provider.name}</h3>
+              <Typography.Title level={3} className="truncate" style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>{provider.name}</Typography.Title>
               <div className="flex min-w-0 items-center gap-1.5 text-xs flex-wrap">
                 {allDisabled ? (
                   <Badge variant="default" size="sm">

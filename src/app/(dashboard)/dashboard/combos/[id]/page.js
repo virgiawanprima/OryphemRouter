@@ -3,6 +3,7 @@
 import { useParams, notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Typography } from "antd";
 import { Card, Button, Select, Badge, PageLoading, CapacityBadges, ConfirmModal } from "@/shared/components";
 import { useModelCaps } from "@/shared/hooks/useModelCaps";
 
@@ -109,7 +110,7 @@ export default function ComboDetailPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-[22px] font-semibold text-text-main">{combo.name}</h1>
+              <Typography.Title level={1} style={{ fontSize: 22, fontWeight: 500, margin: 0 }}>{combo.name}</Typography.Title>
               <Badge>{kindLabel}</Badge>
             </div>
             <p className="text-[13px] text-text-muted">

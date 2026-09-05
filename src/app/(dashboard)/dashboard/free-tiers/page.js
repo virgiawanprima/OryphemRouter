@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Card, Badge, CardSkeleton } from "@/shared/components";
-import { useNotificationStore } from "@/store/notificationStore";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { Typography } from "antd";
 import { useLiveRefresh } from "@/shared/hooks/useRealtime";
+import { useNotificationStore } from "@/store/notificationStore";
+import { Card, Badge, CardSkeleton } from "@/shared/components";
 
 const TIER_ICONS = {
   kiro: "emoji_events",
@@ -85,10 +86,10 @@ export default function FreeTiersPage() {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-text-main flex items-center gap-2">
+          <Typography.Title level={1} style={{ fontSize: 20, fontWeight: 500, margin: 0 }} className="flex items-center gap-2 text-text-main">
             <span className="material-symbols-outlined text-primary">local_atm</span>
             Free Tiers
-          </h1>
+          </Typography.Title>
           <p className="text-sm text-text-muted mt-1">
             Track your free usage across all providers.
             {data?.lastUpdated && (

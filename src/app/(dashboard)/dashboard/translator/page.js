@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Typography } from "antd";
 import { Card, Button } from "@/shared/components";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import dynamic from "next/dynamic";
@@ -215,7 +216,7 @@ export default function TranslatorPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h1 className="text-2xl font-bold text-text-main">Translator</h1>
+          <Typography.Title level={1} style={{ fontSize: 24, fontWeight: 500, margin: 0 }}>Translator</Typography.Title>
           <p className="text-sm text-text-muted mt-1">Replay request flow: matches log files</p>
         </div>
         {meta && (

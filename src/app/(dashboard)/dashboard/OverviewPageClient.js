@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { Typography } from "antd";
 import { Card, Button } from "@/shared/components";
 import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useRealtime, LiveBadge, useLiveRefresh } from "@/shared/hooks/useRealtime";
@@ -149,8 +150,8 @@ export default function OverviewPageClient() {
       <Card padding="md">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-[22px] font-medium text-text-main">Overview</h1>
-            <p className="mt-0.5 text-[13px] text-[color:var(--md-sys-color-primary)]">AI Router Cockpit: real-time provider &amp; usage monitoring</p>
+            <Typography.Title level={1} style={{ fontSize: 22, fontWeight: 500, margin: 0 }}>Overview</Typography.Title>
+            <Typography.Text style={{ fontSize: 13 }} type="secondary" className="!text-[color:var(--md-sys-color-primary)]">AI Router Cockpit: real-time provider &amp; usage monitoring</Typography.Text>
             <div className="mt-2">
               <p className="flex items-center gap-0.5 font-mono text-[13px] text-[color:var(--md-sys-color-primary)]">
                 {typed}
@@ -191,7 +192,7 @@ export default function OverviewPageClient() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <Card padding="sm">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[18px] font-medium text-text-main">Provider health</h2>
+            <Typography.Title level={2} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Provider health</Typography.Title>
             <Link href="/dashboard/providers" className="text-[13px] text-[color:var(--md-sys-color-primary)] hover:underline">View all</Link>
           </div>
           {providers.groups.length === 0 ? (
@@ -229,7 +230,7 @@ export default function OverviewPageClient() {
 
         <Card padding="sm">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[18px] font-medium text-text-main">Quick access</h2>
+            <Typography.Title level={2} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Quick access</Typography.Title>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {NAV_QUICK.map((n) => (
@@ -252,7 +253,7 @@ export default function OverviewPageClient() {
       {/* Log tail */}
       <Card padding="sm">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[18px] font-medium text-text-main">Request logs</h2>
+          <Typography.Title level={2} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Request logs</Typography.Title>
           <Link href="/dashboard/usage" className="text-[13px] text-[color:var(--md-sys-color-primary)] hover:underline">View all</Link>
         </div>
         {logs.length === 0 ? (

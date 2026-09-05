@@ -1,5 +1,6 @@
 "use client";
 
+import { Typography } from "antd";
 import { useParams, notFound, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -94,7 +95,7 @@ export default function MediaProviderDetailPage() {
           </div>
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <h1 className="text-3xl font-semibold tracking-tight">{provider.name}</h1>
+              <Typography.Title level={1} style={{ fontSize: 30, fontWeight: 500, margin: 0 }}>{provider.name}</Typography.Title>
               {!isCustom && provider.notice?.apiKeyUrl && (
                 <a
                   href={provider.notice.apiKeyUrl}

@@ -1,5 +1,6 @@
 "use client";
 
+import { Typography } from "antd";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Badge, Button, Card, CardSkeleton, Input, Modal, Toggle, ConfirmModal } from "@/shared/components";
 import { useNotificationStore } from "@/store/notificationStore";
@@ -580,7 +581,7 @@ export default function ProxyPoolsPage() {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-1 sm:gap-6 sm:px-0">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl font-semibold sm:text-2xl">Proxy Pools</h1>
+          <Typography.Title level={1} style={{ fontSize: 20, fontWeight: 500, margin: 0 }}>Proxy Pools</Typography.Title>
         </div>
 
         <div className="grid grid-cols-1 gap-2 sm:flex sm:items-center">

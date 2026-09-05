@@ -1,5 +1,6 @@
 "use client";
 
+import { Typography } from "antd";
 import { useState, useEffect } from "react";
 import Card from "@/shared/components/Card";
 import PricingModal from "@/shared/components/PricingModal";
@@ -53,7 +54,7 @@ export default function PricingSettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Pricing Settings</h1>
+          <Typography.Title level={1} style={{ fontSize: 30, fontWeight: 500, margin: 0 }}>Pricing Settings</Typography.Title>
           <p className="text-text-muted mt-1">
             Configure pricing rates for cost tracking and calculations
           </p>
