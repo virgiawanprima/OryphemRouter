@@ -105,7 +105,7 @@ export default function StatusBar() {
       </div>
       <div className="flex items-center">
         <span className="status-item hidden md:flex">port <span className="text-text-main">{port}</span></span>
-        <span className="status-item hidden md:flex">theme <span className="text-brand-300">{theme === "dark" ? "dracula" : "light"}</span></span>
+        <span className="status-item hidden md:flex">theme <span className="text-brand-300">{theme === "dark" ? "tokyo-night" : "light"}</span></span>
         <span className="status-segment">
           <Clock />
         </span>
