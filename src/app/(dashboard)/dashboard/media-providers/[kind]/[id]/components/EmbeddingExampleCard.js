@@ -85,7 +85,7 @@ export function EmbeddingExampleCard({ providerId, customAlias }) {
 
   return (
     <Card>
-      <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Example</Typography.Title>
+      <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Example</Typography.Title>
 
       <div className="flex flex-col gap-2.5">
         {/* Model — text input for custom node, dropdown otherwise */}

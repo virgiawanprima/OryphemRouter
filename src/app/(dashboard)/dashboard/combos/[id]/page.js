@@ -134,7 +134,7 @@ export default function ComboDetailPage() {
       {error && <div className="border border-[color:var(--md-sys-color-errorContainer)] bg-[color:var(--md-sys-color-errorContainer)] rounded-[var(--md-sys-shape-corner-large)] p-3 text-[13px] text-[color:var(--md-sys-color-onErrorContainer)]">{error}</div>}
 
       <Card padding="md">
-        <Typography.Title level={2} className="text-[16px] font-medium text-text-main"  style={{ margin: 0 }}>>Routing strategy</Typography.Title>
+        <Typography.Title level={2} className="text-[16px] font-medium text-text-main" style={{ margin: 0 }}>Routing strategy</Typography.Title>
         <p className="text-[13px] text-text-muted mb-3">How OryphemRouter chooses among this combo's models on each request.</p>
         <div className="max-w-[320px]">
           <Select
@@ -148,7 +148,7 @@ export default function ComboDetailPage() {
       </Card>
 
       <Card padding="md">
-        <Typography.Title level={2} className="text-[16px] font-medium text-text-main"  style={{ margin: 0 }}>>Models</Typography.Title>
+        <Typography.Title level={2} className="text-[16px] font-medium text-text-main" style={{ margin: 0 }}>Models</Typography.Title>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {models.length === 0 ? (
             <p className="text-[13px] text-text-muted">No models in this combo yet.</p>

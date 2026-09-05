@@ -264,7 +264,7 @@ export default function ComboDetailPage() {
 
       {/* Settings Card */}
       <Card>
-        <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Settings</Typography.Title>
+        <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Settings</Typography.Title>
         <div className="flex flex-col gap-4">
           <div>
             <Input label="Combo Name" value={name} onChange={(e) => { setName(e.target.value); validateName(e.target.value); }} onBlur={handleSaveName} error={nameError} />
@@ -284,7 +284,7 @@ export default function ComboDetailPage() {
       <Card>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
           <div>
-            <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Providers</Typography.Title>
+            <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Providers</Typography.Title>
             <p className="text-xs text-text-muted">Tried in order (top-down) or rotated when round-robin is on.</p>
           </div>
           <Button size="sm" icon="add" onClick={() => setShowPicker(true)}>Add Provider</Button>
@@ -335,7 +335,7 @@ export default function ComboDetailPage() {
       {combo.kind && examplePath && (
         <Card>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
-            <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Test Example</Typography.Title>
+            <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Test Example</Typography.Title>
             <Button size="sm" icon="play_arrow" onClick={handleTest} disabled={testing || providers.length === 0}>
               {testing ? "Running..." : "Run"}
             </Button>
@@ -385,7 +385,7 @@ export default function ComboDetailPage() {
 
       {/* Usage Logs Card */}
       <Card>
-        <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Usage Logs</Typography.Title>
+        <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Usage Logs</Typography.Title>
         {logs.length === 0 ? (
           <p className="text-xs text-text-muted italic">No usage yet.</p>
         ) : (

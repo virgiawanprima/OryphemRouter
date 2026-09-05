@@ -76,7 +76,7 @@ export default function ProviderLimitCard({
           </div>
 
           <div>
-            <Typography.Title level={3} className="font-semibold text-text-primary"  style={{ margin: 0 }}>>
+            <Typography.Title level={3} className="font-semibold text-text-primary" style={{ margin: 0 }}>
               {name || provider}
             </Typography.Title>
             {plan && (

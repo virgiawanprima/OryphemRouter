@@ -1361,7 +1361,7 @@ export default function ProviderDetailPage() {
         <Card>
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>{isAnthropicCompatible ? "Anthropic Compatible Details" : "OpenAI Compatible Details"}</Typography.Title>
+              <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>{isAnthropicCompatible ? "Anthropic Compatible Details" : "OpenAI Compatible Details"}</Typography.Title>
               <p className="break-all text-sm text-text-muted">
                 {isAnthropicCompatible ? "Messages API" : (providerNode.apiType === "responses" ? "Responses API" : "Chat Completions")} · {(providerNode.baseUrl || "").replace(/\/$/, "")}/
                 {isAnthropicCompatible ? "messages" : (providerNode.apiType === "responses" ? "responses" : "chat/completions")}
@@ -1424,7 +1424,7 @@ export default function ProviderDetailPage() {
       ) : (
         <Card>
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Connections</Typography.Title>
+            <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Connections</Typography.Title>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               {connections.length > 0 && proxyPools.length > 0 && (
                 <Button
@@ -1641,7 +1641,7 @@ export default function ProviderDetailPage() {
       <Card>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>
+            <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>
               {"Available Models"}
             </Typography.Title>
             {providerThinkingLevels && (

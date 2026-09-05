@@ -760,7 +760,7 @@ export default function APIPageClient() {
     <div className="flex flex-col gap-8">
       {/* Endpoint Card */}
       <Card>
-        <Typography.Title level={2} className="text-lg font-semibold flex items-center gap-2"  style={{ margin: 0 }}>>
+        <Typography.Title level={2} className="text-lg font-semibold flex items-center gap-2" style={{ margin: 0 }}>
           <span className="material-symbols-outlined text-primary">api</span>
           API Endpoint
         </Typography.Title>
@@ -1008,7 +1008,7 @@ export default function APIPageClient() {
       {/* API Keys */}
       <Card id="require-api-key">
         <div className="flex items-center justify-between mb-4">
-          <Typography.Title level={2} className="text-lg font-semibold flex items-center gap-2"  style={{ margin: 0 }}>>
+          <Typography.Title level={2} className="text-lg font-semibold flex items-center gap-2" style={{ margin: 0 }}>
             <span className="material-symbols-outlined text-primary">vpn_key</span>
             API Keys
           </Typography.Title>

@@ -722,7 +722,7 @@ export default function ProviderLimits() {
           <span className="material-symbols-outlined text-[64px] text-text-muted opacity-20">
             cloud_off
           </span>
-          <Typography.Title level={3} className="text-lg font-semibold text-text-primary"  style={{ margin: 0 }}>>
+          <Typography.Title level={3} className="text-lg font-semibold text-text-primary" style={{ margin: 0 }}>
             No Providers Connected
           </Typography.Title>
           <p className="mt-2 text-sm text-text-muted max-w-md mx-auto">
@@ -741,7 +741,7 @@ export default function ProviderLimits() {
           <span className="material-symbols-outlined text-[64px] text-text-muted opacity-20">
             {emptyState.icon}
           </span>
-          <Typography.Title level={3} className="text-lg font-semibold text-text-primary"  style={{ margin: 0 }}>>
+          <Typography.Title level={3} className="text-lg font-semibold text-text-primary" style={{ margin: 0 }}>
             {emptyState.title}
           </Typography.Title>
           <p className="mt-2 text-sm text-text-muted max-w-md mx-auto">
@@ -999,7 +999,7 @@ export default function ProviderLimits() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <Typography.Title level={3} className="text-sm font-semibold text-text-primary capitalize truncate"  style={{ margin: 0 }}>>
+                      <Typography.Title level={3} className="text-sm font-semibold text-text-primary capitalize truncate" style={{ margin: 0 }}>
                         {group.provider}
                       </Typography.Title>
                       <span className="rounded-full bg-[color:var(--md-sys-color-surfaceContainerHigh)] px-2 py-0.5 text-[10px] font-semibold text-text-muted">
@@ -1432,7 +1432,7 @@ export default function ProviderLimits() {
           <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-black/15 bg-white shadow-2xl ring-1 ring-black/10 dark:border-white/15 dark:bg-neutral-950 dark:ring-white/10">
             <div className="flex items-start justify-between gap-3 border-b border-black/10 bg-black/[0.03] px-4 py-3 dark:border-white/10 dark:bg-white/[0.04]">
               <div className="min-w-0">
-                <Typography.Title level={3} className="text-base font-semibold text-text-primary"  style={{ margin: 0 }}>>Codex Reset Credit Expiry</Typography.Title>
+                <Typography.Title level={3} className="text-base font-semibold text-text-primary" style={{ margin: 0 }}>Codex Reset Credit Expiry</Typography.Title>
                 <p className="mt-0.5 truncate text-xs text-text-muted">
                   {getConnectionLabel(resetCreditsState.connection) || "Codex account"}
                 </p>

@@ -84,7 +84,7 @@ function MediaProviderCard({ provider, kind, connections, isCustom, onToggle }) 
               />
             </div>
             <div className="min-w-0">
-              <Typography.Title level={3} className="font-semibold text-sm"  style={{ margin: 0 }}>>{provider.name}</Typography.Title>
+              <Typography.Title level={3} className="font-semibold text-sm" style={{ margin: 0 }}>{provider.name}</Typography.Title>
               <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                 {isCustom && <Badge variant="default" size="sm">Custom</Badge>}
                 {renderStatus()}
@@ -300,7 +300,7 @@ export default function MediaProviderKindPage() {
 
       {isRegistryKind && registryProviders.length > 0 && (
         <Card padding="md">
-          <Typography.Title level={2} className="text-[16px] font-medium text-text-main"  style={{ margin: 0 }}>>Providers</Typography.Title>
+          <Typography.Title level={2} className="text-[16px] font-medium text-text-main" style={{ margin: 0 }}>Providers</Typography.Title>
           <p className="text-[13px] text-text-muted mb-1">
             Available via <code className="font-mono text-xs">{kindConfig?.endpoint?.path || "/v1/"+kind}</code>
           </p>

@@ -198,7 +198,7 @@ export default function UsageTable({
   return (
     <Card className="overflow-hidden">
       <div className="p-4 border-b border-border bg-bg-subtle/50">
-        <Typography.Title level={3} className="font-semibold"  style={{ margin: 0 }}>>{title}</Typography.Title>
+        <Typography.Title level={3} className="font-semibold" style={{ margin: 0 }}>{title}</Typography.Title>
       </div>
       <div className="overflow-x-auto">
         <AntTable

@@ -30,7 +30,7 @@ export default function MitmLinkCard({ tool }) {
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <Typography.Title level={3} className="font-medium text-sm"  style={{ margin: 0 }}>>{tool.name}</Typography.Title>
+                <Typography.Title level={3} className="font-medium text-sm" style={{ margin: 0 }}>{tool.name}</Typography.Title>
                 <span className="px-1.5 py-0.5 text-[10px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-full">MITM</span>
               </div>
               <p className="text-xs text-text-muted truncate">{tool.description}</p>

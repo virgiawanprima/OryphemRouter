@@ -220,7 +220,7 @@ export default function ModelsCard({ providerId, kindFilter, providerAliasOverri
     <>
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Models{kindFilter ? `: ${kindFilter.toUpperCase()}` : ""}</Typography.Title>
+          <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Models{kindFilter ? `: ${kindFilter.toUpperCase()}` : ""}</Typography.Title>
         </div>
         {testError && <p className="text-xs text-red-500 mb-3 break-words">{testError}</p>}
 

@@ -97,7 +97,7 @@ export default function PricingSettingsPage() {
 
       {/* Info Section */}
       <Card className="p-6">
-        <Typography.Title level={2} className="text-xl font-semibold"  style={{ margin: 0 }}>>How Pricing Works</Typography.Title>
+        <Typography.Title level={2} className="text-xl font-semibold" style={{ margin: 0 }}>How Pricing Works</Typography.Title>
         <div className="space-y-3 text-sm text-text-muted">
           <p>
             <strong>Cost Calculation:</strong> Costs are calculated based on token usage and pricing rates.
@@ -127,7 +127,7 @@ export default function PricingSettingsPage() {
       {/* Current Pricing Preview */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <Typography.Title level={2} className="text-xl font-semibold"  style={{ margin: 0 }}>>Current Pricing Overview</Typography.Title>
+          <Typography.Title level={2} className="text-xl font-semibold" style={{ margin: 0 }}>Current Pricing Overview</Typography.Title>
           <button
             onClick={() => setShowModal(true)}
             className="text-primary hover:underline text-sm"

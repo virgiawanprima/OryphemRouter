@@ -227,7 +227,7 @@ export function GenericExampleCard({ providerId, kind }) {
 
   return (
     <Card>
-      <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Example</Typography.Title>
+      <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Example</Typography.Title>
       <div className="flex flex-col gap-2.5">
         {/* Model selector — dropdown if presets exist, else manual input for media kinds */}
         {kindModels.length > 0 ? (

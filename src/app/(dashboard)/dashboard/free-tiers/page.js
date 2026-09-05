@@ -132,7 +132,7 @@ export default function FreeTiersPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Typography.Title level={3} className="font-semibold text-text-main text-sm"  style={{ margin: 0 }}>>{tier.provider}</Typography.Title>
+                  <Typography.Title level={3} className="font-semibold text-text-main text-sm" style={{ margin: 0 }}>{tier.provider}</Typography.Title>
                   <Badge variant={tier.type === "unlimited" ? "success" : "warning"} size="sm">
                     {tier.type === "unlimited" ? "Unlimited" : "Limited"}
                   </Badge>

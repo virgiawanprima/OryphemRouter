@@ -250,7 +250,7 @@ export function TtsExampleCard({ providerId }) {
   return (
     <>
       <Card>
-        <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Example</Typography.Title>
+        <Typography.Title level={2} className="text-lg font-semibold" style={{ margin: 0 }}>Example</Typography.Title>
 
         <div className="flex flex-col gap-2.5">
           {/* Endpoint + API Key as read-only text */}
@@ -539,7 +539,7 @@ export function TtsExampleCard({ providerId }) {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0 rounded-t-xl">
-              <Typography.Title level={3} className="text-sm font-semibold"  style={{ margin: 0 }}>>Select Language</Typography.Title>
+              <Typography.Title level={3} className="text-sm font-semibold" style={{ margin: 0 }}>Select Language</Typography.Title>
               <button onClick={() => setModalOpen(false)} className="text-text-muted hover:text-primary transition-colors">
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
