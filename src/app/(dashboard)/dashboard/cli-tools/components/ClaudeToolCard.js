@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Select as AntSelect, Typography } from "antd";
+import { Select as AntSelect, Typography, Input, Checkbox } from "antd";
 import { Card, Button, ModelSelectModal, ManualConfigModal, Tooltip } from "@/shared/components";
 import Image from "next/image";
 import BaseUrlSelect from "./BaseUrlSelect";
@@ -376,7 +376,7 @@ export default function ClaudeToolCard({
                     <span className="text-xs font-semibold text-text-main sm:text-right sm:text-sm">{model.name}</span>
                     <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
                     <div className="relative w-full min-w-0">
-                      <input type="text" value={modelMappings[model.alias] || ""} onChange={(e) => onModelMappingChange(model.alias, e.target.value)} placeholder="provider/model-id" className="w-full min-w-0 pl-2 pr-7 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5" />
+                      <Input size="small" className="w-full min-w-0 pl-2 pr-7 text-xs" value={modelMappings[model.alias] || ""} onChange={(e) => onModelMappingChange(model.alias, e.target.value)} placeholder="provider/model-id" />
                       {modelMappings[model.alias] && <button onClick={() => onModelMappingChange(model.alias, "")} className="absolute right-1 top-1/2 -translate-y-1/2 p-0.5 text-text-muted hover:text-red-500 rounded transition-colors" title="Clear"><span className="material-symbols-outlined text-[14px]">close</span></button>}
                     </div>
                     <button onClick={() => openModelSelector(model.alias)} disabled={!hasActiveProviders} className={`w-full sm:w-auto rounded border px-2 py-2 text-xs transition-colors sm:py-1.5 whitespace-nowrap sm:shrink-0 ${hasActiveProviders ? "bg-surface border-border text-text-main hover:border-primary cursor-pointer" : "opacity-50 cursor-not-allowed border-border"}`}>Select Model</button>
@@ -400,7 +400,7 @@ export default function ClaudeToolCard({
                   <span className="text-xs font-semibold text-text-main sm:text-right sm:text-sm">Filter naming</span>
                   <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
                   <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                    <input type="checkbox" checked={ccFilterNaming} onChange={handleCcFilterNamingToggle} className="w-3.5 h-3.5 accent-primary cursor-pointer" />
+                    <Checkbox checked={ccFilterNaming} onChange={handleCcFilterNamingToggle} className="w-3.5 h-3.5" />
                     <span className="text-xs text-text-muted">Filter naming requests</span>
                     <Tooltip text="Intercepts Claude Code's topic-naming requests and returns a fake response locally, saving API tokens.">
                       <span className="material-symbols-outlined text-text-muted text-[14px] cursor-help">info</span>
@@ -413,7 +413,7 @@ export default function ClaudeToolCard({
                   <span className="text-xs font-semibold text-text-main sm:text-right sm:text-sm">Web Search</span>
                   <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
                   <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                    <input type="checkbox" checked={exaMcpEnabled} onChange={(e) => setExaMcpEnabled(e.target.checked)} className="w-3.5 h-3.5 accent-primary cursor-pointer" />
+                    <Checkbox checked={exaMcpEnabled} onChange={(e) => setExaMcpEnabled(e.target.checked)} className="w-3.5 h-3.5" />
                     <span className="text-xs text-text-muted">Exa MCP</span>
                     <Tooltip text="Injects Exa MCP into ~/.claude.json so non-Claude models gain web search. Restart Claude Code after Apply.">
                       <span className="material-symbols-outlined text-text-muted text-[14px] cursor-help">info</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect, Input } from "antd";
 import { UPDATER_CONFIG } from "@/shared/constants/config";
 
 const STORAGE_KEY = "oryphemrouter.cliToolEndpointPresets";
@@ -160,12 +160,12 @@ export default function BaseUrlSelect({
         )}
       </div>
       {isCustom && (
-        <input
-          type="text"
+        <Input
           value={customInput}
           onChange={handleCustomInput}
           placeholder={withV1 ? "https://example.com/v1" : "https://example.com"}
-          className="w-full min-w-0 px-2 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
+          size="small"
+          className="w-full min-w-0 text-xs"
         />
       )}
     </div>

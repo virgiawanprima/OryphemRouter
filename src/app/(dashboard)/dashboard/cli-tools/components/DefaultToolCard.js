@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Card, ModelSelectModal } from "@/shared/components";
-import { Typography } from "antd";
+import { Typography, Input } from "antd";
 import DraculaCodeBlock from "@/shared/components/DraculaCodeBlock";
 import { getProviderIconSrc, markProviderIconMissing } from "@/shared/utils/providerIcon";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
@@ -59,12 +59,11 @@ export default function DefaultToolCard({ toolId, tool, isExpanded, onToggle, ba
   const renderModelSelector = () => {
     return (
       <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
-        <input
-          type="text"
+        <Input
           value={modelValue}
           onChange={(e) => setModelValue(e.target.value)}
           placeholder="provider/model-id"
-          className="w-full sm:w-auto flex-1 px-3 py-2 bg-bg-secondary rounded-lg text-sm border border-border focus:outline-none focus:ring-1 focus:ring-primary/50"
+          className="w-full sm:w-auto flex-1"
         />
         <button
           onClick={() => setShowModelModal(true)}

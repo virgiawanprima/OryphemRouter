@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography } from "antd";
+import { Typography, InputNumber } from "antd";
 
 import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
@@ -134,10 +134,10 @@ export default function ConnectionsCard({ providerId, isOAuth }) {
             {providerStrategy === "round-robin" && (
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-xs text-text-muted">Sticky:</span>
-                <input
-                  type="number" min={1} value={providerStickyLimit}
-                  onChange={(e) => { setProviderStickyLimit(e.target.value); saveStrategy("round-robin", e.target.value); }}
-                  className="w-16 px-2 py-1 text-xs border border-border rounded-md bg-background focus:outline-none focus:border-primary"
+                <InputNumber
+                  min={1} value={providerStickyLimit ? Number(providerStickyLimit) : undefined}
+                  onChange={(v) => { const val = v == null ? "" : String(v); setProviderStickyLimit(val); saveStrategy("round-robin", val); }}
+                  className="w-16 !text-xs"
                 />
               </div>
             )}

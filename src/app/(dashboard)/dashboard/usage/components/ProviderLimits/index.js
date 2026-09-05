@@ -5,7 +5,7 @@ import ProviderIcon from "@/shared/components/ProviderIcon";
 import QuotaTable from "./QuotaTable";
 import Toggle from "@/shared/components/Toggle";
 import Tooltip from "@/shared/components/Tooltip";
-import { Select as AntSelect, Table as AntTable ,
+import { Select as AntSelect, Table as AntTable, InputNumber,
   Typography } from "antd";
 import {
   parseQuotaData,
@@ -1311,13 +1311,11 @@ export default function ProviderLimits() {
                   { value: "custom", label: "Custom" },
                 ]}
               />
-              <input
-                type="number"
-                min="1"
-                max={String(ACCOUNT_PAGE_SIZE_MAX)}
-                inputMode="numeric"
-                value={customPageSizeInput}
-                onChange={(event) => setCustomPageSizeInput(event.target.value)}
+              <InputNumber
+                min={1}
+                max={ACCOUNT_PAGE_SIZE_MAX}
+                value={customPageSizeInput ? Number(customPageSizeInput) : undefined}
+                onChange={(v) => setCustomPageSizeInput(v == null ? "" : String(v))}
                 onBlur={() => {
                   const parsedValue = Number.parseInt(customPageSizeInput, 10);
                   if (!Number.isFinite(parsedValue)) {

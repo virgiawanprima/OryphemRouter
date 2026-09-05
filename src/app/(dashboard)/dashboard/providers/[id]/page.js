@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getProviderIconSrc, markProviderIconMissing } from "@/shared/utils/providerIcon";
-import { Select as AntSelect, Typography } from "antd";
+import { Select as AntSelect, Typography, Checkbox } from "antd";
 import { Card, Button, Modal, CardSkeleton, OAuthModal, KiroOAuthWrapper, CursorAuthModal, IFlowCookieModal, GitLabAuthModal, Toggle, EditConnectionModal, NoAuthProxyCard, ConfirmModal } from "@/shared/components";
 import { OAUTH_PROVIDERS, APIKEY_PROVIDERS, FREE_PROVIDERS, FREE_TIER_PROVIDERS, WEB_COOKIE_PROVIDERS, getProviderAlias, isOpenAICompatibleProvider, isAnthropicCompatibleProvider } from "@/shared/constants/providers";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
@@ -946,11 +946,10 @@ export default function ProviderDetailPage() {
         .map((conn, index) => (
           <div key={conn.id} className="flex min-w-0 items-stretch">
             <div className="flex shrink-0 items-center pl-1 sm:pl-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={isSelected(conn.id)}
                 onChange={() => toggleSelectConnection(conn.id)}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                className="!align-middle"
               />
             </div>
             <div className="flex-1 min-w-0">
@@ -1480,13 +1479,12 @@ export default function ProviderDetailPage() {
                 {providerStrategy === "round-robin" && (
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs text-text-muted">Sticky:</span>
-                    <input
-                      type="number"
+                    <InputNumber
                       min={1}
-                      value={providerStickyLimit}
-                      onChange={(e) => handleStickyLimitChange(e.target.value)}
+                      value={providerStickyLimit ? Number(providerStickyLimit) : undefined}
+                      onChange={(v) => handleStickyLimitChange(v == null ? "" : String(v))}
                       placeholder="1"
-                      className="w-14 px-2 py-1 text-xs border border-border rounded-md bg-background focus:outline-none focus:border-primary"
+                      className="w-16 !text-xs"
                     />
                   </div>
                 )}
@@ -1563,11 +1561,10 @@ export default function ProviderDetailPage() {
               {connections.length > 0 && (
                 <div className="mb-3 flex items-center gap-2 border-b border-black/[0.03] pb-2 dark:border-white/[0.03]">
                   <label className="flex cursor-pointer items-center gap-1.5 text-xs text-text-muted hover:text-primary">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={allSelected}
                       onChange={toggleSelectAllConnections}
-                      className="h-3.5 w-3.5 rounded border-gray-300 text-primary focus:ring-primary"
+                      className="!align-middle"
                     />
                     Select All
                   </label>

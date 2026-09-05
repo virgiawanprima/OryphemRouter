@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography } from "antd";
+import { Typography, Input } from "antd";
 
 import { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
@@ -82,14 +82,7 @@ function AddCustomModelModal({ isOpen, onSave, onClose }) {
       <div className="flex flex-col gap-4">
         <div>
           <label className="text-xs text-text-muted mb-1 block">Model ID</label>
-          <input
-            className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            value={modelId}
-            onChange={(e) => setModelId(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSave()}
-            placeholder="e.g. tts-1-hd"
-            autoFocus
-          />
+          <Input value={modelId} onChange={(e) => setModelId(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSave()} placeholder="e.g. tts-1-hd" autoFocus className="w-full" />
         </div>
         <div className="flex gap-2">
           <Button onClick={handleSave} fullWidth disabled={!modelId.trim()}>Add</Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography } from "antd";
+import { Typography, Input as AntInput } from "antd";
 
 import { useState } from "react";
 import PropTypes from "prop-types";
@@ -212,11 +212,11 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
                   : <>One key per line. Format: <code>name|apiKey</code> or just <code>apiKey</code> (auto-named by index).</>
               }
             </p>
-            <textarea
-              className="w-full rounded border border-accent/30 bg-sidebar p-2 text-sm font-mono resize-y min-h-[140px] focus:outline-none focus:ring-1 focus:ring-primary"
+            <AntInput.TextArea
               placeholder={bulkPlaceholder}
               value={bulkText}
               onChange={(e) => setBulkText(e.target.value)}
+              className="!min-h-[140px] !font-mono"
             />
             {bulkResult && (
               <div className={`text-sm font-medium ${bulkResult.failed > 0 ? "text-yellow-400" : "text-green-400"}`}>

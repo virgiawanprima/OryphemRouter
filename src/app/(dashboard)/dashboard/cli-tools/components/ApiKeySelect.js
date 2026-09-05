@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect, Input } from "antd";
 
 const CUSTOM_VALUE = "__custom__";
 
@@ -52,12 +52,12 @@ export default function ApiKeySelect({ value, onChange, apiKeys = [], cloudEnabl
         ]}
       />
       {mode === CUSTOM_VALUE && (
-        <input
-          type="text"
+        <Input
           value={customInput}
           onChange={handleCustomInput}
           placeholder="sk-..."
-          className="w-full min-w-0 px-2 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
+          size="small"
+          className="w-full min-w-0 text-xs"
         />
       )}
     </div>

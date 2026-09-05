@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, Button, ManualConfigModal, ComboFormModal, McpMarketplaceModal, ModelSelectModal } from "@/shared/components";
-import { Typography } from "antd";
+import { Typography, Input, Checkbox } from "antd";
 import Image from "next/image";
 import BaseUrlSelect from "./BaseUrlSelect";
 import ApiKeySelect from "./ApiKeySelect";
@@ -430,8 +430,7 @@ export default function CoworkToolCard({
                       const exaDef = (status?.defaultPlugins || []).find((d) => d.name === "exa");
                       return (
                         <label className="flex items-start gap-2 cursor-pointer px-2 py-1.5 bg-surface rounded border border-border">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={exaEnabled}
                             onChange={(e) => {
                               if (e.target.checked && exaDef) setPlugins([...plugins.filter((p) => p.name !== "exa"), exaDef]);
@@ -452,8 +451,7 @@ export default function CoworkToolCard({
                       const browserEnabled = localPlugins.includes("browsermcp");
                       return (
                         <label className="flex items-start gap-2 cursor-pointer px-2 py-1.5 bg-surface rounded border border-border">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={browserEnabled}
                             onChange={(e) => setLocalPlugins(e.target.checked ? [...localPlugins, "browsermcp"] : localPlugins.filter((n) => n !== "browsermcp"))}
                             className="mt-0.5"
@@ -481,8 +479,7 @@ export default function CoworkToolCard({
                           const enabled = localPlugins.includes(p.name);
                           return (
                             <label key={p.name} className="flex items-start gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
+                              <Checkbox
                                 checked={enabled}
                                 onChange={(e) => setLocalPlugins(e.target.checked ? [...localPlugins, p.name] : localPlugins.filter((n) => n !== p.name))}
                                 className="mt-0.5"
@@ -586,22 +583,22 @@ export default function CoworkToolCard({
             <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-1">
                 <label className="text-[11px] text-text-muted font-medium">Name</label>
-                <input
-                  type="text"
+                <Input
                   placeholder="my-mcp"
                   value={addMcpForm.name}
                   onChange={(e) => setAddMcpForm((f) => ({ ...f, name: e.target.value.replace(/\s+/g, "-").toLowerCase() }))}
-                  className="px-2 py-1.5 rounded border border-border bg-surface text-xs outline-none focus:border-primary"
+                  size="small"
+                  className="text-xs"
                 />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-[11px] text-text-muted font-medium">SSE URL</label>
-                <input
-                  type="text"
+                <Input
                   placeholder="https://your-mcp-server.com/sse"
                   value={addMcpForm.url}
                   onChange={(e) => setAddMcpForm((f) => ({ ...f, url: e.target.value }))}
-                  className="px-2 py-1.5 rounded border border-border bg-surface text-xs outline-none focus:border-primary"
+                  size="small"
+                  className="text-xs"
                 />
               </div>
             </div>

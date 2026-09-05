@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography } from "antd";
+import { Typography, Input } from "antd";
 
 import { useState, useEffect, useRef } from "react";
 import { Card, Button, ModelSelectModal, ManualConfigModal } from "@/shared/components";
@@ -431,12 +431,12 @@ export default function OpenCodeToolCard({ tool, isExpanded, onToggle, baseUrl, 
                 <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-[8rem_auto_1fr_auto] sm:items-center sm:gap-2">
                   <span className="text-xs font-semibold text-text-main sm:text-right sm:text-sm">Subagent Model</span>
                   <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
-                  <input
-                    type="text"
+                  <Input
                     value={subagentModel}
                     onChange={(e) => setSubagentModel(e.target.value)}
                     placeholder={selectedModel || "provider/model-id (defaults to main model)"}
-                    className="w-full min-w-0 px-2 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
+                    size="small"
+                    className="w-full min-w-0 text-xs"
                   />
                   <button
                     onClick={() => setSubagentModalOpen(true)}

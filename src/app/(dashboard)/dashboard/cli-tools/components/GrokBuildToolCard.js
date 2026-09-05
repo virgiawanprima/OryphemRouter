@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography } from "antd";
+import { Typography, Input } from "antd";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, Button, ModelSelectModal, ManualConfigModal } from "@/shared/components";
@@ -27,12 +27,12 @@ function ModelField({ label, value, placeholder, onChange, onSelect, disabled, h
       </div>
       <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
       <div className="relative w-full min-w-0">
-        <input
-          type="text"
+        <Input
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="w-full min-w-0 pl-2 pr-7 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
+          size="small"
+          className="w-full min-w-0 pl-2 pr-7 text-xs"
         />
         {value && (
           <button

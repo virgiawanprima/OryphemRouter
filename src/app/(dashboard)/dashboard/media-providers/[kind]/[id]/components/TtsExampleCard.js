@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Select as AntSelect ,
   Typography } from "antd";
+import { Input } from "antd";
 import { Card } from "@/shared/components";
 import { AI_PROVIDERS } from "@/shared/constants/providers";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
@@ -377,14 +378,14 @@ export function TtsExampleCard({ providerId }) {
             <Row label="Voice ID">
               <div className="flex flex-col gap-1">
                 <div className="relative">
-                  <input
+                  <Input
                     value={voiceId}
                     onChange={(e) => {
                       setVoiceId(e.target.value);
                       setSelectedVoice(e.target.value);
                     }}
                     placeholder="e.g. CwhRBWXzGAHq8TQ4Fs17"
-                    className="w-full px-3 py-1.5 pr-7 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary font-mono"
+                    className="w-full !font-mono"
                   />
                   {voiceId && (
                     <button
@@ -419,11 +420,7 @@ export function TtsExampleCard({ providerId }) {
           {/* Input */}
           <Row label="Input">
             <div className="relative">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="w-full px-3 py-1.5 pr-7 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-              />
+              <Input value={input} onChange={(e) => setInput(e.target.value)} className="w-full" />
               {input && (
                 <button
                   type="button"
@@ -440,12 +437,12 @@ export function TtsExampleCard({ providerId }) {
           {config.hasStyleInput && (
             <Row label={translate("Style")}>
               <div className="relative">
-                <textarea
+                <Input.TextArea
                   value={style}
                   onChange={(e) => setStyle(e.target.value)}
                   placeholder={translate("e.g. a warm, gentle voice, speaking slowly with a British accent")}
                   rows={2}
-                  className="w-full px-3 py-1.5 pr-7 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary resize-none"
+                  className="!resize-none"
                 />
                 {style && (
                   <button
@@ -547,13 +544,7 @@ export function TtsExampleCard({ providerId }) {
 
             {/* Search */}
             <div className="px-4 py-2.5 border-b border-border shrink-0">
-              <input
-                autoFocus
-                value={modalSearch}
-                onChange={(e) => setModalSearch(e.target.value)}
-                placeholder="Search language..."
-                className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-              />
+              <Input autoFocus value={modalSearch} onChange={(e) => setModalSearch(e.target.value)} placeholder="Search language..." className="w-full" />
             </div>
 
             {/* Language list */}

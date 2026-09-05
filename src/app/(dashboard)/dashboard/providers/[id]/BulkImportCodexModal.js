@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { Input as AntInput } from "antd";
 import { Button, Modal } from "@/shared/components";
 import { translate } from "@/i18n/runtime";
 
@@ -92,12 +93,12 @@ export default function BulkImportCodexModal({ isOpen, onClose, onSuccess }) {
           )}
         </p>
 
-        <textarea
-          className="w-full rounded border border-accent/30 bg-sidebar p-2 text-sm font-mono resize-y min-h-[240px] focus:outline-none focus:ring-1 focus:ring-primary"
+        <AntInput.TextArea
           placeholder={PLACEHOLDER}
           value={jsonText}
           onChange={(e) => setJsonText(e.target.value)}
           disabled={submitting}
+          className="!min-h-[240px] !font-mono"
         />
 
         {parseError && (

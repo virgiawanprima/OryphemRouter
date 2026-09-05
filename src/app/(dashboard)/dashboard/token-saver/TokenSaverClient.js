@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Typography } from "antd";
+import { Typography, Checkbox } from "antd";
 import { Card, Button, Input, Modal, Toggle, ConfirmModal } from "@/shared/components";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import { getCurrentLocale, onLocaleChange } from "@/i18n/runtime";
@@ -611,9 +611,8 @@ export default function TokenSaverClient() {
                     }`}
                     title={extraTitle}
                   >
-                    <input
-                      type="checkbox"
-                      className="w-3 h-3"
+                    <Checkbox
+                      className="!align-middle"
                       checked={pending}
                       onChange={() => togglePendingExtra(extra)}
                     />

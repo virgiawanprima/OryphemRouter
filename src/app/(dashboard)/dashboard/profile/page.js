@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Typography } from "antd";
+import { Typography, Input as AntInput } from "antd";
 import { Card, Button, Toggle, Input } from "@/shared/components";
 import Modal, { ConfirmModal } from "@/shared/components/Modal";
 import LanguageSwitcher from "@/shared/components/LanguageSwitcher";
@@ -1216,12 +1216,12 @@ export default function ProfilePage() {
                           onChange={handleCertFileUpload}
                         />
                       </div>
-                      <textarea
+                      <AntInput.TextArea
                         rows={4}
-                        placeholder="-----BEGIN CERTIFICATE-----&#10;MIIC...&#10;-----END CERTIFICATE-----"
+                        placeholder="-----BEGIN CERTIFICATE-----\nMIIC...\n-----END CERTIFICATE-----"
                         value={samlForm.samlCert}
                         onChange={(e) => updateSamlForm("samlCert", e.target.value)}
-                        className="w-full p-2.5 rounded-lg border border-border bg-bg text-xs font-mono text-text-main focus:outline-none focus:border-primary"
+                        className="!text-xs !font-mono"
                         disabled={loading || samlLoading}
                       />
                       <p className="text-xs text-text-muted">Paste raw Base64 certificate or PEM block.</p>

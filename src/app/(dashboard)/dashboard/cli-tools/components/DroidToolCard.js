@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Card, Button, ModelSelectModal, ManualConfigModal } from "@/shared/components";
-import { Typography } from "antd";
+import { Typography, Input } from "antd";
 import Image from "next/image";
 import BaseUrlSelect from "./BaseUrlSelect";
 import ApiKeySelect from "./ApiKeySelect";
@@ -367,13 +367,13 @@ export default function DroidToolCard({
                     )}
                     {/* Model input row */}
                     <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
+                      <Input
                         value={modelInput}
                         onChange={(e) => setModelInput(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addModel(); } }}
                         placeholder="provider/model-id"
-                        className="w-full min-w-0 px-2 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
+                        size="small"
+                        className="w-full min-w-0 text-xs"
                       />
                       <button
                         onClick={() => setModalOpen(true)}

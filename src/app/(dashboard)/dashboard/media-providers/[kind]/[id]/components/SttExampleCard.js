@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Select as AntSelect ,
   Typography } from "antd";
+import { Input, InputNumber } from "antd";
 import { Card } from "@/shared/components";
 import { getModelKind } from "@/shared/constants/models";
 import { getModelsByProviderId } from "@/shared/constants/models";
@@ -122,12 +123,7 @@ export function SttExampleCard({ providerId }) {
           </Row>
         ) : (
           <Row label="Model">
-            <input
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              placeholder="Enter model id"
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary font-mono"
-            />
+            <Input value={selectedModel} onChange={(e) => setSelectedModel(e.target.value)} placeholder="Enter model id" className="w-full" />
           </Row>
         )}
 
@@ -179,39 +175,28 @@ export function SttExampleCard({ providerId }) {
         {/* Language (if model supports) */}
         {allowedParams.includes("language") && (
           <Row label="Language">
-            <input
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              placeholder="e.g. en, vi, ja (auto-detect if empty)"
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary font-mono"
-            />
+            <Input value={language} onChange={(e) => setLanguage(e.target.value)} placeholder="e.g. en, vi, ja (auto-detect if empty)" className="w-full" />
           </Row>
         )}
 
         {/* Prompt (if model supports) */}
         {allowedParams.includes("prompt") && (
           <Row label="Prompt">
-            <input
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="optional context to improve accuracy"
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
-            />
+            <Input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="optional context to improve accuracy" className="w-full" />
           </Row>
         )}
 
         {/* Temperature (if model supports) */}
         {allowedParams.includes("temperature") && (
           <Row label="Temperature">
-            <input
-              type="number"
-              step="0.1"
-              min="0"
-              max="1"
-              value={temperature}
-              onChange={(e) => setTemperature(e.target.value)}
+            <InputNumber
+              step={0.1}
+              min={0}
+              max={1}
+              value={temperature === "" ? null : Number(temperature)}
+              onChange={(v) => setTemperature(v == null ? "" : String(v))}
               placeholder="0 - 1 (default 0)"
-              className="w-full px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary"
+              className="w-full"
             />
           </Row>
         )}

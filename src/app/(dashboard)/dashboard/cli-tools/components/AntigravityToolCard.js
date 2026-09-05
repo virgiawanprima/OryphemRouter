@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Select as AntSelect, Typography } from "antd";
+import { Select as AntSelect, Typography, Input as AntInput } from "antd";
 import { Card, Button, Badge, Modal, Input, ModelSelectModal } from "@/shared/components";
 import Image from "next/image";
 
@@ -351,12 +351,12 @@ export default function AntigravityToolCard({
                   <span className="text-xs font-semibold text-text-main sm:text-right sm:text-sm">{model.name}</span>
                   <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
                   <div className="relative w-full min-w-0">
-                    <input
-                      type="text"
+                    <AntInput
                       value={modelMappings[model.alias] || ""}
                       onChange={(e) => handleModelMappingChange(model.alias, e.target.value)}
                       placeholder="provider/model-id"
-                      className="w-full min-w-0 pl-2 pr-7 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5"
+                      size="small"
+                      className="w-full min-w-0 pl-2 pr-7 text-xs"
                     />
                     {modelMappings[model.alias] && (
                       <button

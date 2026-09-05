@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography } from "antd";
+import { Typography, Input as AntInput } from "antd";
 
 import { useState, useEffect, useCallback } from "react";
 import { Card, Button, Badge, Input, ModelSelectModal } from "@/shared/components";
@@ -209,14 +209,14 @@ export default function MitmToolCard({
                     <span className="text-xs font-semibold text-text-main sm:text-right">{model.name}</span>
                     <span className="material-symbols-outlined hidden text-text-muted text-[14px] sm:inline">arrow_forward</span>
                     <div className="relative w-full min-w-0">
-                      <input
-                        type="text"
+                      <AntInput
                         value={modelMappings[model.alias] || ""}
                         onChange={(e) => handleModelMappingChange(model.alias, e.target.value)}
                         onBlur={(e) => handleMappingBlur(model.alias, e.target.value)}
                         placeholder="provider/model-id"
                         disabled={!dnsActive}
-                        className={`w-full min-w-0 pl-2 pr-7 py-2 bg-surface rounded border border-border text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 sm:py-1.5 ${!dnsActive ? "opacity-50 cursor-not-allowed" : ""}`}
+                        size="small"
+                        className={`w-full min-w-0 pl-2 pr-7 text-xs ${!dnsActive ? "opacity-50 cursor-not-allowed" : ""}`}
                       />
                       {modelMappings[model.alias] && (
                         <button
