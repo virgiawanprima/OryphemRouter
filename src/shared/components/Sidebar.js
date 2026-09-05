@@ -268,15 +268,8 @@ export default function Sidebar({ onClose }) {
         className="!border-r !border-[color:var(--md-sys-color-outlineVariant)] transition-all duration-200 min-h-full"
       >
         <div className="flex h-full flex-col">
-          {/* Traffic lights + collapse toggle */}
-          <div className={`flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-4"} pt-4 pb-2`}>
-            {!collapsed && (
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-                <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-                <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
-              </div>
-            )}
+          {/* Collapse toggle */}
+          <div className={`flex items-center ${collapsed ? "justify-center px-0" : "justify-end px-4"} pt-4 pb-2`}>
             <button
               onClick={toggleCollapse}
               className="text-text-subtle hover:text-text-main transition-colors p-0.5"

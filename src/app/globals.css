@@ -19,53 +19,53 @@
      Official M3 scheme. Light scheme is the default; `.dark`
      overrides with the M3 dark scheme below.
      ============================================================ */
-  --md-ref-palette-primary40: #4655C9;
-  --md-ref-palette-primary80: #BCC2FF;
-  --md-ref-palette-secondary40: #5B5D72;
-  --md-ref-palette-secondary80: #C4C5DD;
-  --md-ref-palette-tertiary40: #00696B;
-  --md-ref-palette-tertiary80: #4DD9DB;
-  --md-ref-palette-error40: #B3261E;
-  --md-ref-palette-error80: #F2B8B5;
-  --md-ref-palette-neutral10: #1D1B20;
-  --md-ref-palette-neutral90: #E6E0E9;
-  --md-ref-palette-neutral-variant30: #49454F;
-  --md-ref-palette-neutral-variant80: #CAC4D0;
+  --md-ref-palette-primary40: #2E7DE9;
+  --md-ref-palette-primary80: #7AA2F7;
+  --md-ref-palette-secondary40: #6172B0;
+  --md-ref-palette-secondary80: #A9B1D6;
+  --md-ref-palette-tertiary40: #007197;
+  --md-ref-palette-tertiary80: #7DCFFF;
+  --md-ref-palette-error40: #F52A65;
+  --md-ref-palette-error80: #F7768E;
+  --md-ref-palette-neutral10: #3760BF;
+  --md-ref-palette-neutral90: #E1E2E7;
+  --md-ref-palette-neutral-variant30: #848CB5;
+  --md-ref-palette-neutral-variant80: #C4C8DA;
 
   color-scheme: light;
 
   /* ---- M3 light scheme roles ---- */
-  --md-sys-color-primary: #4655C9;
-  --md-sys-color-onPrimary: #FFFFFF;
-  --md-sys-color-primaryContainer: #DEE0FF;
-  --md-sys-color-onPrimaryContainer: #001159;
-  --md-sys-color-secondary: #5B5D72;
-  --md-sys-color-onSecondary: #FFFFFF;
-  --md-sys-color-secondaryContainer: #E0E1F9;
-  --md-sys-color-onSecondaryContainer: #181A2C;
-  --md-sys-color-tertiary: #00696B;
-  --md-sys-color-onTertiary: #FFFFFF;
-  --md-sys-color-tertiaryContainer: #9CF1F2;
-  --md-sys-color-onTertiaryContainer: #002020;
-  --md-sys-color-error: #B3261E;
+  --md-sys-color-primary: #2E7DE9;
+  --md-sys-color-onPrimary: #E1E2E7;
+  --md-sys-color-primaryContainer: #D6E4FF;
+  --md-sys-color-onPrimaryContainer: #1A3A8F;
+  --md-sys-color-secondary: #6172B0;
+  --md-sys-color-onSecondary: #E1E2E7;
+  --md-sys-color-secondaryContainer: #E4E9F7;
+  --md-sys-color-onSecondaryContainer: #3B3F5C;
+  --md-sys-color-tertiary: #007197;
+  --md-sys-color-onTertiary: #E1E2E7;
+  --md-sys-color-tertiaryContainer: #D8F0FF;
+  --md-sys-color-onTertiaryContainer: #00485C;
+  --md-sys-color-error: #F52A65;
   --md-sys-color-onError: #FFFFFF;
-  --md-sys-color-errorContainer: #F9DEDC;
-  --md-sys-color-onErrorContainer: #410E0B;
-  --md-sys-color-background: #FBF8FF;
-  --md-sys-color-onBackground: #1B1B21;
-  --md-sys-color-surface: #FBF8FF;
-  --md-sys-color-onSurface: #1B1B21;
-  --md-sys-color-surfaceVariant: #E3E1EC;
-  --md-sys-color-onSurfaceVariant: #46464F;
-  --md-sys-color-outline: #777680;
-  --md-sys-color-outlineVariant: #C7C5D0;
+  --md-sys-color-errorContainer: #FFD9E3;
+  --md-sys-color-onErrorContainer: #8C1240;
+  --md-sys-color-background: #E1E2E7;
+  --md-sys-color-onBackground: #3760BF;
+  --md-sys-color-surface: #E1E2E7;
+  --md-sys-color-onSurface: #3760BF;
+  --md-sys-color-surfaceVariant: #D6D9E4;
+  --md-sys-color-onSurfaceVariant: #6172B0;
+  --md-sys-color-outline: #A6ACC6;
+  --md-sys-color-outlineVariant: #C4C8DA;
   --md-sys-color-surfaceContainerLowest: #FFFFFF;
-  --md-sys-color-surfaceContainerLow: #F5F2FA;
-  --md-sys-color-surfaceContainer: #EFEDF5;
-  --md-sys-color-surfaceContainerHigh: #E9E7EF;
-  --md-sys-color-surfaceContainerHighest: #E3E1EA;
-  --md-sys-color-inverseSurface: #303036;
-  --md-sys-color-inverseOnSurface: #F3F0F7;
+  --md-sys-color-surfaceContainerLow: #F3F4F8;
+  --md-sys-color-surfaceContainer: #F3F4F8;
+  --md-sys-color-surfaceContainerHigh: #D6D9E4;
+  --md-sys-color-surfaceContainerHighest: #C4C8DA;
+  --md-sys-color-inverseSurface: #1A1B26;
+  --md-sys-color-inverseOnSurface: #C0CAF5;
 
   /* ---- M3 shape ---- */
   --md-sys-shape-corner-none: 0px;
@@ -99,18 +99,29 @@
      border-border, bg-c-blue-600, ...) working while pointing at M3
      values. Refactors can migrate to --md-sys-* directly over time.
      ============================================================ */
-  --c-teal-50: #E0F5F5;  --c-teal-600: #008B8D;  --c-teal-800: #00696B;  --c-teal-900: #004F50;
-  --c-blue-50: #E8EAFB;  --c-blue-600: #5B65D6;  --c-blue-800: #4655C9;  --c-blue-900: #3140B1;
-  --c-amber-50: #FFF0E0; --c-amber-600: #B3540C;  --c-amber-800: #7C3D00;  --c-amber-900: #572A00;
-  --c-red-50: #FCE8E6;  --c-red-600: #C6443D;  --c-red-800: #A52620;  --c-red-900: #7C1D18;
-  --c-gray-50: #FEF7FF; --c-gray-600: #49454F; --c-gray-800: #1D1B20; --c-gray-900: #141218;
+  --c-teal-50: #E0F5F5;  --c-teal-600: #587539;  --c-teal-800: #587539;  --c-teal-900: #3F5A2A;
+  --c-blue-50: #D6E4FF;  --c-blue-600: #2E7DE9;  --c-blue-800: #2E7DE9;  --c-blue-900: #1A5FC8;
+  --c-amber-50: #FFF3E0; --c-amber-600: #8C6C3E;  --c-amber-800: #6E532E;  --c-amber-900: #543F22;
+  --c-red-50: #FFE3EA;  --c-red-600: #F52A65;  --c-red-800: #D20065;  --c-red-900: #A60050;
+  --c-gray-50: #F3F4F8; --c-gray-600: #6172B0; --c-gray-800: #3760BF; --c-gray-900: #2E3340;
 
   --color-brand-50: var(--c-blue-50); --color-brand-500: var(--c-blue-600); --color-brand-600: var(--c-blue-600);
   --color-brand-700: var(--c-blue-800); --color-brand-800: var(--c-blue-800); --color-brand-900: var(--c-blue-900);
   --color-primary: var(--md-sys-color-primary); --color-primary-hover: var(--md-sys-color-onPrimaryContainer);
   --color-accent: var(--md-sys-color-tertiary); --color-accent-soft: var(--md-sys-color-tertiaryContainer);
   --color-cyan: var(--md-sys-color-tertiary); --color-green: var(--c-teal-600); --color-purple: var(--md-sys-color-primary);
-  --color-orange: var(--c-amber-600); --color-pink: var(--md-sys-color-tertiary); --color-yellow: #E6C84C;
+  --color-orange: var(--c-amber-600); --color-pink: var(--md-sys-color-tertiary); --color-yellow: #8C6C3E;
+
+  /* ---- Tokyo Night Day: semantic akses + soft variants ---- */
+  --color-blue: var(--c-blue-600); --color-blue-soft: color-mix(in srgb, var(--c-blue-600) 13%, transparent);
+  --color-green-soft: color-mix(in srgb, var(--color-green) 13%, transparent);
+  --color-yellow-soft: color-mix(in srgb, var(--color-yellow) 13%, transparent);
+  --color-orange-soft: color-mix(in srgb, var(--color-orange) 13%, transparent);
+  --color-red-soft: color-mix(in srgb, var(--color-danger) 13%, transparent);
+  --color-purple-soft: color-mix(in srgb, var(--color-purple) 13%, transparent);
+  --color-cyan-soft: color-mix(in srgb, var(--color-cyan) 13%, transparent);
+  --color-pink-soft: color-mix(in srgb, var(--color-pink) 13%, transparent);
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 13%, transparent);
 
   --color-bg: var(--md-sys-color-background); --color-bg-alt: var(--md-sys-color-surfaceContainerLow);
   --color-surface: var(--md-sys-color-surfaceContainer);
@@ -118,6 +129,8 @@
   --color-surface-3: var(--md-sys-color-surfaceContainerHigh);
   --color-surface-4: var(--md-sys-color-surfaceContainerHighest);
   --color-sidebar: var(--md-sys-color-surfaceContainerLow);
+  --color-deepest: var(--md-sys-color-surfaceContainerLowest);
+  --color-raised: var(--md-sys-color-surfaceContainerLow);
   --color-border: var(--md-sys-color-outlineVariant);
   --color-border-500: var(--md-sys-color-outlineVariant);
   --color-border-subtle: var(--md-sys-color-surfaceContainerHighest);
@@ -156,48 +169,59 @@
   color-scheme: dark;
 
   /* ---- M3 dark scheme roles ---- */
-  --md-sys-color-primary: #BCC2FF;
-  --md-sys-color-onPrimary: #1B2A8F;
-  --md-sys-color-primaryContainer: #3140B1;
-  --md-sys-color-onPrimaryContainer: #DEE1FF;
-  --md-sys-color-secondary: #C4C5DD;
-  --md-sys-color-onSecondary: #2D2F42;
-  --md-sys-color-secondaryContainer: #434659;
-  --md-sys-color-onSecondaryContainer: #E0E1F9;
-  --md-sys-color-tertiary: #4DD9DB;
-  --md-sys-color-onTertiary: #003737;
-  --md-sys-color-tertiaryContainer: #004F50;
-  --md-sys-color-onTertiaryContainer: #9CF1F2;
-  --md-sys-color-error: #F2B8B5;
-  --md-sys-color-onError: #601410;
-  --md-sys-color-errorContainer: #8C1D18;
-  --md-sys-color-onErrorContainer: #F9DEDC;
-  --md-sys-color-background: #131318;
-  --md-sys-color-onBackground: #E4E1E9;
-  --md-sys-color-surface: #131318;
-  --md-sys-color-onSurface: #E4E1E9;
-  --md-sys-color-surfaceVariant: #46464F;
-  --md-sys-color-onSurfaceVariant: #C7C5D0;
-  --md-sys-color-outline: #91909A;
-  --md-sys-color-outlineVariant: #46464F;
-  --md-sys-color-surfaceContainerLowest: #0E0E13;
-  --md-sys-color-surfaceContainerLow: #1B1B21;
-  --md-sys-color-surfaceContainer: #1F1F25;
-  --md-sys-color-surfaceContainerHigh: #2A292F;
-  --md-sys-color-surfaceContainerHighest: #35343A;
-  --md-sys-color-inverseSurface: #E4E1E9;
-  --md-sys-color-inverseOnSurface: #303036;
+  --md-sys-color-primary: #7AA2F7;
+  --md-sys-color-onPrimary: #16161E;
+  --md-sys-color-primaryContainer: #2A3B7E;
+  --md-sys-color-onPrimaryContainer: #C0CAF5;
+  --md-sys-color-secondary: #A9B1D6;
+  --md-sys-color-onSecondary: #16161E;
+  --md-sys-color-secondaryContainer: #414868;
+  --md-sys-color-onSecondaryContainer: #A9B1D6;
+  --md-sys-color-tertiary: #7DCFFF;
+  --md-sys-color-onTertiary: #16161E;
+  --md-sys-color-tertiaryContainer: #283457;
+  --md-sys-color-onTertiaryContainer: #7DCFFF;
+  --md-sys-color-error: #F7768E;
+  --md-sys-color-onError: #16161E;
+  --md-sys-color-errorContainer: #5A1E35;
+  --md-sys-color-onErrorContainer: #F7768E;
+  --md-sys-color-background: #1A1B26;
+  --md-sys-color-onBackground: #C0CAF5;
+  --md-sys-color-surface: #1A1B26;
+  --md-sys-color-onSurface: #C0CAF5;
+  --md-sys-color-surfaceVariant: #292E42;
+  --md-sys-color-onSurfaceVariant: #A9B1D6;
+  --md-sys-color-outline: #414868;
+  --md-sys-color-outlineVariant: #292E42;
+  --md-sys-color-surfaceContainerLowest: #16161E;
+  --md-sys-color-surfaceContainerLow: #1F2335;
+  --md-sys-color-surfaceContainer: #1F2335;
+  --md-sys-color-surfaceContainerHigh: #292E42;
+  --md-sys-color-surfaceContainerHighest: #292E42;
+  --md-sys-color-inverseSurface: #E1E2E7;
+  --md-sys-color-inverseOnSurface: #3760BF;
 
-  --c-teal-50: #12312F; --c-teal-600: #4DD9DB; --c-teal-800: #35C3C5; --c-teal-900: #9CF1F2;
-  --c-blue-50: #2A2A45; --c-blue-600: #B4BBF1; --c-blue-800: #BCC2FF; --c-blue-900: #DEE0FF;
-  --c-amber-50: #3A2613; --c-amber-600: #E8A26B; --c-amber-800: #FFB97A; --c-amber-900: #FFD4A8;
-  --c-red-50: #3B1210; --c-red-600: #E8968E; --c-red-800: #F2B8B5; --c-red-900: #F9DEDC;
-  --c-gray-50: #141218; --c-gray-600: #CAC4D0; --c-gray-800: #E6E0E9; --c-gray-900: #F5EFFF;
+  --c-teal-50: #1E2B22; --c-teal-600: #9ECE6A; --c-teal-800: #9ECE6A; --c-teal-900: #B4E08A;
+  --c-blue-50: #1E2640; --c-blue-600: #7AA2F7; --c-blue-800: #7AA2F7; --c-blue-900: #A9C0FA;
+  --c-amber-50: #3A2D18; --c-amber-600: #E0AF68; --c-amber-800: #E0AF68; --c-amber-900: #EFC68C;
+  --c-red-50: #3B1220; --c-red-600: #F7768E; --c-red-800: #F7768E; --c-red-900: #F9A8BC;
+  --c-gray-50: #1A1B26; --c-gray-600: #A9B1D6; --c-gray-800: #C0CAF5; --c-gray-900: #C0CAF5;
 
   --color-primary: var(--md-sys-color-primary); --color-primary-hover: var(--md-sys-color-onPrimaryContainer);
   --color-accent: var(--md-sys-color-tertiary); --color-accent-soft: var(--md-sys-color-tertiaryContainer);
   --color-cyan: var(--md-sys-color-tertiary); --color-green: var(--c-teal-600); --color-purple: var(--md-sys-color-primary);
-  --color-orange: var(--c-amber-600); --color-pink: var(--md-sys-color-tertiary); --color-yellow: #EDD46F;
+  --color-orange: var(--c-amber-600); --color-pink: var(--md-sys-color-tertiary); --color-yellow: #E0AF68;
+
+  /* ---- Tokyo Night Day: semantic akses + soft variants ---- */
+  --color-blue: var(--c-blue-600); --color-blue-soft: color-mix(in srgb, var(--c-blue-600) 13%, transparent);
+  --color-green-soft: color-mix(in srgb, var(--color-green) 13%, transparent);
+  --color-yellow-soft: color-mix(in srgb, var(--color-yellow) 13%, transparent);
+  --color-orange-soft: color-mix(in srgb, var(--color-orange) 13%, transparent);
+  --color-red-soft: color-mix(in srgb, var(--color-danger) 13%, transparent);
+  --color-purple-soft: color-mix(in srgb, var(--color-purple) 13%, transparent);
+  --color-cyan-soft: color-mix(in srgb, var(--color-cyan) 13%, transparent);
+  --color-pink-soft: color-mix(in srgb, var(--color-pink) 13%, transparent);
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 13%, transparent);
 
   --color-bg: var(--md-sys-color-background); --color-bg-alt: var(--md-sys-color-surfaceContainerLow);
   --color-surface: var(--md-sys-color-surfaceContainer);
@@ -205,6 +229,8 @@
   --color-surface-3: var(--md-sys-color-surfaceContainerHigh);
   --color-surface-4: var(--md-sys-color-surfaceContainerHighest);
   --color-sidebar: var(--md-sys-color-surfaceContainerLow);
+  --color-deepest: var(--md-sys-color-surfaceContainerLowest);
+  --color-raised: var(--md-sys-color-surfaceContainerLow);
   --color-border: var(--md-sys-color-outlineVariant);
   --color-border-500: var(--md-sys-color-outlineVariant);
   --color-border-subtle: var(--md-sys-color-surfaceContainerHighest);
@@ -307,6 +333,8 @@ select {
   --color-surface-3: var(--color-surface-3);
   --color-surface-4: var(--color-surface-4);
   --color-sidebar: var(--color-sidebar);
+  --color-deepest: var(--color-deepest);
+  --color-raised: var(--color-raised);
   --color-border: var(--color-border);
   --color-border-subtle: var(--color-border-subtle);
   --color-text: var(--color-text);
@@ -507,20 +535,6 @@ input, textarea {
 .dark .bg-vibrancy {
   background: rgba(20, 21, 30, 0.72);
 }
-
-/* macOS Traffic Lights */
-.traffic-lights {
-  display: flex;
-  gap: 8px;
-}
-.traffic-light {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-.traffic-light.red { background: #FF5F56; }
-.traffic-light.yellow { background: #FFBD2E; }
-.traffic-light.green { background: #27C93F; }
 
 /* Material Symbols */
 .material-symbols-outlined {

@@ -6,7 +6,7 @@ import { cn } from "@/shared/utils/cn";
 
 // Ant Design Modal — adapter keeping the app's existing props (isOpen, onClose,
 // footer, size). antd handles focus trap, ESC, overlay click and body scroll
-// lock natively; traffic-light header decoration is preserved via title slot.
+// lock natively; the title slot keeps the header decoration consistent.
 const sizeWidths = {
   sm: 420,
   md: 480,
@@ -23,22 +23,14 @@ export default function Modal({
   footer,
   size = "md",
   closeOnOverlay = true,
-  showTrafficLights = true,
   className,
   ...props
 }) {
   const titleId = useId();
 
-  const headerNode = showTrafficLights ? (
-    <div className="flex items-center gap-2">
-      <span className="w-3 h-3 rounded-full bg-[#FF5F56] inline-block" />
-      <span className="w-3 h-3 rounded-full bg-[#FFBD2E] inline-block" />
-      <span className="w-3 h-3 rounded-full bg-[#27C93F] inline-block" />
-      <h2 id={titleId} className="ml-2 text-base font-semibold text-text-main">{title}</h2>
-    </div>
-  ) : (
+  const headerNode = title ? (
     <h2 id={titleId} className="text-base font-semibold text-text-main">{title}</h2>
-  );
+  ) : undefined;
 
   return (
     <AntModal
