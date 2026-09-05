@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect ,
+  Typography } from "antd";
 import { Card } from "@/shared/components";
 import { isCustomEmbeddingProvider } from "@/shared/constants/providers";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
@@ -84,7 +85,7 @@ export function EmbeddingExampleCard({ providerId, customAlias }) {
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold mb-4">Example</h2>
+      <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Example</Typography.Title>
 
       <div className="flex flex-col gap-2.5">
         {/* Model — text input for custom node, dropdown otherwise */}

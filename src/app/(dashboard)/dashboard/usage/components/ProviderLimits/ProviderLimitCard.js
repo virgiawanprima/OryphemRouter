@@ -1,5 +1,7 @@
 "use client";
 
+import { Typography } from "antd";
+
 import { useState } from "react";
 import Card from "@/shared/components/Card";
 import ProviderIcon from "@/shared/components/ProviderIcon";
@@ -74,9 +76,9 @@ export default function ProviderLimitCard({
           </div>
 
           <div>
-            <h3 className="font-semibold text-text-primary">
+            <Typography.Title level={3} className="font-semibold text-text-primary"  style={{ margin: 0 }}>>
               {name || provider}
-            </h3>
+            </Typography.Title>
             {plan && (
               <Badge
                 variant={planVariants[plan?.toLowerCase()] || "default"}

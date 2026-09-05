@@ -1,5 +1,7 @@
 "use client";
 
+import { Typography } from "antd";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -54,7 +56,7 @@ function ProviderCard({ provider, kind, connections }) {
             />
           </div>
           <div>
-            <h3 className="font-semibold text-sm">{provider.name}</h3>
+            <Typography.Title level={3} className="font-semibold text-sm"  style={{ margin: 0 }}>>{provider.name}</Typography.Title>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">{renderStatus()}</div>
           </div>
         </div>
@@ -114,7 +116,7 @@ function Section({ title, icon, kind, providers, connections, combos, onCreateCo
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="material-symbols-outlined text-primary">{icon}</span>
-          <h2 className="text-base font-semibold">{title}</h2>
+          <Typography.Title level={2} className="text-base font-semibold"  style={{ margin: 0 }}>>{title}</Typography.Title>
           <span className="text-xs text-text-muted">({providers.length} providers · {combos.length} combos)</span>
         </div>
         <Button size="sm" icon="add" onClick={onCreateCombo}>Create Combo</Button>

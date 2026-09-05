@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Typography } from "antd";
 import { Card, Button, Toggle, Input } from "@/shared/components";
 import Modal, { ConfirmModal } from "@/shared/components/Modal";
 import LanguageSwitcher from "@/shared/components/LanguageSwitcher";
@@ -768,7 +769,7 @@ export default function ProfilePage() {
                 <span className="material-symbols-outlined text-xl sm:text-2xl">computer</span>
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-semibold">Local Mode</h2>
+                <Typography.Title level={2} style={{ fontSize: 20, fontWeight: 500, margin: 0 }}>Local Mode</Typography.Title>
                 <p className="text-sm text-text-muted">Running on your machine</p>
               </div>
             </div>
@@ -841,7 +842,7 @@ export default function ProfilePage() {
             <div className="size-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
               <span className="material-symbols-outlined text-[20px]">language</span>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold">Language</h3>
+            <Typography.Title level={3} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Language</Typography.Title>
           </div>
           <button
             onClick={() => setLangOpen(true)}
@@ -859,7 +860,7 @@ export default function ProfilePage() {
             <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
               <span className="material-symbols-outlined text-[20px]">shield</span>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold">Security</h3>
+            <Typography.Title level={3} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Security</Typography.Title>
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex items-start sm:items-center justify-between gap-4">
@@ -946,7 +947,7 @@ export default function ProfilePage() {
               <span className="material-symbols-outlined text-[20px]">lock_open</span>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base sm:text-lg font-semibold">Single Sign-On (SSO)</h3>
+              <Typography.Title level={3} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Single Sign-On (SSO)</Typography.Title>
               <p className="text-xs text-text-muted">
                 {settings.authMode === "sso" || settings.authMode === "oidc" || settings.authMode === "saml"
                   ? `${settings.ssoType === "saml" ? "SAML 2.0" : "OIDC"} SSO active`
@@ -1435,7 +1436,7 @@ export default function ProfilePage() {
             <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 shrink-0">
               <span className="material-symbols-outlined text-[20px]">route</span>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold">Routing Strategy</h3>
+            <Typography.Title level={3} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Routing Strategy</Typography.Title>
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex items-start sm:items-center justify-between gap-4">
@@ -1526,7 +1527,7 @@ export default function ProfilePage() {
             <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500 shrink-0">
               <span className="material-symbols-outlined text-[20px]">wifi</span>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold">Network</h3>
+            <Typography.Title level={3} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Network</Typography.Title>
           </div>
 
           <div className="flex flex-col gap-4">
@@ -1598,7 +1599,7 @@ export default function ProfilePage() {
             <div className="p-2 rounded-lg bg-orange-500/10 text-orange-500 shrink-0">
               <span className="material-symbols-outlined text-[20px]">monitoring</span>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold">Observability</h3>
+            <Typography.Title level={3} style={{ fontSize: 18, fontWeight: 500, margin: 0 }}>Observability</Typography.Title>
           </div>
           <div className="flex items-start sm:items-center justify-between gap-4">
             <div className="flex-1 min-w-0">

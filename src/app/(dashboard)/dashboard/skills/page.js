@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, Badge } from "@/shared/components";
+import { Typography } from "antd";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import {
   SKILLS,
@@ -45,7 +46,7 @@ function SkillRow({ skill }) {
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="font-semibold text-sm text-text-main">{skill.name}</h3>
+          <Typography.Title level={3} style={{ fontSize: 14, fontWeight: 500, margin: 0 }} className="text-text-main">{skill.name}</Typography.Title>
           {skill.isEntry && (
             <Badge variant="primary" size="sm">START HERE</Badge>
           )}
@@ -91,7 +92,7 @@ export default function SkillsPage() {
       <Card padding="md">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <h2 className="text-sm font-semibold text-text-main">More on GitHub</h2>
+            <Typography.Title level={2} style={{ fontSize: 14, fontWeight: 500, margin: 0 }} className="text-text-main">More on GitHub</Typography.Title>
             <p className="text-xs text-text-muted mt-0.5">
               Browse source, README, and examples.
             </p>

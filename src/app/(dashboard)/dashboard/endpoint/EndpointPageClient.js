@@ -1,5 +1,7 @@
 "use client";
 
+import { Typography } from "antd";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, Button, Input, Modal, CardSkeleton, Toggle, ConfirmModal } from "@/shared/components";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
@@ -758,10 +760,10 @@ export default function APIPageClient() {
     <div className="flex flex-col gap-8">
       {/* Endpoint Card */}
       <Card>
-        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Typography.Title level={2} className="text-lg font-semibold flex items-center gap-2"  style={{ margin: 0 }}>>
           <span className="material-symbols-outlined text-primary">api</span>
           API Endpoint
-        </h2>
+        </Typography.Title>
 
         {/* Endpoint rows */}
         <div className="flex flex-col gap-2">
@@ -1006,10 +1008,10 @@ export default function APIPageClient() {
       {/* API Keys */}
       <Card id="require-api-key">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <Typography.Title level={2} className="text-lg font-semibold flex items-center gap-2"  style={{ margin: 0 }}>>
             <span className="material-symbols-outlined text-primary">vpn_key</span>
             API Keys
-          </h2>
+          </Typography.Title>
           <Button icon="add" onClick={() => setShowAddModal(true)}>
             Create Key
           </Button>

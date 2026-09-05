@@ -1,5 +1,7 @@
 "use client";
 
+import { Typography } from "antd";
+
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Badge, Input, Modal, Select } from "@/shared/components";
@@ -343,7 +345,7 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
         )}
         {isCloudflareAi && (
           <div className="bg-sidebar/50 p-4 rounded-lg border border-accent/20">
-            <h3 className="font-semibold mb-3 text-sm">Cloudflare Workers AI</h3>
+            <Typography.Title level={3} className="font-semibold text-sm"  style={{ margin: 0 }}>>Cloudflare Workers AI</Typography.Title>
             <Input
               label="Account ID"
               value={cloudflareData.accountId}
@@ -357,7 +359,7 @@ export default function AddApiKeyModal({ isOpen, provider, providerName, isCompa
         )}
         {isAzure && (
           <div className="bg-sidebar/50 p-4 rounded-lg border border-accent/20">
-            <h3 className="font-semibold mb-3 text-sm">Azure OpenAI Configuration</h3>
+            <Typography.Title level={3} className="font-semibold text-sm"  style={{ margin: 0 }}>>Azure OpenAI Configuration</Typography.Title>
             <div className="flex flex-col gap-3">
               <Input
                 label="Azure Endpoint"

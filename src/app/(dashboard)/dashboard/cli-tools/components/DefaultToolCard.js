@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card, ModelSelectModal } from "@/shared/components";
+import { Typography } from "antd";
 import DraculaCodeBlock from "@/shared/components/DraculaCodeBlock";
 import { getProviderIconSrc, markProviderIconMissing } from "@/shared/utils/providerIcon";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
@@ -266,7 +267,7 @@ export default function DefaultToolCard({ toolId, tool, isExpanded, onToggle, ba
             {renderIcon()}
           </div>
           <div className="min-w-0">
-            <h3 className="font-medium text-sm">{tool.name}</h3>
+            <Typography.Title level={3} style={{ fontSize: 14, fontWeight: 500, margin: 0 }}>{tool.name}</Typography.Title>
             <p className="text-xs text-text-muted truncate">{tool.description}</p>
           </div>
         </div>

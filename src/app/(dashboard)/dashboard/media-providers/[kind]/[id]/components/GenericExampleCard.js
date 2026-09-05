@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect ,
+  Typography } from "antd";
 import { Card } from "@/shared/components";
 import { MEDIA_PROVIDER_KINDS, resolveProviderId } from "@/shared/constants/providers";
 import { getModelsByProviderId, getModelKind } from "@/shared/constants/models";
@@ -226,7 +227,7 @@ export function GenericExampleCard({ providerId, kind }) {
 
   return (
     <Card>
-      <h2 className="text-lg font-semibold mb-4">Example</h2>
+      <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Example</Typography.Title>
       <div className="flex flex-col gap-2.5">
         {/* Model selector — dropdown if presets exist, else manual input for media kinds */}
         {kindModels.length > 0 ? (

@@ -1,5 +1,7 @@
 "use client";
 
+import { Typography } from "antd";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/shared/components";
@@ -32,7 +34,7 @@ export default function ToolSummaryCard({ toolId, tool, status }) {
               ) : null}
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-medium text-sm truncate">{tool.name}</h3>
+              <Typography.Title level={3} className="font-medium text-sm truncate"  style={{ margin: 0 }}>>{tool.name}</Typography.Title>
               <span className={`inline-block mt-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full ${s.cls}`}>{s.label}</span>
             </div>
             <span className="material-symbols-outlined text-text-muted text-[18px] shrink-0">chevron_right</span>

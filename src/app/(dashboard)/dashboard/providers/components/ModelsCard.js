@@ -1,5 +1,7 @@
 "use client";
 
+import { Typography } from "antd";
+
 import { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Card, Button, Modal } from "@/shared/components";
@@ -218,7 +220,7 @@ export default function ModelsCard({ providerId, kindFilter, providerAliasOverri
     <>
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Models{kindFilter ? `: ${kindFilter.toUpperCase()}` : ""}</h2>
+          <Typography.Title level={2} className="text-lg font-semibold"  style={{ margin: 0 }}>>Models{kindFilter ? `: ${kindFilter.toUpperCase()}` : ""}</Typography.Title>
         </div>
         {testError && <p className="text-xs text-red-500 mb-3 break-words">{testError}</p>}
 

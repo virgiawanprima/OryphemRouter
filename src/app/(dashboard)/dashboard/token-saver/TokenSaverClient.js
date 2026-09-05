@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Typography } from "antd";
 import { Card, Button, Input, Modal, Toggle, ConfirmModal } from "@/shared/components";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import { getCurrentLocale, onLocaleChange } from "@/i18n/runtime";
@@ -480,12 +481,12 @@ export default function TokenSaverClient() {
     <div className="space-y-6 p-6">
       <Card id="rtk">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <Typography.Title level={2} style={{ fontSize: 18, fontWeight: 500, margin: 0 }} className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">
               bolt
             </span>
             Token Saver
-          </h2>
+          </Typography.Title>
         </div>
         <div className="flex items-center justify-between pt-2 pb-4 border-b border-[color:var(--md-sys-color-outlineVariant)] gap-4">
           <div className="min-w-0 flex-1">

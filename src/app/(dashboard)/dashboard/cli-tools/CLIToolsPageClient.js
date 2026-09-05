@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { CardSkeleton } from "@/shared/components";
+import { Typography } from "antd";
 import { CLI_TOOLS, MITM_TOOLS } from "@/shared/constants/cliTools";
 import { MitmLinkCard } from "./components";
 import ToolSummaryCard from "./components/ToolSummaryCard";
@@ -57,7 +58,7 @@ export default function CLIToolsPageClient() {
       <div className="flex flex-col gap-3 sm:gap-4">
         <div className="flex items-center gap-2 px-1">
           <span className="material-symbols-outlined text-[18px] text-primary">security</span>
-          <h2 className="text-sm font-semibold text-text-main">MITM Tools</h2>
+          <Typography.Title level={2} style={{ fontSize: 14, fontWeight: 500, margin: 0 }} className="text-text-main">MITM Tools</Typography.Title>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {mitmTools.map(([toolId, tool]) => (

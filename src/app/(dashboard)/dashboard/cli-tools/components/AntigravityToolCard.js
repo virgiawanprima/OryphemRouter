@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Select as AntSelect } from "antd";
+import { Select as AntSelect, Typography } from "antd";
 import { Card, Button, Badge, Modal, Input, ModelSelectModal } from "@/shared/components";
 import Image from "next/image";
 
@@ -253,7 +253,7 @@ export default function AntigravityToolCard({
           </div>
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <h3 className="font-medium text-sm">{tool.name}</h3>
+              <Typography.Title level={3} style={{ fontSize: 14, fontWeight: 500, margin: 0 }}>{tool.name}</Typography.Title>
               {isRunning ? (
                 <Badge variant="success" size="sm">Active</Badge>
               ) : (

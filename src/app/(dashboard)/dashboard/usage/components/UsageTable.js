@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
-import { Table as AntTable } from "antd";
+import { Table as AntTable ,
+  Typography } from "antd";
 import Card from "@/shared/components/Card";
 
 const fmt = (n) => new Intl.NumberFormat().format(n || 0);
@@ -197,7 +198,7 @@ export default function UsageTable({
   return (
     <Card className="overflow-hidden">
       <div className="p-4 border-b border-border bg-bg-subtle/50">
-        <h3 className="font-semibold">{title}</h3>
+        <Typography.Title level={3} className="font-semibold"  style={{ margin: 0 }}>>{title}</Typography.Title>
       </div>
       <div className="overflow-x-auto">
         <AntTable

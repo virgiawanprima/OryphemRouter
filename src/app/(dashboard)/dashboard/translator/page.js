@@ -245,7 +245,7 @@ export default function TranslatorPage() {
                     {isExpanded ? "expand_more" : "chevron_right"}
                   </span>
                   <span className="text-xs font-mono text-text-muted/60 w-4">{step.id}</span>
-                  <h3 className="text-sm font-semibold text-text-main">{step.label}</h3>
+                  <Typography.Title level={3} className="text-sm font-semibold text-text-main"  style={{ margin: 0 }}>>{step.label}</Typography.Title>
                   <span className="text-xs text-text-muted/60 font-mono">{step.file}</span>
                   {content && <span className="text-xs text-green-500">({content.length} chars)</span>}
                 </button>
