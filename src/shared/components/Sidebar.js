@@ -264,7 +264,7 @@ export default function Sidebar({ onClose }) {
         trigger={null}
         collapsible
         theme="light"
-        style={{ background: "var(--md-sys-color-surfaceContainerLow)" }}
+        style={{ background: "var(--color-deepest)" }}
         className="!border-r !border-[color:var(--md-sys-color-outlineVariant)] transition-all duration-200 min-h-full"
       >
         <div className="flex h-full flex-col">
