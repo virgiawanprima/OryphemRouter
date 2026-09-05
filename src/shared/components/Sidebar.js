@@ -1,16 +1,76 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/shared/utils/cn";
+import { Layout, Menu } from "antd";
+import {
+  DashboardOutlined,
+  ApiOutlined,
+  ClusterOutlined,
+  AppstoreOutlined,
+  BarChartOutlined,
+  LineChartOutlined,
+  BankOutlined,
+  SaveOutlined,
+  CodeOutlined,
+  ApartmentOutlined,
+  ExperimentOutlined,
+  FileTextOutlined,
+  SettingOutlined,
+  TagsOutlined,
+  PictureOutlined,
+  DatabaseOutlined,
+  BgColorsOutlined,
+  AudioOutlined,
+  SoundOutlined,
+  PlayCircleOutlined,
+  GlobalOutlined,
+  ZoomInOutlined,
+  ScanOutlined,
+  SwapOutlined,
+  SafetyCertificateOutlined,
+  TranslationOutlined,
+  DesktopOutlined,
+} from "@ant-design/icons";
 import { APP_CONFIG, UPDATER_CONFIG } from "@/shared/constants/config";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import Button from "./Button";
 import { ConfirmModal } from "./Modal";
 import RemotePromoModal from "./RemotePromoModal";
 
+const { Sider } = Layout;
+
+const ICON_MAP = {
+  space_dashboard: <DashboardOutlined />,
+  api: <ApiOutlined />,
+  dns: <ClusterOutlined />,
+  layers: <AppstoreOutlined />,
+  bar_chart: <BarChartOutlined />,
+  data_usage: <LineChartOutlined />,
+  local_atm: <BankOutlined />,
+  savings: <SaveOutlined />,
+  terminal: <CodeOutlined />,
+  lan: <ApartmentOutlined />,
+  extension: <ExperimentOutlined />,
+  article: <FileTextOutlined />,
+  settings: <SettingOutlined />,
+  sell: <TagsOutlined />,
+  perm_media: <PictureOutlined />,
+  data_array: <DatabaseOutlined />,
+  brush: <BgColorsOutlined />,
+  record_voice_over: <AudioOutlined />,
+  mic: <SoundOutlined />,
+  movie: <PlayCircleOutlined />,
+  travel_explore: <GlobalOutlined />,
+  photo_size_select_large: <ZoomInOutlined />,
+  document_scanner: <ScanOutlined />,
+  swap_vert: <SwapOutlined />,
+  shield_check: <SafetyCertificateOutlined />,
+  translate: <TranslationOutlined />,
+  computer: <DesktopOutlined />,
+};
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: "space_dashboard" },
@@ -45,10 +105,17 @@ const MEDIA_SUBITEMS = [
   { href: "/dashboard/media-providers/moderation", label: "Moderation", icon: "shield_check" },
 ];
 
+function NavLabel({ href, label, onNavigate }) {
+  return (
+    <Link href={href} onClick={onNavigate} className="!text-inherit">
+      {label}
+    </Link>
+  );
+}
+
 export default function Sidebar({ onClose }) {
   const pathname = usePathname();
   const [showRemoteModal, setShowRemoteModal] = useState(false);
-  const [mediaOpen, setMediaOpen] = useState(false);
   const [isDisconnected, setIsDisconnected] = useState(false);
   const [updateInfo, setUpdateInfo] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -56,6 +123,7 @@ export default function Sidebar({ onClose }) {
   const [shutdownCountdown, setShutdownCountdown] = useState(0);
   const [enableTranslator, setEnableTranslator] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [openKeys, setOpenKeys] = useState([]);
   const countdownRef = useRef(null);
 
   // Clean up the shutdown countdown on unmount — otherwise the interval keeps
@@ -88,6 +156,13 @@ export default function Sidebar({ onClose }) {
       return next;
     });
   };
+
+  // Open the Media Providers submenu when inside a media route
+  useEffect(() => {
+    if (pathname.startsWith("/dashboard/media-providers")) {
+      setOpenKeys((keys) => (keys.includes("media") ? keys : [...keys, "media"]));
+    }
+  }, [pathname]);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -145,194 +220,158 @@ export default function Sidebar({ onClose }) {
     if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null; }
   };
 
-  // Note: legacy updater poll removed. New flow: copy install cmd + shutdown server,
-  // user runs the command manually in another terminal.
+  const selectedKey = useMemo(() => {
+    const all = [
+      ...navItems,
+      ...systemItems,
+      ...MEDIA_SUBITEMS,
+      ...(enableTranslator ? [{ href: "/dashboard/translator" }] : []),
+    ];
+    const active = all.find((i) => isActive(i.href));
+    return active ? active.href : "/dashboard";
+  }, [pathname, enableTranslator]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const menuItems = useMemo(() => {
+    const toItem = ({ href, label, icon }) => ({
+      key: href,
+      icon: ICON_MAP[icon],
+      label: <NavLabel href={href} label={label} onNavigate={onClose} />,
+    });
+    const systemChildren = [
+      {
+        key: "media",
+        icon: ICON_MAP.perm_media,
+        label: "Media Providers",
+        children: MEDIA_SUBITEMS.map(toItem),
+      },
+      ...systemItems.map(toItem),
+    ];
+    if (enableTranslator) {
+      systemChildren.push(toItem({ href: "/dashboard/translator", label: "Translator", icon: "translate" }));
+    }
+    return [
+      ...navItems.map(toItem),
+      { type: "group", label: "System", children: systemChildren },
+    ];
+  }, [onClose, enableTranslator]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      <aside className={`flex flex-col border-r border-[color:var(--md-sys-color-outlineVariant)] bg-[color:var(--md-sys-color-surfaceContainerLow)] transition-all duration-200 min-h-full ${collapsed ? "w-[68px]" : "w-64"}`}>
-        {/* Traffic lights + collapse toggle */}
-        <div className={`flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-4"} pt-4 pb-2`}>
-          {!collapsed && (
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-              <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-              <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
-            </div>
-          )}
-          <button
-            onClick={toggleCollapse}
-            className="text-text-subtle hover:text-text-main transition-colors p-0.5"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <span className="material-symbols-outlined text-[16px]">
-              {collapsed ? "keyboard_double_arrow_right" : "keyboard_double_arrow_left"}
-            </span>
-          </button>
-        </div>
-
-        {/* Logo */}
-        <div className={`px-4 py-4 flex flex-col gap-2 ${collapsed ? "items-center" : ""}`}>
-          <Link href="/dashboard" className={`flex items-center gap-3 group ${collapsed ? "justify-center" : ""}`}>
-            <div className="flex items-center justify-center size-9 shrink-0">
-              <img
-                src="/images/logo-oryphem-putih.png"
-                alt="OryphemRouter"
-                className="hidden dark:block size-9 object-contain"
-              />
-              <img
-                src="/images/logo-oryphem-hitam.png"
-                alt="OryphemRouter"
-                className="block dark:hidden size-9 object-contain"
-              />
-            </div>
+      <Sider
+        width={256}
+        collapsedWidth={68}
+        collapsed={collapsed}
+        trigger={null}
+        collapsible
+        theme="light"
+        style={{ background: "var(--md-sys-color-surfaceContainerLow)" }}
+        className="!border-r !border-[color:var(--md-sys-color-outlineVariant)] transition-all duration-200 min-h-full"
+      >
+        <div className="flex h-full flex-col">
+          {/* Traffic lights + collapse toggle */}
+          <div className={`flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-4"} pt-4 pb-2`}>
             {!collapsed && (
-              <div className="flex flex-col">
-                <span className="text-base font-medium tracking-tight text-text-main">
-                  {APP_CONFIG.name}
-                </span>
-                <span className="text-[13px] text-text-muted">v{APP_CONFIG.version}</span>
-              </div>
-            )}
-          </Link>
-          {updateInfo && !collapsed && (
-            <div className="flex flex-col gap-1.5 -m-1">
-              <span className="text-xs font-semibold text-green-600 dark:text-amber-500">
-                ↑ New version available: v{updateInfo.latestVersion}
-              </span>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowUpdateModal(true)}
-                  className="rounded-[var(--radius-brand)] border border-green-600 bg-green-600 hover:bg-green-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-[11px] font-semibold transition-colors cursor-pointer px-2 py-1"
-                >
-                  Update now
-                </button>
-                <button
-                  onClick={() => copy(INSTALL_CMD)}
-                  title="Copy install command"
-                  className="flex-1 text-left hover:opacity-80 transition-opacity cursor-pointer min-w-0"
-                >
-                  <code className="block text-[10px] text-green-600/80 dark:text-amber-400/70 font-mono truncate">
-                    {copied ? "✓ copied!" : INSTALL_CMD}
-                  </code>
-                </button>
+                <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+                <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.href}
-              href={item.href}
-              icon={item.icon}
-              label={item.label}
-              active={isActive(item.href)}
-              collapsed={collapsed}
-              onNavigate={onClose}
-            />
-          ))}
-
-          {/* System section */}
-          <div className="pt-3 mt-2 space-y-0.5">
-            {!collapsed && (
-              <p className="px-4 text-[13px] text-text-muted mb-2">
-                System
-              </p>
             )}
-
-            {/* Media Providers collapsible group */}
             <button
-              onClick={() => setMediaOpen((v) => !v)}
-              title={collapsed ? "Media Providers" : undefined}
-              className={cn(
-                "relative w-full flex items-center gap-3 px-3 py-2 rounded-[var(--md-sys-shape-corner-full)] transition-colors group",
-                collapsed && "justify-center px-0",
-                pathname.startsWith("/dashboard/media-providers")
-                  ? "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)]"
-                  : "text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main"
-              )}
+              onClick={toggleCollapse}
+              className="text-text-subtle hover:text-text-main transition-colors p-0.5"
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
-              <span className="material-symbols-outlined text-[18px] shrink-0">perm_media</span>
-              {!collapsed && (
-                <>
-                  <span className="text-[14px] flex-1 text-left">Media Providers</span>
-                  <span className="material-symbols-outlined text-[16px]" style={{ transform: mediaOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
-                    expand_more
-                  </span>
-                </>
-              )}
+              <span className="material-symbols-outlined text-[16px]">
+                {collapsed ? "keyboard_double_arrow_right" : "keyboard_double_arrow_left"}
+              </span>
             </button>
-            {mediaOpen && !collapsed && (
-              <div className="pl-3 space-y-0.5">
-                {MEDIA_SUBITEMS.map((sub) => (
-                  <NavLink
-                    key={sub.href}
-                    href={sub.href}
-                    icon={sub.icon}
-                    label={sub.label}
-                    active={pathname.startsWith(sub.href)}
-                    collapsed={false}
-                    small
-                    onNavigate={onClose}
-                  />
-                ))}
+          </div>
+
+          {/* Logo */}
+          <div className={`px-4 py-4 flex flex-col gap-2 ${collapsed ? "items-center" : ""}`}>
+            <Link href="/dashboard" className={`flex items-center gap-3 group ${collapsed ? "justify-center" : ""}`}>
+              <div className="flex items-center justify-center size-9 shrink-0">
+                <img
+                  src="/images/logo-oryphem-putih.png"
+                  alt="OryphemRouter"
+                  className="hidden dark:block size-9 object-contain"
+                />
+                <img
+                  src="/images/logo-oryphem-hitam.png"
+                  alt="OryphemRouter"
+                  className="block dark:hidden size-9 object-contain"
+                />
+              </div>
+              {!collapsed && (
+                <div className="flex flex-col">
+                  <span className="text-base font-medium tracking-tight text-text-main">
+                    {APP_CONFIG.name}
+                  </span>
+                  <span className="text-[13px] text-text-muted">v{APP_CONFIG.version}</span>
+                </div>
+              )}
+            </Link>
+            {updateInfo && !collapsed && (
+              <div className="flex flex-col gap-1.5 -m-1">
+                <span className="text-xs font-semibold text-green-600 dark:text-amber-500">
+                  ↑ New version available: v{updateInfo.latestVersion}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowUpdateModal(true)}
+                    className="rounded-[var(--radius-brand)] border border-green-600 bg-green-600 hover:bg-green-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white text-[11px] font-semibold transition-colors cursor-pointer px-2 py-1"
+                  >
+                    Update now
+                  </button>
+                  <button
+                    onClick={() => copy(INSTALL_CMD)}
+                    title="Copy install command"
+                    className="flex-1 text-left hover:opacity-80 transition-opacity cursor-pointer min-w-0"
+                  >
+                    <code className="block text-[10px] text-green-600/80 dark:text-amber-400/70 font-mono truncate">
+                      {copied ? "✓ copied!" : INSTALL_CMD}
+                    </code>
+                  </button>
+                </div>
               </div>
             )}
+          </div>
 
-            {systemItems.map((item) => (
-              <NavLink
-                key={item.href}
-                href={item.href}
-                icon={item.icon}
-                label={item.label}
-                active={isActive(item.href)}
-                collapsed={collapsed}
-                onNavigate={onClose}
-              />
-            ))}
+          {/* Navigation — Ant Design Menu */}
+          <nav className="flex-1 px-2 py-2 overflow-y-auto custom-scrollbar">
+            <Menu
+              mode="inline"
+              inlineCollapsed={collapsed}
+              selectedKeys={[selectedKey]}
+              openKeys={collapsed ? undefined : openKeys}
+              onOpenChange={setOpenKeys}
+              items={menuItems}
+              className="!border-none !bg-transparent"
+            />
+          </nav>
 
-            {enableTranslator && (
-              <NavLink
-                href="/dashboard/translator"
-                icon="translate"
-                label="Translator"
-                active={isActive("/dashboard/translator")}
-                collapsed={collapsed}
-                onNavigate={onClose}
-              />
-            )}
-
-            {/* Remote promo */}
-            <button
+          {/* Remote promo */}
+          <div className="px-3 pb-3">
+            <Button
+              variant="ghost"
+              fullWidth
               onClick={() => setShowRemoteModal(true)}
               title={collapsed ? "Remote" : undefined}
-              className={cn(
-                "relative w-full flex items-center gap-3 px-3 py-2 rounded-[8px] transition-colors group",
-                collapsed && "justify-center px-0",
-                "text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main"
-              )}
+              className="!justify-start"
             >
-              <span className="material-symbols-outlined text-[18px] shrink-0">computer</span>
-              {!collapsed && <span className="text-[14px]">Remote</span>}
-            </button>
-
-            </div>
-
-          {/* Bottom: language + theme toggles */}
-          <div className="mt-auto pt-3 border-t border-[color:var(--md-sys-color-outlineVariant)] px-3">
+              <span className="flex items-center gap-3 w-full">
+                <DesktopOutlined className="shrink-0 text-[16px]" />
+                {!collapsed && <span className="text-[14px]">Remote</span>}
+              </span>
+            </Button>
           </div>
-        </nav>
-
-      </aside>
+        </div>
+      </Sider>
 
       {/* Remote Promo Modal */}
       <RemotePromoModal isOpen={showRemoteModal} onClose={() => setShowRemoteModal(false)} />
-
 
       {/* Update Confirmation Modal */}
       <ConfirmModal
@@ -376,49 +415,6 @@ export default function Sidebar({ onClose }) {
     </>
   );
 }
-
-function NavLink({ href, icon, label, active, collapsed, small, onNavigate }) {
-  return (
-    <Link
-      href={href}
-      onClick={onNavigate}
-      title={collapsed ? label : undefined}
-      className={cn(
-        "relative flex items-center gap-3 px-3 py-2 rounded-[var(--md-sys-shape-corner-full)] transition-colors duration-150 group",
-        collapsed && "justify-center px-0",
-        small && "px-4",
-        active
-          ? "bg-[color:var(--md-sys-color-secondaryContainer)] text-[color:var(--md-sys-color-onSecondaryContainer)]"
-          : "text-text-muted hover:bg-[color:var(--md-sys-color-surfaceContainerHigh)] hover:text-text-main"
-      )}
-    >
-      <span
-        className={cn(
-          "material-symbols-outlined shrink-0 transition-all duration-150",
-          active && "fill-1",
-          small ? "text-[16px]" : "text-[18px]"
-        )}
-      >
-        {icon}
-      </span>
-      {!collapsed && (
-        <span className={cn("text-[14px]", small ? "text-[13px]" : "")}>
-          {label}
-        </span>
-      )}
-    </Link>
-  );
-}
-
-NavLink.propTypes = {
-  href: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  active: PropTypes.bool,
-  collapsed: PropTypes.bool,
-  small: PropTypes.bool,
-  onNavigate: PropTypes.func,
-};
 
 Sidebar.propTypes = {
   onClose: PropTypes.func,
