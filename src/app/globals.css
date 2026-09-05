@@ -558,6 +558,23 @@ input, textarea {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* ============================================================
+   Tokyo Night: antd primary button — bg-deepest text, primary bg
+   ============================================================ */
+.ant-btn-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-deepest) !important;
+}
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: var(--c-blue-800) !important;
+  color: var(--color-deepest) !important;
+}
+.ant-btn-dangerous.ant-btn-primary {
+  background-color: var(--color-danger) !important;
+  color: #FFFFFF !important;
+}
+
 /* Disable text selection on buttons */
 button {
   -webkit-user-select: none;
