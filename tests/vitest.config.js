@@ -17,6 +17,12 @@ export default defineConfig({
     exclude: ["**/node_modules/**", "**/.claude/**", "**/dist/**", "**/embeddings.cloud.test.js"],
     // Allow many it.concurrent cases (real provider smoke runs ~50 providers in parallel)
     maxConcurrency: 60,
+    // 5s is too tight for specs whose setup re-initialises the module graph per test
+    // (vi.resetModules + a fresh DATA_DIR, which re-loads sql.js wasm). Those tests pass in
+    // isolation but intermittently time out when the whole suite runs in parallel — observed
+    // as "Test timed out in 5000ms" in compatible-provider-connections.test.js. A modest bump
+    // keeps real hangs visible while removing the load-dependent flake.
+    testTimeout: 15_000,
     // Suppress noisy console output from handlers under test
     silent: false,
   },
