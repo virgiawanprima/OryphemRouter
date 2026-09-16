@@ -15,7 +15,10 @@ for (const e of REGISTRY) {
   if (e.alias) ALIAS_TO_ID.set(e.alias, e.id);
   for (const a of e.aliases || []) ALIAS_TO_ID.set(a, e.id);
 }
-function resolveModelsKey(aliasOrId) {
+// Resolve a provider alias (short or long) to its canonical registry id.
+// Exported so capability lookups keyed by canonical id also answer for callers
+// that only have the alias a user typed ("ocg/glm-5.2" → "opencode-go").
+export function resolveModelsKey(aliasOrId) {
   return ALIAS_TO_ID.get(aliasOrId) || aliasOrId;
 }
 

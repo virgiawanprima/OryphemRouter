@@ -6,6 +6,13 @@
 //   3. PATTERN_CAPABILITIES                     — glob match, ordered specific -> generic
 //   4. DEFAULT_CAPABILITIES                     — safe floor (always returned)
 //
+// A provider whose ids are VENDOR ALIASES (they don't spell out the underlying
+// family, e.g. opencode-go's `deepseek-flash`) can never be covered reliably by
+// tier 3 — a name glob will happily answer with the wrong family. Such providers
+// MUST get a full PROVIDER_CAPABILITIES table at tier 1. The result carries
+// `capabilitySource` so callers can tell an authoritative answer ("provider")
+// from a guess ("pattern").
+//
 // ── HOW TO ADD / UPDATE A MODEL ──────────────────────────────────────
 // Authoritative data source: https://models.dev/api.json (145 providers, 4000+
 // models, MIT). Each model exposes the exact fields we map below:
@@ -23,6 +30,7 @@
 // 2.0+, Grok, Perplexity). Verify with: curl -s https://models.dev/api.json
 
 import { matchPattern } from "./pricing.js";
+import { resolveModelsKey } from "../config/providerModels.js";
 
 /**
  * Safe floor — every resolved result is merged over this so consumers
@@ -179,6 +187,56 @@ export const PROVIDER_CAPABILITIES = {
     "laguna-s-2.1":  { reasoning: true, thinkingFormat: "openai", contextWindow: 1000000, maxOutput: 32000 },
     "laguna-xs-2.1": { reasoning: true, thinkingFormat: "openai", contextWindow: 200000, maxOutput: 32000 },
   },
+  // OpenCode Go (registry: open-sse/providers/registry/opencode-go.js).
+  //
+  // WHY THIS TABLE EXISTS: the upstream catalog (GET
+  // https://opencode.ai/zen/go/v1/models) advertises ids ONLY — no modalities, no
+  // limits — so any capability not declared here has to be guessed from the generic
+  // name patterns below. That guess is exactly what broke 9Router: its glob-only
+  // resolver matched `*deepseek*` (no vision) before any vision rule, so
+  // `deepseek-flash` — a vision-capable model — was flagged text-only and the vision
+  // adapter rerouted every image request away from it. A per-provider exact entry is
+  // the only reliable path for vendor-aliased ids.
+  //
+  // RULE: every model this router ships for this provider has an explicit entry.
+  // tests/unit/opencode-go-capabilities.test.js fails when a registry model is
+  // missing one, so a newly added alias can never silently inherit a pattern guess.
+  //
+  // EVIDENCE STATUS: values without a marker are frozen at the pattern result that
+  // was live before this table existed (deliberately no behavior change) and still
+  // need the image probe described in Projek/oryphemrouter — a 1x1 PNG call whose
+  // usage.prompt_tokens is compared against a text-only call. Do not "correct" them
+  // from model names; probe, then update.
+  "opencode-go": {
+    "glm-5.2":            { reasoning: true, thinkingFormat: "zai", contextWindow: 200000, maxOutput: 128000 },
+    "glm-5.1":            { reasoning: true, thinkingFormat: "zai", contextWindow: 200000, maxOutput: 128000 },
+    "kimi-k2.7-code":     { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", thinkingCanDisable: false, contextWindow: 262144, maxOutput: 65536 },
+    "kimi-k2.6":          { vision: true, reasoning: true, thinkingFormat: "kimi", contextWindow: 262144, maxOutput: 262144 },
+    "deepseek-v4-pro":    { reasoning: true, thinkingFormat: "deepseek", contextWindow: 1000000, maxOutput: 384000 },
+    "deepseek-v4-flash":  { reasoning: true, thinkingFormat: "deepseek", contextWindow: 1000000, maxOutput: 384000 },
+    "mimo-v2.5":          { vision: true, audioInput: true, videoInput: true, contextWindow: 1048576, maxOutput: 131072 },
+    "mimo-v2.5-pro":      { vision: true, audioInput: true, videoInput: true, contextWindow: 1048576, maxOutput: 131072 },
+    "minimax-m3":         { vision: true, reasoning: true, thinkingFormat: "minimax", contextWindow: 1048576, maxOutput: 512000 },
+    "minimax-m2.7":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 204800, maxOutput: 131072 },
+    "minimax-m2.5":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 200000, maxOutput: 131072 },
+    "qwen3.7-max":        { reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
+    "qwen3.7-plus":       { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
+    // NOTE — unresolved conflict: open-sse/config/opencodeZenGoSharedModels.js
+    // declares `supportsVision: false` for qwen3.6-plus/qwen3.5-plus, which
+    // contradicts the qwen 3.5+ family pattern used here. The value below preserves
+    // live behavior; the two sources must be reconciled by probe (see open item).
+    "qwen3.6-plus":       { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
+
+    // Listed upstream but not shipped in the registry: declared here so that adding
+    // one of them as a custom/passthrough model cannot silently fall into a pattern
+    // that strips the user's images.
+    // VERIFIED by probe (2026-09-11): 1x1 PNG answered "Pink", prompt_tokens 228 vs
+    // 36 for text-only. Context window MEASURED at 1,048,576 — the upstream listing
+    // reports no limits and 9Router's metadata wrongly claimed 128000.
+    "deepseek-flash":     { vision: true, reasoning: true, thinkingFormat: "deepseek", contextWindow: 1048576 },
+    // Recorded as an alias duplicate of deepseek-flash (same upstream model).
+    "deepseek-v4.1-flash": { vision: true, reasoning: true, thinkingFormat: "deepseek", contextWindow: 1048576 },
+  },
 };
 
 /**
@@ -321,34 +379,48 @@ export const PATTERN_CAPABILITIES = [
  * Resolve capabilities for a model using the 4-step fallback chain,
  * merged over DEFAULT_CAPABILITIES so the result is always complete.
  *
+ * The returned object also carries `capabilitySource` — which tier answered:
+ *   "provider" — PROVIDER_CAPABILITIES (explicit, authoritative)
+ *   "exact"    — MODEL_CAPABILITIES (canonical id, documented exception)
+ *   "pattern"  — a NAME GLOB matched. For a provider that has a provider table
+ *                this means the model was NOT declared, i.e. the answer is a
+ *                guess — callers that drop user content (media strip) must log
+ *                this so the guess is never silent.
+ *   "default"  — safe floor, nothing matched.
+ *
  * @param {string} provider
  * @param {string} model
  * @returns {object} full capabilities object
  */
 export function getCapabilitiesForModel(provider, model) {
-  if (!model) return { ...DEFAULT_CAPABILITIES };
+  if (!model) return { ...DEFAULT_CAPABILITIES, capabilitySource: "default" };
 
   // Canonical exact lookup strips vendor prefix: "anthropic/claude-opus-4.7" -> "claude-opus-4.7".
   const baseModel = model.includes("/") ? model.split("/").pop() : model;
 
-  // 1. Provider-specific override
+  // 1. Provider-specific override. Accept the short alias as well as the canonical
+  // id: combo/capacity-adapter callers derive the provider from the raw model string
+  // the user typed ("ocg/glm-5.2" → "ocg"), and a miss here would silently drop
+  // through to a name pattern — the exact failure mode this tier exists to prevent.
   if (provider) {
-    const providerCaps = PROVIDER_CAPABILITIES[provider];
-    if (providerCaps?.[model]) return { ...DEFAULT_CAPABILITIES, ...providerCaps[model] };
-    if (providerCaps?.[baseModel]) return { ...DEFAULT_CAPABILITIES, ...providerCaps[baseModel] };
+    for (const key of [provider, resolveModelsKey(provider)]) {
+      const providerCaps = PROVIDER_CAPABILITIES[key];
+      if (providerCaps?.[model]) return { ...DEFAULT_CAPABILITIES, ...providerCaps[model], capabilitySource: "provider" };
+      if (providerCaps?.[baseModel]) return { ...DEFAULT_CAPABILITIES, ...providerCaps[baseModel], capabilitySource: "provider" };
+    }
   }
 
   // 2. Canonical exact
-  if (MODEL_CAPABILITIES[baseModel]) return { ...DEFAULT_CAPABILITIES, ...MODEL_CAPABILITIES[baseModel] };
-  if (MODEL_CAPABILITIES[model]) return { ...DEFAULT_CAPABILITIES, ...MODEL_CAPABILITIES[model] };
+  if (MODEL_CAPABILITIES[baseModel]) return { ...DEFAULT_CAPABILITIES, ...MODEL_CAPABILITIES[baseModel], capabilitySource: "exact" };
+  if (MODEL_CAPABILITIES[model]) return { ...DEFAULT_CAPABILITIES, ...MODEL_CAPABILITIES[model], capabilitySource: "exact" };
 
   // 3. Pattern match (first match wins)
   for (const { pattern, caps } of PATTERN_CAPABILITIES) {
     if (matchPattern(pattern, baseModel) || matchPattern(pattern, model)) {
-      return { ...DEFAULT_CAPABILITIES, ...caps };
+      return { ...DEFAULT_CAPABILITIES, ...caps, capabilitySource: "pattern" };
     }
   }
 
   // 4. Floor
-  return { ...DEFAULT_CAPABILITIES };
+  return { ...DEFAULT_CAPABILITIES, capabilitySource: "default" };
 }
