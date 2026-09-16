@@ -27,6 +27,11 @@ product
 .DS_Store
 *.pem
 
+# Repo-local scratch. Was previously hidden only by the over-broad `**/opencode`
+# rule (it matched the directory tmp/opencode/); now ignored explicitly.
+# Project scratch belongs in /tmp/opencode (see scripts/dev.sh).
+/tmp/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -98,10 +103,13 @@ GEMINI.md
 **/CLAUDE.md
 **/GEMINI.md
 .opencode/
-opencode.json
-opencode
-opencode.*
-**/opencode
+# Root-anchored ONLY. Unanchored `opencode` / `opencode.*` also matches tracked
+# source files (open-sse/executors/opencode.js, open-sse/providers/registry/
+# opencode.js) and silently hides them from ripgrep / glob / grep tooling —
+# audits then "miss" real code. Keep these patterns anchored to the repo root.
+/opencode
+/opencode.json
+/opencode.jsonc
 # Playwright artifacts
 test-results/
 playwright-report/
