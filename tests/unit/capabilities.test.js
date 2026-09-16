@@ -53,6 +53,30 @@ describe("getCapabilitiesForModel", () => {
     expect(getCapabilitiesForModel("kiro", "openai/gpt-5.6-sol")).toMatchObject(kiroGpt56Expected);
     expect(getCapabilitiesForModel("kiro", "gpt-5.6-terra-thinking")).toMatchObject(kiroGpt56Expected);
     expect(getCapabilitiesForModel("kiro", "gpt-5.6-luna-agentic")).toMatchObject(kiroGpt56Expected);
-    expect(getCapabilitiesForModel("kiro", "gpt-5.6-sol-thinking-agentic")).toMatchObject(kiroGpt56Expected);
+      expect(getCapabilitiesForModel("kiro", "gpt-5.6-sol-thinking-agentic")).toMatchObject(kiroGpt56Expected);
+  });
+});
+
+describe("GLM-5.3-Flash — canonical exception the family pattern cannot express", () => {
+  // Z.ai's own guide index lists GLM-5.3-Flash and describes it as "the first native multimodal
+  // model in the GLM-5 series" (Input Modality Video/Image/Text/File), while its text siblings
+  // GLM-5.3/5.2/5.1 are text-only. The `*glm-5*` pattern answers for the whole family, so the
+  // multimodal member needs an exact entry — otherwise it is declared non-vision and loses images.
+  it("is vision-capable despite matching the text GLM-5 family pattern", () => {
+    const caps = getCapabilitiesForModel("glm", "glm-5.3-flash");
+    expect(caps.capabilitySource).toBe("exact");
+    expect(caps).toMatchObject({
+      vision: true, videoInput: true, pdf: true, reasoning: true,
+      thinkingFormat: "zai", thinkingCanDisable: false,
+      contextWindow: 1000000, maxOutput: 128000,
+    });
+  });
+
+  it("keeps its text-only siblings text-only", () => {
+    for (const id of ["glm-5.3", "glm-5.2", "glm-5.1"]) {
+      const caps = getCapabilitiesForModel("glm", id);
+      expect(caps.vision, id).toBe(false);
+      expect(caps.capabilitySource, id).toBe("pattern");
+    }
   });
 });

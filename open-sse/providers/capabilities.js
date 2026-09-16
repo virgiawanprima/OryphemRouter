@@ -105,6 +105,13 @@ export const MODEL_CAPABILITIES = {
   // GLM vision variant (text GLM has no vision)
   "glm-4.6v":          { vision: true, reasoning: true, thinkingFormat: "zai", contextWindow: 128000 },
 
+  // GLM-5.3-Flash — Z.ai: "the first native multimodal model in the GLM-5 series", Input
+  // Modality "Video / Image / Text / File", 1M context, 128K max output, thinking always on.
+  // Declared here as a canonical exception because the `*glm-5*` pattern (used by the text
+  // GLM-5.3/5.2/5.1 siblings) would otherwise answer vision:false for it — the same
+  // vendor-alias mis-flag the pattern list cannot express.
+  "glm-5.3-flash":     { vision: true, videoInput: true, pdf: true, reasoning: true, thinkingFormat: "zai", thinkingCanDisable: false, contextWindow: 1000000, maxOutput: 128000 },
+
   // Qwen plain coder/text (no vision) — registry "vision-model" / "coder-model" aliases
   "vision-model":      { vision: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000 },
   "coder-model":       { reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000 },

@@ -44,8 +44,13 @@ export default {
       auth: { combined: true, header: "x-api-key", scheme: "raw" },
     },
   ],
+  // Audited against the vendor's own guide index (docs.z.ai) 2026-09-16. GLM-5.3-Flash was
+  // missing: Z.ai documents it as "the first native multimodal model in the GLM-5 series" with
+  // 3x the coding-plan quota, and it is served by both transports declared above. Placed second
+  // so the default model stays GLM 5.3 (both are current; no reason to move the default).
   models: [
     { id: "glm-5.3", name: "GLM 5.3" },
+    { id: "glm-5.3-flash", name: "GLM 5.3 Flash (Multimodal)" },
     { id: "glm-5.2", name: "GLM 5.2" },
     { id: "glm-5.1", name: "GLM 5.1" },
     { id: "glm-5", name: "GLM 5" },
