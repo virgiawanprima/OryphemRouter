@@ -29,6 +29,14 @@ import { DEFAULT_RETRY_CONFIG, FETCH_CONNECT_TIMEOUT_MS } from "../config/runtim
  *   defaultRegion, modelsFetcher, validateUrl, responsesUrl } — clientId/clientSecret/tokenUrl are
  *   injected from `oauth` automatically (single source); declare them in `oauth`, not here.
  *
+ * ⚠️ `responsesUrl` is honoured by EXACTLY ONE executor (`open-sse/executors/github.js`, in
+ * `executeWithResponsesEndpoint`). Eleven providers declare it, so for the other ten it is inert
+ * metadata: a Responses-format client does NOT reach it — generic routing resolves endpoints
+ * through `transports[]`, and the default executor builds its URL from `baseUrl`. If you want a
+ * provider's /responses endpoint to be reachable, declare it as a `transports[]` entry with
+ * `format: "openai-responses"` (see registry/deepseek.js) and give the models that support it a
+ * matching `supportedFormats`. Audited registry-wide 2026-09-16.
+ *
  * OAuthConfig: { clientId, authorizeUrl, tokenUrl, deviceCodeUrl, refreshUrl, scope|scopes, redirectUri,
  *   callbackPath, fixedPort, codeChallengeMethod, extraParams, refresh:{encoding,scope}, refreshLeadMs,
  *   userInfoUrl }.
