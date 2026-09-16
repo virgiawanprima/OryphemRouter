@@ -151,7 +151,7 @@ const getComboMetricsTool = {
 };
 const switchComboInput = z.object({
   comboId: z.string().describe("ID of the combo to activate/deactivate"),
-  active: z.boolean().describe("Whether to enable or disable the combo")
+  active: z.boolean().describe("Whether to enable or disable the combo. NOT SUPPORTED — see the tool description.")
 });
 const switchComboOutput = z.object({
   success: z.boolean(),
@@ -163,7 +163,13 @@ const switchComboOutput = z.object({
 });
 const switchComboTool = {
   name: "omniroute_switch_combo",
-  description: "Activates or deactivates a combo. When deactivated, requests will not be routed through this combo. Use to toggle between different routing strategies.",
+  // Honest description: there is NO storage for this. The combos table has no isActive
+  // column and nothing in the request path consults one, so the previous wording
+  // ("requests will not be routed through this combo") described behaviour that never
+  // existed — the handler PUT {isActive} to /api/combos/<id>, which updateCombo drops,
+  // and still answered success. The tool now fails explicitly instead of pretending.
+  // Implementing it means a schema column + migration + a gate in getComboModelsFromData.
+  description: "NOT IMPLEMENTED. Enable/disable for combos has no storage (the combos table has no isActive column and the request path does not consult it), so this tool fails with an explicit error rather than reporting a change it cannot make. Use omniroute_set_routing_strategy to change how a combo routes.",
   inputSchema: switchComboInput,
   outputSchema: switchComboOutput,
   scopes: ["write:combos"],

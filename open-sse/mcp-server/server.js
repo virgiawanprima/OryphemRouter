@@ -368,12 +368,17 @@ async function handleGetComboMetrics(args) {
 async function handleSwitchCombo(args) {
   const start = Date.now();
   try {
-    const result = await omniRouteFetch(`/api/combos/${encodeURIComponent(args.comboId)}`, {
-      method: "PUT",
-      body: JSON.stringify({ isActive: args.active })
-    });
-    await logToolCall("omniroute_switch_combo", args, result, Date.now() - start, true);
-    return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+    // Not implemented, and deliberately not faked. The combos table has no isActive column
+    // and no code path consults one, so PUTting {isActive} to /api/combos/<id> was dropped
+    // by updateCombo while this handler still answered success. Failing explicitly is the
+    // honest option until the feature exists (column + migration + a gate in
+    // getComboModelsFromData).
+    const msg =
+      "omniroute_switch_combo is not implemented: combos have no enable/disable storage " +
+      "(no isActive column, and the request path does not consult one). " +
+      "Use omniroute_set_routing_strategy to change how a combo routes.";
+    await logToolCall("omniroute_switch_combo", args, null, Date.now() - start, false, msg);
+    return { content: [{ type: "text", text: `Error: ${msg}` }], isError: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     await logToolCall("omniroute_switch_combo", args, null, Date.now() - start, false, msg);
