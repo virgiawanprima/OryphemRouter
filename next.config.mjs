@@ -20,7 +20,14 @@ const nextConfig = {
   // letter). That throw happens at module scope, so every consumer of `open` dies on
   // import — including xAI/Grok token refresh, which loads the OAuth service that imports
   // it. Keeping it external preserves the real `import.meta.url` at runtime.
-  serverExternalPackages: ["better-sqlite3", "sql.js", "node:sqlite", "bun:sqlite", "open"],
+  //
+  // `koffi` ships prebuilt native .node binaries for every platform (freebsd_ia32,
+  // freebsd_x64, ...). Bundling it makes webpack try to parse those binaries as source and
+  // fail the whole build ("Module parse failed: Unexpected character"), which reached the
+  // build through tls-client-node → open-sse/services/tlsClientBase.js →
+  // executors/lmarena.js → /api/translator/translate. Same reasoning as `open`: keep both
+  // external so Node loads the right binary at runtime instead of webpack inlining it.
+  serverExternalPackages: ["better-sqlite3", "sql.js", "node:sqlite", "bun:sqlite", "open", "koffi", "tls-client-node"],
   turbopack: {
     root: tracingRoot
   },
