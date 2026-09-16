@@ -1,6 +1,7 @@
 import { parseJson } from "@/lib/utils/parseJson";
 import { NextResponse } from "next/server";
-import { getCombos, createCombo, getComboByName } from "@/lib/localDb";
+import { getCombos, createCombo, getComboByName, getSettings, updateSettings } from "@/lib/localDb";
+import { normalizeComboStrategy, COMBO_STRATEGY_VALUES } from "open-sse/utils/omni/routingStrategies.js";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,30 @@ export async function POST(request) {
       );
     }
 
+    // A combo has no strategy column: the dispatcher reads
+    // settings.comboStrategies[<combo name>].fallbackStrategy (src/sse/handlers/chat.js).
+    // Accept the strategy here so clients that send it at creation time are honoured
+    // instead of silently ignored, and reject unknown values up front (ADR-002).
+    const rawStrategy = body.fallbackStrategy ?? body.strategy;
+    let normalizedStrategy = null;
+    if (rawStrategy !== null && rawStrategy !== undefined && rawStrategy !== "") {
+      normalizedStrategy = normalizeComboStrategy(rawStrategy);
+      if (!normalizedStrategy) {
+        return NextResponse.json(
+          { error: `Invalid fallbackStrategy '${rawStrategy}'. Valid values: ${COMBO_STRATEGY_VALUES.join(", ")}` },
+          { status: 400 },
+        );
+      }
+    }
+
     const combo = await createCombo({ name, models: models || [], kind: normalizedKind });
+
+    if (normalizedStrategy) {
+      const settings = await getSettings();
+      const strategies = { ...(settings.comboStrategies || {}) };
+      strategies[name] = { ...(strategies[name] || {}), fallbackStrategy: normalizedStrategy };
+      await updateSettings({ comboStrategies: strategies });
+    }
 
     return NextResponse.json(combo, { status: 201 });
   } catch (error) {

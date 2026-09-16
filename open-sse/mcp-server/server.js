@@ -320,18 +320,25 @@ async function handleListCombos(args) {
     if (args.includeMetrics) {
       metrics = toRecord(await omniRouteFetch("/api/combos/metrics").catch(() => ({})));
     }
+    // Strategy is NOT a column on the combo row — the dispatcher resolves it from
+    // settings.comboStrategies[<combo name>] → settings.comboStrategy → "fallback". Reading
+    // combo.strategy (which never exists) fabricated "priority" for every combo, and
+    // `enabled` was equally absent (always true). Report what is actually configured.
+    const settings = toRecord(await omniRouteFetch("/api/settings").catch(() => ({})));
+    const comboStrategies = toRecord(settings.comboStrategies);
+    const globalStrategy = toString(settings.comboStrategy, "fallback");
     const result = {
       combos: toArray(combos).map((rawCombo) => {
         const combo = toRecord(rawCombo);
         const comboData = toRecord(combo.data);
         const comboId = toString(combo.id, "");
+        const name = toString(combo.name, comboId || "unnamed");
         const modelsSource = Array.isArray(combo.models) && combo.models.length > 0 ? combo.models : comboData.models;
         return {
           id: comboId,
-          name: toString(combo.name, comboId || "unnamed"),
+          name,
           models: normalizeComboModels(modelsSource),
-          strategy: toString(combo.strategy, toString(comboData.strategy, "priority")),
-          enabled: combo.enabled !== false,
+          strategy: toString(toRecord(comboStrategies[name]).fallbackStrategy, globalStrategy),
           ...args.includeMetrics ? { metrics: metrics[comboId] ?? null } : {}
         };
       })

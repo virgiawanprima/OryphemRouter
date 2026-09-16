@@ -95,8 +95,13 @@ const listCombosOutput = z.object({
           priority: z.number()
         })
       ),
-      strategy: z.enum(ROUTING_STRATEGY_VALUES),
-      enabled: z.boolean(),
+      // Resolved from settings.comboStrategies[<combo name>] → settings.comboStrategy →
+      // "fallback" (the same chain the dispatcher uses). Typed as a plain string because
+      // settings written before the /api/settings validation existed may still hold a
+      // ported name the combo dispatcher does not implement. The combo row has no strategy
+      // column, and no `enabled` flag either — that field was always fabricated as true and
+      // has been dropped rather than keep lying to clients.
+      strategy: z.string(),
       metrics: z.object({
         requestCount: z.number(),
         successRate: z.number(),
@@ -169,7 +174,7 @@ const switchComboTool = {
 const createComboInput = z.object({
   name: z.string().trim().min(1).max(100).describe("Unique combo name (letters, numbers, spaces, -, _, /, ., [ and ])"),
   description: z.string().max(2e3).optional().describe("Optional human-readable description"),
-  strategy: z.enum(ROUTING_STRATEGY_VALUES).optional().describe("Routing strategy (default: priority)"),
+  strategy: z.enum(COMBO_STRATEGY_VALUES).optional().describe("Combo routing strategy (default: fallback). Persisted to settings.comboStrategies for this combo"),
   models: z.array(
     z.object({
       provider: z.string().describe("Provider name (e.g., 'claude', 'gemini')"),
