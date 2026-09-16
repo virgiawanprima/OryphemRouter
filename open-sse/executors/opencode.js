@@ -2,7 +2,6 @@ import crypto from "crypto";
 import { BaseExecutor } from "./base.js";
 import { PROVIDERS } from "../config/providers.js";
 import { getModelSupportedFormats } from "../config/providerModels.js";
-import { FORMATS } from "../translator/formats.js";
 import { injectReasoningContent } from "../utils/reasoningContentInjector.js";
 import { resolveSessionId } from "../utils/sessionManager.js";
 
@@ -42,31 +41,27 @@ export class OpenCodeExecutor extends BaseExecutor {
     return injectReasoningContent({ provider: this.provider, model, body });
   }
 
-  buildUrl(model) {
+  buildUrl(model, _stream, _urlIndex = 0, credentials = null) {
     const base = this.config.baseUrl;
-    // Transport is resolved from metadata, never from a hardcoded model list. This
-    // executor used to carry `const MESSAGES_MODELS = new Set()` and branch on it:
-    // an empty allowlist that silently pinned EVERY model to /chat/completions —
-    // the same "hardcode the matcher instead of reading the declaration" mistake
-    // that routed opencode-go's /responses-only models to chat in 9Router.
+    // Transport is resolved from metadata, never from a hardcoded model list. This executor
+    // used to carry `const MESSAGES_MODELS = new Set()` and branch on it: an empty allowlist
+    // that silently pinned EVERY model to /chat/completions — the same "hardcode the matcher
+    // instead of reading the declaration" mistake that routed opencode-go's /responses-only
+    // models to chat in 9Router.
     //
-    // Zen ships a dynamic catalog (registry `passthroughModels`, no per-model
-    // entries), so today no model declares the claude format and the chat endpoint
-    // stays the default — identical behavior, but driven by the declaration. Add
-    // per-model `supportedFormats` (or `transports` on the registry entry) and the
-    // /messages route activates on its own.
-    //
-    // OPEN: whether zen's claude-format models even have a /zen/v1/messages endpoint
-    // is unverified (the upstream catalog reports ids only). Probe it before relying
-    // on it — tracked in Projek/oryphemrouter.
+    // chatCore resolves the per-model format and hands the chosen transport down on
+    // `credentials.runtimeTransport`; that value already accounts for the client's
+    // sourceFormat, so it wins. The declared-format lookup below covers direct executor use
+    // (and any path that does not go through chatCore).
+    if (credentials?.runtimeTransport?.baseUrl) return credentials.runtimeTransport.baseUrl;
+
     const transports = this.config.transports;
-    const claudeTransport = Array.isArray(transports)
-      ? transports.find((t) => t.format === FORMATS.CLAUDE)
-      : null;
-    const declared = getModelSupportedFormats(this.provider, model);
-    if (claudeTransport && declared?.includes(FORMATS.CLAUDE)) {
-      return claudeTransport.baseUrl || `${base}/zen/v1/messages`;
+    if (Array.isArray(transports)) {
+      const declared = getModelSupportedFormats(this.provider, model);
+      const match = declared?.[0] ? transports.find((t) => t.format === declared[0]) : null;
+      if (match?.baseUrl) return match.baseUrl;
     }
+    // Undeclared model (or no matching transport): chat stays the documented default.
     return `${base}/zen/v1/chat/completions`;
   }
 

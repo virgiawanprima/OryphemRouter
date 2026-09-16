@@ -1,31 +1,24 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// KNOWN GAP — this provider's transport is NOT modelled correctly yet.
+// OpenCode Zen (oc) — transport + curated model catalog.
 //
-// opencode.ai/docs/zen publishes a per-model endpoint table, and only part of the catalog
-// speaks chat. As of 2026-09-16:
-//   /zen/v1/responses           all GPT (6-astra … 5-nano), Grok 4.6/4.5, Grok Build 0.1,
-//                               Muse Spark 1.3/1.2 (+ contributor-free)
-//   /zen/v1/messages            all Claude (fable 5.1/5, opus 5 & 4.x, sonnet 5/4.x,
-//                               haiku 4.5), Qwen3.7-Max / 3.7-Plus / 3.6-Plus / 3.5-Plus
-//   /zen/v1/models/<model-id>   all Gemini (3.8/3.7/3.6/3.5-flash, 3.5-flash-lite,
-//                               3.1-pro, 3-flash) — a PER-MODEL path
-//   /zen/v1/chat/completions    DeepSeek, MiniMax, GLM, Kimi, and the free models
+// opencode.ai/docs/zen publishes a per-model endpoint table. Only part of the catalog speaks
+// chat, so `supportedFormats` matters here:
+//   /zen/v1/responses        all GPT, Grok 4.6/4.5, Grok Build 0.1, Muse Spark 1.3/1.2 (+contributor-free)
+//   /zen/v1/messages         all Claude, Qwen3.7-Max / 3.7-Plus / 3.6-Plus / 3.5-Plus
+//   /zen/v1/chat/completions DeepSeek, MiniMax, GLM, Kimi, and the free models
+//   /zen/v1/models/<id>      all Gemini — a PER-MODEL path, NOT expressible as a format
 //
-// Because this entry declares `models: []` and no `transports[]`, chatCore's format pick has
-// nothing to work with and the executor sends everything to /chat/completions — so the GPT,
-// Claude, Qwen and Gemini models cannot work through this router today.
+// ⚠️ The transports[] and the per-model catalog must stay together. Adding transports[] alone
+// would regress: chatCore falls back to the client's own format when a model declares nothing,
+// so a claude client asking for a chat-only model (Kimi, GLM, DeepSeek) would be sent to
+// /messages and start failing where it works today.
 //
-// ⚠️ TRAP: adding `transports[]` WITHOUT a per-model catalog is a REGRESSION, not a fix.
-// chatCore falls back to the client's own format when a model declares nothing, so a claude
-// client asking for a chat-only model (Kimi, GLM, DeepSeek) would be sent to /messages and
-// start failing where it works today.
+// Gemini models are deliberately NOT listed: their endpoint is per-model, which the
+// `{ format, baseUrl }` transport shape cannot express. Leaving them undeclared keeps today's
+// behaviour (they fall back to chat) rather than pretending they are routable.
 //
-// Minimum viable fix: declare `transports[]` for openai / claude / openai-responses TOGETHER
-// WITH per-model `supportedFormats` for the documented (non-Gemini) catalog, and have
-// OpenCodeExecutor.buildUrl honour `credentials.runtimeTransport.baseUrl`. Gemini still needs
-// a transport shape able to express a per-model path — `{ format, baseUrl }` cannot.
-// See Projek/oryphemrouter in the vault for the full table and comparison with the Go provider.
-// ─────────────────────────────────────────────────────────────────────────────
+// Display names are omitted on purpose — `normalizeModel` derives them, and the enrichment
+// layers (metadata.js / generatedMetadata.js) supply the curated ones. Transcribing 60+ names
+// by hand would only add chances to introduce a typo.
 export default {
   id: "opencode",
   priority: 40,
@@ -52,7 +45,83 @@ export default {
     },
     noAuth: true,
   },
-  models: [],
+  transports: [
+    { format: "openai", baseUrl: "https://opencode.ai/zen/v1/chat/completions", auth: { combined: true, header: "Authorization", scheme: "bearer", noAuth: true } },
+    { format: "claude", baseUrl: "https://opencode.ai/zen/v1/messages", auth: { combined: true, header: "x-api-key", scheme: "raw", anthropicVersion: true, noAuth: true } },
+    { format: "openai-responses", baseUrl: "https://opencode.ai/zen/v1/responses", auth: { combined: true, header: "Authorization", scheme: "bearer", noAuth: true } },
+  ],
+  models: [
+    // ── /zen/v1/responses ────────────────────────────────────────────────
+    { id: "gpt-6-astra", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.6-sol", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.6-terra", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.6-luna", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.5", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.5-pro", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.4", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.4-pro", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.4-mini", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.4-nano", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.3-codex", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.3-codex-spark", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.2", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.2-codex", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.1", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.1-codex", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.1-codex-max", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5.1-codex-mini", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5-codex", supportedFormats: ["openai-responses"] },
+    { id: "gpt-5-nano", supportedFormats: ["openai-responses"] },
+    { id: "grok-4.6", supportedFormats: ["openai-responses"] },
+    { id: "grok-4.5", supportedFormats: ["openai-responses"] },
+    { id: "grok-build-0.1", supportedFormats: ["openai-responses"] },
+    { id: "muse-spark-1.3", supportedFormats: ["openai-responses"] },
+    { id: "muse-spark-1.2", supportedFormats: ["openai-responses"] },
+    { id: "muse-spark-1.3-contributor-free", supportedFormats: ["openai-responses"] },
+
+    // ── /zen/v1/messages ─────────────────────────────────────────────────
+    { id: "claude-fable-5-1", supportedFormats: ["claude"] },
+    { id: "claude-fable-5", supportedFormats: ["claude"] },
+    { id: "claude-opus-5", supportedFormats: ["claude"] },
+    { id: "claude-opus-4-8", supportedFormats: ["claude"] },
+    { id: "claude-opus-4-7", supportedFormats: ["claude"] },
+    { id: "claude-opus-4-6", supportedFormats: ["claude"] },
+    { id: "claude-opus-4-5", supportedFormats: ["claude"] },
+    { id: "claude-sonnet-5", supportedFormats: ["claude"] },
+    { id: "claude-sonnet-4-6", supportedFormats: ["claude"] },
+    { id: "claude-sonnet-4-5", supportedFormats: ["claude"] },
+    { id: "claude-haiku-4-5", supportedFormats: ["claude"] },
+    { id: "qwen3.7-max", supportedFormats: ["claude"] },
+    { id: "qwen3.7-plus", supportedFormats: ["claude"] },
+    { id: "qwen3.6-plus", supportedFormats: ["claude"] },
+    { id: "qwen3.5-plus", supportedFormats: ["claude"] },
+
+    // ── /zen/v1/chat/completions ─────────────────────────────────────────
+    { id: "deepseek-v4-pro", supportedFormats: ["openai"] },
+    { id: "deepseek-v4-flash", supportedFormats: ["openai"] },
+    { id: "deepseek-v4-flash-vision-exp", supportedFormats: ["openai"] },
+    { id: "minimax-m3", supportedFormats: ["openai"] },
+    { id: "minimax-m2.7", supportedFormats: ["openai"] },
+    { id: "minimax-m2.5", supportedFormats: ["openai"] },
+    { id: "glm-5.3-flash", supportedFormats: ["openai"] },
+    { id: "glm-5.3", supportedFormats: ["openai"] },
+    { id: "glm-5.2", supportedFormats: ["openai"] },
+    { id: "glm-5.1", supportedFormats: ["openai"] },
+    { id: "glm-5", supportedFormats: ["openai"] },
+    { id: "kimi-k2.5", supportedFormats: ["openai"] },
+    { id: "kimi-k2.6", supportedFormats: ["openai"] },
+    { id: "kimi-k2.7-code", supportedFormats: ["openai"] },
+    { id: "kimi-k3", supportedFormats: ["openai"] },
+    { id: "big-pickle", supportedFormats: ["openai"] },
+    { id: "mimo-v2.5-free", supportedFormats: ["openai"] },
+    { id: "ling-3.0-flash-fin-free", supportedFormats: ["openai"] },
+    { id: "nemotron-3-ultra-free", supportedFormats: ["openai"] },
+    { id: "nemotron-3.5-lightning-free", supportedFormats: ["openai"] },
+
+    // NOT declared: gemini-3.8-flash, 3.7-flash, 3.6-flash, 3.5-flash, 3.5-flash-lite,
+    // 3.1-pro, 3-flash — their endpoint is /zen/v1/models/<model-id> (per-model path).
+  ],
   modelsFetcher: { url: "https://opencode.ai/zen/v1/models", type: "opencode-free" },
   passthroughModels: true,
 };
