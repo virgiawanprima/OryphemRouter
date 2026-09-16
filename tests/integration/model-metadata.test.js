@@ -42,11 +42,18 @@ describe("getModelMetadata (open-sse/providers/models/getMetadata.js)", () => {
     expect(getModelMetadata("openai", "default")).toBeNull();
   });
 
-  it("falls back to the raw registry entry for known-but-unenriched models", () => {
-    // gpt-5.4 is in the openai registry but not in MODEL_METADATA → registry fallback.
+  it("merges curated metadata with the registry entry for a known model", () => {
+    // gpt-5.4 is curated in MODEL_METADATA (1,050,000 context, vision, reasoning, …) and is
+    // also declared by the openai registry, so the caller gets the union. This test used to
+    // assert a raw-registry fallback on the premise that gpt-5.4 was unenriched — it has
+    // since been added to the curated layer, so the expectation moved with the data.
     const meta = getModelMetadata("openai", "gpt-5.4");
-    expect(meta).toEqual({ id: "gpt-5.4", name: "GPT-5.4" });
+    expect(meta).toMatchObject({
+      id: "gpt-5.4", name: "GPT-5.4", contextWindow: 1050000,
+      vision: true, reasoning: true, toolCalling: true,
+    });
   });
+
 
   it("returns null when the model is in neither MODEL_METADATA nor the registry", () => {
     expect(getModelMetadata("fakeprovider", "nope-nope-nope")).toBeNull();

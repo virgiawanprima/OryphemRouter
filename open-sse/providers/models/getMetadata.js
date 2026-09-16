@@ -30,10 +30,18 @@ export function findRegistryModel(providerId, modelId) {
  */
 export function getModelMetadata(providerId, modelId) {
   const registryEntry = findRegistryModel(providerId, modelId);
-  const enriched = MODEL_METADATA[modelId] ?? GENERATED_METADATA[modelId];
+  const enrichedRaw = MODEL_METADATA[modelId] ?? GENERATED_METADATA[modelId];
+  // Enrichment entries declare the provider they came from (`provider: "cursor"` for the
+  // "default" sentinel, `provider: "cheaperinference"` for "gpt-5.4"). Serving such an
+  // entry for a DIFFERENT provider leaks one provider's model into another provider's
+  // lookup — and those entries can carry transport fields (targetFormat, rateMultiplier)
+  // that only make sense for the declaring provider. Scope by provider when declared.
+  const enriched =
+    enrichedRaw?.provider && enrichedRaw.provider !== providerId ? undefined : enrichedRaw;
 
   if (enriched === undefined) {
     // Fallback: surface the raw registry entry (id/name + provider-declared fields).
+    // null when the provider does not know the model at all.
     return registryEntry;
   }
 
