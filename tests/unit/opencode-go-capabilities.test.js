@@ -30,9 +30,12 @@ const UPSTREAM_ONLY_DECLARED = ["deepseek-flash"];
 // pattern or the bare floor, i.e. the answer is a guess. Pinned exactly so it cannot grow
 // silently. (Different from "declared but the VALUES are not doc-verified": kimi-k2.7-code
 // and qwen3.8-flash carry an entry, but only qwen3.8-flash's vision flag has a source.)
-const UNVERIFIED = [
-  "muse-spark-1.3-contributor", "muse-spark-1.2-contributor",
-];
+// Registry models with NO explicit provider entry at all. This is empty on purpose and is
+// the goal state: every model the router ships for this provider has a capability entry
+// backed by a vendor source (see the inline citations in capabilities.js). A newly added
+// model that lacks one lands here and fails the coverage test below instead of silently
+// inheriting a name-pattern guess.
+const UNVERIFIED = [];
 
 // `visionModels.js` is a SECOND, independent vision heuristic (name fragments) used
 // by compression/lite.js and autoCombo. It disagrees with the capability table for
@@ -43,6 +46,7 @@ const VISION_HEURISTIC_GAPS = [
   "mimo-v2.5", "mimo-v2.5-pro", "qwen3.6-plus", "qwen3.7-plus", "qwen3.8-flash",
   "qwen3.8-max", "deepseek-v4-flash", "deepseek-v4.1-flash", "kimi-k3",
   "grok-4.6", "glm-5.3-flash",
+  "muse-spark-1.3-contributor", "muse-spark-1.2-contributor",
 ];
 
 describe("OpenCode Go capabilities — explicit declaration, never a glob guess", () => {
@@ -143,12 +147,15 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
     }
   });
 
-  it("documents the ids that still fall through to a guess (known gap)", () => {
-    // Not a bug to hide: Meta's pages for Muse Spark 1.3 / 1.2-contributor return HTTP 400/500
-    // and no other official source states their modalities, so they still resolve by a name
-    // pattern/floor. Pinned so the residual risk stays quantified.
-    expect(getCapabilitiesForModel(PROVIDER, "muse-spark-1.3-contributor").capabilitySource).toBe("default");
-    expect(getCapabilitiesForModel(PROVIDER, "muse-spark-1.2-contributor").capabilitySource).toBe("default");
+  it("leaves no shipped model falling through to a name-pattern guess", () => {
+    // Was a "known gap" pin listing the ids that still resolved by pattern/floor. Meta's model
+    // table closed the last two (muse-spark contributor ids), so the gap is now zero and the
+    // assertion flips to enforcing that: any future model without a source fails here.
+    const unresolved = REGISTRY_MODELS.filter(
+      (id) => getCapabilitiesForModel(PROVIDER, id).capabilitySource !== "provider"
+    );
+    expect(unresolved).toEqual([]);
+    expect(UNVERIFIED).toEqual([]);
   });
 
   it("marks models whose modality the vendor does not document", () => {

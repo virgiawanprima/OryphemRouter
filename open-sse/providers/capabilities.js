@@ -291,6 +291,14 @@ export const PROVIDER_CAPABILITIES = {
     // Long Context: Native tool calling and multi-step reasoning" — modality never stated.
     "longcat-2.0":        { reasoning: true, contextWindow: 1000000, modalityUnknown: true },
 
+    // Meta Model API docs (dev.meta.ai/docs/models) publish an explicit table:
+    // `muse-spark-1.3` → Input modalities "Text, image, video, audio*, PDF", context window
+    // 1,048,576 — and "Muse Spark comes in three versions, each sharing the same modalities
+    // and context window". The Contributor tier is the same model with training-eligible
+    // pricing, so both contributor ids carry the full modality set.
+    "muse-spark-1.3-contributor": { vision: true, videoInput: true, audioInput: true, pdf: true, reasoning: true, thinkingFormat: "openai", contextWindow: 1048576 },
+    "muse-spark-1.2-contributor": { vision: true, videoInput: true, audioInput: true, pdf: true, reasoning: true, thinkingFormat: "openai", contextWindow: 1048576 },
+
     // Listed upstream but not shipped in the registry: declared here so that adding
     // one of them as a custom/passthrough model cannot silently fall into a pattern
     // that strips the user's images.
