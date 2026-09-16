@@ -202,29 +202,43 @@ export const PROVIDER_CAPABILITIES = {
   // tests/unit/opencode-go-capabilities.test.js fails when a registry model is
   // missing one, so a newly added alias can never silently inherit a pattern guess.
   //
-  // EVIDENCE STATUS: values without a marker are frozen at the pattern result that
-  // was live before this table existed (deliberately no behavior change) and still
-  // need the image probe described in Projek/oryphemrouter — a 1x1 PNG call whose
-  // usage.prompt_tokens is compared against a text-only call. Do not "correct" them
-  // from model names; probe, then update.
+  // EVIDENCE STATUS — updated 2026-09-16 after reading the vendor docs directly. Entries
+  // carry an inline source comment whenever a vendor/protocol doc states the modality.
+  // Doc-verified: glm-5.2 / glm-5.1 (Z.ai "Input Modalities: Text"), qwen3.7-max /
+  // qwen3.7-plus / qwen3.6-plus (qwen.ai/apiplatform "Inputs:"), minimax-m3 (MiniMax
+  // "Frontier multimodal … 1M"), minimax-m2.7 / m2.5 (no multimodal feature listed),
+  // mimo-v2.5 / mimo-v2.5-pro (Xiaomi "native omni-modal: images, video, audio"),
+  // deepseek-flash / v4-pro / v4-flash / v4-flash-vision-exp (DeepSeek "Vision" row),
+  // kimi-k2.6 (Moonshot + ModelScope: image and video input).
+  // STILL UNVERIFIED: kimi-k2.7-code — needs the 1x1 PNG probe described in
+  // Projek/oryphemrouter (compare usage.prompt_tokens against a text-only call).
+  // Never "correct" a value from the model NAME; cite a doc or probe it.
   "opencode-go": {
-    "glm-5.2":            { reasoning: true, thinkingFormat: "zai", contextWindow: 200000, maxOutput: 128000 },
+    // Z.ai docs (docs.z.ai/guides/llm/glm-5.2): Input Modalities "Text", 1M context.
+    "glm-5.2":            { reasoning: true, thinkingFormat: "zai", contextWindow: 1000000, maxOutput: 128000 },
+    // Z.ai docs (docs.z.ai/guides/llm/glm-5.1): Input Modalities "Text", 200K context.
     "glm-5.1":            { reasoning: true, thinkingFormat: "zai", contextWindow: 200000, maxOutput: 128000 },
     "kimi-k2.7-code":     { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", thinkingCanDisable: false, contextWindow: 262144, maxOutput: 65536 },
-    "kimi-k2.6":          { vision: true, reasoning: true, thinkingFormat: "kimi", contextWindow: 262144, maxOutput: 262144 },
+    // ModelScope/Moonshot: K2.6 is a native multimodal model with image AND video input.
+    "kimi-k2.6":          { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", contextWindow: 262144, maxOutput: 262144 },
+    // DeepSeek docs: Vision "Not supported" for DeepSeek-V4-Pro; 1M context, 384K max output.
     "deepseek-v4-pro":    { reasoning: true, thinkingFormat: "deepseek", contextWindow: 1000000, maxOutput: 384000 },
-    "deepseek-v4-flash":  { reasoning: true, thinkingFormat: "deepseek", contextWindow: 1000000, maxOutput: 384000 },
+    // DeepSeek docs (api-docs.deepseek.com/quick_start/pricing): the name `deepseek-v4-flash`
+    // is RETIRED - requests are served by DeepSeek-V4.1-Flash, whose Vision row is ✓.
+    "deepseek-v4-flash":  { vision: true, reasoning: true, thinkingFormat: "deepseek", contextWindow: 1000000, maxOutput: 384000 },
     "mimo-v2.5":          { vision: true, audioInput: true, videoInput: true, contextWindow: 1048576, maxOutput: 131072 },
     "mimo-v2.5-pro":      { vision: true, audioInput: true, videoInput: true, contextWindow: 1048576, maxOutput: 131072 },
     "minimax-m3":         { vision: true, reasoning: true, thinkingFormat: "minimax", contextWindow: 1048576, maxOutput: 512000 },
     "minimax-m2.7":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 204800, maxOutput: 131072 },
     "minimax-m2.5":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 200000, maxOutput: 131072 },
+    // Qwen platform (qwen.ai/apiplatform): Qwen3.7-Max "Inputs: Text" — Alibaba Model Studio
+    // describes Max as a pure-text-only interface → no vision.
     "qwen3.7-max":        { reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
+    // Qwen platform: Qwen3.7-Plus "Inputs: Text,Image,Video".
     "qwen3.7-plus":       { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
-    // NOTE — unresolved conflict: open-sse/config/opencodeZenGoSharedModels.js
-    // declares `supportsVision: false` for qwen3.6-plus/qwen3.5-plus, which
-    // contradicts the qwen 3.5+ family pattern used here. The value below preserves
-    // live behavior; the two sources must be reconciled by probe (see open item).
+    // Qwen platform: Qwen3.6-Plus "Inputs: Text,Image,Video", 1,000,000 context. This SETTLES
+    // the conflict with the (since deleted) opencodeZenGoSharedModels.js, which claimed
+    // supportsVision:false — the vendor's own API platform says image and video are accepted.
     "qwen3.6-plus":       { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
 
     // Listed upstream but not shipped in the registry: declared here so that adding
@@ -232,10 +246,15 @@ export const PROVIDER_CAPABILITIES = {
     // that strips the user's images.
     // VERIFIED by probe (2026-09-11): 1x1 PNG answered "Pink", prompt_tokens 228 vs
     // 36 for text-only. Context window MEASURED at 1,048,576 — the upstream listing
-    // reports no limits and 9Router's metadata wrongly claimed 128000.
+    // reports no limits and 9Router's metadata wrongly claimed 128000. The vendor docs
+    // now agree: DeepSeek's Vision row is ✓ for this model.
     "deepseek-flash":     { vision: true, reasoning: true, thinkingFormat: "deepseek", contextWindow: 1048576 },
     // Recorded as an alias duplicate of deepseek-flash (same upstream model).
     "deepseek-v4.1-flash": { vision: true, reasoning: true, thinkingFormat: "deepseek", contextWindow: 1048576 },
+    // DeepSeek docs: a RETIRED name still accepted, served by DeepSeek-V4.1-Flash (Vision ✓).
+    // Without an entry here it fell through to `*deepseek-v4*` (no vision) and images from a
+    // vision-capable model would have been silently dropped — the exact 9Router failure.
+    "deepseek-v4-flash-vision-exp": { vision: true, reasoning: true, thinkingFormat: "deepseek", contextWindow: 1048576 },
   },
 };
 

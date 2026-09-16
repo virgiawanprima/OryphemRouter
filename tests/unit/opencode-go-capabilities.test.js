@@ -24,14 +24,16 @@ const REGISTRY_MODELS = (PROVIDER_MODELS[PROVIDER] || []).map((m) => m.id);
 // Ids the upstream catalog lists but the registry does not ship. Declared
 // explicitly so that adding one as a custom/passthrough model cannot inherit a
 // glob guess. `deepseek-flash` is the id 9Router got wrong.
-const UPSTREAM_ONLY_DECLARED = ["deepseek-flash", "deepseek-v4.1-flash"];
+const UPSTREAM_ONLY_DECLARED = ["deepseek-flash", "deepseek-v4.1-flash", "deepseek-v4-flash-vision-exp"];
 
 // `visionModels.js` is a SECOND, independent vision heuristic (name fragments) used
 // by compression/lite.js and autoCombo. It disagrees with the capability table for
 // these ids (the table says vision:true, the fragment list has no matching entry).
 // Pinned here so the divergence is visible and a NEW one has to be a deliberate edit
 // — consolidating the two sources is tracked as an open item.
-const VISION_HEURISTIC_GAPS = ["mimo-v2.5", "mimo-v2.5-pro", "qwen3.7-plus", "qwen3.6-plus"];
+const VISION_HEURISTIC_GAPS = [
+  "mimo-v2.5", "mimo-v2.5-pro", "qwen3.7-plus", "qwen3.6-plus", "deepseek-v4-flash",
+];
 
 describe("OpenCode Go capabilities — explicit declaration, never a glob guess", () => {
   it("has a non-empty fixture (guards against a silently empty assertion set)", () => {
@@ -70,13 +72,45 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
     expect(caps.contextWindow).toBe(1048576);
   });
 
-  it("pins the deliberate text-only decisions the globs got wrong", () => {
-    // These ids match generic patterns that WOULD have given a different answer;
-    // the explicit entry is what makes the decision intentional.
-    expect(getCapabilitiesForModel(PROVIDER, "glm-5.2").vision).toBe(false);
-    expect(getCapabilitiesForModel(PROVIDER, "qwen3.7-max").vision).toBe(false);
-    expect(getCapabilitiesForModel(PROVIDER, "deepseek-v4-flash").vision).toBe(false);
-    expect(getCapabilitiesForModel(PROVIDER, "kimi-k2.7-code").vision).toBe(true);
+  it("keeps text-only models text-only (vendor docs)", () => {
+    // Each of these matches a generic pattern that could have gone either way; the
+    // explicit entry is what makes the decision intentional. Sources:
+    // Z.ai "Input Modalities: Text" (glm-5.2, glm-5.1), qwen.ai/apiplatform
+    // "Inputs: Text" (qwen3.7-max), MiniMax feature list with no multimodal entry
+    // (m2.7, m2.5), DeepSeek "Vision: Not supported" (v4-pro).
+    for (const id of ["glm-5.2", "glm-5.1", "qwen3.7-max", "minimax-m2.7", "minimax-m2.5", "deepseek-v4-pro"]) {
+      expect(getCapabilitiesForModel(PROVIDER, id).vision, id).toBe(false);
+    }
+  });
+
+  it("keeps vision-capable models vision-capable (vendor docs)", () => {
+    // qwen.ai/apiplatform "Inputs: Text,Image,Video" (3.6-plus, 3.7-plus), MiniMax
+    // "Frontier multimodal … 1M" (m3), Xiaomi "native omni-modal" (mimo-v2.5, pro),
+    // Moonshot/ModelScope image+video (k2.6), DeepSeek "Vision ✓" (v4-flash, whose
+    // legacy name is served by V4.1-Flash).
+    for (const id of ["qwen3.6-plus", "qwen3.7-plus", "minimax-m3", "mimo-v2.5", "mimo-v2.5-pro", "kimi-k2.6", "deepseek-v4-flash"]) {
+      expect(getCapabilitiesForModel(PROVIDER, id).vision, id).toBe(true);
+    }
+  });
+
+  it("gives the retired DeepSeek vision name an explicit entry", () => {
+    // DeepSeek docs: `deepseek-v4-flash-vision-exp` is a retired name still served by
+    // DeepSeek-V4.1-Flash (Vision ✓). Left to the `*deepseek-v4*` pattern it would
+    // resolve vision:false and silently drop the images it exists to accept.
+    const caps = getCapabilitiesForModel(PROVIDER, "deepseek-v4-flash-vision-exp");
+    expect(caps.capabilitySource).toBe("provider");
+    expect(caps.vision).toBe(true);
+  });
+
+  it("uses the vendor context window for glm-5.2 (Z.ai: 1M, not the pattern's 200K)", () => {
+    expect(getCapabilitiesForModel(PROVIDER, "glm-5.2").contextWindow).toBe(1000000);
+    expect(getCapabilitiesForModel(PROVIDER, "glm-5.1").contextWindow).toBe(200000);
+  });
+
+  it("attributes video input where the vendor documents it", () => {
+    for (const id of ["kimi-k2.6", "qwen3.6-plus", "qwen3.7-plus", "mimo-v2.5"]) {
+      expect(getCapabilitiesForModel(PROVIDER, id).videoInput, id).toBe(true);
+    }
   });
 
   it("documents the upstream ids that still fall through to a guess (known gap)", () => {
