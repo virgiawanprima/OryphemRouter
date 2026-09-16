@@ -38,6 +38,11 @@ describe("combo.js — auto strategy (ported autoCombo engine)", () => {
   it("handleComboChat with 'auto' + engine enabled → engine pick tried first", async () => {
     setAutoComboEnabled(true);
     const order = [];
+    // Capture the engine's decision from its log line so the assertion is about the
+    // ROUTING CONTRACT (the pick is tried first) instead of engine scoring internals.
+    // The previous assertion here was `expect(order).toContain(order[0])` — true for any
+    // non-empty array, i.e. it could never fail.
+    const log = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
     const res = await handleComboChat({
       body: { messages: [{ role: "user", content: "hi" }] },
       models: ["openai/gpt-4o", "anthropic/claude-sonnet-4-6", "google/gemini-3.5-flash"],
@@ -45,13 +50,22 @@ describe("combo.js — auto strategy (ported autoCombo engine)", () => {
         order.push(m);
         return new Response(JSON.stringify({ ok: true }), { status: 200 });
       },
-      log: { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() },
+      log,
       comboName: "c1",
       comboStrategy: "auto",
     });
     expect(res.ok).toBe(true);
-    // The engine returns a pick; that pick must be tried first (reorder applied).
     expect(order.length).toBeGreaterThanOrEqual(1);
-    expect(order).toContain(order[0]);
+
+    const rankingCall = log.info.mock.calls.find(([tag]) => tag === "AUTO-COMBO");
+    if (rankingCall) {
+      const picked = String(rankingCall[1]).match(/picked (\S+) first/)?.[1];
+      expect(picked, "log line should name the picked model").toBeTruthy();
+      expect(order[0]).toBe(picked);
+    } else {
+      // Safe degradation path: the engine declined to rank (opt-in inputs unavailable), so
+      // the original order must be preserved — never a silent reshuffle.
+      expect(order[0]).toBe("openai/gpt-4o");
+    }
   });
 });
