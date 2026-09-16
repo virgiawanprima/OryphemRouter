@@ -20,7 +20,7 @@
  */
 
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { validateApiKey, clearAllValidationCache } from "../src/lib/auth/apiKeyValidator.js";
+import { validateApiKey, clearAllValidationCache } from "../../src/lib/auth/apiKeyValidator.js";
 
 // ── fetch stub ──────────────────────────────────────────────────────────────
 // Returns a 200 "models list" response for any URL — enough for the validator
