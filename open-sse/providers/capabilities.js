@@ -231,6 +231,10 @@ export const PROVIDER_CAPABILITIES = {
     // Kimi K3 — mirrors the canonical exact entry (MODEL_CAPABILITIES) so the provider
     // tier answers authoritatively instead of deferring to it.
     "kimi-k3":            { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", thinkingCanDisable: false, contextWindow: 1048576, maxOutput: 131072 },
+    // Moonshot model card (huggingface.co/moonshotai/Kimi-K2.7-Code): the model summary lists
+    // "Vision Encoder: MoonViT" (400M params) and Context Length 256K, so vision is declared
+    // by the vendor. videoInput is carried over from the K2.6 precedent (documented image AND
+    // video) and is NOT separately documented for K2.7 — treat it as inherited, not proven.
     "kimi-k2.7-code":     { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", thinkingCanDisable: false, contextWindow: 262144, maxOutput: 65536 },
     // ModelScope/Moonshot: K2.6 is a native multimodal model with image AND video input.
     "kimi-k2.6":          { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", contextWindow: 262144, maxOutput: 262144 },
@@ -270,6 +274,22 @@ export const PROVIDER_CAPABILITIES = {
     // "text, image", 1,050,000 context window, 128,000 max output, reasoning effort
     // none..max, web_search supported.
     "gpt-5.6-luna":       { vision: true, reasoning: true, search: true, thinkingFormat: "openai", contextWindow: 1050000, maxOutput: 128000 },
+
+    // ── Documented model, UNDOCUMENTED modality ────────────────────────────────
+    // These declare only what the vendor actually states and carry `modalityUnknown: true`.
+    // The marker keeps the safety property of ADR-003: a media strip caused by an entry
+    // whose modality is unknown still logs a warning instead of passing as authoritative.
+    // Declaring them without the marker would silently turn "unknown" into "text-only".
+    //
+    // Tencent Hy model cards (huggingface.co/tencent/Hy3, /Hy4-preview) document the context
+    // window and the reasoning mode but never state the input modality — and the same card
+    // format DOES carry a "Vision Encoder" row when the model has one (see Kimi K2.7), so
+    // for Hy3 the absence is meaningful but not conclusive.
+    "hy3":                { reasoning: true, thinkingFormat: "hunyuan", contextWindow: 262144, modalityUnknown: true },
+    "hy4-preview":        { reasoning: true, thinkingFormat: "hunyuan", contextWindow: 1000000, modalityUnknown: true },
+    // LongCat API changelog (longcat.chat/platform/docs/change-log): "Trillion Parameters, 1M
+    // Long Context: Native tool calling and multi-step reasoning" — modality never stated.
+    "longcat-2.0":        { reasoning: true, contextWindow: 1000000, modalityUnknown: true },
 
     // Listed upstream but not shipped in the registry: declared here so that adding
     // one of them as a custom/passthrough model cannot silently fall into a pattern
@@ -436,6 +456,10 @@ export const PATTERN_CAPABILITIES = [
  *                guess — callers that drop user content (media strip) must log
  *                this so the guess is never silent.
  *   "default"  — safe floor, nothing matched.
+ *
+ * A provider entry may also carry `modalityUnknown: true` when the vendor documents other
+ * facts (context window, reasoning) but never states the input modality. Consumers that
+ * drop user content must treat that the same as a guess: the value is not authoritative.
  *
  * @param {string} provider
  * @param {string} model

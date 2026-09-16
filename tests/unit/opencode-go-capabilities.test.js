@@ -31,7 +31,6 @@ const UPSTREAM_ONLY_DECLARED = ["deepseek-flash"];
 // silently. (Different from "declared but the VALUES are not doc-verified": kimi-k2.7-code
 // and qwen3.8-flash carry an entry, but only qwen3.8-flash's vision flag has a source.)
 const UNVERIFIED = [
-  "hy3", "hy4-preview", "longcat-2.0",
   "muse-spark-1.3-contributor", "muse-spark-1.2-contributor",
 ];
 
@@ -105,7 +104,7 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
     // OpenAI "Input modalities: text, image" (gpt-5.6-luna).
     for (const id of [
       "qwen3.6-plus", "qwen3.7-plus", "qwen3.8-max", "qwen3.8-flash",
-      "minimax-m3", "mimo-v2.5", "mimo-v2.5-pro", "kimi-k2.6",
+      "minimax-m3", "mimo-v2.5", "mimo-v2.5-pro", "kimi-k2.6", "kimi-k2.7-code",
       "deepseek-v4-flash", "glm-5.3-flash", "grok-4.6", "gpt-5.6-luna",
     ]) {
       expect(getCapabilitiesForModel(PROVIDER, id).vision, id).toBe(true);
@@ -145,12 +144,27 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
   });
 
   it("documents the ids that still fall through to a guess (known gap)", () => {
-    // Not a bug to hide: an id we could not source from vendor docs still resolves by a
-    // name pattern ("pattern") or the bare floor ("default"). Pinned so the residual risk
-    // stays quantified — each one needs a doc or the image probe before it is declared.
-    expect(getCapabilitiesForModel(PROVIDER, "hy3").capabilitySource).toBe("pattern");
-    expect(getCapabilitiesForModel(PROVIDER, "longcat-2.0").capabilitySource).toBe("default");
+    // Not a bug to hide: Meta's pages for Muse Spark 1.3 / 1.2-contributor return HTTP 400/500
+    // and no other official source states their modalities, so they still resolve by a name
+    // pattern/floor. Pinned so the residual risk stays quantified.
     expect(getCapabilitiesForModel(PROVIDER, "muse-spark-1.3-contributor").capabilitySource).toBe("default");
+    expect(getCapabilitiesForModel(PROVIDER, "muse-spark-1.2-contributor").capabilitySource).toBe("default");
+  });
+
+  it("marks models whose modality the vendor does not document", () => {
+    // Documented context/reasoning may be declared, but the modality must stay explicitly
+    // unknown so a media strip caused by it still logs a warning (ADR-003) instead of
+    // passing as an authoritative "text-only" answer.
+    for (const id of ["hy3", "hy4-preview", "longcat-2.0"]) {
+      const caps = getCapabilitiesForModel(PROVIDER, id);
+      expect(caps.capabilitySource, id).toBe("provider");
+      expect(caps.modalityUnknown, id).toBe(true);
+      expect(caps.vision, id).toBe(false);
+    }
+    // The documented fields really are declared, from the vendor cards.
+    expect(getCapabilitiesForModel(PROVIDER, "hy3").contextWindow).toBe(262144);
+    expect(getCapabilitiesForModel(PROVIDER, "hy4-preview").contextWindow).toBe(1000000);
+    expect(getCapabilitiesForModel(PROVIDER, "longcat-2.0").contextWindow).toBe(1000000);
   });
 
   it("keeps the second vision heuristic's known disagreements pinned", () => {

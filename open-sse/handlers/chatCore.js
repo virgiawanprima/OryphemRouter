@@ -163,11 +163,12 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
     const droppedCaps = stripUnsupportedModalities(body, sourceFormat, caps);
     if (droppedCaps.length > 0) {
       // Dropping user content is never allowed to be silent. A drop decided by a
-      // *guessed* capability (name-pattern match or bare default, i.e. the model was
-      // not explicitly declared for this provider) gets a visible warning — that is
-      // exactly the guess that stripped images from vision-capable models in
-      // 9Router. Authoritative answers (provider/exact) keep the quiet debug trace.
-      const guessed = caps.capabilitySource === "pattern" || caps.capabilitySource === "default";
+      // *guessed* capability (name-pattern match, bare default, or a model whose modality
+      // the provider simply does not document) gets a visible warning — that is exactly the
+      // guess that stripped images from vision-capable models in 9Router. Authoritative
+      // answers (provider/exact) keep the quiet debug trace.
+      const guessed = caps.capabilitySource === "pattern" || caps.capabilitySource === "default"
+        || caps.modalityUnknown === true;
       const detail = `${provider}/${model} dropped [${droppedCaps.join(", ")}] (capability source: ${caps.capabilitySource})`;
       if (guessed) log?.warn?.("MODALITY", `media stripped on a GUESSED capability — ${detail}`);
       else log?.debug?.("MODALITY", `stripped unsupported media — ${detail}`);
