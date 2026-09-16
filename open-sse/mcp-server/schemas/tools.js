@@ -6,6 +6,7 @@ import { CCR_MCP_TOOLS } from "./ccrTools.js";
 import { radarCatalogTool } from "./radarCatalog.js";
 import {
   AUTO_ROUTING_STRATEGY_VALUES,
+  COMBO_STRATEGY_VALUES,
   ROUTING_STRATEGY_VALUES
 } from "../../utils/omni/routingStrategies.js";
 import { pickFastestModelInput, pickFastestModelOutput } from "./pickFastestModel.js";
@@ -485,7 +486,7 @@ const setBudgetGuardTool = {
 };
 const setRoutingStrategyInput = z.object({
   comboId: z.string().describe("Combo ID or name to update"),
-  strategy: z.enum(ROUTING_STRATEGY_VALUES).describe("Routing strategy to apply"),
+  strategy: z.enum(COMBO_STRATEGY_VALUES).describe("Combo routing strategy to apply (the dispatcher-implemented set, not the wider ported name list)"),
   autoRoutingStrategy: z.enum(AUTO_ROUTING_STRATEGY_VALUES).optional().describe("Optional strategy used by auto mode (only used when strategy='auto')")
 });
 const setRoutingStrategyOutput = z.object({

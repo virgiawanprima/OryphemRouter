@@ -7,7 +7,7 @@ import {
   getComboModelString,
   getComboStepTarget
 } from "../../utils/omni/combosSteps.js";
-import { normalizeRoutingStrategy } from "../../utils/omni/routingStrategies.js";
+import { normalizeComboStrategy, COMBO_STRATEGY_VALUES } from "../../utils/omni/routingStrategies.js";
 const OMNIROUTE_BASE_URL = resolveOmniRouteBaseUrl();
 const OMNIROUTE_API_KEY = process.env.OMNIROUTE_API_KEY || "";
 async function apiFetch(path, options = {}) {
@@ -287,41 +287,54 @@ async function handleSetRoutingStrategy(args) {
       );
       return { content: [{ type: "text", text: `Error: ${msg}` }], isError: true };
     }
-    const comboData = toRecord(combo.data);
-    const currentConfig = toRecord(
-      Object.keys(toRecord(combo.config)).length > 0 ? combo.config : comboData.config
-    );
-    const normalizedStrategy = normalizeRoutingStrategy(args.strategy);
-    let nextConfig = void 0;
+    const normalizedStrategy = normalizeComboStrategy(args.strategy);
+    if (!normalizedStrategy) {
+      const msg = `Invalid strategy '${args.strategy}'. Valid values: ${COMBO_STRATEGY_VALUES.join(", ")}`;
+      await logToolCall("omniroute_set_routing_strategy", args, null, Date.now() - start, false, msg);
+      return { content: [{ type: "text", text: `Error: ${msg}` }], isError: true };
+    }
+
+    // The combo dispatcher reads settings.comboStrategies[<combo NAME>].fallbackStrategy
+    // (src/sse/handlers/chat.js) — the combo row itself has no strategy column. Writing
+    // `strategy` to /api/combos/<id> was a silent no-op (updateCombo only persists
+    // name/kind/models) that still reported success. Merge into settings and report the
+    // value that actually came back.
+    const comboName = toString(combo.name);
+    if (!comboName) {
+      const msg = `Combo '${comboId}' has no name; cannot key its strategy`;
+      await logToolCall("omniroute_set_routing_strategy", args, null, Date.now() - start, false, msg);
+      return { content: [{ type: "text", text: `Error: ${msg}` }], isError: true };
+    }
+
+    const settingsNow = toRecord(await apiFetch("/api/settings"));
+    const strategies = { ...toRecord(settingsNow.comboStrategies) };
+    const entry = { ...toRecord(strategies[comboName]), fallbackStrategy: normalizedStrategy };
     if (normalizedStrategy === "auto" && args.autoRoutingStrategy) {
-      const currentAutoConfig = toRecord(currentConfig.auto);
-      nextConfig = {
-        ...currentConfig,
-        auto: {
-          ...currentAutoConfig,
-          routerStrategy: args.autoRoutingStrategy
-        }
-      };
+      entry.autoRoutingStrategy = args.autoRoutingStrategy;
     }
-    const payload = { strategy: normalizedStrategy };
-    if (nextConfig && Object.keys(nextConfig).length > 0) {
-      payload.config = nextConfig;
-    }
-    const updatedCombo = toRecord(
-      await apiFetch(`/api/combos/${encodeURIComponent(comboId)}`, {
-        method: "PUT",
-        body: JSON.stringify(payload)
+    strategies[comboName] = entry;
+
+    const savedSettings = toRecord(
+      await apiFetch("/api/settings", {
+        method: "PATCH",
+        body: JSON.stringify({ comboStrategies: strategies })
       })
     );
-    const updatedConfig = toRecord(updatedCombo.config);
-    const resolvedAutoStrategy = toString(toRecord(updatedConfig.auto).routerStrategy) || (normalizedStrategy === "auto" ? args.autoRoutingStrategy ?? "rules" : "");
+    const persisted =
+      toString(toRecord(toRecord(savedSettings.comboStrategies)[comboName]).fallbackStrategy) || "";
+    if (persisted !== normalizedStrategy) {
+      const msg = `Strategy was not persisted for combo '${comboName}' (read back '${persisted || "none"}')`;
+      await logToolCall("omniroute_set_routing_strategy", args, null, Date.now() - start, false, msg);
+      return { content: [{ type: "text", text: `Error: ${msg}` }], isError: true };
+    }
+
     const result = {
       success: true,
       combo: {
-        id: toString(updatedCombo.id, comboId),
-        name: toString(updatedCombo.name, toString(combo.name, comboId)),
-        strategy: toString(updatedCombo.strategy, normalizedStrategy),
-        autoRoutingStrategy: toString(updatedCombo.strategy, normalizedStrategy) === "auto" ? resolvedAutoStrategy : null
+        id: comboId,
+        name: comboName,
+        strategy: persisted,
+        autoRoutingStrategy: persisted === "auto" ? entry.autoRoutingStrategy ?? args.autoRoutingStrategy ?? "rules" : null
       }
     };
     await logToolCall("omniroute_set_routing_strategy", args, result, Date.now() - start, true);
