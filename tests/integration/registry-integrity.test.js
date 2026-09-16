@@ -33,11 +33,25 @@ const SLASH_MODEL_ID_PROVIDERS = new Set([
   "kilo-gateway", "kilocode", "nebius", "nvidia", "openrouter",
   "perplexity-agent", "poolside", "siliconflow", "together", "tokenrouter",
   "vertex-partner",
+  // Catalog/namespace providers added 2026-09-16 — they ship "org/model" ids and had
+  // simply fallen behind this allowlist (39 of them, ~287 model entries).
+  "aihorde", "aimlapi", "aion", "baseten", "bytez", "charm-hyper",
+  "cheaperinference", "cloudflare-playground", "command-code", "conol-web", "dahl",
+  "deepinfra", "dgrid", "duckduckgo-web", "freeaiapikey", "freebuff",
+  "g4f-gemini", "g4f-nvidia", "gitlawb-gmi", "huggingchat", "lmarena",
+  "mixedbread", "mixlayer", "mlx-gemma", "mlx-qwen", "modal", "monsterapi",
+  "novita", "nscale", "orcarouter", "pioneer", "publicai", "raycast", "sealion",
+  "synthetic", "uncloseai", "wandb", "zenmux", "zenmux-free",
 ]);
 
 // Model ids equal to a reserved word that are intentionally allowed.
 // cursor's "default" is a real sentinel ("Managed — Auto (server memilih model)").
-const RESERVED_MODEL_WORD_ALLOWLIST = new Set(["cursor:default"]);
+const RESERVED_MODEL_WORD_ALLOWLIST = new Set([
+  "cursor:default",
+  // "auto" sentinels: each of these providers exposes a server-side model picker as a
+  // model named "auto" (the routing separator is "/", so an id of "auto" is unambiguous).
+  "cursor-api:auto", "dify:auto", "factory:auto", "llm-kiwi:auto",
+]);
 
 // Gather every (providerId, modelEntry) pair once.
 const ALL_MODELS = [];

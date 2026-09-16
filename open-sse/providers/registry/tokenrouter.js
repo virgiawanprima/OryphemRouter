@@ -1,7 +1,6 @@
 export default {
   id: "tokenrouter",
   alias: "tokenrouter",
-  aliases: ["tr"],
   uiAlias: "tokenrouter",
   display: {
     name: "TokenRouter",

@@ -8,7 +8,7 @@ export default {
   priority: 170,
   alias: "kimi",
   // Legacy id + short alias from former kimi-coding registry entry
-  aliases: ["kimi-coding", "kmc"],
+  aliases: ["kimi-coding"],
   display: {
     name: "Kimi",
     icon: "psychology",

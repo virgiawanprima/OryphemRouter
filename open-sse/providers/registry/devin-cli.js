@@ -1,7 +1,7 @@
 export default {
   id: "devin-cli",
   alias: "dv",
-  aliases: ["devin"],
+  alias: "dv",
   uiAlias: "dv",
   hidden: true,
   display: {
