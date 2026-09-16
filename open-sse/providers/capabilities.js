@@ -214,6 +214,12 @@ export const PROVIDER_CAPABILITIES = {
   // Projek/oryphemrouter (compare usage.prompt_tokens against a text-only call).
   // Never "correct" a value from the model NAME; cite a doc or probe it.
   "opencode-go": {
+    // Z.ai docs (docs.z.ai/guides/vlm/glm-5.3-flash — note the /vlm/ path): "the first
+    // native multimodal model in the GLM-5 series", Input Modality "Video / Image / Text /
+    // File", 1M context, 128K max output. thinking.type only supports "enabled".
+    // Left to the `*glm-5*` pattern this resolved vision:false and DROPPED images from a
+    // natively multimodal model.
+    "glm-5.3-flash":      { vision: true, videoInput: true, pdf: true, reasoning: true, thinkingFormat: "zai", thinkingCanDisable: false, contextWindow: 1000000, maxOutput: 128000 },
     // Z.ai docs (docs.z.ai/guides/llm/glm-5.3): "supports text-only inputs, with a
     // 1M-token context window and a maximum output length of 128K". Reasoning is ALWAYS
     // on — disabling is no longer supported (thinkingCanDisable:false).
@@ -251,6 +257,19 @@ export const PROVIDER_CAPABILITIES = {
     // the conflict with the (since deleted) opencodeZenGoSharedModels.js, which claimed
     // supportsVision:false — the vendor's own API platform says image and video are accepted.
     "qwen3.6-plus":       { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
+    // Alibaba Model Studio (model-studio/qwen3-8-max): Input Modality "Image Text Video"
+    // in every region, Context Window 1,000,000, Max Output 131,072. NOTE this DIFFERS
+    // from Qwen3.7-Max, which is text-only — the `*qwen*max*` pattern would have stripped
+    // images from an image-capable model.
+    "qwen3.8-max":        { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 131072 },
+    // xAI docs (docs.x.ai/developers/models): Grok 4.6 is the flagship chat/code model,
+    // 500K context, and the "Image input models" section documents image input (jpg/png,
+    // up to 20MiB) with server-side Web Search / X Search tools available.
+    "grok-4.6":           { vision: true, reasoning: true, search: true, thinkingFormat: "openai", contextWindow: 500000 },
+    // OpenAI docs (developers.openai.com/api/docs/models/gpt-5.6-luna): Input modalities
+    // "text, image", 1,050,000 context window, 128,000 max output, reasoning effort
+    // none..max, web_search supported.
+    "gpt-5.6-luna":       { vision: true, reasoning: true, search: true, thinkingFormat: "openai", contextWindow: 1050000, maxOutput: 128000 },
 
     // Listed upstream but not shipped in the registry: declared here so that adding
     // one of them as a custom/passthrough model cannot silently fall into a pattern

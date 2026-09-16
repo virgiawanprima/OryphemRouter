@@ -26,12 +26,13 @@ const REGISTRY_MODELS = (PROVIDER_MODELS[PROVIDER] || []).map((m) => m.id);
 // glob guess. `deepseek-flash` is the id 9Router got wrong.
 const UPSTREAM_ONLY_DECLARED = ["deepseek-flash"];
 
-// Registry models with NO vendor-doc statement we could find (checked 2026-09-16). They
-// still resolve through a name pattern, i.e. the answer is a guess — pinned exactly so it
-// cannot grow silently, and so each stays a named probe candidate.
+// Registry models with NO explicit provider entry at all — they fall through to a name
+// pattern or the bare floor, i.e. the answer is a guess. Pinned exactly so it cannot grow
+// silently. (Different from "declared but the VALUES are not doc-verified": kimi-k2.7-code
+// and qwen3.8-flash carry an entry, but only qwen3.8-flash's vision flag has a source.)
 const UNVERIFIED = [
-  "glm-5.3-flash", "longcat-2.0", "qwen3.8-max", "grok-4.6", "gpt-5.6-luna",
-  "hy3", "hy4-preview", "muse-spark-1.3-contributor", "muse-spark-1.2-contributor",
+  "hy3", "hy4-preview", "longcat-2.0",
+  "muse-spark-1.3-contributor", "muse-spark-1.2-contributor",
 ];
 
 // `visionModels.js` is a SECOND, independent vision heuristic (name fragments) used
@@ -41,7 +42,8 @@ const UNVERIFIED = [
 // — consolidating the two sources is tracked as an open item.
 const VISION_HEURISTIC_GAPS = [
   "mimo-v2.5", "mimo-v2.5-pro", "qwen3.6-plus", "qwen3.7-plus", "qwen3.8-flash",
-  "deepseek-v4-flash", "deepseek-v4.1-flash", "kimi-k3", "grok-4.6",
+  "qwen3.8-max", "deepseek-v4-flash", "deepseek-v4.1-flash", "kimi-k3",
+  "grok-4.6", "glm-5.3-flash",
 ];
 
 describe("OpenCode Go capabilities — explicit declaration, never a glob guess", () => {
@@ -94,13 +96,32 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
   });
 
   it("keeps vision-capable models vision-capable (vendor docs)", () => {
-    // qwen.ai/apiplatform "Inputs: Text,Image,Video" (3.6-plus, 3.7-plus), MiniMax
-    // "Frontier multimodal … 1M" (m3), Xiaomi "native omni-modal" (mimo-v2.5, pro),
-    // Moonshot/ModelScope image+video (k2.6), DeepSeek "Vision ✓" (v4-flash, whose
-    // legacy name is served by V4.1-Flash).
-    for (const id of ["qwen3.6-plus", "qwen3.7-plus", "minimax-m3", "mimo-v2.5", "mimo-v2.5-pro", "kimi-k2.6", "deepseek-v4-flash"]) {
+    // qwen.ai/apiplatform "Inputs: Text,Image,Video" (3.6-plus, 3.7-plus), Alibaba Model
+    // Studio "Input Modality Image Text Video" (qwen3.8-max), MiniMax "Frontier multimodal
+    // … 1M" (m3), Xiaomi "native omni-modal" (mimo-v2.5, pro), Moonshot/ModelScope
+    // image+video (k2.6), DeepSeek "Vision ✓" (v4-flash, whose legacy name is served by
+    // V4.1-Flash), Z.ai "first native multimodal model in the GLM-5 series" with Input
+    // Modality Video/Image/Text/File (glm-5.3-flash), xAI image-input models (grok-4.6),
+    // OpenAI "Input modalities: text, image" (gpt-5.6-luna).
+    for (const id of [
+      "qwen3.6-plus", "qwen3.7-plus", "qwen3.8-max", "qwen3.8-flash",
+      "minimax-m3", "mimo-v2.5", "mimo-v2.5-pro", "kimi-k2.6",
+      "deepseek-v4-flash", "glm-5.3-flash", "grok-4.6", "gpt-5.6-luna",
+    ]) {
       expect(getCapabilitiesForModel(PROVIDER, id).vision, id).toBe(true);
     }
+  });
+
+  it("pins the doc-stated context windows that the name patterns understated", () => {
+    // Z.ai 1M for glm-5.2/glm-5.3/glm-5.3-flash, Alibaba 1M for qwen3.8-max,
+    // xAI 500K for grok-4.6, OpenAI 1,050,000 for gpt-5.6-luna. The `*glm-5*` and
+    // `*qwen*max*` patterns said 200K and 1M-with-no-vision respectively.
+    expect(getCapabilitiesForModel(PROVIDER, "glm-5.2").contextWindow).toBe(1000000);
+    expect(getCapabilitiesForModel(PROVIDER, "glm-5.3").contextWindow).toBe(1000000);
+    expect(getCapabilitiesForModel(PROVIDER, "glm-5.3-flash").contextWindow).toBe(1000000);
+    expect(getCapabilitiesForModel(PROVIDER, "qwen3.8-max").contextWindow).toBe(1000000);
+    expect(getCapabilitiesForModel(PROVIDER, "grok-4.6").contextWindow).toBe(500000);
+    expect(getCapabilitiesForModel(PROVIDER, "gpt-5.6-luna").contextWindow).toBe(1050000);
   });
 
   it("gives the retired DeepSeek vision name an explicit entry", () => {
@@ -127,9 +148,9 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
     // Not a bug to hide: an id we could not source from vendor docs still resolves by a
     // name pattern ("pattern") or the bare floor ("default"). Pinned so the residual risk
     // stays quantified — each one needs a doc or the image probe before it is declared.
-    expect(getCapabilitiesForModel(PROVIDER, "glm-5.3-flash").capabilitySource).toBe("pattern");
-    expect(getCapabilitiesForModel(PROVIDER, "qwen3.8-max").capabilitySource).toBe("pattern");
+    expect(getCapabilitiesForModel(PROVIDER, "hy3").capabilitySource).toBe("pattern");
     expect(getCapabilitiesForModel(PROVIDER, "longcat-2.0").capabilitySource).toBe("default");
+    expect(getCapabilitiesForModel(PROVIDER, "muse-spark-1.3-contributor").capabilitySource).toBe("default");
   });
 
   it("keeps the second vision heuristic's known disagreements pinned", () => {
