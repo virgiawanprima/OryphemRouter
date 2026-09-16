@@ -8,6 +8,26 @@ export const ROUTING_STRATEGY_VALUES = [
 export const AUTO_ROUTING_STRATEGY_VALUES = [
   "rules", "cost", "eco", "latency", "fast", "sla-aware", "sla", "lkgp",
 ];
+
+// Descriptors for the auto engine's sub-strategies, so the UI can offer them from the same
+// source the validator uses. Labels reflect what the engine actually registers
+// (open-sse/services/autoCombo/routerStrategy.js): eco= costStrategy, fast= latencyStrategy,
+// sla= slaStrategy — the aliases are real, not cosmetic.
+export const AUTO_ROUTING_STRATEGIES = [
+  { value: "rules", label: "Rules: deterministic default" },
+  { value: "cost", label: "Cost: cheapest first" },
+  { value: "eco", label: "Eco: same as Cost" },
+  { value: "latency", label: "Latency: fastest first" },
+  { value: "fast", label: "Fast: same as Latency" },
+  { value: "sla-aware", label: "SLA aware: honour the error-rate policy" },
+  { value: "sla", label: "SLA: same as SLA aware" },
+  { value: "lkgp", label: "LKGP: stick to the last known good provider" },
+];
+
+export function normalizeAutoRoutingStrategy(value) {
+  const s = String(value || "").toLowerCase().trim();
+  return AUTO_ROUTING_STRATEGY_VALUES.includes(s) ? s : null;
+}
 export function normalizeRoutingStrategy(value) {
   const s = String(value || "").toLowerCase().trim();
   return ROUTING_STRATEGY_VALUES.includes(s) ? s : null;
@@ -116,6 +136,21 @@ export function validateComboStrategySettings(body) {
             ok: false,
             error: `Invalid fallbackStrategy '${raw}' for combo '${comboName}'. Valid values: ${COMBO_STRATEGY_VALUES.join(", ")}`,
           };
+        }
+        // Sub-strategy for the "auto" engine. The runtime forwards it to
+        // selectWithStrategy (chat.js → combo.js → comboAdapter), so an unknown value here
+        // would silently fall back to the engine's "rules" default.
+        if (Object.prototype.hasOwnProperty.call(entry, "autoRoutingStrategy")) {
+          const rawAuto = entry.autoRoutingStrategy;
+          if (rawAuto !== null && rawAuto !== undefined && rawAuto !== "") {
+            const normalizedAuto = normalizeAutoRoutingStrategy(rawAuto);
+            if (!normalizedAuto) {
+              return {
+                ok: false,
+                error: `Invalid autoRoutingStrategy '${rawAuto}' for combo '${comboName}'. Valid values: ${AUTO_ROUTING_STRATEGY_VALUES.join(", ")}`,
+              };
+            }
+          }
         }
       }
     }

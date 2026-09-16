@@ -366,16 +366,22 @@ async function rankWithAutoCombo(models, log, strategy) {
  * @param {Object} options.log - Logger object
  * @param {string} [options.comboName] - Name of the combo (for round-robin tracking)
  * @param {string} [options.comboStrategy] - Strategy: "fallback", "round-robin", "cost-optimized", or "auto" (opt-in autoCombo engine)
+ * @param {string} [options.autoRoutingStrategy] - Sub-strategy for the "auto" engine
+ *   (rules|cost|eco|latency|fast|sla-aware|sla|lkgp). Only consulted when
+ *   comboStrategy === "auto"; the engine defaults to "rules" when omitted.
  * @param {number|string} [options.comboStickyLimit=1] - Requests per combo model before switching
  * @returns {Promise<Response>}
  */
-export async function handleComboChat({ body, models, handleSingleModel, log, comboName, comboStrategy, comboStickyLimit = 1, autoSwitch = true, onModelSuccess }) {
+export async function handleComboChat({ body, models, handleSingleModel, log, comboName, comboStrategy, comboStickyLimit = 1, autoSwitch = true, onModelSuccess, autoRoutingStrategy }) {
   // Apply rotation strategy if enabled
   let rotatedModels = getRotatedModels(models, comboName, comboStrategy, comboStickyLimit);
 
   // Auto strategy: rank with the ported autoCombo engine (opt-in, safe fallback).
+  // The sub-strategy is forwarded here — previously this call dropped the third argument,
+  // so a per-combo auto sub-strategy had nowhere to go and the engine always used its
+  // "rules" default (a UI field for it would have been a no-op).
   if (comboStrategy === "auto") {
-    rotatedModels = await rankWithAutoCombo(rotatedModels, log);
+    rotatedModels = await rankWithAutoCombo(rotatedModels, log, autoRoutingStrategy);
   }
 
   // Auto-switch: float models that satisfy the request's required capabilities to the front.

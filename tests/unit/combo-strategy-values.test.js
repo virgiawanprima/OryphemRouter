@@ -12,7 +12,10 @@ import {
   COMBO_STRATEGIES,
   COMBO_STRATEGY_VALUES,
   ROUTING_STRATEGY_VALUES,
+  AUTO_ROUTING_STRATEGIES,
+  AUTO_ROUTING_STRATEGY_VALUES,
   normalizeComboStrategy,
+  normalizeAutoRoutingStrategy,
   validateComboStrategySettings,
 } from "../../open-sse/utils/omni/routingStrategies.js";
 import { getRotatedModels, resetComboRotation } from "../../open-sse/services/combo.js";
@@ -24,6 +27,16 @@ describe("combo strategy — single source of truth", () => {
     for (const s of COMBO_STRATEGIES) {
       expect(s.label, s.value).toBeTruthy();
       expect(s.description, s.value).toBeTruthy();
+    }
+  });
+
+  it("keeps the auto sub-strategy descriptors in step with the value list", () => {
+    // The UI reads the descriptors, the validator and the MCP schema read the value list —
+    // a descriptor added without a value (or vice versa) would offer an unvalidatable choice.
+    expect(AUTO_ROUTING_STRATEGIES.map((s) => s.value)).toEqual(AUTO_ROUTING_STRATEGY_VALUES);
+    for (const s of AUTO_ROUTING_STRATEGIES) {
+      expect(s.label, s.value).toBeTruthy();
+      expect(normalizeAutoRoutingStrategy(s.value), s.value).toBe(s.value);
     }
   });
 
@@ -133,5 +146,30 @@ describe("combo strategy validation at the API boundary", () => {
     expect(validateComboStrategySettings({ spendingLimits: { maxCostPerDay: 5 } })).toEqual({ ok: true });
     expect(validateComboStrategySettings({})).toEqual({ ok: true });
     expect(validateComboStrategySettings(null)).toEqual({ ok: true });
+  });
+
+  it("accepts a valid auto sub-strategy on a combo", () => {
+    const res = validateComboStrategySettings({
+      comboStrategies: { mycombo: { fallbackStrategy: "auto", autoRoutingStrategy: "lkgp" } },
+    });
+    expect(res).toEqual({ ok: true });
+  });
+
+  it("rejects an unknown auto sub-strategy and names the combo", () => {
+    const res = validateComboStrategySettings({
+      comboStrategies: { mycombo: { fallbackStrategy: "auto", autoRoutingStrategy: "weighted" } },
+    });
+    expect(res.ok).toBe(false);
+    expect(res.error).toContain("Invalid autoRoutingStrategy 'weighted'");
+    expect(res.error).toContain("mycombo");
+    // The sub-strategy list is the auto engine's, not the combo list.
+    expect(res.error).toContain("rules, cost, eco, latency, fast, sla-aware, sla, lkgp");
+  });
+
+  it("treats an empty auto sub-strategy as 'engine default'", () => {
+    const res = validateComboStrategySettings({
+      comboStrategies: { mycombo: { fallbackStrategy: "auto", autoRoutingStrategy: "" } },
+    });
+    expect(res).toEqual({ ok: true });
   });
 });

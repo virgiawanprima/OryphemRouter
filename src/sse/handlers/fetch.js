@@ -107,7 +107,8 @@ export async function handleFetch(request) {
       log,
       comboName: providerInput,
       comboStrategy,
-      comboStickyLimit
+      comboStickyLimit,
+      autoRoutingStrategy: comboStrategies[providerInput]?.autoRoutingStrategy
     });
   }
 

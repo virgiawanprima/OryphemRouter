@@ -7,7 +7,7 @@ import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import { useModelCaps } from "@/shared/hooks/useModelCaps";
 import { useLiveRefresh } from "@/shared/hooks/useRealtime";
-import { COMBO_STRATEGIES } from "open-sse/utils/omni/routingStrategies.js";
+import { COMBO_STRATEGIES, AUTO_ROUTING_STRATEGIES } from "open-sse/utils/omni/routingStrategies.js";
 
 // Validate combo name: only a-z, A-Z, 0-9, -, _
 const VALID_NAME_REGEX = /^[a-zA-Z0-9_.\-]+$/;
@@ -294,11 +294,17 @@ export default function CombosPage() {
 // list, so the UI can never offer a strategy the engine silently ignores.
 const STRATEGY_OPTIONS = COMBO_STRATEGIES.map(({ value, label }) => ({ value, label }));
 
+// Sub-strategy for the "auto" engine, exposed as its own picker (ADR-002 point 4) rather
+// than folded into the main list — "auto/eco" and "eco" are not the same thing. Same single
+// source as the /api/settings validator, so the runtime forwarding and the choices agree.
+const AUTO_STRATEGY_OPTIONS = AUTO_ROUTING_STRATEGIES.map(({ value, label }) => ({ value, label }));
+
 function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, onCopy, onEdit, onDelete, strategy = {}, onSetStrategy }) {
   const [showJudgeSelect, setShowJudgeSelect] = useState(false);
   const current = strategy.fallbackStrategy || "fallback";
   const judge = strategy.judgeModel || "";
   const isFusion = current === "fusion";
+  const isAuto = current === "auto";
 
   return (
     <Card padding="sm" className="group">
@@ -347,6 +353,23 @@ function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, o
                     <span className="material-symbols-outlined text-[13px]">close</span>
                   </button>
                 )}
+              </div>
+            )}
+
+            {/* Auto: ranking sub-strategy. Kept separate from the combo strategy list —
+                "auto/eco" and a combo-level "eco" are not the same thing. Shows the
+                engine's effective default ("rules") when nothing is stored. */}
+            {isAuto && (
+              <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-medium text-text-muted">Ranking</span>
+                <div className="w-[180px]">
+                  <Select
+                    options={AUTO_STRATEGY_OPTIONS}
+                    value={strategy.autoRoutingStrategy || "rules"}
+                    onChange={(v) => onSetStrategy({ autoRoutingStrategy: v })}
+                    selectClassName="py-1 text-xs"
+                  />
+                </div>
               </div>
             )}
           </div>

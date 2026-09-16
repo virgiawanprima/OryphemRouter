@@ -240,6 +240,7 @@ export async function handleChat(request, clientRawRequest = null, opts = {}) {
       comboName: modelStr,
       comboStrategy,
       comboStickyLimit,
+      autoRoutingStrategy: comboStrategies[modelStr]?.autoRoutingStrategy,
       onModelSuccess: async (winningModel) => {
         // Opt-in auto-promote: move the winning combo model to position #1.
         try {
@@ -395,7 +396,8 @@ async function handleSingleModelChat(body, modelStr, clientRawRequest = null, re
         log,
         comboName: modelStr,
         comboStrategy,
-        comboStickyLimit
+        comboStickyLimit,
+        autoRoutingStrategy: comboStrategies[modelStr]?.autoRoutingStrategy
       });
     }
     log.warn("CHAT", "Invalid model format", { model: modelStr });
