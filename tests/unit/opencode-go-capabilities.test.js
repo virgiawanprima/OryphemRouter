@@ -142,9 +142,14 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
   });
 
   it("attributes video input where the vendor documents it", () => {
-    for (const id of ["kimi-k2.6", "qwen3.6-plus", "qwen3.7-plus", "mimo-v2.5"]) {
+    for (const id of ["kimi-k2.6", "qwen3.6-plus", "qwen3.7-plus", "qwen3.8-flash", "qwen3.8-max", "mimo-v2.5", "glm-5.3-flash"]) {
       expect(getCapabilitiesForModel(PROVIDER, id).videoInput, id).toBe(true);
     }
+  });
+
+  it("uses the vendor's max output for qwen3.8-flash (131,072, not the borrowed 65,536)", () => {
+    expect(getCapabilitiesForModel(PROVIDER, "qwen3.8-flash").maxOutput).toBe(131072);
+    expect(getCapabilitiesForModel(PROVIDER, "qwen3.8-flash").contextWindow).toBe(1000000);
   });
 
   it("leaves no shipped model falling through to a name-pattern guess", () => {

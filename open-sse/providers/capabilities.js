@@ -248,10 +248,11 @@ export const PROVIDER_CAPABILITIES = {
     "minimax-m3":         { vision: true, reasoning: true, thinkingFormat: "minimax", contextWindow: 1048576, maxOutput: 512000 },
     "minimax-m2.7":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 204800, maxOutput: 131072 },
     "minimax-m2.5":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 200000, maxOutput: 131072 },
-    // Alibaba Model Studio describes Qwen3.8-Flash as "the latest multimodal model from
-    // the Qwen family" → image input documented. Everything else mirrors the 3.7-Plus
-    // family entry and is INFERRED, not documented — verify before trusting it.
-    "qwen3.8-flash":      { vision: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
+    // Alibaba Model Studio (model-studio/qwen3-8-flash): Input Modality "Image Text Video"
+    // in every region, Context Window 1,000,000, Max Output Length 131,072. This entry used
+    // to borrow the 3.7-Plus family values — including a 65,536 max output that was simply
+    // wrong — and only its vision flag was sourced. The vendor page settles all of it.
+    "qwen3.8-flash":      { vision: true, videoInput: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 131072 },
     // Qwen platform (qwen.ai/apiplatform): Qwen3.7-Max "Inputs: Text" — Alibaba Model Studio
     // describes Max as a pure-text-only interface → no vision.
     "qwen3.7-max":        { reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
