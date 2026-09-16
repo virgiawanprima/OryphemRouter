@@ -4,6 +4,19 @@ function normalizeMessageWhitespace(content) {
   if (!content) return "";
   return content.replace(/\n{3,}/g, "\n\n").replace(/[ \t]+$/gm, "");
 }
+// LEGACY FALLBACK — DO NOT USE FOR NEW CODE.
+//
+// This is a name-fragment heuristic (`utils/visionModels.js`), NOT the capability table,
+// and the two disagree for 13 of the 28 opencode-go models (mimo-v2.5, qwen3.6-plus,
+// grok-4.6, glm-5.3-flash, deepseek-v4-flash, muse-spark-* …). It returns false for all of
+// them, which in this file means "cannot see images" — the exact mis-flag that made 9Router
+// strip images from vision-capable models.
+//
+// It is only reachable through the string form of `replaceImageUrls(body, "<model id>")`,
+// and no caller in this repo uses that form any more (every caller passes an options
+// object with an explicit `supportsVision`). If you need this answer, use
+// `getCapabilitiesForModel(provider, model).vision` instead — and remember that capability
+// entries carrying `modalityUnknown` are NOT authoritative either.
 function modelSupportsVision(model) {
   return isVisionModelId(model);
 }
@@ -100,6 +113,13 @@ function removeRedundantContent(body, options = {}) {
 }
 function replaceImageUrls(body, options) {
   if (!body.messages) return { body, applied: false };
+  // NOTE (verified 2026-09-16): no caller in this repo supplies `options.supportsVision` —
+  // chatCore, src/sse/handlers/chat.js and compression/index.js contain zero references to
+  // it, and strategySelector only forwards it. So this evaluates to undefined and the guard
+  // below returns early every time: image-URL replacement is INERT plumbing today. It would
+  // activate if a caller (or `config.lite`, which strategySelector spreads) passed
+  // `supportsVision: false`, which is why the value must come from the capability table and
+  // never from the name heuristic.
   const supportsVision = typeof options === "object" && options !== null ? options.supportsVision : typeof options === "string" ? modelSupportsVision(options) : void 0;
   if (supportsVision !== false) return { body, applied: false };
   let applied = false;
