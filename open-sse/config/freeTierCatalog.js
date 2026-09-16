@@ -1,3 +1,5 @@
+import { FREE_MODEL_BUDGETS } from "./freeModelCatalog.js";
+
 const FREE_TIER_BUDGETS = {
   mistral: 1e9,
   "cloudflare-ai": 122e6,
@@ -57,8 +59,34 @@ function computeFreeTierTotals(opts = {}) {
     headline: `over ${billions(documentedMonthlyTokens)} documented free tokens/month across ${byProvider.length}+ providers`
   };
 }
+// ── Derived free-tier provider set ────────────────────────────────────────────
+// `hasFree` on a registry entry is hand-maintained and had drifted badly: only 15
+// entries carried it, while the free-tier catalogs in this directory document 79
+// providers that actually offer free usage. Every reader of `hasFree` (the dashboard
+// provider projection today) was therefore blind to 72 free providers.
+//
+// Deriving the set from OUR OWN catalogs keeps it evidence-based: every id comes from a
+// documented per-model budget row (freeModelCatalog) or a documented monthly budget
+// (FREE_TIER_BUDGETS). No provider is guessed, and nothing here needs network access.
+//
+// Keys in both catalogs are registry provider IDs — verified 79/79 resolve directly, no
+// alias resolution needed. tests/unit/free-tier-providers.test.js pins that invariant so
+// a future catalog entry written with a short alias fails loudly instead of silently
+// dropping out of the set.
+const FREE_TIER_PROVIDER_IDS = new Set([
+  ...Object.keys(FREE_TIER_BUDGETS),
+  ...FREE_MODEL_BUDGETS.map((m) => m.provider).filter(Boolean),
+]);
+
+/** True when the provider is documented as offering free usage in either catalog. */
+function isFreeTierProvider(providerId) {
+  return FREE_TIER_PROVIDER_IDS.has(providerId);
+}
+
 export {
   FREE_TIER_BUDGETS,
   FREE_TIER_TOS,
-  computeFreeTierTotals
+  FREE_TIER_PROVIDER_IDS,
+  computeFreeTierTotals,
+  isFreeTierProvider
 };

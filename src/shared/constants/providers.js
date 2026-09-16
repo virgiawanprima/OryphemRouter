@@ -1,5 +1,6 @@
 // Provider definitions
 import REGISTRY from "open-sse/providers/registry/index.js";
+import { isFreeTierProvider } from "open-sse/config/freeTierCatalog.js";
 import { RISK_NOTICE } from "@/shared/constants/providersDisplay";
 
 const MEDIA_ENTRY_KEYS = [
@@ -25,7 +26,10 @@ function buildProviderEntry(r) {
     ...(r.hidden ? { hidden: true } : {}),
     ...mediaFields,
     ...(r.priority !== undefined ? { priority: r.priority } : {}),
-    ...(r.hasFree ? { hasFree: true } : {}),
+    // `hasFree` is hand-maintained on the registry entry and had drifted to 15 of the 79
+    // providers our own free-tier catalogs document, so the projector ORs in the derived
+    // set. Both mean the same thing to the UI; the derived side just cannot go stale.
+    ...(r.hasFree || isFreeTierProvider(r.id) ? { hasFree: true } : {}),
     ...(r.thinkingConfig ? { thinkingConfig: r.thinkingConfig } : {}),
     ...(r.regions ? { regions: r.regions, defaultRegion: r.defaultRegion } : {}),
     ...(r.hasProviderSpecificData ? { hasProviderSpecificData: true } : {}),
