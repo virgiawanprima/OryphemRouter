@@ -3,6 +3,7 @@ import { getSettings, updateSettings } from "@/lib/localDb";
 import { WRITABLE_SETTING_KEYS } from "@/lib/db/repos/settingsRepo.js";
 import { applyOutboundProxyEnv } from "@/lib/network/outboundProxy";
 import { resetComboRotation } from "open-sse/services/combo.js";
+import { validateComboStrategySettings } from "open-sse/utils/omni/routingStrategies.js";
 import { invalidateSpendingCache } from "@/sse/services/spendingCache.js";
 import bcrypt from "bcryptjs";
 import { parseJson } from "@/lib/utils/parseJson";
@@ -44,6 +45,14 @@ export async function PATCH(request) {
 
     // Strip protected secrets before any internal handling sets them
     for (const key of PROTECTED_SETTING_KEYS) delete body[key];
+
+    // Combo strategy values are checked at the boundary (ADR-002). An unknown strategy is
+    // rejected with 400 rather than stored and silently ignored by the combo dispatcher,
+    // which would leave the operator unable to tell a typo from a no-op.
+    const strategyCheck = validateComboStrategySettings(body);
+    if (!strategyCheck.ok) {
+      return NextResponse.json({ error: strategyCheck.error }, { status: 400 });
+    }
 
     // If updating password, hash it
     if (body.newPassword) {

@@ -7,6 +7,7 @@ import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useCopyToClipboard } from "@/shared/hooks/useCopyToClipboard";
 import { useModelCaps } from "@/shared/hooks/useModelCaps";
 import { useLiveRefresh } from "@/shared/hooks/useRealtime";
+import { COMBO_STRATEGIES } from "open-sse/utils/omni/routingStrategies.js";
 
 // Validate combo name: only a-z, A-Z, 0-9, -, _
 const VALID_NAME_REGEX = /^[a-zA-Z0-9_.\-]+$/;
@@ -288,13 +289,10 @@ export default function CombosPage() {
   );
 }
 
-const STRATEGY_OPTIONS = [
-  { value: "fallback", label: "Fallback: try in order" },
-  { value: "round-robin", label: "Round Robin: rotate" },
-  { value: "fusion", label: "Fusion: panel + judge" },
-  { value: "pipeline", label: "Pipeline: chain steps" },
-  { value: "auto", label: "Auto: AI-ranked (opt-in)" },
-];
+// Strategy options come from the single source in open-sse/utils/omni/routingStrategies.js
+// (ADR-002): the selector, the API validator and the combo dispatcher all read the same
+// list, so the UI can never offer a strategy the engine silently ignores.
+const STRATEGY_OPTIONS = COMBO_STRATEGIES.map(({ value, label }) => ({ value, label }));
 
 function ComboCard({ combo, getCaps, getPricing, activeProviders = [], copied, onCopy, onEdit, onDelete, strategy = {}, onSetStrategy }) {
   const [showJudgeSelect, setShowJudgeSelect] = useState(false);
