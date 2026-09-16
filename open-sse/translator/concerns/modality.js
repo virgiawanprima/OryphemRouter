@@ -58,43 +58,58 @@ function filterBlocks(blocks, capOf, caps, removed, isLast) {
 }
 
 // OpenAI / OpenAI-compatible chat messages[].content[].
+// Returns the set of capabilities actually removed (empty = nothing dropped).
 function stripOpenAI(body, caps) {
-  if (!Array.isArray(body.messages)) return;
+  const removedAll = new Set();
+  if (!Array.isArray(body.messages)) return removedAll;
   const last = body.messages.length - 1;
   body.messages.forEach((msg, i) => {
     if (caps.vision === false) {
-      if (Array.isArray(msg.images)) delete msg.images;
+      if (Array.isArray(msg.images) && msg.images.length > 0) {
+        delete msg.images;
+        removedAll.add("vision");
+      }
       if (Array.isArray(msg.experimental_attachments)) {
-        msg.experimental_attachments = msg.experimental_attachments.filter(
+        const kept = msg.experimental_attachments.filter(
           (a) => !(a?.contentType?.startsWith("image/") || (typeof a?.url === "string" && a.url.startsWith("data:image/")))
         );
+        if (kept.length !== msg.experimental_attachments.length) removedAll.add("vision");
+        msg.experimental_attachments = kept;
       }
       if (Array.isArray(msg.attachments)) {
-        msg.attachments = msg.attachments.filter(
+        const kept = msg.attachments.filter(
           (a) => !(a?.contentType?.startsWith("image/") || (typeof a?.url === "string" && a.url.startsWith("data:image/")))
         );
+        if (kept.length !== msg.attachments.length) removedAll.add("vision");
+        msg.attachments = kept;
       }
     }
     if (!Array.isArray(msg.content)) return;
     const removed = new Set();
     msg.content = filterBlocks(msg.content, capForOpenAIBlock, caps, removed, i === last);
+    for (const cap of removed) removedAll.add(cap);
   });
+  return removedAll;
 }
 
-// Claude messages[].content[].
+// Claude messages[].content[]. Returns the set of capabilities actually removed.
 function stripClaude(body, caps) {
-  if (!Array.isArray(body.messages)) return;
+  const removedAll = new Set();
+  if (!Array.isArray(body.messages)) return removedAll;
   const last = body.messages.length - 1;
   body.messages.forEach((msg, i) => {
     if (!Array.isArray(msg.content)) return;
     const removed = new Set();
     msg.content = filterBlocks(msg.content, capForClaudeBlock, caps, removed, i === last);
+    for (const cap of removed) removedAll.add(cap);
   });
+  return removedAll;
 }
 
 // OpenAI Responses input[].content[] (input_image / input_file).
 function stripResponses(body, caps) {
-  if (!Array.isArray(body.input)) return;
+  const removedAll = new Set();
+  if (!Array.isArray(body.input)) return removedAll;
   const last = body.input.length - 1;
   body.input.forEach((item, i) => {
     if (!Array.isArray(item.content)) return;
@@ -105,12 +120,15 @@ function stripResponses(body, caps) {
       return true;
     });
     for (const cap of removed) item.content.push({ type: "input_text", text: ph(cap, i === last) });
+    for (const cap of removed) removedAll.add(cap);
   });
+  return removedAll;
 }
 
 // Gemini / gemini-cli contents[].parts[] (inlineData / fileData by mime).
 function stripGeminiParts(contents, caps) {
-  if (!Array.isArray(contents)) return;
+  const removedAll = new Set();
+  if (!Array.isArray(contents)) return removedAll;
   const last = contents.length - 1;
   contents.forEach((c, i) => {
     if (!Array.isArray(c.parts)) return;
@@ -122,47 +140,55 @@ function stripGeminiParts(contents, caps) {
       return true;
     });
     for (const cap of removed) c.parts.push({ text: ph(cap, i === last) });
+    for (const cap of removed) removedAll.add(cap);
   });
+  return removedAll;
 }
 
 /**
  * Remove media blocks the model can't read, in-place on the source-format body.
+ *
+ * Reporting what was ACTUALLY dropped (rather than "a modality was disabled") is
+ * deliberate: callers must be able to tell a request that lost user content from
+ * one that merely targeted a text-only model, so the drop is never silent.
+ *
  * @param {object} body - request body (source format)
  * @param {string} sourceFormat - one of FORMATS
  * @param {object} caps - capabilities from getCapabilitiesForModel
- * @returns {boolean} true if anything was stripped-eligible (cap false for some modality)
+ * @returns {string[]} capability names actually removed ([] = nothing was dropped)
  */
 export function stripUnsupportedModalities(body, sourceFormat, caps) {
-  if (!body || !caps) return false;
+  if (!body || !caps) return [];
   // Fast exit: model supports everything we'd strip.
-  if (caps.vision !== false && caps.audioInput !== false && caps.pdf !== false) return false;
+  if (caps.vision !== false && caps.audioInput !== false && caps.pdf !== false) return [];
 
+  let removed;
   switch (sourceFormat) {
     case FORMATS.OPENAI:
     case FORMATS.OLLAMA:
     case FORMATS.KIRO:
     case FORMATS.CURSOR:
     case FORMATS.COMMANDCODE:
-      stripOpenAI(body, caps);
+      removed = stripOpenAI(body, caps);
       break;
     case FORMATS.CLAUDE:
-      stripClaude(body, caps);
+      removed = stripClaude(body, caps);
       break;
     case FORMATS.OPENAI_RESPONSES:
     case FORMATS.OPENAI_RESPONSE:
     case FORMATS.CODEX:
-      stripResponses(body, caps);
+      removed = stripResponses(body, caps);
       break;
     case FORMATS.GEMINI:
     case FORMATS.GEMINI_CLI:
     case FORMATS.VERTEX:
-      stripGeminiParts(body.contents, caps);
+      removed = stripGeminiParts(body.contents, caps);
       break;
     case FORMATS.ANTIGRAVITY:
-      stripGeminiParts(body?.request?.contents, caps);
+      removed = stripGeminiParts(body?.request?.contents, caps);
       break;
     default:
-      stripOpenAI(body, caps);
+      removed = stripOpenAI(body, caps);
   }
-  return true;
+  return [...removed];
 }

@@ -152,8 +152,17 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
   // Auto-strip media blocks the model can't read (vision/audio/pdf) before translation.
   if (!passthrough) {
     const caps = getCapabilitiesForModel(provider, model);
-    if (stripUnsupportedModalities(body, sourceFormat, caps)) {
-      log?.debug?.("MODALITY", `stripped unsupported media for ${provider}/${model}`);
+    const droppedCaps = stripUnsupportedModalities(body, sourceFormat, caps);
+    if (droppedCaps.length > 0) {
+      // Dropping user content is never allowed to be silent. A drop decided by a
+      // *guessed* capability (name-pattern match or bare default, i.e. the model was
+      // not explicitly declared for this provider) gets a visible warning — that is
+      // exactly the guess that stripped images from vision-capable models in
+      // 9Router. Authoritative answers (provider/exact) keep the quiet debug trace.
+      const guessed = caps.capabilitySource === "pattern" || caps.capabilitySource === "default";
+      const detail = `${provider}/${model} dropped [${droppedCaps.join(", ")}] (capability source: ${caps.capabilitySource})`;
+      if (guessed) log?.warn?.("MODALITY", `media stripped on a GUESSED capability — ${detail}`);
+      else log?.debug?.("MODALITY", `stripped unsupported media — ${detail}`);
     }
     // Convert remote image URLs to base64 for targets that can't fetch URLs.
     try {

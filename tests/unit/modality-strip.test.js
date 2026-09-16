@@ -10,8 +10,23 @@ const ALL = { vision: true, audioInput: true, pdf: true };
 describe("stripUnsupportedModalities", () => {
   it("fast-exits when model supports all modalities", () => {
     const body = { messages: [{ role: "user", content: [{ type: "image_url", image_url: { url: "x" } }] }] };
-    expect(stripUnsupportedModalities(body, FORMATS.OPENAI, ALL)).toBe(false);
+    expect(stripUnsupportedModalities(body, FORMATS.OPENAI, ALL)).toEqual([]);
     expect(body.messages[0].content).toHaveLength(1);
+  });
+
+  it("reports the capabilities actually dropped (never silent)", () => {
+    const body = { messages: [{ role: "user", content: [
+      { type: "text", text: "hi" },
+      { type: "image_url", image_url: { url: "data:image/png;base64,xx" } },
+      { type: "file", file: { filename: "d.pdf", file_data: "data:application/pdf;base64,x" } },
+    ] }] };
+    expect(stripUnsupportedModalities(body, FORMATS.OPENAI, { vision: false, audioInput: true, pdf: false }))
+      .toEqual(["vision", "pdf"]);
+  });
+
+  it("reports nothing dropped when the request carried no media", () => {
+    const body = { messages: [{ role: "user", content: [{ type: "text", text: "hi" }] }] };
+    expect(stripUnsupportedModalities(body, FORMATS.OPENAI, NO_VISION)).toEqual([]);
   });
 
   it("openai: strips image when vision:false, leaves placeholder", () => {
@@ -19,7 +34,7 @@ describe("stripUnsupportedModalities", () => {
       { type: "text", text: "hi" },
       { type: "image_url", image_url: { url: "data:image/png;base64,xx" } },
     ] }] };
-    stripUnsupportedModalities(body, FORMATS.OPENAI, NO_VISION);
+    expect(stripUnsupportedModalities(body, FORMATS.OPENAI, NO_VISION)).toEqual(["vision"]);
     const types = body.messages[0].content.map((b) => b.type);
     expect(types).toContain("text");
     expect(types).not.toContain("image_url");
@@ -101,8 +116,8 @@ describe("stripUnsupportedModalities", () => {
   });
 
   it("handles missing/empty body safely", () => {
-    expect(stripUnsupportedModalities(null, FORMATS.OPENAI, NO_VISION)).toBe(false);
-    expect(stripUnsupportedModalities({}, FORMATS.OPENAI, null)).toBe(false);
-    expect(stripUnsupportedModalities({ messages: [] }, FORMATS.OPENAI, NO_VISION)).toBe(true);
+    expect(stripUnsupportedModalities(null, FORMATS.OPENAI, NO_VISION)).toEqual([]);
+    expect(stripUnsupportedModalities({}, FORMATS.OPENAI, null)).toEqual([]);
+    expect(stripUnsupportedModalities({ messages: [] }, FORMATS.OPENAI, NO_VISION)).toEqual([]);
   });
 });
