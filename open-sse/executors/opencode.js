@@ -1,11 +1,12 @@
 import crypto from "crypto";
 import { BaseExecutor } from "./base.js";
 import { PROVIDERS } from "../config/providers.js";
+import { getModelSupportedFormats } from "../config/providerModels.js";
+import { FORMATS } from "../translator/formats.js";
 import { injectReasoningContent } from "../utils/reasoningContentInjector.js";
 import { resolveSessionId } from "../utils/sessionManager.js";
 
 const OPENCODE_UA = "opencode";
-const MESSAGES_MODELS = new Set();
 
 function generateRequestId() {
   return `msg_${crypto.randomUUID().replace(/-/g, "")}`;
@@ -43,9 +44,30 @@ export class OpenCodeExecutor extends BaseExecutor {
 
   buildUrl(model) {
     const base = this.config.baseUrl;
-    return MESSAGES_MODELS.has(model)
-      ? `${base}/zen/v1/messages`
-      : `${base}/zen/v1/chat/completions`;
+    // Transport is resolved from metadata, never from a hardcoded model list. This
+    // executor used to carry `const MESSAGES_MODELS = new Set()` and branch on it:
+    // an empty allowlist that silently pinned EVERY model to /chat/completions —
+    // the same "hardcode the matcher instead of reading the declaration" mistake
+    // that routed opencode-go's /responses-only models to chat in 9Router.
+    //
+    // Zen ships a dynamic catalog (registry `passthroughModels`, no per-model
+    // entries), so today no model declares the claude format and the chat endpoint
+    // stays the default — identical behavior, but driven by the declaration. Add
+    // per-model `supportedFormats` (or `transports` on the registry entry) and the
+    // /messages route activates on its own.
+    //
+    // OPEN: whether zen's claude-format models even have a /zen/v1/messages endpoint
+    // is unverified (the upstream catalog reports ids only). Probe it before relying
+    // on it — tracked in Projek/oryphemrouter.
+    const transports = this.config.transports;
+    const claudeTransport = Array.isArray(transports)
+      ? transports.find((t) => t.format === FORMATS.CLAUDE)
+      : null;
+    const declared = getModelSupportedFormats(this.provider, model);
+    if (claudeTransport && declared?.includes(FORMATS.CLAUDE)) {
+      return claudeTransport.baseUrl || `${base}/zen/v1/messages`;
+    }
+    return `${base}/zen/v1/chat/completions`;
   }
 
   buildHeaders(credentials, stream = true) {
