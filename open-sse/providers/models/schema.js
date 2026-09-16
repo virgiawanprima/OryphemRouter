@@ -43,6 +43,21 @@ export function modelTargetFormat(model) {
 // sourceFormat-matched transport for multi-endpoint providers whose models differ
 // in endpoint support (opencode-go: kimi/glm only do /chat/completions, minimax/qwen
 // also do /messages, deepseek also does /responses).
+//
+// WHEN THIS IS REQUIRED vs WHEN THE PROVIDER-LEVEL transports[] SUFFICES
+// (audited across the whole registry 2026-09-16 — 9 providers declare transports, 90 models
+// declare formats): declare per-model formats ONLY when the models really differ. Seven
+// providers (deepseek, glm, kimi, minimax, minimax-cn, xiaomi-mimo, xiaomi-tokenplan) serve
+// every model over both of their wire formats, so their provider-level transports[] is the
+// whole truth and no model needs a declaration. The two opencode providers are the opposite
+// case — zen alone mixes /chat/completions, /messages and /responses across its catalog — so
+// there a model without a declaration would be routed by the *client's* format, and a claude
+// client asking for a chat-only model would be sent to /messages. That asymmetry is the whole
+// reason this field exists.
+//
+// A declaration must name a format the provider actually offers — declaring one without a
+// matching transports[] entry is a route that cannot be taken. tests/unit/
+// registry-transport-declarations.test.js enforces exactly that, registry-wide.
 export function modelSupportedFormats(model) {
   return model?.supportedFormats || null;
 }
