@@ -85,12 +85,20 @@ export async function handleChatCore({ body, modelInfo, credentials, log, onCred
   // /chat/completions), so without this guard a claude-format request would wrongly
   // route kimi to /messages.
   const modelSupportedFormats = getModelSupportedFormats(alias, model);
-  const runtimeTransport = resolveTransport(provider, sourceFormat);
-  // Per-model guard: when a model declares supportedFormats, only use the
-  // sourceFormat-matched transport if that format is declared (opencode-go models
-  // differ — kimi/glm only do /chat/completions). Undeclared models keep the
-  // upstream default (use the transport), preserving behavior for glm/deepseek/...
-  const useTransport = (!modelSupportedFormats || modelSupportedFormats.includes(sourceFormat)) ? runtimeTransport : null;
+  // Which upstream format to speak for this model.
+  //   • A model that DECLARES supportedFormats is authoritative: speak the client's
+  //     sourceFormat when the model declares it (zero translation), otherwise speak
+  //     one the model DOES declare. Falling back to the provider default instead is
+  //     what sent opencode-go's /messages-only models (Qwen, MiniMax) to
+  //     /chat/completions — the provider's own docs list those under /messages only,
+  //     so a chat-format client had no working route at all.
+  //   • A model that declares nothing keeps the provider default (previous behavior);
+  //     opencode-go is currently the only provider that declares per-model formats.
+  const transportFormat = modelSupportedFormats
+    ? (modelSupportedFormats.includes(sourceFormat) ? sourceFormat : modelSupportedFormats[0])
+    : sourceFormat;
+  const runtimeTransport = resolveTransport(provider, transportFormat);
+  const useTransport = runtimeTransport;
   const targetFormat = modelTargetFormat || useTransport?.format || getTargetFormat(provider, credentials);
   if (useTransport && credentials) credentials.runtimeTransport = useTransport;
   const stripList = getModelStrip(alias, model);

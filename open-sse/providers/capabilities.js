@@ -214,10 +214,17 @@ export const PROVIDER_CAPABILITIES = {
   // Projek/oryphemrouter (compare usage.prompt_tokens against a text-only call).
   // Never "correct" a value from the model NAME; cite a doc or probe it.
   "opencode-go": {
+    // Z.ai docs (docs.z.ai/guides/llm/glm-5.3): "supports text-only inputs, with a
+    // 1M-token context window and a maximum output length of 128K". Reasoning is ALWAYS
+    // on — disabling is no longer supported (thinkingCanDisable:false).
+    "glm-5.3":            { reasoning: true, thinkingFormat: "zai", thinkingCanDisable: false, contextWindow: 1000000, maxOutput: 128000 },
     // Z.ai docs (docs.z.ai/guides/llm/glm-5.2): Input Modalities "Text", 1M context.
     "glm-5.2":            { reasoning: true, thinkingFormat: "zai", contextWindow: 1000000, maxOutput: 128000 },
     // Z.ai docs (docs.z.ai/guides/llm/glm-5.1): Input Modalities "Text", 200K context.
     "glm-5.1":            { reasoning: true, thinkingFormat: "zai", contextWindow: 200000, maxOutput: 128000 },
+    // Kimi K3 — mirrors the canonical exact entry (MODEL_CAPABILITIES) so the provider
+    // tier answers authoritatively instead of deferring to it.
+    "kimi-k3":            { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", thinkingCanDisable: false, contextWindow: 1048576, maxOutput: 131072 },
     "kimi-k2.7-code":     { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", thinkingCanDisable: false, contextWindow: 262144, maxOutput: 65536 },
     // ModelScope/Moonshot: K2.6 is a native multimodal model with image AND video input.
     "kimi-k2.6":          { vision: true, videoInput: true, reasoning: true, thinkingFormat: "kimi", contextWindow: 262144, maxOutput: 262144 },
@@ -231,6 +238,10 @@ export const PROVIDER_CAPABILITIES = {
     "minimax-m3":         { vision: true, reasoning: true, thinkingFormat: "minimax", contextWindow: 1048576, maxOutput: 512000 },
     "minimax-m2.7":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 204800, maxOutput: 131072 },
     "minimax-m2.5":       { reasoning: true, thinkingFormat: "minimax", thinkingCanDisable: false, contextWindow: 200000, maxOutput: 131072 },
+    // Alibaba Model Studio describes Qwen3.8-Flash as "the latest multimodal model from
+    // the Qwen family" → image input documented. Everything else mirrors the 3.7-Plus
+    // family entry and is INFERRED, not documented — verify before trusting it.
+    "qwen3.8-flash":      { vision: true, reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },
     // Qwen platform (qwen.ai/apiplatform): Qwen3.7-Max "Inputs: Text" — Alibaba Model Studio
     // describes Max as a pure-text-only interface → no vision.
     "qwen3.7-max":        { reasoning: true, thinkingFormat: "qwen", contextWindow: 1000000, maxOutput: 65536 },

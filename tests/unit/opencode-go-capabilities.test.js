@@ -24,7 +24,15 @@ const REGISTRY_MODELS = (PROVIDER_MODELS[PROVIDER] || []).map((m) => m.id);
 // Ids the upstream catalog lists but the registry does not ship. Declared
 // explicitly so that adding one as a custom/passthrough model cannot inherit a
 // glob guess. `deepseek-flash` is the id 9Router got wrong.
-const UPSTREAM_ONLY_DECLARED = ["deepseek-flash", "deepseek-v4.1-flash", "deepseek-v4-flash-vision-exp"];
+const UPSTREAM_ONLY_DECLARED = ["deepseek-flash"];
+
+// Registry models with NO vendor-doc statement we could find (checked 2026-09-16). They
+// still resolve through a name pattern, i.e. the answer is a guess — pinned exactly so it
+// cannot grow silently, and so each stays a named probe candidate.
+const UNVERIFIED = [
+  "glm-5.3-flash", "longcat-2.0", "qwen3.8-max", "grok-4.6", "gpt-5.6-luna",
+  "hy3", "hy4-preview", "muse-spark-1.3-contributor", "muse-spark-1.2-contributor",
+];
 
 // `visionModels.js` is a SECOND, independent vision heuristic (name fragments) used
 // by compression/lite.js and autoCombo. It disagrees with the capability table for
@@ -32,7 +40,8 @@ const UPSTREAM_ONLY_DECLARED = ["deepseek-flash", "deepseek-v4.1-flash", "deepse
 // Pinned here so the divergence is visible and a NEW one has to be a deliberate edit
 // — consolidating the two sources is tracked as an open item.
 const VISION_HEURISTIC_GAPS = [
-  "mimo-v2.5", "mimo-v2.5-pro", "qwen3.7-plus", "qwen3.6-plus", "deepseek-v4-flash",
+  "mimo-v2.5", "mimo-v2.5-pro", "qwen3.6-plus", "qwen3.7-plus", "qwen3.8-flash",
+  "deepseek-v4-flash", "deepseek-v4.1-flash", "kimi-k3", "grok-4.6",
 ];
 
 describe("OpenCode Go capabilities — explicit declaration, never a glob guess", () => {
@@ -40,13 +49,14 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
     expect(REGISTRY_MODELS.length).toBeGreaterThan(10);
   });
 
-  it("declares an explicit provider entry for EVERY shipped model", () => {
+  it("declares an explicit provider entry for every shipped model we can source", () => {
     const undeclared = REGISTRY_MODELS.filter(
       (id) => getCapabilitiesForModel(PROVIDER, id).capabilitySource !== "provider"
     );
-    // A failure here means a newly shipped model would be resolved by a name glob —
-    // add it to PROVIDER_CAPABILITIES["opencode-go"] instead of relying on a pattern.
-    expect(undeclared).toEqual([]);
+    // Every registry model is either declared from a vendor doc or listed in UNVERIFIED.
+    // A newly shipped model that is neither lands here instead of silently inheriting a
+    // pattern guess — the failure mode that mis-flagged `deepseek-flash` in 9Router.
+    expect(undeclared.sort()).toEqual([...UNVERIFIED].sort());
   });
 
   it("declares the upstream-only ids we have evidence for", () => {
@@ -113,12 +123,11 @@ describe("OpenCode Go capabilities — explicit declaration, never a glob guess"
     }
   });
 
-  it("documents the upstream ids that still fall through to a guess (known gap)", () => {
-    // Not a bug to hide: an upstream id we have not probed and did not declare is
-    // still resolved by a name glob ("pattern") or by the bare floor ("default").
-    // Pinned so the residual risk stays quantified — each one needs the image probe
-    // before it can be declared for real.
-    expect(getCapabilitiesForModel(PROVIDER, "glm-5.3").capabilitySource).toBe("pattern");
+  it("documents the ids that still fall through to a guess (known gap)", () => {
+    // Not a bug to hide: an id we could not source from vendor docs still resolves by a
+    // name pattern ("pattern") or the bare floor ("default"). Pinned so the residual risk
+    // stays quantified — each one needs a doc or the image probe before it is declared.
+    expect(getCapabilitiesForModel(PROVIDER, "glm-5.3-flash").capabilitySource).toBe("pattern");
     expect(getCapabilitiesForModel(PROVIDER, "qwen3.8-max").capabilitySource).toBe("pattern");
     expect(getCapabilitiesForModel(PROVIDER, "longcat-2.0").capabilitySource).toBe("default");
   });
