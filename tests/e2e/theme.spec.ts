@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { login } from "./helpers";
 
-// Material Design 3 theme — E2E spec (M3 seed #6750A4)
-test.describe("Material 3 theme", () => {
-  test("CSS tokens match M3 palette (dark)", async ({ page }) => {
+// Tokyo Night theme — E2E spec
+test.describe("Tokyo Night theme", () => {
+  test("CSS tokens match Tokyo Night palette (dark)", async ({ page }) => {
     await login(page);
     await page.waitForSelector('aside');
     const tokens = await page.evaluate(() => {
@@ -15,17 +15,17 @@ test.describe("Material 3 theme", () => {
         primary: cs.getPropertyValue('--color-primary').trim(),
       };
     });
-    // M3 dark scheme harmonized to deep indigo (WCAG AA) — matches committed tokens
-    expect(tokens.bg.toLowerCase()).toBe("#131318");
-    expect(tokens.text.toLowerCase()).toBe("#e4e1e9");
-    expect(tokens.border.toLowerCase()).toBe("#46464f");
-    expect(tokens.primary.toLowerCase()).toBe("#bcc2ff");
+    // Tokyo Night dark scheme — matches committed tokens
+    expect(tokens.bg.toLowerCase()).toBe("#1a1b26");
+    expect(tokens.text.toLowerCase()).toBe("#c0caf5");
+    expect(tokens.border.toLowerCase()).toBe("#292e42");
+    expect(tokens.primary.toLowerCase()).toBe("#7aa2f7");
   });
 
-  test("body uses M3 dark background", async ({ page }) => {
+  test("body uses Tokyo Night dark background", async ({ page }) => {
     await login(page);
     const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).toBe("rgb(19, 19, 24)");
+    expect(bg).toBe("rgb(26, 27, 38)");
   });
 
   test("toggle switches theme visibly and persists across reload", async ({ page }) => {
@@ -37,26 +37,26 @@ test.describe("Material 3 theme", () => {
 
     // Default is dark
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
-    expect(await bodyBg()).toBe("rgb(19, 19, 24)");
+    expect(await bodyBg()).toBe("rgb(26, 27, 38)");
 
-    // Switch to light → M3 light background
+    // Switch to light → Tokyo Night Day background
     await toggle.click();
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    expect(await bodyBg()).toBe("rgb(251, 248, 255)");
+    expect(await bodyBg()).toBe("rgb(225, 226, 231)");
 
     // Persists after full reload
     await page.reload();
     await page.waitForSelector("aside");
     await page.waitForTimeout(800);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(false);
-    expect(await bodyBg()).toBe("rgb(251, 248, 255)");
+    expect(await bodyBg()).toBe("rgb(225, 226, 231)");
 
     // Toggle back to dark
     await page.getByRole("button", { name: /Switch to/i }).first().click();
     await page.waitForTimeout(500);
     expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
-    expect(await bodyBg()).toBe("rgb(19, 19, 24)");
+    expect(await bodyBg()).toBe("rgb(26, 27, 38)");
   });
 
   test("color transitions are applied for smooth theme change", async ({ page }) => {

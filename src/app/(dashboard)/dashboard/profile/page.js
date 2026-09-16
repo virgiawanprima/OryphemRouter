@@ -1062,7 +1062,7 @@ export default function ProfilePage() {
                           <p className="font-semibold text-xs sm:text-sm text-text-main">
                             IdP Setup Guidelines & Provider Configuration Instructions
                           </p>
-                          <p className="text-[11px] text-text-muted">
+                          <p className="text-[13px] text-text-muted">
                             Click to view setup steps for AWS IAM Identity Center, Okta, Entra ID, Keycloak, & Authentik
                           </p>
                         </div>

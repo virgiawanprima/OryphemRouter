@@ -21,12 +21,12 @@ export default function AntDesignProvider({ children }) {
 
   const token = useMemo(
     () => ({
-      colorPrimary: "#7AA2F7",
-      colorInfo: "#7AA2F7",
-      colorLink: "#7AA2F7",
-      colorSuccess: "#9ECE6A",
-      colorWarning: "#E0AF68",
-      colorError: "#F7768E",
+      colorPrimary: isDark ? "#7AA2F7" : "#2E7DE9",
+      colorInfo: isDark ? "#7AA2F7" : "#2E7DE9",
+      colorLink: isDark ? "#7AA2F7" : "#2E7DE9",
+      colorSuccess: isDark ? "#9ECE6A" : "#587539",
+      colorWarning: isDark ? "#E0AF68" : "#8C6C3E",
+      colorError: isDark ? "#F7768E" : "#F52A65",
       colorBgBase: isDark ? "#1A1B26" : "#E1E2E7",
       colorBgLayout: isDark ? "#16161E" : "#E1E2E7",
       colorTextBase: isDark ? "#C0CAF5" : "#3760BF",

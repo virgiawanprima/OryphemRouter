@@ -1,7 +1,7 @@
 "use client";
 
-// Dracula syntax-highlighted code block (Prism). Used for CLI Tools config
-// snippets and Overview terminal header per E2E spec v7 — preset resmi Dracula.
+// Tokyo Night syntax-highlighted code block (Prism). Used for CLI Tools config
+// snippets and Overview terminal header.
 
 import { useEffect, useState } from "react";
 import prism from "prismjs";
@@ -34,8 +34,21 @@ export default function DraculaCodeBlock({ code, language = "json", className })
 
   return (
     <pre
-      className={`p-4 bg-[#282a36] rounded-lg border border-[#44475a] overflow-x-auto font-mono text-[13px] leading-relaxed ${className || ""}`}
+      className={`p-4 bg-[color:var(--md-sys-color-surfaceContainerLowest)] rounded-lg border border-[color:var(--md-sys-color-outlineVariant)] overflow-x-auto font-mono text-[13px] leading-relaxed ${className || ""}`}
     >
+      <style>{`
+        pre code .token.comment, pre code .token.prolog, pre code .token.doctype, pre code .token.cdata { color: var(--color-text-muted); }
+        pre code .token.punctuation { color: var(--color-text-secondary); }
+        pre code .token.property, pre code .token.tag, pre code .token.constant, pre code .token.symbol { color: var(--color-danger); }
+        pre code .token.boolean, pre code .token.number { color: var(--color-orange); }
+        pre code .token.selector, pre code .token.attr-name, pre code .token.string, pre code .token.char { color: var(--color-green); }
+        pre code .token.property-access { color: var(--color-cyan); }
+        pre code .token.operator, pre code .token.entity, pre code .token.url, pre code .token.function { color: var(--color-cyan); }
+        pre code .token.keyword { color: var(--color-purple); }
+        pre code .token.atrule, pre code .token.attr-value, pre code .token.class-name { color: var(--color-yellow); }
+        pre code .token.builtin { color: var(--color-purple); }
+        pre code .token.regex, pre code .token.important, pre code .token.variable { color: var(--color-orange); }
+      `}</style>
       <code dangerouslySetInnerHTML={{ __html: html || escapeHtml(code || "") }} />
     </pre>
   );

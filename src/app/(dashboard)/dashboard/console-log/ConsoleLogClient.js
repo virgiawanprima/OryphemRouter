@@ -15,7 +15,7 @@ const LOG_LEVEL_COLORS = {
 function colorLine(line) {
   const match = line.match(/\[(\w+)\]/g);
   const levelTag = match ? match[1]?.replace(/\[|\]/g, "") : null;
-  const color = LOG_LEVEL_COLORS[levelTag] || "text-green-400";
+  const color = LOG_LEVEL_COLORS[levelTag] || "text-[color:var(--color-green)]";
   return <span className={color}>{line}</span>;
 }
 
@@ -83,7 +83,7 @@ export default function ConsoleLogClient() {
         </div>
         <div
           ref={logRef}
-          className="bg-[#282a36] rounded-b-lg p-4 text-xs font-mono h-[calc(100vh-220px)] overflow-y-auto"
+          className="bg-[color:var(--md-sys-color-surfaceContainerLowest)] rounded-b-lg p-4 text-[13px] font-mono h-[calc(100vh-220px)] overflow-y-auto"
         >
           {logs.length === 0 ? (
             <span className="text-text-muted">No console logs yet.</span>
